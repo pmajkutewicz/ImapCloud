@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<FindBugsFilter>
+	<Match>
+		<Class name="~com.sun.mail.*" />
+		<Bug code="IICU_INCORRECT_INTERNAL_CLASS_USE" />
+	</Match>
+</FindBugsFilter>

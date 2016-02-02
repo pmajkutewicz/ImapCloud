@@ -1,0 +1,258 @@
+<project>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>pl.pamsoft.imapcloud</groupId>
+	<artifactId>parent</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>IMAP Cloud parent</name>
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<jetty.version>9.2.11.v20150529</jetty.version>
+		<tomcat.version>8.0.30</tomcat.version>
+		<guice.version>4.0</guice.version>
+		<guava.version>19.0</guava.version>
+		<gson.version>2.5</gson.version>
+		<unirest-java.version>1.4.7</unirest-java.version>
+		<ignite-guice.version>1.0.0</ignite-guice.version>
+		<logback-classic.version>1.1.3</logback-classic.version>
+		<javax.mail-api.version>1.5.4</javax.mail-api.version>
+		<snakeyaml.version>1.16</snakeyaml.version>
+		<orientdb.version>2.1.8</orientdb.version>
+		<lombok.version>1.16.6</lombok.version>
+		<joda-time.version>2.3</joda-time.version>
+		<jackson-datatype-jdk8.version>2.6.3</jackson-datatype-jdk8.version>
+
+
+		<skip.findbugs>false</skip.findbugs>
+		<skip.checkstyle>false</skip.checkstyle>
+		<maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
+		<checkstyle.version>6.11.2</checkstyle.version>
+		<!-- findbugs -->
+		<maven-findbugs-plugin.version>3.0.2</maven-findbugs-plugin.version>
+		<findbugs-maven-plugin.failOnError>true</findbugs-maven-plugin.failOnError>
+		<findsecbugs-plugin.version>1.4.2</findsecbugs-plugin.version>
+		<fb-contrib.version>6.2.3</fb-contrib.version>
+		<findbugs-annotation.version>3.0.0</findbugs-annotation.version>
+
+		<main.basedir>${project.basedir}</main.basedir>
+		<jackson.version>2.7.0</jackson.version>
+	</properties>
+
+	<modules>
+		<module>core</module>
+		<module>communication-dto</module>
+		<module>gui</module>
+		<module>backend-client</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>communication-dto</artifactId>
+				<version>${version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>backend-client</artifactId>
+				<version>${version}</version>
+			</dependency>
+
+			<!-- backend client deps -->
+			<dependency>
+				<groupId>org.eclipse.jetty.websocket</groupId>
+				<artifactId>javax-websocket-client-impl</artifactId>
+				<version>${jetty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.mashape.unirest</groupId>
+				<artifactId>unirest-java</artifactId>
+				<version>${unirest-java.version}</version>
+			</dependency>
+
+			<!-- core -->
+			<dependency>
+				<groupId>org.apache.tomcat.embed</groupId>
+				<artifactId>tomcat-embed-websocket</artifactId>
+				<version>${tomcat.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>javax.mail-api</artifactId>
+				<version>${javax.mail-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>javax.mail</artifactId>
+				<version>${javax.mail-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.yaml</groupId>
+				<artifactId>snakeyaml</artifactId>
+				<version>${snakeyaml.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.orientechnologies</groupId>
+				<artifactId>orientdb-core</artifactId>
+				<version>${orientdb.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.orientechnologies</groupId>
+				<artifactId>orientdb-server</artifactId>
+				<version>${orientdb.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.orientechnologies</groupId>
+				<artifactId>orientdb-graphdb</artifactId>
+				<version>${orientdb.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.orientechnologies</groupId>
+				<artifactId>orientdb-object</artifactId>
+				<version>${orientdb.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>${joda-time.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-jdk8</artifactId>
+				<version>${jackson-datatype-jdk8.version}</version>
+			</dependency>
+
+			<!-- GUI -->
+			<dependency>
+				<groupId>com.gluonhq</groupId>
+				<artifactId>ignite-guice</artifactId>
+				<version>${ignite-guice.version}</version>
+			</dependency>
+
+			<!-- common -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>${guice.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>${gson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback-classic.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.datatype</groupId>
+				<artifactId>jackson-datatype-jdk8</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>${findbugs-annotation.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven-checkstyle-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>${skip.checkstyle}</skip>
+					<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+					<configLocation>other/checkstyle_checks.xml</configLocation>
+					<failsOnError>true</failsOnError>
+					<logViolationsToConsole>true</logViolationsToConsole>
+					<consoleOutput>true</consoleOutput>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>${checkstyle.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>${maven-findbugs-plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<skip>${skip.findbugs}</skip>
+					<excludeFilterFile>${main.basedir}/other/findbug_excludes.xml</excludeFilterFile>
+					<effort>Max</effort><!-- Min, Default, Max -->
+					<!-- I guess this on can be set to Low after fixing higher priority bugs,
+					 but let start from Highest ones -->
+					<threshold>Default</threshold><!-- High, Default, Low, Ignore -->
+					<failOnError>${findbugs-maven-plugin.failOnError}</failOnError>
+					<plugins>
+						<plugin>
+							<groupId>com.h3xstream.findsecbugs</groupId>
+							<artifactId>findsecbugs-plugin</artifactId>
+							<version>${findsecbugs-plugin.version}</version>
+						</plugin>
+						<plugin>
+							<groupId>com.mebigfatguy.fb-contrib</groupId>
+							<artifactId>fb-contrib</artifactId>
+							<version>${fb-contrib.version}</version>
+						</plugin>
+					</plugins>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

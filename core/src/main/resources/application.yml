@@ -1,0 +1,14 @@
+spring.data.orient:
+  url: plocal:./.imapcloud_db/db
+  username: admin
+  password: admin
+
+spring.thymeleaf:
+  cache: false
+  mode: LEGACYHTML5
+
+server:
+  tomcat.accesslog.enabled: true
+  port: 9000
+
+

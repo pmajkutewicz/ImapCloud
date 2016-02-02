@@ -1,0 +1,88 @@
+package pl.pamsoft.imapcloud.config;
+
+import com.orientechnologies.orient.core.config.OGlobalConfiguration;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.object.db.OObjectDatabasePool;
+import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
+import com.orientechnologies.orient.object.metadata.schema.OSchemaProxyObject;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import pl.pamsoft.imapcloud.entity.Account;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+@Configuration
+class OrientDB {
+
+	private static final Logger LOG = LoggerFactory.getLogger(OrientDB.class);
+
+	private OrientGraphFactory graphDB;
+
+	private OObjectDatabaseTx db;
+
+	@Value("${spring.data.orient.url}")
+	private String url;
+
+	@Value("${spring.data.orient.username}")
+	private String username;
+
+	@Value("${spring.data.orient.password}")
+	private String password;
+
+	@PostConstruct
+	public void init() {
+		LOG.debug("DB Location: {}", url);
+		configGraphDb();
+		configObjectDb();
+	}
+
+	private void configObjectDb() {
+		db = OObjectDatabasePool.global().acquire(url, username, password);
+		db.setAutomaticSchemaGeneration(true);
+
+		db.getEntityManager().registerEntityClass(Account.class);
+		OSchemaProxyObject schema = db.getMetadata().getSchema();
+		if (schema.existsClass(Account.class.getSimpleName())) {
+			OClass accountClass = schema.getClass(Account.class.getSimpleName());
+			if (accountClass.getClassIndex("Account_email") != null) {
+				accountClass.createIndex("Account_email", OClass.INDEX_TYPE.UNIQUE, "email");
+			}
+		}
+		schema.save();
+	}
+
+	private void configGraphDb() {
+		OGlobalConfiguration.FILE_LOCK.setValue(Boolean.FALSE);
+		graphDB = new OrientGraphFactory(url, username, password);
+		graphDB.setUseLightweightEdges(true);
+		OrientGraphNoTx tx = graphDB.getNoTx();
+		tx.shutdown();
+	}
+
+	private String createIndexName(Class cls, String field) {
+		return String.format("%s_%s", cls.getSimpleName(), field);
+	}
+
+	@PreDestroy
+	public void destroy() {
+		graphDB.close();
+		db.close();
+		LOG.info("DB destroyed");
+	}
+
+	@Bean
+	public OrientGraphFactory getGraphDB() {
+		return graphDB;
+	}
+
+	@Bean
+	public OObjectDatabaseTx getObjectDB() {
+		return db;
+	}
+}

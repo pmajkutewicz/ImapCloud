@@ -1,0 +1,15 @@
+mail_ru: {
+  domain: mail.ru,
+  imapHost: imap.mail.ru,
+  loginType: WITH_DOMAIN,
+  sizeMB: 9999999,
+  attachmentSizeMB: 25
+  }
+mail_com: {
+  domain: mail.com,
+  imapHost: unknown,
+  loginType: WITH_DOMAIN,
+  sizeMB: 9999999,
+  attachmentSizeMB: 50
+  }
+
