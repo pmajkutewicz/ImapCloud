@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import pl.pamsoft.imapcloud.dto.AccountDto;
+import pl.pamsoft.imapcloud.dto.FileDto;
 
 import java.util.List;
 
@@ -14,6 +15,6 @@ import java.util.List;
 @Data
 @ToString
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class ListAccountResponse implements AccountResponse {
-	List<AccountDto> account;
+public class ListFilesInDirResponse {
+	List<FileDto> files;
 }

@@ -51,7 +51,7 @@ public class AccountRestClient extends AbstractRestClient {
 	public List<AccountDto> listAccounts() throws IOException {
 		try {
 			HttpResponse<ListAccountResponse> httpResponse = Unirest.get(endpoint + CREATE_ACCOUNT).asObject(ListAccountResponse.class);
-			return httpResponse.getBody().getAccountDtos();
+			return httpResponse.getBody().getAccount();
 		} catch (UnirestException e) {
 			throw new IOException(e);
 		}
