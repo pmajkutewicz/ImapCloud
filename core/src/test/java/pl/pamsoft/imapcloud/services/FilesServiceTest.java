@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class FilesServiceTest {
 
-	public static final int MEBIBYTE = 1024 * 1024;
+	private static final int MEBIBYTE = 1024 * 1024;
 	private FilesService fs = new FilesService();
 
 	@Test

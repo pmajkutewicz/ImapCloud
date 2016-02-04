@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.rest;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,17 +23,14 @@ public class FilesRestController {
 	private FilesService filesService;
 
 	@ResponseBody
+	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public ResponseEntity<?> listFilesInDirectory(@RequestParam(required = false, defaultValue = ".") String dir) {
 		File selectedDir = new File(dir);
-		throwExceptionWhenNotDirectory(selectedDir);
+		if (selectedDir.isDirectory()) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 
 		List<FileDto> files = filesService.listFilesInDir(selectedDir);
 		return new ResponseEntity<>(new ListFilesInDirResponse(files), HttpStatus.OK);
-	}
-
-	private void throwExceptionWhenNotDirectory(File selectedDir) {
-		if (selectedDir.isDirectory()) {
-			new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-		}
 	}
 }
