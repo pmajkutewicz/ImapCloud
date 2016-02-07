@@ -5,7 +5,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -39,6 +41,12 @@ public class FilesController implements Initializable {
 	@FXML
 	private TableView<FileDto> fileList;
 
+	@FXML
+	private AccountsTableController embeddedAccountTableController;
+
+	@FXML
+	private Parent embeddedAccountTable;
+
 	private EventHandler<MouseEvent> doubleClickHandler = event -> {
 		if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
 			Node node = ((Node) event.getTarget()).getParent();
@@ -63,18 +71,25 @@ public class FilesController implements Initializable {
 		try {
 			String homeDir = filesRestClient.getHomeDir().getHomeDir();
 			fileList.setOnMousePressed(doubleClickHandler);
+			fileList.getSelectionModel().setSelectionMode(
+				SelectionMode.MULTIPLE
+			);
 			updateUI(homeDir);
 		} catch (IOException e) {
 			utils.showWarning(e.getMessage());
 		}
 	}
 
-	public void onEnter() {
+	public void onEnterCurentDir() {
 		try {
 			updateUI(currentDir.getText());
 		} catch (IOException e) {
 			utils.showWarning(e.getMessage());
 		}
+	}
+
+	public void onUploadClick() {
+
 	}
 
 	private void updateUI(String directory) throws IOException {

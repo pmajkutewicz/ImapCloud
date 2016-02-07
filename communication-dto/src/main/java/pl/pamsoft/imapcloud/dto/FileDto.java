@@ -31,6 +31,9 @@ public class FileDto {
 	private Long size;
 
 	public String getReadableFileSize() {
+		if (Type.DIRECTORY == type) {
+			return "";
+		}
 		if (null == size || size <= 0) {
 			return "0";
 		}
