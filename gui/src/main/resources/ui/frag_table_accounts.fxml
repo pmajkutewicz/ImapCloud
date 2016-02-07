@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?scenebuilder-stylesheet css/custom.css?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.GridPane?>
+<TableView fx:id="accountsTable" prefHeight="200.0" prefWidth="281.0" GridPane.rowIndex="1" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="pl.pamsoft.imapcloud.controllers.AccountsTableController">
+	<columns>
+		<TableColumn prefWidth="250.0" text="%accounts.table.column.login">
+			<cellValueFactory>
+				<PropertyValueFactory property="login"/>
+			</cellValueFactory>
+		</TableColumn>
+		<TableColumn prefWidth="150.0" text="%accounts.table.column.imap">
+			<cellValueFactory>
+				<PropertyValueFactory property="imapServer"/>
+			</cellValueFactory>
+		</TableColumn>
+		<TableColumn prefWidth="60.0" text="%accounts.table.column.used">
+			<cellValueFactory>
+				<PropertyValueFactory property="usedSpace"/>
+			</cellValueFactory>
+		</TableColumn>
+	</columns>
+	<columnResizePolicy>
+		<TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+	</columnResizePolicy>
+</TableView>

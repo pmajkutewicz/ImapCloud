@@ -9,12 +9,12 @@
 	<tabs>
 		<Tab id="accountsTab" closable="false" text="%main.tab.accounts">
 			<content>
-				<fx:include fx:id="accountsTabPage" source="accounts.fxml" />
+				<fx:include fx:id="accountsTabPage" source="tab_accounts.fxml" />
 			</content>
 		</Tab>
 		<Tab id="uploadsTab" closable="false" text="%main.tab.uploads">
 			<content>
-				<fx:include fx:id="uploadsTabPage" source="uploads.fxml" />
+				<fx:include fx:id="uploadsTabPage" source="tab_uploads.fxml" />
 			</content>
 		</Tab>
 	</tabs>

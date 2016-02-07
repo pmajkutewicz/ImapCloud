@@ -4,8 +4,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,10 @@ public class AccountController implements Initializable {
 	private TextField usernameTextField;
 
 	@FXML
-	private TableView<AccountDto> accountsTable;
+	private AccountsTableController embeddedAccountTableController;
+
+	@FXML
+	private Parent embeddedAccountTable;
 
 	public void createButtonClick(ActionEvent event) {
 		try {
@@ -57,15 +60,8 @@ public class AccountController implements Initializable {
 			emailProvidersComboBox.setCellFactory(p -> new EmailProviderInfoRenderer());
 			emailProvidersComboBox.getItems().addAll(accountRestClient.getAvailableEmailAccounts().getEmailProviders());
 			emailProvidersComboBox.getSelectionModel().selectFirst();
-			initAccountTable();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void initAccountTable() throws IOException {
-		List<AccountDto> accountDtos = accountRestClient.listAccounts();
-		ObservableList<AccountDto> items = accountsTable.getItems();
-		items.addAll(accountDtos);
 	}
 }
