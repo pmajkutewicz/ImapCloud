@@ -5,6 +5,7 @@ import com.google.inject.Provides;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
+import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 import pl.pamsoft.imapcloud.websocket.OnFailedInitNotification;
 import pl.pamsoft.imapcloud.websocket.ServerConnection;
 import pl.pamsoft.imapcloud.websocket.ServerConnectionImpl;
@@ -40,6 +41,12 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	FilesRestClient getFilesRestClient() {
 		return new FilesRestClient(ENDPOINT);
+	}
+
+	@Provides
+	@Singleton
+	UploadsRestClient getUploadRestClient() {
+		return new UploadsRestClient(ENDPOINT);
 	}
 
 	@Provides

@@ -11,7 +11,6 @@ import pl.pamsoft.imapcloud.guice.GuiceControllerFactoryCallback;
 import pl.pamsoft.imapcloud.websocket.ServerConnection;
 
 import java.net.ConnectException;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class Start extends Application {

@@ -1,12 +1,11 @@
 package pl.pamsoft.imapcloud.controllers;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -15,10 +14,11 @@ import javafx.scene.input.MouseEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.Utils;
+import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.responses.AbstractResponse;
 import pl.pamsoft.imapcloud.responses.ListFilesInDirResponse;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
+import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -33,6 +33,9 @@ public class FilesController implements Initializable {
 	private FilesRestClient filesRestClient;
 
 	@Inject
+	private UploadsRestClient uploadsRestClient;
+
+	@Inject
 	private Utils utils;
 
 	@FXML
@@ -41,11 +44,11 @@ public class FilesController implements Initializable {
 	@FXML
 	private TableView<FileDto> fileList;
 
-	@FXML
-	private AccountsTableController embeddedAccountTableController;
+//	@FXML
+//	private AccountsTableController embeddedAccountTableController;
 
 	@FXML
-	private Parent embeddedAccountTable;
+	private TableView<AccountDto> embeddedAccountTable;
 
 	private EventHandler<MouseEvent> doubleClickHandler = event -> {
 		if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
@@ -80,7 +83,7 @@ public class FilesController implements Initializable {
 		}
 	}
 
-	public void onEnterCurentDir() {
+	public void onEnterCurrentDir() {
 		try {
 			updateUI(currentDir.getText());
 		} catch (IOException e) {
@@ -89,6 +92,13 @@ public class FilesController implements Initializable {
 	}
 
 	public void onUploadClick() {
+		try {
+			ObservableList<FileDto> selectedFiles = fileList.getSelectionModel().getSelectedItems();
+			AccountDto selectedAccountDto = embeddedAccountTable.getSelectionModel().getSelectedItem();
+			uploadsRestClient.startUpload(selectedFiles, selectedAccountDto);
+		} catch (IOException e) {
+			utils.showWarning(e.getMessage());
+		}
 
 	}
 

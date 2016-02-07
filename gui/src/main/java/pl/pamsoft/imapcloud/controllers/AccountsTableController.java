@@ -4,7 +4,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 
@@ -14,7 +15,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-@Data
+@Getter
+@Setter
 public class AccountsTableController implements Initializable {
 
 	@Inject

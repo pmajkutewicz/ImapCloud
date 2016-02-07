@@ -1,15 +1,12 @@
 package pl.pamsoft.imapcloud.controllers;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
 import pl.pamsoft.imapcloud.renderers.EmailProviderInfoRenderer;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
@@ -17,7 +14,6 @@ import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class AccountController implements Initializable {
@@ -36,11 +32,11 @@ public class AccountController implements Initializable {
 	@FXML
 	private TextField usernameTextField;
 
-	@FXML
-	private AccountsTableController embeddedAccountTableController;
-
-	@FXML
-	private Parent embeddedAccountTable;
+//	@FXML
+//	private AccountsTableController embeddedAccountTableController;
+//
+//	@FXML
+//	private Parent embeddedAccountTable;
 
 	public void createButtonClick(ActionEvent event) {
 		try {

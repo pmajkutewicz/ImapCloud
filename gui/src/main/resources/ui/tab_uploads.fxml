@@ -33,7 +33,7 @@
 			</padding>
 			<children>
 				<Label text="%uploads.label.source.dir" />
-				<TextField fx:id="currentDir" onAction="#onEnterCurentDir" />
+				<TextField fx:id="currentDir" onAction="#onEnterCurrentDir" />
 				<Label text="%uploads.label.source.files" />
 				<TableView fx:id="fileList" minHeight="200" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
 					<columns>
