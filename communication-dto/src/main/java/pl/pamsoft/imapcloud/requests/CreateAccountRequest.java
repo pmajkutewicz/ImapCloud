@@ -10,9 +10,8 @@ import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@ToString
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class CreateAccountRequest implements AccountRequest {
+public class CreateAccountRequest {
 	private String username;
 	private String password;
 	private EmailProviderInfo selectedEmailProvider;

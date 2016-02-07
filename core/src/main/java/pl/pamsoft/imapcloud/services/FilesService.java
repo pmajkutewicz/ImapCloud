@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.services;
 
 import com.google.common.collect.Ordering;
 import com.google.common.io.Files;
+import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.stream.StreamSupport;
 import static pl.pamsoft.imapcloud.dto.FileDto.Type.DIRECTORY;
 import static pl.pamsoft.imapcloud.dto.FileDto.Type.FILE;
 
+@Service
 public class FilesService {
 
 	private Function<File, FileDto> toFileDto = f -> new FileDto(f.getName(), f.getAbsolutePath(), f.isDirectory() ? DIRECTORY : FILE, f.isDirectory() ? null : f.length());

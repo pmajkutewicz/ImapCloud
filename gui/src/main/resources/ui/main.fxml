@@ -7,14 +7,14 @@
 
 <TabPane minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
 	<tabs>
-		<Tab id="accountsTab" closable="false" text="Accounts">
+		<Tab id="accountsTab" closable="false" text="%main.tab.accounts">
 			<content>
-				<fx:include fx:id="fooTabPage" source="accounts.fxml" />
+				<fx:include fx:id="accountsTabPage" source="accounts.fxml" />
 			</content>
 		</Tab>
-		<Tab closable="false" text="Untitled Tab 2">
+		<Tab id="uploadsTab" closable="false" text="%main.tab.uploads">
 			<content>
-				<!--<fx:include fx:id="barTabPage" source="barTabPage.fxml"/>-->
+				<fx:include fx:id="uploadsTabPage" source="uploads.fxml" />
 			</content>
 		</Tab>
 	</tabs>

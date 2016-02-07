@@ -4,6 +4,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import org.apache.http.HttpStatus;
+import pl.pamsoft.imapcloud.responses.AbstractResponse;
 
 import java.io.IOException;
 
@@ -18,7 +19,8 @@ abstract class AbstractRestClient {
 
 	void throwExceptionIfNotValidResponse(HttpResponse response) throws IOException {
 		if (HttpStatus.SC_OK != response.getStatus()) {
-			throw new IOException(response.getStatusText());
+			AbstractResponse body = (AbstractResponse) response.getBody();
+			throw new IOException(body.getMessage());
 		}
 	}
 

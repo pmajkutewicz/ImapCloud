@@ -39,6 +39,7 @@
 
 		<main.basedir>${project.basedir}</main.basedir>
 		<jackson.version>2.7.0</jackson.version>
+		<controlsfx.version>8.40.10</controlsfx.version>
 	</properties>
 
 	<modules>
@@ -124,17 +125,18 @@
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.datatype</groupId>
-				<artifactId>jackson-datatype-jdk8</artifactId>
-				<version>${jackson-datatype-jdk8.version}</version>
-			</dependency>
 
 			<!-- GUI -->
 			<dependency>
 				<groupId>com.gluonhq</groupId>
 				<artifactId>ignite-guice</artifactId>
 				<version>${ignite-guice.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.controlsfx</groupId>
+				<artifactId>controlsfx</artifactId>
+				<version>${controlsfx.version}</version>
 			</dependency>
 
 			<!-- common -->
@@ -166,6 +168,11 @@
 			<dependency>
 				<groupId>com.fasterxml.jackson.datatype</groupId>
 				<artifactId>jackson-datatype-jdk8</artifactId>
+				<version>${jackson-datatype-jdk8.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
 				<version>${jackson.version}</version>
 			</dependency>
 		</dependencies>
