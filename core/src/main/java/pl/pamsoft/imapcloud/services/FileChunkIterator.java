@@ -1,5 +1,8 @@
 package pl.pamsoft.imapcloud.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -9,6 +12,8 @@ import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FileChunkIterator implements Iterator<MappedByteBuffer> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(FileChunkIterator.class);
 
 	private FileChannel inChannel;
 	private long maxSize;
@@ -57,6 +62,7 @@ public class FileChunkIterator implements Iterator<MappedByteBuffer> {
 			}
 			MappedByteBuffer mapped = inChannel.map(FileChannel.MapMode.READ_ONLY, currentPosition, fetchSize);
 			currentPosition += fetchSize;
+			LOG.debug("Returning buffer of {} bytes", fetchSize);
 			if (variableChunksMode) {
 				generateNextFetchSize();
 			}

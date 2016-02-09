@@ -41,7 +41,7 @@ public class AccountsSettings {
 		String imapHost = (String) values.get("imapHost");
 		LoginType loginType = LoginType.valueOf((String) values.get("loginType"));
 		Integer sizeMB = (Integer) values.get("sizeMB");
-		Integer attachmentSizeMB = (Integer) values.get("attachmentSize");
+		Integer attachmentSizeMB = (Integer) values.get("attachmentSizeMB");
 		return new EmailProviderInfo(domain, imapHost, loginType, sizeMB, attachmentSizeMB);
 	}
 

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class AccountDto {
-	private String login;
-	private String imapServer;
+	private String id;
+	private String email;
 	private Integer usedSpace;
 }

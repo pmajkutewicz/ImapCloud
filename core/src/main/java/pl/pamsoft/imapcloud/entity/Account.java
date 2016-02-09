@@ -16,4 +16,6 @@ public class Account {
 	private String email;
 	private String imapServerAddress;
 	private String password;
+	private Integer sizeMB;
+	private Integer attachmentSizeMB;
 }

@@ -13,8 +13,8 @@ public class EmailProviderInfo {
 	private String domain;
 	private String imapHost;
 	private LoginType loginType;
-	private Integer size;
-	private Integer attachmentSize;
+	private Integer sizeMB;
+	private Integer attachmentSizeMB;
 }
 
 

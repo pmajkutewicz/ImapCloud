@@ -2,11 +2,13 @@ package pl.pamsoft.imapcloud.config;
 
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
+import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.object.db.OObjectDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.metadata.schema.OSchemaProxyObject;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,12 +50,12 @@ class OrientDB {
 
 		db.getEntityManager().registerEntityClass(Account.class);
 		OSchemaProxyObject schema = db.getMetadata().getSchema();
-		if (schema.existsClass(Account.class.getSimpleName())) {
-			OClass accountClass = schema.getClass(Account.class.getSimpleName());
-			if (accountClass.getClassIndex("Account_email") != null) {
-				accountClass.createIndex("Account_email", OClass.INDEX_TYPE.UNIQUE, "email");
-			}
-		}
+//		if (schema.existsClass(Account.class.getSimpleName())) {
+//			OClass accountClass = schema.getClass(Account.class.getSimpleName());
+//			if (accountClass.getClassIndex("Account__email") != null) {
+//				accountClass.createIndex("Account__email", OClass.INDEX_TYPE.UNIQUE, "email");
+//			}
+//		}
 		schema.save();
 	}
 
@@ -62,6 +64,17 @@ class OrientDB {
 		graphDB = new OrientGraphFactory(url, username, password);
 		graphDB.setUseLightweightEdges(true);
 		OrientGraphNoTx tx = graphDB.getNoTx();
+		if (tx.getVertexType(Account.class.getSimpleName()) == null) {
+			OrientVertexType vertexType = tx.createVertexType(Account.class.getSimpleName());
+			vertexType.createProperty(GraphProperties.ACCOUNT_EMAIL, OType.STRING);
+			vertexType.createProperty(GraphProperties.ACCOUNT_LOGIN, OType.STRING);
+			vertexType.createProperty(GraphProperties.ACCOUNT_PASSWORD, OType.STRING);
+			vertexType.createProperty(GraphProperties.ACCOUNT_IMAP_SERVER, OType.STRING);
+			vertexType.createProperty(GraphProperties.ACCOUNT_SIZE_MB, OType.INTEGER);
+			vertexType.createProperty(GraphProperties.ACCOUNT_ATTACHMENT_SIZE_MB, OType.INTEGER);
+			vertexType.createIndex(createIndexName(Account.class, GraphProperties.ACCOUNT_EMAIL),
+				OClass.INDEX_TYPE.UNIQUE, GraphProperties.ACCOUNT_EMAIL);
+		}
 		tx.shutdown();
 	}
 

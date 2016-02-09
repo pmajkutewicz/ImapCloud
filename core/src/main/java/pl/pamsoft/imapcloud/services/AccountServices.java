@@ -19,17 +19,21 @@ public class AccountServices {
 	@Autowired
 	private AccountRepository accountRepository;
 
-	private Function<? super Account, AccountDto> toAccount = a -> new AccountDto(a.getLogin(), a.getImapServerAddress(), 0); //TODO: update used space
+	private Function<? super Account, AccountDto> toAccount = a -> new AccountDto(a.getId(), a.getEmail(), 0); //TODO: update used space
 
 	public void addAccount(CreateAccountRequest request) {
 		Account account = new Account();
+		String email = request.getUsername() + '@' + request.getSelectedEmailProvider().getDomain();
+		account.setEmail(request.getUsername());
 		if (LoginType.USERNAME_ONLY == request.getSelectedEmailProvider().getLoginType()) {
 			account.setLogin(request.getUsername());
 		} else {
-			account.setLogin(request.getUsername() + '@' + request.getSelectedEmailProvider().getDomain());
+			account.setLogin(email);
 		}
 		account.setPassword(request.getPassword());
 		account.setImapServerAddress(request.getSelectedEmailProvider().getImapHost());
+		account.setSizeMB(request.getSelectedEmailProvider().getSizeMB());
+		account.setAttachmentSizeMB(request.getSelectedEmailProvider().getAttachmentSizeMB());
 
 		accountRepository.save(account);
 	}

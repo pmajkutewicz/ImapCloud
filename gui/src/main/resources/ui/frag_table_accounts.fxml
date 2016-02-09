@@ -9,14 +9,9 @@
 <TableView fx:id="accountsTable" prefHeight="200.0" prefWidth="281.0" GridPane.rowIndex="1" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="pl.pamsoft.imapcloud.controllers.AccountsTableController">
 	<columns>
-		<TableColumn prefWidth="250.0" text="%accounts.table.column.login">
+		<TableColumn prefWidth="250.0" text="%accounts.table.column.email">
 			<cellValueFactory>
-				<PropertyValueFactory property="login"/>
-			</cellValueFactory>
-		</TableColumn>
-		<TableColumn prefWidth="150.0" text="%accounts.table.column.imap">
-			<cellValueFactory>
-				<PropertyValueFactory property="imapServer"/>
+				<PropertyValueFactory property="email"/>
 			</cellValueFactory>
 		</TableColumn>
 		<TableColumn prefWidth="60.0" text="%accounts.table.column.used">
