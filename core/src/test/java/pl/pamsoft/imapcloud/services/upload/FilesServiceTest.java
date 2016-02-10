@@ -1,7 +1,8 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.services.upload.FilesService;
 
 import java.io.File;
 import java.util.List;

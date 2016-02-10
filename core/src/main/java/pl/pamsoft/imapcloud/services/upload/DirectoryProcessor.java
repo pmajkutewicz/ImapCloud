@@ -1,5 +1,6 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.upload;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
 import java.io.File;
@@ -28,6 +29,7 @@ public class DirectoryProcessor implements Function<FileDto, Stream<FileDto>> {
 		}
 	}
 
+	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	private List<FileDto> parseDirectories(FileDto fileDto) {
 		List<FileDto> result = new ArrayList<>();
 

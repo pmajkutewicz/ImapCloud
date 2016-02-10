@@ -1,6 +1,9 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.Test;
+import org.mockito.Mockito;
+import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.services.upload.FileChunkIterator;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -11,6 +14,7 @@ import java.io.OutputStream;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 public class FileChunkIteratorTest {
 
@@ -19,25 +23,29 @@ public class FileChunkIteratorTest {
 	@Test
 	public void fileReadingWithNotAlignedChunks() throws Exception {
 		String filePath = getTempDir() + "/not_aligned.txt";
+		FileDto mockedFileDto = Mockito.mock(FileDto.class);
+		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
 		writeFile(filePath, 10);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(3);
-		fileChunkIterator.process(new File(filePath));
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(mockedFileDto, 3);
+		fileChunkIterator.process();
 
-		assertThat(fileChunkIterator.next().length, is(3));
-		assertThat(fileChunkIterator.next().length, is(3));
-		assertThat(fileChunkIterator.next().length, is(3));
-		assertThat(fileChunkIterator.next().length, is(1));
+		assertThat(fileChunkIterator.next().getData().length, is(3));
+		assertThat(fileChunkIterator.next().getData().length, is(3));
+		assertThat(fileChunkIterator.next().getData().length, is(3));
+		assertThat(fileChunkIterator.next().getData().length, is(1));
 		deleteFile(filePath);
 	}
 
 	@Test
 	public void fileShouldBeReadUsingConstantChunks() throws Exception {
 		String filePath = getTempDir() + "/constant_chunks.txt";
+		FileDto mockedFileDto = Mockito.mock(FileDto.class);
+		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
 		writeFile(filePath, MEBIBYTE);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(1024);
-		fileChunkIterator.process(new File(filePath));
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(mockedFileDto, 1024);
+		fileChunkIterator.process();
 		int counter = 0;
 		while (fileChunkIterator.hasNext()) {
 			fileChunkIterator.next();
@@ -51,16 +59,19 @@ public class FileChunkIteratorTest {
 	@Test
 	public void fileShouldBeReadUsingVariableChunks() throws Exception {
 		String filePath = getTempDir() + "/variable_chunks.txt";
+		FileDto mockedFileDto = Mockito.mock(FileDto.class);
+		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
 		writeFile(filePath, MEBIBYTE);
+
 
 		int deviation = 512;
 		int fetchSize = 1024;
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(fetchSize, deviation);
-		fileChunkIterator.process(new File(filePath));
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(mockedFileDto, fetchSize, deviation);
+		fileChunkIterator.process();
 		// last chunks can be shorter than deviation, so let say we have 20 tries
 		for (int i = 0; i < 20; i++) {
 			assertTrue(fileChunkIterator.hasNext());
-			int capacity = fileChunkIterator.next().length;
+			int capacity = fileChunkIterator.next().getData().length;
 			assertTrue(capacity > fetchSize - deviation && capacity < fetchSize + deviation);
 		}
 		deleteFile(filePath);

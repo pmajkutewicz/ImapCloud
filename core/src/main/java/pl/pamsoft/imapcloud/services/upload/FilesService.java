@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.upload;
 
 import com.google.common.collect.Ordering;
 import com.google.common.io.Files;

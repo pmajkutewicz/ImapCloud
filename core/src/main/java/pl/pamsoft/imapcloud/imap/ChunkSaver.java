@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.imap;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -8,21 +9,18 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.util.function.Consumer;
 
 import static javax.mail.Folder.HOLDS_MESSAGES;
 
-public class ChunkSaver implements Consumer<byte[]> {
+public class ChunkSaver implements Consumer<UploadChunkContainer> {
 
 	public static final String IMAP_CLOUD_FOLDER_NAME = "IC";
 	private GenericObjectPool<Store> connectionPool;
@@ -32,7 +30,7 @@ public class ChunkSaver implements Consumer<byte[]> {
 	}
 
 	@Override
-	public void accept(byte[] byteBuffer) {
+	public void accept(UploadChunkContainer dataChunk) {
 		Store store = null;
 		try {
 			store = connectionPool.borrowObject();
@@ -40,7 +38,7 @@ public class ChunkSaver implements Consumer<byte[]> {
 			if (!folder.exists()) {
 				folder.create(HOLDS_MESSAGES);
 			}
-			Message[] msg = {createMessage(byteBuffer)};
+			Message[] msg = {createMessage(dataChunk)};
 			folder.appendMessages(msg);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -51,24 +49,23 @@ public class ChunkSaver implements Consumer<byte[]> {
 		}
 	}
 
-	private Message createMessage(byte[] byteBuffer) throws MessagingException {
+	private Message createMessage(UploadChunkContainer dataChunk) throws MessagingException {
 		String htmlBody = "";
 		Message msg = new MimeMessage(Session.getInstance(System.getProperties()));
 
 		Multipart mp = new MimeMultipart();
-
 		MimeBodyPart htmlPart = new MimeBodyPart();
 		htmlPart.setContent(htmlBody, "text/html");
 		mp.addBodyPart(htmlPart);
 
 		MimeBodyPart attachment = new MimeBodyPart();
-		InputStream attachmentDataStream = new ByteArrayInputStream(byteBuffer);
-		DataSource ds = new ByteArrayDataSource(byteBuffer, "application/octet-stream");
+		DataSource ds = new ByteArrayDataSource(dataChunk.getData(), "application/octet-stream");
 		attachment.setDataHandler(new DataHandler(ds));
 		attachment.setFileName("manual.pdf");
+		attachment.setDisposition(Part.ATTACHMENT);
 		mp.addBodyPart(attachment);
-
 		msg.setContent(mp);
+		msg.setHeader("IC-ChunkNumber", String.valueOf(dataChunk.getChunkNumber()));
 		return msg;
 	}
 }

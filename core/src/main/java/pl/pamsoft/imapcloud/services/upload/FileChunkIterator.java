@@ -1,7 +1,10 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.upload;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,33 +14,38 @@ import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FileChunkIterator implements Iterator<byte[]> {
+public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileChunkIterator.class);
 
 	private FileChannel inChannel;
 	private long maxSize;
 	private long currentPosition = 0;
+	private FileDto fileDto;
 	private int fetchSize;
+	private int currentChunkNumber = 1;
 
 	private boolean variableChunksMode;
 	private int maxIncrease;
 	private int minFetchSize;
 
-	public FileChunkIterator(int fetchSize) {
+	public FileChunkIterator(FileDto fileDto, int fetchSize) {
+		this.fileDto = fileDto;
 		this.fetchSize = fetchSize;
 	}
 
-	public FileChunkIterator(int fetchSize, int deviation) {
+	public FileChunkIterator(FileDto fileDto, int fetchSize, int deviation) {
+		this.fileDto = fileDto;
 		this.minFetchSize = fetchSize - deviation;
 		this.maxIncrease = 2 * deviation;
 		this.variableChunksMode = true;
 		generateNextFetchSize();
 	}
 
-	public void process(File file) throws IOException {
+	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
+	public void process() throws IOException {
 		// i guess it should be FileInputStream
-		inChannel = new RandomAccessFile(file, "r").getChannel();
+		inChannel = new RandomAccessFile(new File(fileDto.getAbsolutePath()), "r").getChannel();
 		maxSize = inChannel.size();
 	}
 
@@ -55,7 +63,7 @@ public class FileChunkIterator implements Iterator<byte[]> {
 	}
 
 	@Override
-	public byte[] next() {
+	public UploadChunkContainer next() {
 		try {
 			if (currentPosition + fetchSize > maxSize) {
 				this.fetchSize = Math.toIntExact(maxSize - currentPosition);
@@ -63,12 +71,14 @@ public class FileChunkIterator implements Iterator<byte[]> {
 			byte[] data = new byte[fetchSize];
 			MappedByteBuffer mapped = inChannel.map(FileChannel.MapMode.READ_ONLY, currentPosition, fetchSize);
 			currentPosition += fetchSize;
-			LOG.debug("Returning buffer of {} bytes", fetchSize);
+
 			if (variableChunksMode) {
 				generateNextFetchSize();
 			}
 			mapped.get(data);
-			return data;
+			UploadChunkContainer uploadChunkContainer = new UploadChunkContainer(fileDto, data, currentChunkNumber++);
+			LOG.debug("Returning {}", uploadChunkContainer);
+			return uploadChunkContainer;
 		} catch (IOException e) {
 			return null;
 		}

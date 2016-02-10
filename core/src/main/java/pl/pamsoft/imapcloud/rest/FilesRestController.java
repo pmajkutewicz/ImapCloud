@@ -15,7 +15,7 @@ import pl.pamsoft.imapcloud.responses.AbstractResponse;
 import pl.pamsoft.imapcloud.responses.ErrorResponse;
 import pl.pamsoft.imapcloud.responses.GetHomeDirResponse;
 import pl.pamsoft.imapcloud.responses.ListFilesInDirResponse;
-import pl.pamsoft.imapcloud.services.FilesService;
+import pl.pamsoft.imapcloud.services.upload.FilesService;
 
 import java.io.File;
 import java.util.List;

@@ -1,10 +1,10 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.upload;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -12,31 +12,31 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class FileSplitter implements Function<FileDto, Stream<byte[]>> {
+public class FileSplitter implements Function<FileDto, Stream<UploadChunkContainer>> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileSplitter.class);
 
-	private int maxChunkSizeMB;
+	private int maxChunkSizeInMB;
 	private int deviationInPercent;
 	private boolean variableSize;
 
 	public FileSplitter(int maxChunkSizeMB) {
-		this.maxChunkSizeMB = maxChunkSizeMB;
+		this.maxChunkSizeInMB = maxChunkSizeMB;
 	}
 
 	public FileSplitter(int maxChunkSizeMB, int deviationInPercent) {
-		this.maxChunkSizeMB = maxChunkSizeMB;
+		this.maxChunkSizeInMB = maxChunkSizeMB;
 		this.deviationInPercent = deviationInPercent;
 		this.variableSize = true;
 	}
 
 	@Override
-	public Stream<byte[]> apply(FileDto fileDto) {
+	public Stream<UploadChunkContainer> apply(FileDto fileDto) {
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
-		int maxSize = calculateMaxSize(toBytes(maxChunkSizeMB));
-		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(maxSize, xPercent(maxSize)) : new FileChunkIterator(maxSize);
+		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
+		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(fileDto, maxSize, xPercent(maxSize)) : new FileChunkIterator(fileDto, maxSize);
 		try {
-			fileChunkIterator.process(new File(fileDto.getAbsolutePath()));
+			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -44,6 +44,7 @@ public class FileSplitter implements Function<FileDto, Stream<byte[]>> {
 		return Stream.empty();
 	}
 
+	//CSOFF: MagicNumber
 	private int toBytes(int maxChunkSizeMB) {
 		return maxChunkSizeMB * 1024 * 1024;
 	}
@@ -62,4 +63,5 @@ public class FileSplitter implements Function<FileDto, Stream<byte[]>> {
 	private int xPercent(double val) {
 		return (int) (val * deviationInPercent) / 100;
 	}
+	//CSON: MagicNumber
 }
