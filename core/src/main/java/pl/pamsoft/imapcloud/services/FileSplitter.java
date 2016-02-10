@@ -1,17 +1,20 @@
 package pl.pamsoft.imapcloud.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class FileSplitter implements Function<FileDto, Stream<MappedByteBuffer>> {
+public class FileSplitter implements Function<FileDto, Stream<byte[]>> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(FileSplitter.class);
 
 	private int maxChunkSizeMB;
 	private int deviationInPercent;
@@ -28,7 +31,8 @@ public class FileSplitter implements Function<FileDto, Stream<MappedByteBuffer>>
 	}
 
 	@Override
-	public Stream<MappedByteBuffer> apply(FileDto fileDto) {
+	public Stream<byte[]> apply(FileDto fileDto) {
+		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeMB));
 		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(maxSize, xPercent(maxSize)) : new FileChunkIterator(maxSize);
 		try {

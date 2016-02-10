@@ -11,24 +11,24 @@ import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class FileChunkIterator implements Iterator<MappedByteBuffer> {
+public class FileChunkIterator implements Iterator<byte[]> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileChunkIterator.class);
 
 	private FileChannel inChannel;
 	private long maxSize;
 	private long currentPosition = 0;
-	private long fetchSize;
+	private int fetchSize;
 
 	private boolean variableChunksMode;
-	private long maxIncrease;
-	private long minFetchSize;
+	private int maxIncrease;
+	private int minFetchSize;
 
-	public FileChunkIterator(long fetchSize) {
+	public FileChunkIterator(int fetchSize) {
 		this.fetchSize = fetchSize;
 	}
 
-	public FileChunkIterator(long fetchSize, long deviation) {
+	public FileChunkIterator(int fetchSize, int deviation) {
 		this.minFetchSize = fetchSize - deviation;
 		this.maxIncrease = 2 * deviation;
 		this.variableChunksMode = true;
@@ -42,7 +42,7 @@ public class FileChunkIterator implements Iterator<MappedByteBuffer> {
 	}
 
 	private void generateNextFetchSize() {
-		this.fetchSize = ThreadLocalRandom.current().nextLong(minFetchSize, minFetchSize + maxIncrease);
+		this.fetchSize = ThreadLocalRandom.current().nextInt(minFetchSize, minFetchSize + maxIncrease);
 	}
 
 	public void close() throws IOException {
@@ -55,18 +55,20 @@ public class FileChunkIterator implements Iterator<MappedByteBuffer> {
 	}
 
 	@Override
-	public MappedByteBuffer next() {
+	public byte[] next() {
 		try {
 			if (currentPosition + fetchSize > maxSize) {
-				this.fetchSize = maxSize - currentPosition;
+				this.fetchSize = Math.toIntExact(maxSize - currentPosition);
 			}
+			byte[] data = new byte[fetchSize];
 			MappedByteBuffer mapped = inChannel.map(FileChannel.MapMode.READ_ONLY, currentPosition, fetchSize);
 			currentPosition += fetchSize;
 			LOG.debug("Returning buffer of {} bytes", fetchSize);
 			if (variableChunksMode) {
 				generateNextFetchSize();
 			}
-			return mapped;
+			mapped.get(data);
+			return data;
 		} catch (IOException e) {
 			return null;
 		}

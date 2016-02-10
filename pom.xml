@@ -39,6 +39,7 @@
 		<findbugs-annotation.version>3.0.0</findbugs-annotation.version>
 
 		<main.basedir>${project.basedir}</main.basedir>
+		<commons-pool2.version>2.4.2</commons-pool2.version>
 	</properties>
 
 	<modules>
@@ -123,6 +124,10 @@
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-pool2</artifactId>
 			</dependency>
 
 			<!-- GUI -->

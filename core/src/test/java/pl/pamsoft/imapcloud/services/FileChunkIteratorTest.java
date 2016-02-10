@@ -24,10 +24,10 @@ public class FileChunkIteratorTest {
 		FileChunkIterator fileChunkIterator = new FileChunkIterator(3);
 		fileChunkIterator.process(new File(filePath));
 
-		assertThat(fileChunkIterator.next().capacity(), is(3));
-		assertThat(fileChunkIterator.next().capacity(), is(3));
-		assertThat(fileChunkIterator.next().capacity(), is(3));
-		assertThat(fileChunkIterator.next().capacity(), is(1));
+		assertThat(fileChunkIterator.next().length, is(3));
+		assertThat(fileChunkIterator.next().length, is(3));
+		assertThat(fileChunkIterator.next().length, is(3));
+		assertThat(fileChunkIterator.next().length, is(1));
 		deleteFile(filePath);
 	}
 
@@ -60,7 +60,7 @@ public class FileChunkIteratorTest {
 		// last chunks can be shorter than deviation, so let say we have 20 tries
 		for (int i = 0; i < 20; i++) {
 			assertTrue(fileChunkIterator.hasNext());
-			int capacity = fileChunkIterator.next().capacity();
+			int capacity = fileChunkIterator.next().length;
 			assertTrue(capacity > fetchSize - deviation && capacity < fetchSize + deviation);
 		}
 		deleteFile(filePath);
