@@ -28,13 +28,13 @@ class OrientDB {
 
 	private OObjectDatabaseTx db;
 
-	@Value("${spring.encrypted.orient.url}")
+	@Value("${spring.data.orient.url}")
 	private String url;
 
-	@Value("${spring.encrypted.orient.username}")
+	@Value("${spring.data.orient.username}")
 	private String username;
 
-	@Value("${spring.encrypted.orient.password}")
+	@Value("${spring.data.orient.password}")
 	private String password;
 
 	@PostConstruct
@@ -72,6 +72,8 @@ class OrientDB {
 			vertexType.createProperty(GraphProperties.ACCOUNT_IMAP_SERVER, OType.STRING);
 			vertexType.createProperty(GraphProperties.ACCOUNT_SIZE_MB, OType.INTEGER);
 			vertexType.createProperty(GraphProperties.ACCOUNT_ATTACHMENT_SIZE_MB, OType.INTEGER);
+			vertexType.createProperty(GraphProperties.ACCOUNT_PRIVATE_KEY, OType.STRING);
+			vertexType.createProperty(GraphProperties.ACCOUNT_PUBLIC_KEY, OType.STRING);
 			vertexType.createIndex(createIndexName(Account.class, GraphProperties.ACCOUNT_EMAIL),
 				OClass.INDEX_TYPE.UNIQUE, GraphProperties.ACCOUNT_EMAIL);
 		}

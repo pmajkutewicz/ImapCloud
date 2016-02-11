@@ -18,4 +18,6 @@ public class Account {
 	private String password;
 	private Integer sizeMB;
 	private Integer attachmentSizeMB;
+	private String privateKey;
+	private String publicKey;
 }

@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.services.crypto;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.crypto.BadPaddingException;
@@ -22,7 +21,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
-@Service
 public abstract class AbstractCryptoServices implements CryptoServices {
 
 	@PostConstruct

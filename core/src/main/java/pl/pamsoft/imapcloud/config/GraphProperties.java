@@ -8,5 +8,7 @@ public class GraphProperties {
 	public static final String ACCOUNT_IMAP_SERVER = "imapServer";
 	public static final String ACCOUNT_SIZE_MB = "sizeMB";
 	public static final String ACCOUNT_ATTACHMENT_SIZE_MB  = "attachmentSizeMB";
+	public static final String ACCOUNT_PRIVATE_KEY  = "privateKey";
+	public static final String ACCOUNT_PUBLIC_KEY  = "publicKey";
 
 }
