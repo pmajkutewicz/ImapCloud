@@ -40,6 +40,7 @@
 
 		<main.basedir>${project.basedir}</main.basedir>
 		<commons-pool2.version>2.4.2</commons-pool2.version>
+		<bouncycastle.version>1.54</bouncycastle.version>
 	</properties>
 
 	<modules>
@@ -128,6 +129,17 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-pool2</artifactId>
+			</dependency>
+
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk15on</artifactId>
+				<version>${bouncycastle.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcpg-jdk15on</artifactId>
+				<version>${bouncycastle.version}</version>
 			</dependency>
 
 			<!-- GUI -->

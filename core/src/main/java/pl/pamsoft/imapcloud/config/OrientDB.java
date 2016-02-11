@@ -28,13 +28,13 @@ class OrientDB {
 
 	private OObjectDatabaseTx db;
 
-	@Value("${spring.data.orient.url}")
+	@Value("${spring.encrypted.orient.url}")
 	private String url;
 
-	@Value("${spring.data.orient.username}")
+	@Value("${spring.encrypted.orient.username}")
 	private String username;
 
-	@Value("${spring.data.orient.password}")
+	@Value("${spring.encrypted.orient.password}")
 	private String password;
 
 	@PostConstruct
