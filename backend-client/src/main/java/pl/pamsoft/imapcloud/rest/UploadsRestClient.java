@@ -26,7 +26,7 @@ public class UploadsRestClient extends AbstractRestClient {
 	public void startUpload(List<FileDto> selectedFiles, AccountDto selectedAccount) throws IOException {
 		try {
 			HttpResponse<JsonNode> httpResponse = Unirest.post(endpoint + START_UPLOADS)
-				.body(new StartUploadRequest(selectedFiles, selectedAccount))
+				.body(new StartUploadRequest(selectedFiles, selectedAccount, true))
 				.asJson();
 			LOG.debug(httpResponse.toString());
 		} catch (UnirestException e) {

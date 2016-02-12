@@ -41,7 +41,7 @@ public class ChunkSaver implements Consumer<UploadChunkContainer> {
 			Message[] msg = {createMessage(dataChunk)};
 			folder.appendMessages(msg);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//TODO
 		} finally {
 			if (null != store) {
 				connectionPool.returnObject(store);

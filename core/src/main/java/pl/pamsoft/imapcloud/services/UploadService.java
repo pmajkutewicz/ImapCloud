@@ -10,6 +10,8 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
+import pl.pamsoft.imapcloud.services.crypto.CryptoService;
+import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
 import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
@@ -35,7 +37,10 @@ public class UploadService {
 	@Autowired
 	private FilesService filesService;
 
-	public void upload(AccountDto selectedAccount, List<FileDto> selectedFiles) {
+	@Autowired
+	private CryptoService cryptoService;
+
+	public void upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncodingEnabled) {
 		try {
 			MessageDigest instance = MessageDigest.getInstance("SHA-512");
 			Account account = accountRepository.getById(selectedAccount.getId());
@@ -43,6 +48,7 @@ public class UploadService {
 			Predicate<FileDto> removeFilesWithSize0 = fileDto -> fileDto.getSize() > 0;
 			Function<FileDto, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
 			Function<UploadChunkContainer, UploadChunkContainer> hashGenerator = new ChunkHasher(instance);
+			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getPublicKey());
 			Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
 
 			selectedFiles.stream()
@@ -50,6 +56,7 @@ public class UploadService {
 				.filter(removeFilesWithSize0)
 				.flatMap(splitFileIntoChunks)
 				.map(hashGenerator)
+				.map(chunkEncoder)
 				.forEach(saveOnIMAPServer);
 
 			System.out.println(account);

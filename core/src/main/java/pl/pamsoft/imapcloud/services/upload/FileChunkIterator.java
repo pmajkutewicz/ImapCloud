@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.services.upload;
 
+import com.google.common.base.Stopwatch;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	@Override
 	public UploadChunkContainer next() {
 		try {
+			Stopwatch stopwatch = Stopwatch.createStarted();
 			if (currentPosition + fetchSize > maxSize) {
 				this.fetchSize = Math.toIntExact(maxSize - currentPosition);
 			}
@@ -77,7 +79,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 			}
 			mapped.get(data);
 			UploadChunkContainer uploadChunkContainer = new UploadChunkContainer(fileDto, data, currentChunkNumber++);
-			LOG.debug("Returning {}", uploadChunkContainer);
+			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop());
 			return uploadChunkContainer;
 		} catch (IOException e) {
 			return null;
