@@ -2,7 +2,6 @@ package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.services.upload.FilesService;
 
 import java.io.File;
 import java.util.List;
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertThat;
 public class FilesServiceTest {
 
 	private static final int MEBIBYTE = 1024 * 1024;
-	private FilesService fs = new FilesService();
+	private FilesIOService fs = new FilesIOService();
 
 	@Test
 	public void traverseDirTest() {

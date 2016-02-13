@@ -15,7 +15,7 @@ import pl.pamsoft.imapcloud.responses.AbstractResponse;
 import pl.pamsoft.imapcloud.responses.ErrorResponse;
 import pl.pamsoft.imapcloud.responses.GetHomeDirResponse;
 import pl.pamsoft.imapcloud.responses.ListFilesInDirResponse;
-import pl.pamsoft.imapcloud.services.upload.FilesService;
+import pl.pamsoft.imapcloud.services.upload.FilesIOService;
 
 import java.io.File;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
 public class FilesRestController {
 
 	@Autowired
-	private FilesService filesService;
+	private FilesIOService filesService;
 
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)

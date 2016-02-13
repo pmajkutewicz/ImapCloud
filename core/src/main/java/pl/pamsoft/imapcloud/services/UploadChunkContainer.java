@@ -15,17 +15,17 @@ public class UploadChunkContainer {
 	@SuppressFBWarnings("EI_EXPOSE_REP")
 	private final byte[] data;
 	private final int chunkNumber;
-	private final String sha256;
+	private final String chunkHash;
 
 	public UploadChunkContainer(FileDto fileDto, byte[] data, int chunkNumber) {
 		this(fileDto, data, chunkNumber, StringUtils.EMPTY);
 	}
 
-	public UploadChunkContainer(FileDto fileDto, byte[] data, int chunkNumber, String sha256) {
+	public UploadChunkContainer(FileDto fileDto, byte[] data, int chunkNumber, String chunkHash) {
 		this.fileDto = fileDto;
 		this.data = data;
 		this.chunkNumber = chunkNumber;
-		this.sha256 = sha256;
+		this.chunkHash = chunkHash;
 	}
 
 	@Override

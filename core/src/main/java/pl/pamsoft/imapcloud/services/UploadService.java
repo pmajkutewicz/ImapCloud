@@ -8,14 +8,12 @@ import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
-import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
-import pl.pamsoft.imapcloud.services.crypto.CryptoService;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
 import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
-import pl.pamsoft.imapcloud.services.upload.FilesService;
+import pl.pamsoft.imapcloud.services.upload.FilesIOService;
 
 import javax.mail.Store;
 import java.security.MessageDigest;
@@ -35,7 +33,10 @@ public class UploadService {
 	private AccountRepository accountRepository;
 
 	@Autowired
-	private FilesService filesService;
+	private FilesIOService filesIOService;
+
+	@Autowired
+	private FileServices fileServices;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -44,20 +45,22 @@ public class UploadService {
 		try {
 			MessageDigest instance = MessageDigest.getInstance("SHA-512");
 			Account account = accountRepository.getById(selectedAccount.getId());
-			Function<FileDto, Stream<FileDto>> parseDirectories = new DirectoryProcessor(filesService);
+			Function<FileDto, Stream<FileDto>> parseDirectories = new DirectoryProcessor(filesIOService);
 			Predicate<FileDto> removeFilesWithSize0 = fileDto -> fileDto.getSize() > 0;
+			Consumer<FileDto> storeFile = fileDto -> fileServices.save(fileDto, account);
 			Function<FileDto, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
 			Function<UploadChunkContainer, UploadChunkContainer> hashGenerator = new ChunkHasher(instance);
-			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getPublicKey());
-			Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
+			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey());
+			//Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
 
 			selectedFiles.stream()
 				.flatMap(parseDirectories)
 				.filter(removeFilesWithSize0)
+				.peek(storeFile)
 				.flatMap(splitFileIntoChunks)
 				.map(hashGenerator)
 				.map(chunkEncoder)
-				.forEach(saveOnIMAPServer);
+				.forEach(System.out::println);
 
 			System.out.println(account);
 //		new FileChunkIterator(selectedAccount.)

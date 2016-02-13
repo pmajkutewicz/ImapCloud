@@ -7,8 +7,18 @@ public class GraphProperties {
 	public static final String ACCOUNT_PASSWORD = "password";
 	public static final String ACCOUNT_IMAP_SERVER = "imapServer";
 	public static final String ACCOUNT_SIZE_MB = "sizeMB";
-	public static final String ACCOUNT_ATTACHMENT_SIZE_MB  = "attachmentSizeMB";
-	public static final String ACCOUNT_PRIVATE_KEY  = "privateKey";
-	public static final String ACCOUNT_PUBLIC_KEY  = "publicKey";
+	public static final String ACCOUNT_ATTACHMENT_SIZE_MB = "attachmentSizeMB";
+	public static final String ACCOUNT_CRYPTO_KEY = "cryptoKey";
 
+	public static final String FILE_UNIQUE_ID = "fileUniqueId";
+	public static final String FILE_NAME = "name";
+	public static final String FILE_ABSOLUTE_PATH = "absolutePath";
+	public static final String FILE_SIZE = "size";
+	public static final String FILE_EDGE_ACCOUNT = "is_owned_by";
+
+	public static final String FILE_CHUNK_UNIQUE_ID = "fileChunkUniqueId";
+	public static final String FILE_CHUNK_NUMBER = "chunkNumber";
+	public static final String FILE_CHUNK_HASH = "chunkHash";
+	public static final String FILE_CHUNK_SIZE = "size";
+	public static final String FILE_CHUNK_EDGE_FILE = "is_part_of";
 }

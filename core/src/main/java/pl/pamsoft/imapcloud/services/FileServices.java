@@ -1,0 +1,34 @@
+package pl.pamsoft.imapcloud.services;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import pl.pamsoft.imapcloud.dao.FileRepository;
+import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.entity.Account;
+
+import java.util.UUID;
+
+@Service
+public class FileServices {
+
+	@Autowired
+	private FileRepository fileRepository;
+
+	private static final Logger LOG = LoggerFactory.getLogger(FileServices.class);
+
+	public void save(FileDto fileDto, Account account) {
+		String uniqueId = UUID.randomUUID().toString();
+
+		pl.pamsoft.imapcloud.entity.File file = new pl.pamsoft.imapcloud.entity.File();
+		file.setAbsolutePath(fileDto.getAbsolutePath());
+		file.setName(fileDto.getName());
+		file.setOwnerAccount(account);
+		file.setFileUniqueId(uniqueId);
+		file.setSize(fileDto.getSize());
+
+		fileRepository.save(file);
+	}
+
+}

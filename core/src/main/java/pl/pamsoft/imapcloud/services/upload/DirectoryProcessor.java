@@ -16,9 +16,9 @@ public class DirectoryProcessor implements Function<FileDto, Stream<FileDto>> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryProcessor.class);
 
-	private FilesService filesService;
+	private FilesIOService filesService;
 
-	public DirectoryProcessor(FilesService filesService) {
+	public DirectoryProcessor(FilesIOService filesService) {
 		this.filesService = filesService;
 	}
 

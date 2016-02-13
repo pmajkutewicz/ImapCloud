@@ -39,7 +39,7 @@ public class FileSplitter implements Function<FileDto, Stream<UploadChunkContain
 			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);
 		} catch (IOException e) {
-			LOG.error(String.format("Can't chop file %s into chunks.", fileDto.getAbsolutePath()), e );
+			LOG.error(String.format("Can't chop file %s into chunks.", fileDto.getAbsolutePath()), e);
 		}
 		return Stream.empty();
 	}

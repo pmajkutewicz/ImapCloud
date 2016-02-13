@@ -1,41 +1,39 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import com.google.common.base.Stopwatch;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Base64Utils;
+import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.crypto.CryptoService;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.io.IOException;
 import java.util.function.Function;
 
 public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkContainer> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkEncoder.class);
 	private CryptoService cs;
-	private byte[] publicKey;
+	private PaddedBufferedBlockCipher encryptingCipher;
 
-	public ChunkEncoder(CryptoService cryptoService, String publicKey) {
+	public ChunkEncoder(CryptoService cryptoService, String key) {
 		this.cs = cryptoService;
-		this.publicKey = Base64Utils.decodeFromString(publicKey);
+		byte[] keyBytes = ByteUtils.fromHexString(key);
+		encryptingCipher = cs.getEncryptingCipher(keyBytes);
 	}
 
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer uploadChunkContainer) {
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
-			byte[] encode = cs.encode(publicKey, uploadChunkContainer.getData());
-			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop());
-		} catch (InvalidKeyException | NoSuchPaddingException |
-			NoSuchAlgorithmException | BadPaddingException |
-			IllegalBlockSizeException | InvalidKeySpecException e) {
-			//TODO: e.printStackTrace();
+			byte[] encrypted = cs.encrypt(encryptingCipher, uploadChunkContainer.getData());
+			LOG.debug("{} chunk encrypted in {} (size: {} -> {}",
+				uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop(), uploadChunkContainer.getData().length, encrypted.length);
+			return new UploadChunkContainer(uploadChunkContainer.getFileDto(), encrypted, uploadChunkContainer.getChunkNumber());
+		} catch (InvalidCipherTextException | IOException e) {
+			LOG.error("Error encrypting chunk", e);
 		}
 		return null;
 	}

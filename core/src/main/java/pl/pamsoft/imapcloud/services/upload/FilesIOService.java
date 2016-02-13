@@ -18,7 +18,7 @@ import static pl.pamsoft.imapcloud.dto.FileDto.Type.DIRECTORY;
 import static pl.pamsoft.imapcloud.dto.FileDto.Type.FILE;
 
 @Service
-public class FilesService {
+public class FilesIOService {
 
 	private Function<File, FileDto> toFileDto = f -> new FileDto(f.getName(), f.getAbsolutePath(), f.isDirectory() ? DIRECTORY : FILE, f.isDirectory() ? null : f.length());
 	private Comparator<FileDto> dirFirstSorter = (f1, f2) -> ((DIRECTORY == f1.getType()) && (FILE == f2.getType())) ? -1 : ((f1.getType() == f2.getType()) ? 0 : 1);

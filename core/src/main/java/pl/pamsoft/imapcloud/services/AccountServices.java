@@ -1,16 +1,18 @@
 package pl.pamsoft.imapcloud.services;
 
+import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.LoginType;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
-import pl.pamsoft.imapcloud.services.crypto.CryptoService;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class AccountServices {
+
+	private static final Logger LOG = LoggerFactory.getLogger(AccountServices.class);
 
 	@Autowired
 	private AccountRepository accountRepository;
@@ -42,10 +46,10 @@ public class AccountServices {
 		account.setAttachmentSizeMB(request.getSelectedEmailProvider().getAttachmentSizeMB());
 
 		try {
-			byte[] secretKey = cryptoService.getkey();
-			account.setPublicKey(Base64Utils.encodeToString(secretKey));
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			byte[] keyBytes = cryptoService.generateKey();
+			account.setCryptoKey(ByteUtils.toHexString(keyBytes));
+		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+			LOG.error("Can't create encryption key.", e);
 		}
 		accountRepository.save(account);
 	}
