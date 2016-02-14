@@ -18,5 +18,6 @@ public class File {
 	private String name;
 	private String absolutePath;
 	private Long size;
+	private String fileHash;
 	private Account ownerAccount;
 }

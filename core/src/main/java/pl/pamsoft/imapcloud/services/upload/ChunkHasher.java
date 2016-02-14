@@ -22,8 +22,7 @@ public class ChunkHasher implements Function<UploadChunkContainer, UploadChunkCo
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		md.update(chunk.getData());
-		byte[] digest = md.digest();
+		byte[] digest = md.digest(chunk.getData());
 		String hash = String.format("%s", ByteUtils.toHexString(digest));
 		LOG.debug("Hash generated in {}", stopwatch.stop());
 		return UploadChunkContainer.addChunkHash(chunk, hash);

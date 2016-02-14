@@ -24,7 +24,8 @@ public class FileServices {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileServices.class);
 
-	public File save(FileDto fileDto, Account account) {
+	public File saveFile(UploadChunkContainer uploadChunkContainer, Account account) {
+		FileDto fileDto = uploadChunkContainer.getFileDto();
 		String uniqueId = UUID.randomUUID().toString();
 
 		pl.pamsoft.imapcloud.entity.File file = new pl.pamsoft.imapcloud.entity.File();
@@ -32,14 +33,14 @@ public class FileServices {
 		file.setName(fileDto.getName());
 		file.setOwnerAccount(account);
 		file.setFileUniqueId(uniqueId);
+		file.setFileHash(uploadChunkContainer.getFileHash());
 		file.setSize(fileDto.getSize());
 
 		return fileRepository.save(file);
 	}
 
-	public void save(UploadChunkContainer uploadChunkContainer) {
+	public void saveChunk(UploadChunkContainer uploadChunkContainer) {
 		String uniqueId = UUID.randomUUID().toString();
-
 		FileChunk chunk = new FileChunk();
 		chunk.setFileChunkUniqueId(uniqueId);
 		chunk.setOwnerFile(fileRepository.getFileByUniqueId(uploadChunkContainer.getFileUniqueId()));

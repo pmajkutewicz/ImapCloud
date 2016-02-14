@@ -27,6 +27,7 @@ public class FileRepository extends AbstractRepository<File> {
 		f.setFileUniqueId(v.getProperty(GraphProperties.FILE_UNIQUE_ID));
 		f.setName(v.getProperty(GraphProperties.FILE_NAME));
 		f.setAbsolutePath(v.getProperty(GraphProperties.FILE_ABSOLUTE_PATH));
+		f.setFileHash(v.getProperty(GraphProperties.FILE_HASH));
 
 		return f;
 	};
@@ -66,6 +67,7 @@ public class FileRepository extends AbstractRepository<File> {
 		fileVertex.setProperty(GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath());
 		fileVertex.setProperty(GraphProperties.FILE_SIZE, file.getSize());
 		fileVertex.setProperty(GraphProperties.FILE_UNIQUE_ID, file.getFileUniqueId());
+		fileVertex.setProperty(GraphProperties.FILE_HASH, file.getFileHash());
 		fileVertex.addEdge(GraphProperties.FILE_EDGE_ACCOUNT, vertex);
 	}
 }

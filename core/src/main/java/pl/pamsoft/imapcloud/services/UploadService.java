@@ -12,6 +12,7 @@ import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
 import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
+import pl.pamsoft.imapcloud.services.upload.FileHasher;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
 
@@ -47,21 +48,23 @@ public class UploadService {
 			Account account = accountRepository.getById(selectedAccount.getId());
 			Function<FileDto, UploadChunkContainer> packInContainer = UploadChunkContainer::new;
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService);
+			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance);
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account);
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
-			Function<UploadChunkContainer, UploadChunkContainer> hashGenerator = new ChunkHasher(instance);
+			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance);
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey());
-			Consumer<UploadChunkContainer> storeFileChunk = ucc -> fileServices.save(ucc);
+			Consumer<UploadChunkContainer> storeFileChunk = ucc -> fileServices.saveChunk(ucc);
 			//Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
 
 			selectedFiles.stream()
 				.map(packInContainer)
 				.flatMap(parseDirectories)
+				.map(generateFilehash)
 				.filter(removeFilesWithSize0)
 				.map(storeFile)
 				.flatMap(splitFileIntoChunks)
-				.map(hashGenerator)
+				.map(generateChunkHash)
 				.map(chunkEncoder)
 				.peek(storeFileChunk)
 				.forEach(System.out::println);
