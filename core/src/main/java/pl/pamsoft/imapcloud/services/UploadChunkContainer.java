@@ -17,41 +17,40 @@ public class UploadChunkContainer {
 	private final byte[] data;
 	private final int chunkNumber;
 	private final String chunkHash;
-	private final String fileUniqueId;
+	private final String savedFileId;
 	private final String fileHash;
 
 	public UploadChunkContainer(FileDto fileDto) {
 		this(fileDto, EMPTY, EMPTY, null, 0, EMPTY);
 	}
 
-	private UploadChunkContainer(FileDto fileDto, String fileHash, String fileUniqueId, byte[] data, int chunkNumber, String chunkHash) {
+	private UploadChunkContainer(FileDto fileDto, String fileHash, String savedFileId, byte[] data, int chunkNumber, String chunkHash) {
 		this.fileDto = fileDto;
 		this.fileHash = fileHash;
-		this.fileUniqueId = fileUniqueId;
+		this.savedFileId = savedFileId;
 		this.data = data;
 		this.chunkNumber = chunkNumber;
 		this.chunkHash = chunkHash;
-
 	}
 
 	public static UploadChunkContainer addFileHash(UploadChunkContainer ucc, String fileHash) {
-		return new UploadChunkContainer(ucc.getFileDto(), fileHash, ucc.fileUniqueId, ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash());
+		return new UploadChunkContainer(ucc.getFileDto(), fileHash, ucc.getSavedFileId(), ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash());
 	}
 
-	public static UploadChunkContainer addFileUniqueId(UploadChunkContainer ucc, String fileUniqueId) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), fileUniqueId, ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash());
+	public static UploadChunkContainer addSavedFileId(UploadChunkContainer ucc, String fileId) {
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), fileId, ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash());
 	}
 
 	public static UploadChunkContainer addChunk(UploadChunkContainer ucc, byte[] data, int chunkNumber) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getFileUniqueId(), data, chunkNumber, ucc.getChunkHash());
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), data, chunkNumber, ucc.getChunkHash());
 	}
 
 	public static UploadChunkContainer addChunkHash(UploadChunkContainer ucc, String chunkHash) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.fileUniqueId, ucc.getData(), ucc.getChunkNumber(), chunkHash);
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getData(), ucc.getChunkNumber(), chunkHash);
 	}
 
 	public static UploadChunkContainer addEncryptedData(UploadChunkContainer ucc, byte[] encoded) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.fileUniqueId, encoded, ucc.getChunkNumber(), ucc.getChunkHash());
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), encoded, ucc.getChunkNumber(), ucc.getChunkHash());
 	}
 
 	@Override

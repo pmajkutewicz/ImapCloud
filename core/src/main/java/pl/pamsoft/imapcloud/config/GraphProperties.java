@@ -10,7 +10,6 @@ public class GraphProperties {
 	public static final String ACCOUNT_ATTACHMENT_SIZE_MB = "attachmentSizeMB";
 	public static final String ACCOUNT_CRYPTO_KEY = "cryptoKey";
 
-	public static final String FILE_UNIQUE_ID = "fileUniqueId";
 	public static final String FILE_HASH = "fileHash";
 	public static final String FILE_NAME = "name";
 	public static final String FILE_ABSOLUTE_PATH = "absolutePath";

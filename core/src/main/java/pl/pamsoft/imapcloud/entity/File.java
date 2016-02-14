@@ -14,7 +14,6 @@ public class File {
 	private String id;
 	private Integer version;
 
-	private String fileUniqueId;
 	private String name;
 	private String absolutePath;
 	private Long size;

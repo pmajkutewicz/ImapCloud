@@ -22,6 +22,22 @@ import pl.pamsoft.imapcloud.entity.FileChunk;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_ATTACHMENT_SIZE_MB;
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_CRYPTO_KEY;
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_EMAIL;
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_IMAP_SERVER;
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_LOGIN;
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_PASSWORD;
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_SIZE_MB;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_ABSOLUTE_PATH;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_HASH;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_NUMBER;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_SIZE;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_UNIQUE_ID;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_HASH;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_NAME;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_SIZE;
+
 @Configuration
 class OrientDB {
 
@@ -69,41 +85,49 @@ class OrientDB {
 		OrientGraphNoTx tx = graphDB.getNoTx();
 		if (tx.getVertexType(Account.class.getSimpleName()) == null) {
 			OrientVertexType vertexType = tx.createVertexType(Account.class.getSimpleName());
-			vertexType.createProperty(GraphProperties.ACCOUNT_EMAIL, OType.STRING);
-			vertexType.createProperty(GraphProperties.ACCOUNT_LOGIN, OType.STRING);
-			vertexType.createProperty(GraphProperties.ACCOUNT_PASSWORD, OType.STRING);
-			vertexType.createProperty(GraphProperties.ACCOUNT_IMAP_SERVER, OType.STRING);
-			vertexType.createProperty(GraphProperties.ACCOUNT_SIZE_MB, OType.INTEGER);
-			vertexType.createProperty(GraphProperties.ACCOUNT_ATTACHMENT_SIZE_MB, OType.INTEGER);
-			vertexType.createProperty(GraphProperties.ACCOUNT_CRYPTO_KEY, OType.STRING);
-			vertexType.createIndex(createIndexName(Account.class, GraphProperties.ACCOUNT_EMAIL),
-				OClass.INDEX_TYPE.UNIQUE, GraphProperties.ACCOUNT_EMAIL);
+			vertexType.createProperty(ACCOUNT_EMAIL, OType.STRING);
+			vertexType.createProperty(ACCOUNT_LOGIN, OType.STRING);
+			vertexType.createProperty(ACCOUNT_PASSWORD, OType.STRING);
+			vertexType.createProperty(ACCOUNT_IMAP_SERVER, OType.STRING);
+			vertexType.createProperty(ACCOUNT_SIZE_MB, OType.INTEGER);
+			vertexType.createProperty(ACCOUNT_ATTACHMENT_SIZE_MB, OType.INTEGER);
+			vertexType.createProperty(ACCOUNT_CRYPTO_KEY, OType.STRING);
+			vertexType.createIndex(createIndexName(Account.class, ACCOUNT_EMAIL),
+				OClass.INDEX_TYPE.UNIQUE, ACCOUNT_EMAIL);
 		}
 		if (tx.getVertexType(File.class.getSimpleName()) == null) {
 			OrientVertexType vertexType = tx.createVertexType(File.class.getSimpleName());
-			vertexType.createProperty(GraphProperties.FILE_UNIQUE_ID, OType.STRING);
-			vertexType.createProperty(GraphProperties.FILE_NAME, OType.STRING);
-			vertexType.createProperty(GraphProperties.FILE_ABSOLUTE_PATH, OType.STRING);
-			vertexType.createProperty(GraphProperties.FILE_SIZE, OType.LONG);
+			vertexType.createProperty(FILE_HASH, OType.STRING);
+			vertexType.createProperty(FILE_NAME, OType.STRING);
+			vertexType.createProperty(FILE_ABSOLUTE_PATH, OType.STRING);
+			vertexType.createProperty(FILE_SIZE, OType.LONG);
 			vertexType.createEdgeProperty(Direction.OUT, Account.class.getSimpleName(), OType.LINK);
-			vertexType.createIndex(createIndexName(File.class, GraphProperties.FILE_UNIQUE_ID),
-				OClass.INDEX_TYPE.UNIQUE, GraphProperties.FILE_UNIQUE_ID);
+			vertexType.createIndex(createIndexName(File.class, FILE_ABSOLUTE_PATH, FILE_HASH),
+				OClass.INDEX_TYPE.UNIQUE, FILE_ABSOLUTE_PATH, FILE_HASH);
 		}
 		if (tx.getVertexType(FileChunk.class.getSimpleName()) == null) {
 			OrientVertexType vertexType = tx.createVertexType(FileChunk.class.getSimpleName());
-			vertexType.createProperty(GraphProperties.FILE_CHUNK_UNIQUE_ID, OType.STRING);
-			vertexType.createProperty(GraphProperties.FILE_CHUNK_NUMBER, OType.STRING);
-			vertexType.createProperty(GraphProperties.FILE_CHUNK_HASH, OType.STRING);
-			vertexType.createProperty(GraphProperties.FILE_CHUNK_SIZE, OType.LONG);
+			vertexType.createProperty(FILE_CHUNK_UNIQUE_ID, OType.STRING);
+			vertexType.createProperty(FILE_CHUNK_NUMBER, OType.STRING);
+			vertexType.createProperty(FILE_CHUNK_HASH, OType.STRING);
+			vertexType.createProperty(FILE_CHUNK_SIZE, OType.LONG);
 			vertexType.createEdgeProperty(Direction.OUT, File.class.getSimpleName(), OType.LINK);
-			vertexType.createIndex(createIndexName(FileChunk.class, GraphProperties.FILE_CHUNK_UNIQUE_ID),
-				OClass.INDEX_TYPE.UNIQUE, GraphProperties.FILE_CHUNK_UNIQUE_ID);
+			vertexType.createIndex(createIndexName(FileChunk.class, FILE_CHUNK_UNIQUE_ID),
+				OClass.INDEX_TYPE.UNIQUE, FILE_CHUNK_UNIQUE_ID);
 		}
 		tx.shutdown();
 	}
 
-	private String createIndexName(Class cls, String field) {
+	public static String createIndexName(Class cls, String field) {
 		return String.format("%s_%s", cls.getSimpleName(), field);
+	}
+
+	public static String createIndexName(Class cls, String... fields) {
+		StringBuilder sb = new StringBuilder(cls.getSimpleName());
+		for (String field : fields) {
+			sb.append('_').append(field);
+		}
+		return sb.toString();
 	}
 
 	@PreDestroy

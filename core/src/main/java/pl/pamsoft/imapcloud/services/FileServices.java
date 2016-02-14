@@ -26,13 +26,11 @@ public class FileServices {
 
 	public File saveFile(UploadChunkContainer uploadChunkContainer, Account account) {
 		FileDto fileDto = uploadChunkContainer.getFileDto();
-		String uniqueId = UUID.randomUUID().toString();
 
 		pl.pamsoft.imapcloud.entity.File file = new pl.pamsoft.imapcloud.entity.File();
 		file.setAbsolutePath(fileDto.getAbsolutePath());
 		file.setName(fileDto.getName());
 		file.setOwnerAccount(account);
-		file.setFileUniqueId(uniqueId);
 		file.setFileHash(uploadChunkContainer.getFileHash());
 		file.setSize(fileDto.getSize());
 
@@ -43,7 +41,7 @@ public class FileServices {
 		String uniqueId = UUID.randomUUID().toString();
 		FileChunk chunk = new FileChunk();
 		chunk.setFileChunkUniqueId(uniqueId);
-		chunk.setOwnerFile(fileRepository.getFileByUniqueId(uploadChunkContainer.getFileUniqueId()));
+		chunk.setOwnerFile(fileRepository.getById(uploadChunkContainer.getSavedFileId()));
 		chunk.setSize((long) uploadChunkContainer.getData().length);
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
 		chunk.setChunkHash(uploadChunkContainer.getChunkHash());

@@ -31,9 +31,9 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 				GraphProperties.FILE_CHUNK_UNIQUE_ID, chunk.getFileChunkUniqueId());
 			fillProperties(graphDB, orientVertex, chunk);
 			ORecordId id = (ORecordId) orientVertex.getId();
+			graphDB.commit();
 			chunk.setId(id.toString());
 			chunk.setVersion(orientVertex.getRecord().getVersion());
-			graphDB.commit();
 			graphDB.shutdown();
 		} else {
 			LOG.warn("Duplicate file with id: {}", chunk.getFileChunkUniqueId());

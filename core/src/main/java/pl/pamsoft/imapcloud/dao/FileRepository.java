@@ -24,18 +24,18 @@ public class FileRepository extends AbstractRepository<File> {
 		f.setId(v.getId().toString());
 		f.setVersion(((OrientVertex) v).getRecord().getVersion());
 		f.setSize(v.getProperty(GraphProperties.FILE_SIZE));
-		f.setFileUniqueId(v.getProperty(GraphProperties.FILE_UNIQUE_ID));
 		f.setName(v.getProperty(GraphProperties.FILE_NAME));
 		f.setAbsolutePath(v.getProperty(GraphProperties.FILE_ABSOLUTE_PATH));
 		f.setFileHash(v.getProperty(GraphProperties.FILE_HASH));
-
+		//TODO: add owner account
 		return f;
 	};
 
-	public File getFileByUniqueId(String id) {
+	@Override
+	public File getById(String id) {
 		OrientGraph graphDB = getDb().getGraphDB();
-		Iterable<Vertex> storedFiles = graphDB.getVertices("File.fileUniqueId", id);
-		return converter.apply(storedFiles.iterator().next());
+		Vertex storedFile = graphDB.getVertex(new ORecordId(id));
+		return converter.apply(storedFile);
 	}
 
 	@Override
@@ -43,20 +43,22 @@ public class FileRepository extends AbstractRepository<File> {
 	public File save(File file) {
 		OrientGraph graphDB = getDb().getGraphDB();
 		graphDB.begin();
-		Iterable<Vertex> storedFiles = graphDB.getVertices("File.fileUniqueId", file.getFileUniqueId());
+		Iterable<Vertex> storedFiles = graphDB.getVertices(File.class.getSimpleName(),
+			new String[]{GraphProperties.FILE_ABSOLUTE_PATH, GraphProperties.FILE_HASH}, new Object[]{file.getAbsolutePath(), file.getFileHash()});
 		Iterator<Vertex> iterator = storedFiles.iterator();
 		if (!iterator.hasNext()) {
 			OrientVertex orientVertex = graphDB.addVertex(
 				"class:" + File.class.getSimpleName(),
-				GraphProperties.FILE_UNIQUE_ID, file.getFileUniqueId());
+				GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath(),
+				GraphProperties.FILE_HASH, file.getFileHash());
 			fillProperties(graphDB, orientVertex, file);
 			ORecordId id = (ORecordId) orientVertex.getId();
+			graphDB.commit();
 			file.setId(id.toString());
 			file.setVersion(orientVertex.getRecord().getVersion());
-			graphDB.commit();
 			graphDB.shutdown();
 		} else {
-			LOG.warn("Duplicate file with id: {}", file.getFileUniqueId());
+			LOG.warn("Duplicate file: {}", file.getAbsolutePath());
 		}
 		return file;
 	}
@@ -66,8 +68,6 @@ public class FileRepository extends AbstractRepository<File> {
 		fileVertex.setProperty(GraphProperties.FILE_NAME, file.getName());
 		fileVertex.setProperty(GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath());
 		fileVertex.setProperty(GraphProperties.FILE_SIZE, file.getSize());
-		fileVertex.setProperty(GraphProperties.FILE_UNIQUE_ID, file.getFileUniqueId());
-		fileVertex.setProperty(GraphProperties.FILE_HASH, file.getFileHash());
 		fileVertex.addEdge(GraphProperties.FILE_EDGE_ACCOUNT, vertex);
 	}
 }
