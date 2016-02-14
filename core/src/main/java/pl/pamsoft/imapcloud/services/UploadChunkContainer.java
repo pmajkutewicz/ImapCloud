@@ -13,19 +13,20 @@ import static org.apache.commons.lang.StringUtils.EMPTY;
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class UploadChunkContainer {
 	private final FileDto fileDto;
+	private final String fileHash;
+	private final String savedFileId;
+	private final String fileUniqueId;
 	@SuppressFBWarnings("EI_EXPOSE_REP")
 	private final byte[] data;
 	private final int chunkNumber;
 	private final String chunkHash;
-	private final String savedFileId;
-	private final String fileUniqueId;
-	private final String fileHash;
+	private final String fileChunkUniqueId;
 
 	public UploadChunkContainer(FileDto fileDto) {
-		this(fileDto, EMPTY, EMPTY, EMPTY, null, 0, EMPTY);
+		this(fileDto, EMPTY, EMPTY, EMPTY, null, 0, EMPTY, EMPTY);
 	}
 
-	private UploadChunkContainer(FileDto fileDto, String fileHash, String savedFileId, String fileUniqueId, byte[] data, int chunkNumber, String chunkHash) {
+	private UploadChunkContainer(FileDto fileDto, String fileHash, String savedFileId, String fileUniqueId, byte[] data, int chunkNumber, String chunkHash, String fileChunkUniqueId) {
 		this.fileDto = fileDto;
 		this.fileHash = fileHash;
 		this.savedFileId = savedFileId;
@@ -33,30 +34,37 @@ public class UploadChunkContainer {
 		this.data = data;
 		this.chunkNumber = chunkNumber;
 		this.chunkHash = chunkHash;
+		this.fileChunkUniqueId = fileChunkUniqueId;
 	}
 
 	public static UploadChunkContainer addFileHash(UploadChunkContainer ucc, String fileHash) {
-		return new UploadChunkContainer(ucc.getFileDto(), fileHash, ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash());
+		return new UploadChunkContainer(ucc.getFileDto(), fileHash, ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileChunkUniqueId());
 	}
 
 	public static UploadChunkContainer addIds(UploadChunkContainer ucc, String savedFileId, String fileUniqueId) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), savedFileId, fileUniqueId, ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash());
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), savedFileId, fileUniqueId, ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileChunkUniqueId());
 	}
 
 	public static UploadChunkContainer addChunk(UploadChunkContainer ucc, byte[] data, int chunkNumber) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), data, chunkNumber, ucc.getChunkHash());
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), data, chunkNumber, ucc.getChunkHash(), ucc.getFileChunkUniqueId());
 	}
 
 	public static UploadChunkContainer addChunkHash(UploadChunkContainer ucc, String chunkHash) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getData(), ucc.getChunkNumber(), chunkHash);
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getData(), ucc.getChunkNumber(), chunkHash, ucc.getFileChunkUniqueId());
 	}
 
 	public static UploadChunkContainer addEncryptedData(UploadChunkContainer ucc, byte[] encoded) {
-		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), encoded, ucc.getChunkNumber(), ucc.getChunkHash());
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), encoded, ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileChunkUniqueId());
+	}
+
+	public static UploadChunkContainer addChunkId(UploadChunkContainer ucc, String fileChunkUniqueId) {
+		return new UploadChunkContainer(ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), fileChunkUniqueId);
 	}
 
 	@Override
 	public String toString() {
 		return String.format("Chunk %s for file %s (%s bytes)", chunkNumber, fileDto.getAbsolutePath(), data.length);
 	}
+
+
 }

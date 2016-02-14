@@ -35,7 +35,7 @@ public class FileServices {
 		return fileRepository.save(file);
 	}
 
-	public void saveChunk(UploadChunkContainer uploadChunkContainer) {
+	public FileChunk saveChunk(UploadChunkContainer uploadChunkContainer) {
 		String uniqueId = UUID.randomUUID().toString();
 		FileChunk chunk = new FileChunk();
 		chunk.setFileChunkUniqueId(uniqueId);
@@ -43,7 +43,7 @@ public class FileServices {
 		chunk.setSize((long) uploadChunkContainer.getData().length);
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
 		chunk.setChunkHash(uploadChunkContainer.getChunkHash());
-		fileChunkRepository.save(chunk);
+		return fileChunkRepository.save(chunk);
 	}
 
 }

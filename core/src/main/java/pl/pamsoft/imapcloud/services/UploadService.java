@@ -8,10 +8,12 @@ import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
+import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
 import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
+import pl.pamsoft.imapcloud.services.upload.FileChunkStorer;
 import pl.pamsoft.imapcloud.services.upload.FileHasher;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
@@ -54,8 +56,8 @@ public class UploadService {
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance);
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey());
-			Consumer<UploadChunkContainer> storeFileChunk = ucc -> fileServices.saveChunk(ucc);
-			//Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
+			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
+			Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
 
 			selectedFiles.stream()
 				.map(packInContainer)
@@ -66,8 +68,8 @@ public class UploadService {
 				.flatMap(splitFileIntoChunks)
 				.map(generateChunkHash)
 				.map(chunkEncoder)
-				.peek(storeFileChunk)
-				.forEach(System.out::println);
+				.map(storeFileChunk)
+				.forEach(saveOnIMAPServer);
 
 			System.out.println(account);
 //		new FileChunkIterator(selectedAccount.)

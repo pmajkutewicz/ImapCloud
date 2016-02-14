@@ -66,6 +66,8 @@ public class ChunkSaver implements Consumer<UploadChunkContainer> {
 		mp.addBodyPart(attachment);
 		msg.setContent(mp);
 		msg.setHeader("IC-ChunkNumber", String.valueOf(dataChunk.getChunkNumber()));
+		msg.setHeader("IC-ChunkId", String.valueOf(dataChunk.getFileChunkUniqueId()));
+		msg.setHeader("IC-FileId", String.valueOf(dataChunk.getFileUniqueId()));
 		return msg;
 	}
 }
