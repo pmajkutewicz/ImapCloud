@@ -34,7 +34,7 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 			chunk.setVersion(orientVertex.getRecord().getVersion());
 			graphDB.shutdown();
 		} else {
-			LOG.warn("Duplicate file with id: {}", chunk.getFileChunkUniqueId());
+			LOG.warn("Duplicate chunk with id: {}", chunk.getFileChunkUniqueId());
 		}
 		return chunk;
 	}

@@ -1,7 +1,5 @@
 package pl.pamsoft.imapcloud.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
@@ -22,15 +20,15 @@ public class FileServices {
 	@Autowired
 	private FileChunkRepository fileChunkRepository;
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileServices.class);
-
 	public File saveFile(UploadChunkContainer uploadChunkContainer, Account account) {
 		FileDto fileDto = uploadChunkContainer.getFileDto();
+		String uniqueId = UUID.randomUUID().toString();
 
 		pl.pamsoft.imapcloud.entity.File file = new pl.pamsoft.imapcloud.entity.File();
 		file.setAbsolutePath(fileDto.getAbsolutePath());
 		file.setName(fileDto.getName());
 		file.setOwnerAccount(account);
+		file.setFileUniqueId(uniqueId);
 		file.setFileHash(uploadChunkContainer.getFileHash());
 		file.setSize(fileDto.getSize());
 

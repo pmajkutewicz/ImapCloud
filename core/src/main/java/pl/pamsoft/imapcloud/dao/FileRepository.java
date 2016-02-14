@@ -24,6 +24,7 @@ public class FileRepository extends AbstractRepository<File> {
 		f.setId(v.getId().toString());
 		f.setVersion(((OrientVertex) v).getRecord().getVersion());
 		f.setSize(v.getProperty(GraphProperties.FILE_SIZE));
+		f.setFileUniqueId(v.getProperty(GraphProperties.FILE_UNIQUE_ID));
 		f.setName(v.getProperty(GraphProperties.FILE_NAME));
 		f.setAbsolutePath(v.getProperty(GraphProperties.FILE_ABSOLUTE_PATH));
 		f.setFileHash(v.getProperty(GraphProperties.FILE_HASH));
@@ -42,7 +43,6 @@ public class FileRepository extends AbstractRepository<File> {
 	@SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
 	public File save(File file) {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
-		;
 		Iterable<Vertex> storedFiles = graphDB.getVertices(File.class.getSimpleName(),
 			new String[]{GraphProperties.FILE_ABSOLUTE_PATH, GraphProperties.FILE_HASH}, new Object[]{file.getAbsolutePath(), file.getFileHash()});
 		Iterator<Vertex> iterator = storedFiles.iterator();
@@ -52,9 +52,7 @@ public class FileRepository extends AbstractRepository<File> {
 				GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath(),
 				GraphProperties.FILE_HASH, file.getFileHash());
 			fillProperties(graphDB, orientVertex, file);
-			ORecordId id = (ORecordId) orientVertex.getId();
-			file.setId(id.toString());
-			file.setVersion(orientVertex.getRecord().getVersion());
+			updateIdAndVersionFields(file, orientVertex);
 			graphDB.shutdown();
 		} else {
 			LOG.warn("Duplicate file: {}", file.getAbsolutePath());
@@ -62,11 +60,18 @@ public class FileRepository extends AbstractRepository<File> {
 		return file;
 	}
 
+	private void updateIdAndVersionFields(File file, OrientVertex orientVertex) {
+		ORecordId id = (ORecordId) orientVertex.getId();
+		file.setId(id.toString());
+		file.setVersion(orientVertex.getRecord().getVersion());
+	}
+
 	private void fillProperties(OrientGraphNoTx graphDb, OrientVertex fileVertex, File file) {
 		OrientVertex vertex = graphDb.getVertex(file.getOwnerAccount().getId());
 		fileVertex.setProperty(GraphProperties.FILE_NAME, file.getName());
 		fileVertex.setProperty(GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath());
 		fileVertex.setProperty(GraphProperties.FILE_SIZE, file.getSize());
+		fileVertex.setProperty(GraphProperties.FILE_UNIQUE_ID, file.getFileUniqueId());
 		fileVertex.addEdge(GraphProperties.FILE_EDGE_ACCOUNT, vertex);
 	}
 }

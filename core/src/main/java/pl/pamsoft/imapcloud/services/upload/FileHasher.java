@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import com.google.common.base.Stopwatch;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ public class FileHasher implements Function<UploadChunkContainer, UploadChunkCon
 	}
 
 	@Override
+	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		try (FileInputStream inputStream = new FileInputStream(new File(chunk.getFileDto().getAbsolutePath()))) {

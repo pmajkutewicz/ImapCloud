@@ -37,6 +37,7 @@ import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_UNIQUE_ID;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_HASH;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_NAME;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_SIZE;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_UNIQUE_ID;
 
 @Configuration
 class OrientDB {
@@ -97,6 +98,7 @@ class OrientDB {
 		}
 		if (tx.getVertexType(File.class.getSimpleName()) == null) {
 			OrientVertexType vertexType = tx.createVertexType(File.class.getSimpleName());
+			vertexType.createProperty(FILE_UNIQUE_ID, OType.STRING);
 			vertexType.createProperty(FILE_HASH, OType.STRING);
 			vertexType.createProperty(FILE_NAME, OType.STRING);
 			vertexType.createProperty(FILE_ABSOLUTE_PATH, OType.STRING);
@@ -118,11 +120,11 @@ class OrientDB {
 		tx.shutdown();
 	}
 
-	public static String createIndexName(Class cls, String field) {
+	private String createIndexName(Class cls, String field) {
 		return String.format("%s_%s", cls.getSimpleName(), field);
 	}
 
-	public static String createIndexName(Class cls, String... fields) {
+	private String createIndexName(Class cls, String... fields) {
 		StringBuilder sb = new StringBuilder(cls.getSimpleName());
 		for (String field : fields) {
 			sb.append('_').append(field);
