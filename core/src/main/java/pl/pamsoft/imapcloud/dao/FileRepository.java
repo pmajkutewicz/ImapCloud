@@ -2,7 +2,7 @@ package pl.pamsoft.imapcloud.dao;
 
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class FileRepository extends AbstractRepository<File> {
 
 	@Override
 	public File getById(String id) {
-		OrientGraph graphDB = getDb().getGraphDB();
+		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Vertex storedFile = graphDB.getVertex(new ORecordId(id));
 		return converter.apply(storedFile);
 	}
@@ -41,8 +41,8 @@ public class FileRepository extends AbstractRepository<File> {
 	@Override
 	@SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
 	public File save(File file) {
-		OrientGraph graphDB = getDb().getGraphDB();
-		graphDB.begin();
+		OrientGraphNoTx graphDB = getDb().getGraphDB();
+		;
 		Iterable<Vertex> storedFiles = graphDB.getVertices(File.class.getSimpleName(),
 			new String[]{GraphProperties.FILE_ABSOLUTE_PATH, GraphProperties.FILE_HASH}, new Object[]{file.getAbsolutePath(), file.getFileHash()});
 		Iterator<Vertex> iterator = storedFiles.iterator();
@@ -53,7 +53,6 @@ public class FileRepository extends AbstractRepository<File> {
 				GraphProperties.FILE_HASH, file.getFileHash());
 			fillProperties(graphDB, orientVertex, file);
 			ORecordId id = (ORecordId) orientVertex.getId();
-			graphDB.commit();
 			file.setId(id.toString());
 			file.setVersion(orientVertex.getRecord().getVersion());
 			graphDB.shutdown();
@@ -63,7 +62,7 @@ public class FileRepository extends AbstractRepository<File> {
 		return file;
 	}
 
-	private void fillProperties(OrientGraph graphDb, OrientVertex fileVertex, File file) {
+	private void fillProperties(OrientGraphNoTx graphDb, OrientVertex fileVertex, File file) {
 		OrientVertex vertex = graphDb.getVertex(file.getOwnerAccount().getId());
 		fileVertex.setProperty(GraphProperties.FILE_NAME, file.getName());
 		fileVertex.setProperty(GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath());

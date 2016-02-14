@@ -2,7 +2,7 @@ package pl.pamsoft.imapcloud.dao;
 
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientGraph;
+import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
@@ -21,8 +21,7 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 	@Override
 	@SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
 	public FileChunk save(FileChunk chunk) {
-		OrientGraph graphDB = getDb().getGraphDB();
-		graphDB.begin();
+		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Iterable<Vertex> storedFiles = graphDB.getVertices("FileChunk.fileChunkUniqueId", chunk.getFileChunkUniqueId());
 		Iterator<Vertex> iterator = storedFiles.iterator();
 		if (!iterator.hasNext()) {
@@ -31,7 +30,6 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 				GraphProperties.FILE_CHUNK_UNIQUE_ID, chunk.getFileChunkUniqueId());
 			fillProperties(graphDB, orientVertex, chunk);
 			ORecordId id = (ORecordId) orientVertex.getId();
-			graphDB.commit();
 			chunk.setId(id.toString());
 			chunk.setVersion(orientVertex.getRecord().getVersion());
 			graphDB.shutdown();
@@ -41,7 +39,7 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 		return chunk;
 	}
 
-	private void fillProperties(OrientGraph graphDb, OrientVertex fileVertex, FileChunk chunk) {
+	private void fillProperties(OrientGraphNoTx graphDb, OrientVertex fileVertex, FileChunk chunk) {
 		OrientVertex vertex = graphDb.getVertex(chunk.getOwnerFile().getId());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_NUMBER, chunk.getChunkNumber());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_HASH, chunk.getChunkHash());
