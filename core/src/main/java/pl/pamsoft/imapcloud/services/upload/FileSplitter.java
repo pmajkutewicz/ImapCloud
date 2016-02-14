@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class FileSplitter implements Function<FileDto, Stream<UploadChunkContainer>> {
+public class FileSplitter implements Function<UploadChunkContainer, Stream<UploadChunkContainer>> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileSplitter.class);
 
@@ -31,10 +31,11 @@ public class FileSplitter implements Function<FileDto, Stream<UploadChunkContain
 	}
 
 	@Override
-	public Stream<UploadChunkContainer> apply(FileDto fileDto) {
+	public Stream<UploadChunkContainer> apply(UploadChunkContainer ucc) {
+		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
-		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(fileDto, maxSize, xPercent(maxSize)) : new FileChunkIterator(fileDto, maxSize);
+		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(ucc, maxSize, xPercent(maxSize)) : new FileChunkIterator(ucc, maxSize);
 		try {
 			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);

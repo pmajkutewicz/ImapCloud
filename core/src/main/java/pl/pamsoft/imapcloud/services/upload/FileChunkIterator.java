@@ -4,7 +4,6 @@ import com.google.common.base.Stopwatch;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.io.File;
@@ -22,7 +21,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private FileChannel inChannel;
 	private long maxSize;
 	private long currentPosition = 0;
-	private FileDto fileDto;
+	private UploadChunkContainer ucc;
 	private int fetchSize;
 	private int currentChunkNumber = 1;
 
@@ -30,13 +29,13 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private int maxIncrease;
 	private int minFetchSize;
 
-	public FileChunkIterator(FileDto fileDto, int fetchSize) {
-		this.fileDto = fileDto;
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize) {
+		this.ucc = ucc;
 		this.fetchSize = fetchSize;
 	}
 
-	public FileChunkIterator(FileDto fileDto, int fetchSize, int deviation) {
-		this.fileDto = fileDto;
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation) {
+		this.ucc = ucc;
 		this.minFetchSize = fetchSize - deviation;
 		this.maxIncrease = 2 * deviation;
 		this.variableChunksMode = true;
@@ -46,7 +45,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public void process() throws IOException {
 		// i guess it should be FileInputStream
-		inChannel = new RandomAccessFile(new File(fileDto.getAbsolutePath()), "r").getChannel();
+		inChannel = new RandomAccessFile(new File(ucc.getFileDto().getAbsolutePath()), "r").getChannel();
 		maxSize = inChannel.size();
 	}
 
@@ -78,7 +77,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 				generateNextFetchSize();
 			}
 			mapped.get(data);
-			UploadChunkContainer uploadChunkContainer = new UploadChunkContainer(fileDto, data, currentChunkNumber++);
+			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data, currentChunkNumber++);
 			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop());
 			return uploadChunkContainer;
 		} catch (IOException e) {

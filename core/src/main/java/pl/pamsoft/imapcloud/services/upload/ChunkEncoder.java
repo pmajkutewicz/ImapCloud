@@ -31,7 +31,7 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 			byte[] encrypted = cs.encrypt(encryptingCipher, uploadChunkContainer.getData());
 			LOG.debug("{} chunk encrypted in {} (size: {} -> {}",
 				uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop(), uploadChunkContainer.getData().length, encrypted.length);
-			return new UploadChunkContainer(uploadChunkContainer.getFileDto(), encrypted, uploadChunkContainer.getChunkNumber());
+			return UploadChunkContainer.addEncryptedData(uploadChunkContainer, encrypted);
 		} catch (InvalidCipherTextException | IOException e) {
 			LOG.error("Error encrypting chunk", e);
 		}

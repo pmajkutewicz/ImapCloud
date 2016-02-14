@@ -26,6 +26,6 @@ public class ChunkHasher implements Function<UploadChunkContainer, UploadChunkCo
 		byte[] digest = md.digest();
 		String hash = String.format("%s", ByteUtils.toHexString(digest));
 		LOG.debug("Hash generated in {}", stopwatch.stop());
-		return new UploadChunkContainer(chunk.getFileDto(), chunk.getData(), chunk.getChunkNumber(), hash);
+		return UploadChunkContainer.addChunkHash(chunk, hash);
 	}
 }

@@ -13,7 +13,7 @@ import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
 import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
-import pl.pamsoft.imapcloud.services.upload.FilesIOService;
+import pl.pamsoft.imapcloud.services.upload.FileStorer;
 
 import javax.mail.Store;
 import java.security.MessageDigest;
@@ -45,21 +45,25 @@ public class UploadService {
 		try {
 			MessageDigest instance = MessageDigest.getInstance("SHA-512");
 			Account account = accountRepository.getById(selectedAccount.getId());
-			Function<FileDto, Stream<FileDto>> parseDirectories = new DirectoryProcessor(filesIOService);
-			Predicate<FileDto> removeFilesWithSize0 = fileDto -> fileDto.getSize() > 0;
-			Consumer<FileDto> storeFile = fileDto -> fileServices.save(fileDto, account);
-			Function<FileDto, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
+			Function<FileDto, UploadChunkContainer> packInContainer = UploadChunkContainer::new;
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService);
+			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
+			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account);
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
 			Function<UploadChunkContainer, UploadChunkContainer> hashGenerator = new ChunkHasher(instance);
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey());
+			Consumer<UploadChunkContainer> storeFileChunk = ucc -> fileServices.save(ucc);
 			//Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
 
 			selectedFiles.stream()
+				.map(packInContainer)
 				.flatMap(parseDirectories)
 				.filter(removeFilesWithSize0)
-				.peek(storeFile)
+				.map(storeFile)
 				.flatMap(splitFileIntoChunks)
 				.map(hashGenerator)
 				.map(chunkEncoder)
+				.peek(storeFileChunk)
 				.forEach(System.out::println);
 
 			System.out.println(account);

@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.services.FilesIOService;
 
 import java.io.File;
 import java.util.List;

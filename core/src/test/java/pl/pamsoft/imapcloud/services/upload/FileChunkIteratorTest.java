@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.services.upload;
 import org.junit.Test;
 import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.upload.FileChunkIterator;
 
 import java.io.BufferedOutputStream;
@@ -27,7 +28,7 @@ public class FileChunkIteratorTest {
 		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
 		writeFile(filePath, 10);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(mockedFileDto, 3);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer(mockedFileDto), 3);
 		fileChunkIterator.process();
 
 		assertThat(fileChunkIterator.next().getData().length, is(3));
@@ -44,7 +45,7 @@ public class FileChunkIteratorTest {
 		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
 		writeFile(filePath, MEBIBYTE);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(mockedFileDto, 1024);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer(mockedFileDto), 1024);
 		fileChunkIterator.process();
 		int counter = 0;
 		while (fileChunkIterator.hasNext()) {
@@ -66,7 +67,7 @@ public class FileChunkIteratorTest {
 
 		int deviation = 512;
 		int fetchSize = 1024;
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(mockedFileDto, fetchSize, deviation);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer(mockedFileDto), fetchSize, deviation);
 		fileChunkIterator.process();
 		// last chunks can be shorter than deviation, so let say we have 20 tries
 		for (int i = 0; i < 20; i++) {

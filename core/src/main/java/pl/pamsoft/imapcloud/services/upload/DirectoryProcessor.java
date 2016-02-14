@@ -5,6 +5,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.services.FilesIOService;
+import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class DirectoryProcessor implements Function<FileDto, Stream<FileDto>> {
+public class DirectoryProcessor implements Function<UploadChunkContainer, Stream<UploadChunkContainer>> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryProcessor.class);
 
@@ -23,14 +25,14 @@ public class DirectoryProcessor implements Function<FileDto, Stream<FileDto>> {
 	}
 
 	@Override
-	public Stream<FileDto> apply(FileDto fileDto) {
-		if (FileDto.Type.DIRECTORY == fileDto.getType()) {
+	public Stream<UploadChunkContainer> apply(UploadChunkContainer ucc) {
+		if (FileDto.Type.DIRECTORY == ucc.getFileDto().getType()) {
 			Stopwatch stopwatch = Stopwatch.createStarted();
-			List<FileDto> dtos = parseDirectories(fileDto);
-			LOG.debug("Directory {} parsed in {}", fileDto.getAbsolutePath(), stopwatch.stop());
-			return dtos.stream();
+			List<FileDto> dtos = parseDirectories(ucc.getFileDto());
+			LOG.debug("Directory {} parsed in {}", ucc.getFileDto().getAbsolutePath(), stopwatch.stop());
+			return dtos.stream().map(UploadChunkContainer::new);
 		} else {
-			return Stream.of(fileDto);
+			return Stream.of(ucc.getFileDto()).map(UploadChunkContainer::new);
 		}
 	}
 

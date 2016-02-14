@@ -12,6 +12,8 @@ import javax.persistence.Id;
 public class FileChunk {
 	@Id
 	private String id;
+	private Integer version;
+
 	private String fileChunkUniqueId;
 	private int chunkNumber;
 	private String chunkHash;
