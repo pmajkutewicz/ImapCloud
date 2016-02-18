@@ -5,12 +5,15 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.mbeans.StatisticType;
+import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public class FileHasher implements Function<UploadChunkContainer, UploadChunkContainer> {
@@ -19,9 +22,11 @@ public class FileHasher implements Function<UploadChunkContainer, UploadChunkCon
 	private static final int MEGABYTE = 1024 * 1024;
 
 	private MessageDigest md;
+	private Statistics statistics;
 
-	public FileHasher(MessageDigest messageDigest) {
+	public FileHasher(MessageDigest messageDigest, Statistics statistics) {
 		this.md = messageDigest;
+		this.statistics = statistics;
 	}
 
 	@Override
@@ -36,7 +41,8 @@ public class FileHasher implements Function<UploadChunkContainer, UploadChunkCon
 			}
 			byte[] hashedBytes = md.digest();
 			String hash = ByteUtils.toHexString(hashedBytes);
-			LOG.debug("File hash generated in {}", stopwatch.stop());
+			statistics.add(StatisticType.FILE_HASH, stopwatch.stop());
+			LOG.debug("File hash generated in {}", stopwatch);
 			return UploadChunkContainer.addFileHash(chunk, hash);
 		} catch (IOException ex) {
 			LOG.error(String.format("Can't calculate hash for file: %s", chunk.getFileDto().getAbsolutePath()), ex);

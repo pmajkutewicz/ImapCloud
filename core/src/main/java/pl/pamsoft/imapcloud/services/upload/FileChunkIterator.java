@@ -4,6 +4,8 @@ import com.google.common.base.Stopwatch;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.mbeans.StatisticType;
+import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.io.File;
@@ -23,22 +25,25 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private long currentPosition = 0;
 	private UploadChunkContainer ucc;
 	private int fetchSize;
+	private Statistics statistics;
 	private int currentChunkNumber = 1;
 
 	private boolean variableChunksMode;
 	private int maxIncrease;
 	private int minFetchSize;
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, Statistics statistics) {
 		this.ucc = ucc;
 		this.fetchSize = fetchSize;
+		this.statistics = statistics;
 	}
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, Statistics statistics) {
 		this.ucc = ucc;
 		this.minFetchSize = fetchSize - deviation;
 		this.maxIncrease = 2 * deviation;
 		this.variableChunksMode = true;
+		this.statistics = statistics;
 		generateNextFetchSize();
 	}
 
@@ -78,7 +83,8 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 			}
 			mapped.get(data);
 			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data, currentChunkNumber++);
-			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop());
+			statistics.add(StatisticType.CHUNK_ENCODER, stopwatch.stop());
+			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch);
 			return uploadChunkContainer;
 		} catch (IOException e) {
 			LOG.warn("Returning EMPTY from FileChunkIterator");

@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.services.upload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.io.IOException;
@@ -17,16 +18,19 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 	private static final Logger LOG = LoggerFactory.getLogger(FileSplitter.class);
 
 	private int maxChunkSizeInMB;
+	private Statistics statistics;
 	private int deviationInPercent;
 	private boolean variableSize;
 
-	public FileSplitter(int maxChunkSizeMB) {
+	public FileSplitter(int maxChunkSizeMB, Statistics statistics) {
 		this.maxChunkSizeInMB = maxChunkSizeMB;
+		this.statistics = statistics;
 	}
 
-	public FileSplitter(int maxChunkSizeMB, int deviationInPercent) {
+	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, Statistics statistics) {
 		this.maxChunkSizeInMB = maxChunkSizeMB;
 		this.deviationInPercent = deviationInPercent;
+		this.statistics = statistics;
 		this.variableSize = true;
 	}
 
@@ -35,7 +39,7 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
-		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(ucc, maxSize, xPercent(maxSize)) : new FileChunkIterator(ucc, maxSize);
+		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(ucc, maxSize, xPercent(maxSize), statistics) : new FileChunkIterator(ucc, maxSize, statistics);
 		try {
 			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);

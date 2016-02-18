@@ -5,6 +5,8 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.mbeans.StatisticType;
+import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
@@ -37,10 +39,12 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 	private static final boolean NO_EXPUNGE = false;
 	private GenericObjectPool<Store> connectionPool;
 	private final CryptoService cs;
+	private Statistics statistics;
 
-	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService) {
+	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, Statistics statistics) {
 		this.connectionPool = connectionPool;
 		this.cs = cryptoService;
+		this.statistics = statistics;
 	}
 
 	@Override
@@ -57,7 +61,8 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			destFolder.appendMessages(msg);
 			String[] header = message.getHeader("Message-ID");
 			destFolder.close(NO_EXPUNGE);
-			LOG.debug("Chunk saved in {}", stopwatch.stop());
+			statistics.add(StatisticType.CHUNK_SAVER, stopwatch);
+			LOG.debug("Chunk saved in {}", stopwatch);
 			return UploadChunkContainer.addMessageId(dataChunk, header[0]);
 		} catch (Exception e) {
 			e.printStackTrace();

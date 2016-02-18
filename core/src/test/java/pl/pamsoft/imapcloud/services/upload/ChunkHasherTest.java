@@ -1,8 +1,10 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.security.MessageDigest;
@@ -11,6 +13,9 @@ import static org.junit.Assert.*;
 
 public class ChunkHasherTest {
 
+	@Mock
+	private Statistics statistics;
+
 	@Test
 	public void shouldCalculateSha512Hash() throws Exception {
 		//given
@@ -18,7 +23,7 @@ public class ChunkHasherTest {
 		FileDto mockedFileDto = Mockito.mock(FileDto.class);
 
 		//when
-		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("SHA-512"));
+		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("SHA-512"), statistics);
 		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer(mockedFileDto), test.getBytes(), 1);
 		UploadChunkContainer result = chunkHasher.apply(uploadChunkContainer);
 
@@ -33,7 +38,7 @@ public class ChunkHasherTest {
 		FileDto mockedFileDto = Mockito.mock(FileDto.class);
 
 		//when
-		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("MD5"));
+		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("MD5"), statistics);
 		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer(mockedFileDto), test.getBytes(), 1);
 		UploadChunkContainer result = chunkHasher.apply(uploadChunkContainer);
 

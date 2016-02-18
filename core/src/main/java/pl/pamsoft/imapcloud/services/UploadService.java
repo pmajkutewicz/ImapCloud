@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
+import com.sun.org.glassfish.external.statistics.Statistic;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
+import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
 import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
@@ -44,20 +46,24 @@ public class UploadService {
 	@Autowired
 	private CryptoService cryptoService;
 
+	@Autowired
+	private Statistics statistics;
+
 	public void upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncodingEnabled) {
 		try {
 			MessageDigest instance = MessageDigest.getInstance("SHA-512");
 			Account account = accountRepository.getById(selectedAccount.getId());
+
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Function<FileDto, UploadChunkContainer> packInContainer = UploadChunkContainer::new;
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService);
-			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance);
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics);
+			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance, statistics);
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account);
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
-			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance);
-			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey());
-			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService);
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics);
+			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance, statistics);
+			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey(), statistics);
+			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService, statistics);
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 			selectedFiles.stream()
@@ -77,8 +83,6 @@ public class UploadService {
 				.map(storeFileChunk)
 				.forEach(System.out::println);
 
-
-			System.out.println(account);
 //		new FileChunkIterator(selectedAccount.)
 //		selectedFiles.stream().
 		} catch (NoSuchAlgorithmException e) {

@@ -6,6 +6,8 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.mbeans.StatisticType;
+import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
@@ -16,10 +18,12 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkEncoder.class);
 	private CryptoService cs;
+	private Statistics statistics;
 	private PaddedBufferedBlockCipher encryptingCipher;
 
-	public ChunkEncoder(CryptoService cryptoService, String key) {
+	public ChunkEncoder(CryptoService cryptoService, String key, Statistics statistics) {
 		this.cs = cryptoService;
+		this.statistics = statistics;
 		byte[] keyBytes = ByteUtils.fromHexString(key);
 		encryptingCipher = cs.getEncryptingCipher(keyBytes);
 	}
@@ -29,8 +33,9 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			byte[] encrypted = cs.encrypt(encryptingCipher, uploadChunkContainer.getData());
+			statistics.add(StatisticType.CHUNK_ENCODER, stopwatch.stop());
 			LOG.debug("{} chunk encrypted in {} (size: {} -> {}",
-				uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop(), uploadChunkContainer.getData().length, encrypted.length);
+				uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch, uploadChunkContainer.getData().length, encrypted.length);
 			return UploadChunkContainer.addEncryptedData(uploadChunkContainer, encrypted);
 		} catch (InvalidCipherTextException | IOException e) {
 			LOG.error("Error encrypting chunk", e);
