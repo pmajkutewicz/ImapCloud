@@ -36,9 +36,9 @@ public class CustomMessageIdMimeMessage extends MimeMessage {
 	protected void updateMessageID() throws MessagingException {
 		String suffix;
 		InternetAddress addr = InternetAddress.getLocalAddress(session);
-		if (addr != null)
+		if (addr != null) {
 			suffix = addr.getAddress();
-		else {
+		} else {
 			suffix = "IC@localhost"; // worst-case default
 		}
 		setHeader("Message-ID", '<' + getSubject() + '.' + System.currentTimeMillis() + '.' + "IC" + '.' + suffix + '>');

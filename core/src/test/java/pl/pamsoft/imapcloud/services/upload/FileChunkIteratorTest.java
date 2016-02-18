@@ -1,12 +1,10 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.upload.FileChunkIterator;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -17,14 +15,14 @@ import java.io.OutputStream;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class FileChunkIteratorTest {
 
 	private static final int MEBIBYTE = 1024 * 1024;
 
-	@Mock
-	private Statistics statistics;
+	private Statistics statistics = mock(Statistics.class);
 
 	@Test
 	public void fileReadingWithNotAlignedChunks() throws Exception {

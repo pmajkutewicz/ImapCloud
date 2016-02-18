@@ -22,6 +22,7 @@ public class CryptoService {
 	private static final int COPY_BUFFER_SIZE = 1024 * 1024;
 	private static final int KEYSIZE_IN_BYTES = 256;
 	private static final int TO_BITS = 8;
+	public static final int ROT_13 = 13;
 
 	public byte[] generateKey() throws NoSuchProviderException, NoSuchAlgorithmException {
 		byte[] key = new byte[KEYSIZE_IN_BYTES / TO_BITS];
@@ -76,10 +77,15 @@ public class CryptoService {
 		StringBuilder sb = new StringBuilder(input.length());
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
-			if (c >= 'a' && c <= 'm') c += 13;
-			else if (c >= 'A' && c <= 'M') c += 13;
-			else if (c >= 'n' && c <= 'z') c -= 13;
-			else if (c >= 'N' && c <= 'Z') c -= 13;
+			if (c >= 'a' && c <= 'm') {
+				c += ROT_13;
+			} else if (c >= 'A' && c <= 'M') {
+				c += ROT_13;
+			} else if (c >= 'n' && c <= 'z') {
+				c -= ROT_13;
+			} else if (c >= 'N' && c <= 'Z') {
+				c -= ROT_13;
+			}
 			sb.append(c);
 		}
 		return sb.toString();

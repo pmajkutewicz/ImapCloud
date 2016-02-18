@@ -23,7 +23,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(echoWebSocketHandler(), "/echo");
 		registry.addHandler(performanceDataSocketHandler, "/performance").setAllowedOrigins("*");
-		;
 	}
 
 	@Bean

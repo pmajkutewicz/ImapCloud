@@ -6,7 +6,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class Statistics {
 
 	private static final int MAX_ENTRIES = 1000;
-	private Map<StatisticType, LinkedList<Long>> content = new HashMap<>();
+	private Map<StatisticType, LinkedList<Long>> content = new EnumMap<>(StatisticType.class);
 
 	@PostConstruct
 	public void init() {

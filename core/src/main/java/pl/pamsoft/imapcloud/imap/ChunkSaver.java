@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.imap;
 
 import com.google.common.base.Stopwatch;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ import javax.mail.util.ByteArrayDataSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import static javax.mail.Folder.HOLDS_MESSAGES;
 import static javax.mail.Folder.READ_ONLY;
@@ -53,8 +53,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			store = connectionPool.borrowObject();
-			Folder folder = store.getFolder(IMAP_CLOUD_FOLDER_NAME);
-			Folder destFolder = getFolder(store, dataChunk.getFileDto().getAbsolutePath(), String.valueOf(folder.getSeparator()));
+			Folder destFolder = getFolder(store, dataChunk.getFileDto().getAbsolutePath());
 			destFolder.open(READ_WRITE);
 			Message message = createMessage(dataChunk);
 			Message[] msg = {message};
@@ -76,11 +75,12 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		return UploadChunkContainer.EMPTY;
 	}
 
-	private Folder getFolder(Store store, String absolutePathName, String imapSeparator) throws IOException, InvalidCipherTextException, MessagingException {
+	private Folder getFolder(Store store, String absolutePathName) throws IOException, InvalidCipherTextException, MessagingException {
 		String imapPath = createFolderName(absolutePathName);
 		return createFolderIfDoesntExist(store, imapPath);
 	}
 
+	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	private String createFolderName(String absoluteFilePath) {
 		String absolutePath = new File(absoluteFilePath).getParent();
 		return cs.rot13(absolutePath.replace(File.separator, ""));

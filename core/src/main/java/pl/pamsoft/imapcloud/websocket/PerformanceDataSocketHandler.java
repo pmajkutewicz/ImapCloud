@@ -13,7 +13,7 @@ import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 @Component
 public class PerformanceDataSocketHandler extends TextWebSocketHandler {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EchoWebSocketHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PerformanceDataSocketHandler.class);
 
 	@Autowired
 	private PerformanceDataService performanceDataService;

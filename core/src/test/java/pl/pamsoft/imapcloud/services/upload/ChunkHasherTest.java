@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
@@ -9,12 +8,11 @@ import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
 import java.security.MessageDigest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ChunkHasherTest {
 
-	@Mock
-	private Statistics statistics;
+	private Statistics statistics = Mockito.mock(Statistics.class);
 
 	@Test
 	public void shouldCalculateSha512Hash() throws Exception {
