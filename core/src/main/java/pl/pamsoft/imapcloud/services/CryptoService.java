@@ -71,4 +71,17 @@ public class CryptoService {
 		out.flush();
 		return out.toByteArray();
 	}
+
+	public String rot13(String input) {
+		StringBuilder sb = new StringBuilder(input.length());
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
+			if (c >= 'a' && c <= 'm') c += 13;
+			else if (c >= 'A' && c <= 'M') c += 13;
+			else if (c >= 'n' && c <= 'z') c -= 13;
+			else if (c >= 'N' && c <= 'Z') c -= 13;
+			sb.append(c);
+		}
+		return sb.toString();
+	}
 }

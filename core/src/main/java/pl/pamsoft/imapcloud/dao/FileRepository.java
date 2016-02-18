@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.entity.File;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -41,7 +42,7 @@ public class FileRepository extends AbstractRepository<File> {
 
 	@Override
 	@SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
-	public File save(File file) {
+	public File save(File file) throws FileAlreadyExistsException {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Iterable<Vertex> storedFiles = graphDB.getVertices(File.class.getSimpleName(),
 			new String[]{GraphProperties.FILE_ABSOLUTE_PATH, GraphProperties.FILE_HASH}, new Object[]{file.getAbsolutePath(), file.getFileHash()});
@@ -56,6 +57,7 @@ public class FileRepository extends AbstractRepository<File> {
 			graphDB.shutdown();
 		} else {
 			LOG.warn("Duplicate file: {}", file.getAbsolutePath());
+			throw new FileAlreadyExistsException(file.getAbsolutePath());
 		}
 		return file;
 	}

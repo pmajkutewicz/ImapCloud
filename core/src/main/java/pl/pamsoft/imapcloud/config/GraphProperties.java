@@ -21,5 +21,6 @@ public class GraphProperties {
 	public static final String FILE_CHUNK_NUMBER = "chunkNumber";
 	public static final String FILE_CHUNK_HASH = "chunkHash";
 	public static final String FILE_CHUNK_SIZE = "size";
+	public static final String FILE_CHUNK_MESSAGE_ID = "messageId";
 	public static final String FILE_CHUNK_EDGE_FILE = "is_part_of";
 }

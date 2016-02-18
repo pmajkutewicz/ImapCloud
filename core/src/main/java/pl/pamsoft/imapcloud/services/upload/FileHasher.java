@@ -41,6 +41,7 @@ public class FileHasher implements Function<UploadChunkContainer, UploadChunkCon
 		} catch (IOException ex) {
 			LOG.error(String.format("Can't calculate hash for file: %s", chunk.getFileDto().getAbsolutePath()), ex);
 		}
-		return null;
+		LOG.warn("Returning EMPTY from FileHasher");
+		return UploadChunkContainer.EMPTY;
 	}
 }

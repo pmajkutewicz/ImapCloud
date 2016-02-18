@@ -6,13 +6,14 @@ import org.springframework.core.GenericTypeResolver;
 import org.springframework.stereotype.Repository;
 import pl.pamsoft.imapcloud.config.ODB;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Collection;
 import java.util.LinkedList;
 
 @Repository
 public interface DefaultRepository<T> {
 
-	default T save(T entity) {
+	default T save(T entity) throws FileAlreadyExistsException {
 		return getDb().getDb().save(entity);
 	}
 

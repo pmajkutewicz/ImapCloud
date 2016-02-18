@@ -9,6 +9,7 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.util.UUID;
 
 @Service
@@ -20,7 +21,7 @@ public class FileServices {
 	@Autowired
 	private FileChunkRepository fileChunkRepository;
 
-	public File saveFile(UploadChunkContainer uploadChunkContainer, Account account) {
+	public File saveFile(UploadChunkContainer uploadChunkContainer, Account account) throws FileAlreadyExistsException {
 		FileDto fileDto = uploadChunkContainer.getFileDto();
 		String uniqueId = UUID.randomUUID().toString();
 
@@ -36,14 +37,17 @@ public class FileServices {
 	}
 
 	public FileChunk saveChunk(UploadChunkContainer uploadChunkContainer) {
-		String uniqueId = UUID.randomUUID().toString();
 		FileChunk chunk = new FileChunk();
-		chunk.setFileChunkUniqueId(uniqueId);
+		chunk.setFileChunkUniqueId(createChunkId(uploadChunkContainer.getFileUniqueId(), uploadChunkContainer.getChunkNumber()));
 		chunk.setOwnerFile(fileRepository.getById(uploadChunkContainer.getSavedFileId()));
 		chunk.setSize((long) uploadChunkContainer.getData().length);
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
 		chunk.setChunkHash(uploadChunkContainer.getChunkHash());
+		chunk.setMessageId(uploadChunkContainer.getMessageId());
 		return fileChunkRepository.save(chunk);
 	}
 
+	private String createChunkId(String fileId, int partNumber) {
+		return String.format("%s.%04d", fileId, partNumber);
+	}
 }

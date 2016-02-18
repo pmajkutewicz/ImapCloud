@@ -44,6 +44,8 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_NUMBER, chunk.getChunkNumber());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_HASH, chunk.getChunkHash());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_SIZE, chunk.getSize());
+		fileVertex.setProperty(GraphProperties.FILE_CHUNK_UNIQUE_ID, chunk.getFileChunkUniqueId());
+		fileVertex.setProperty(GraphProperties.FILE_CHUNK_MESSAGE_ID, chunk.getMessageId());
 		fileVertex.addEdge(GraphProperties.FILE_CHUNK_EDGE_FILE, vertex);
 	}
 }

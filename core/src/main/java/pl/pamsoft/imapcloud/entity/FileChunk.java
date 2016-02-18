@@ -19,4 +19,5 @@ public class FileChunk {
 	private String chunkHash;
 	private Long size;
 	private File ownerFile;
+	private String messageId;
 }

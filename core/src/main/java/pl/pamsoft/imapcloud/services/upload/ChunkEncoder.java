@@ -35,6 +35,7 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 		} catch (InvalidCipherTextException | IOException e) {
 			LOG.error("Error encrypting chunk", e);
 		}
-		return null;
+		LOG.warn("Returning EMPTY from ChunkEncoder");
+		return UploadChunkContainer.EMPTY;
 	}
 }

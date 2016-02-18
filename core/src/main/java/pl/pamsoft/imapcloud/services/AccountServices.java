@@ -11,6 +11,7 @@ import pl.pamsoft.imapcloud.dto.LoginType;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
+import java.nio.file.FileAlreadyExistsException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Collection;
@@ -51,7 +52,11 @@ public class AccountServices {
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			LOG.error("Can't create encryption key.", e);
 		}
-		accountRepository.save(account);
+		try {
+			accountRepository.save(account);
+		} catch (FileAlreadyExistsException e) {
+			LOG.warn("Account already exists.");
+		}
 	}
 
 	public List<AccountDto> listAccounts() {

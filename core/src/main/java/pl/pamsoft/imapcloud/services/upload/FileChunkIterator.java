@@ -81,7 +81,8 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch.stop());
 			return uploadChunkContainer;
 		} catch (IOException e) {
-			return null;
+			LOG.warn("Returning EMPTY from FileChunkIterator");
+			return UploadChunkContainer.EMPTY;
 		}
 	}
 }

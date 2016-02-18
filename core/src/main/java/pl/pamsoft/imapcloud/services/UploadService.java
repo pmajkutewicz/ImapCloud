@@ -48,6 +48,7 @@ public class UploadService {
 		try {
 			MessageDigest instance = MessageDigest.getInstance("SHA-512");
 			Account account = accountRepository.getById(selectedAccount.getId());
+			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Function<FileDto, UploadChunkContainer> packInContainer = UploadChunkContainer::new;
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService);
 			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance);
@@ -56,8 +57,8 @@ public class UploadService {
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2);
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance);
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey());
+			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService);
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
-			Consumer<UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account));
 
 			selectedFiles.stream()
 				.map(packInContainer)
@@ -65,11 +66,17 @@ public class UploadService {
 				.map(generateFilehash)
 				.filter(removeFilesWithSize0)
 				.map(storeFile)
+				.filter(filterEmptyUcc)
 				.flatMap(splitFileIntoChunks)
+				.filter(filterEmptyUcc)
 				.map(generateChunkHash)
 				.map(chunkEncoder)
+				.filter(filterEmptyUcc)
+				.map(saveOnIMAPServer)
+				.filter(filterEmptyUcc)
 				.map(storeFileChunk)
-				.forEach(saveOnIMAPServer);
+				.forEach(System.out::println);
+
 
 			System.out.println(account);
 //		new FileChunkIterator(selectedAccount.)
