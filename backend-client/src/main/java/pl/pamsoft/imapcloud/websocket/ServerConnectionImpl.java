@@ -12,17 +12,17 @@ import java.net.URISyntaxException;
 
 public class ServerConnectionImpl implements ServerConnection {
 
-	private AccountClient accountClient;
+	private PerformanceDataClient performanceDataClient;
 	private OnFailedInitNotification notification;
 	private Task<Void> task = new Task<Void>() {
 		@Override
 		protected Void call() {
 			try {
-				String dest = "ws://localhost:9000/account";
-				accountClient = new AccountClient();
+				String dest = "ws://localhost:9000/performance";
+				performanceDataClient = new PerformanceDataClient();
 				WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-				container.connectToServer(accountClient, new URI(dest));
-				accountClient.getLatch().await();
+				container.connectToServer(performanceDataClient, new URI(dest));
+				performanceDataClient.getLatch().await();
 				return null;
 			} catch (InterruptedException | DeploymentException | URISyntaxException | IOException e) {
 				notification.initializationFailedNotification(e);
@@ -36,8 +36,8 @@ public class ServerConnectionImpl implements ServerConnection {
 	}
 
 	@Override
-	public AccountClient getAccountSession() {
-		return accountClient;
+	public PerformanceDataClient getPerformanceDataClient() {
+		return performanceDataClient;
 	}
 
 	@Override
@@ -47,6 +47,6 @@ public class ServerConnectionImpl implements ServerConnection {
 
 	@Override
 	public void close() {
-		accountClient.close();
+		performanceDataClient.close();
 	}
 }

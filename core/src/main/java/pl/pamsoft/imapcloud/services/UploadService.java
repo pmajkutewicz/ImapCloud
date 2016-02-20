@@ -18,6 +18,7 @@ import pl.pamsoft.imapcloud.services.upload.FileChunkStorer;
 import pl.pamsoft.imapcloud.services.upload.FileHasher;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
+import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
 import java.security.MessageDigest;
@@ -47,6 +48,9 @@ public class UploadService {
 	@Autowired
 	private Statistics statistics;
 
+	@Autowired
+	private PerformanceDataService performanceDataService;
+
 	public void upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncodingEnabled) {
 		try {
 			MessageDigest instance = MessageDigest.getInstance("SHA-512");
@@ -55,7 +59,7 @@ public class UploadService {
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Function<FileDto, UploadChunkContainer> packInContainer = UploadChunkContainer::new;
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics);
-			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance, statistics);
+			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance, statistics, performanceDataService);
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account);
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics);

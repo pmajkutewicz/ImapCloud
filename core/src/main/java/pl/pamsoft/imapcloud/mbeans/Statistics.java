@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Component;
+import pl.pamsoft.imapcloud.common.StatisticType;
 
 import javax.annotation.PostConstruct;
 import java.util.EnumMap;
