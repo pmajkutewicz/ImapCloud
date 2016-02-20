@@ -17,5 +17,10 @@
 				<fx:include fx:id="uploadsTabPage" source="tab_uploads.fxml" />
 			</content>
 		</Tab>
+		<Tab id="performanceTab" closable="false" text="%main.tab.performance">
+			<content>
+				<fx:include fx:id="performanceTabPage" source="tab_performance.fxml" />
+			</content>
+		</Tab>
 	</tabs>
 </TabPane>

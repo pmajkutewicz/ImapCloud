@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?scenebuilder-stylesheet css/custom.css?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.72" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pl.pamsoft.imapcloud.controllers.PerformanceController">
+   <children>
+      <HBox>
+         <children>
+            <ToggleButton mnemonicParsing="false" text="%performance.button.connect" fx:id="toggleButton" onAction="#createToggleButton" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" />
+   </children>
+</VBox>
