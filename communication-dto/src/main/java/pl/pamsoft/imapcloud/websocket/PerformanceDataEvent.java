@@ -1,15 +1,15 @@
 package pl.pamsoft.imapcloud.websocket;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import pl.pamsoft.imapcloud.common.StatisticType;
 
-import javax.annotation.concurrent.Immutable;
-
-@Immutable
-@RequiredArgsConstructor
-@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class PerformanceDataEvent implements Event {
-	private final StatisticType type;
-	private final Long currentValue;
+	private StatisticType type;
+	private long currentValue;
 }

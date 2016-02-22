@@ -7,8 +7,7 @@ import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 import pl.pamsoft.imapcloud.websocket.OnFailedInitNotification;
-import pl.pamsoft.imapcloud.websocket.ServerConnection;
-import pl.pamsoft.imapcloud.websocket.ServerConnectionImpl;
+import pl.pamsoft.imapcloud.websocket.PerformanceDataClient;
 
 import javax.inject.Singleton;
 
@@ -27,8 +26,8 @@ public class DefaultModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	ServerConnection get() {
-		return new ServerConnectionImpl(notification);
+	PerformanceDataClient getPerformanceDataClient() {
+		return new PerformanceDataClient();
 	}
 
 	@Provides

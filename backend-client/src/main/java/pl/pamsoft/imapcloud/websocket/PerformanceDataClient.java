@@ -6,11 +6,16 @@ import org.slf4j.LoggerFactory;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
+import javax.websocket.ContainerProvider;
+import javax.websocket.DeploymentException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -24,19 +29,32 @@ public class PerformanceDataClient {
 	private List<EventListener<PerformanceDataEvent>> listeners = new ArrayList<>();
 	private Session websocketSession;
 
-	@OnOpen
-	public void onOpen(Session session) {
-		System.out.println("Connected to server");
-		this.websocketSession = session;
-		latch.countDown();
-	}
-
 	public void addListener(EventListener<PerformanceDataEvent> listener) {
 		this.listeners.add(listener);
 	}
 
 	public void removeListener(EventListener<PerformanceDataEvent> listener) {
 		this.listeners.remove(listener);
+	}
+
+	public void connect() throws IOException, URISyntaxException, InterruptedException, DeploymentException {
+		String dest = "ws://localhost:9000/performance";
+		WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+		container.connectToServer(this, new URI(dest));
+		getLatch().await();
+	}
+
+	public void disconnect() throws IOException, URISyntaxException, InterruptedException, DeploymentException {
+		if (websocketSession.isOpen()) {
+			websocketSession.close();
+		}
+	}
+
+	@OnOpen
+	public void onOpen(Session session) {
+		System.out.println("Connected to server");
+		this.websocketSession = session;
+		latch.countDown();
 	}
 
 	@OnMessage
