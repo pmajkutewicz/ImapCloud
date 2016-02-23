@@ -5,6 +5,7 @@ import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.security.MessageDigest;
 
@@ -13,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class ChunkHasherTest {
 
 	private Statistics statistics = Mockito.mock(Statistics.class);
+	private PerformanceDataService performanceDataService = Mockito.mock(PerformanceDataService.class);
 
 	@Test
 	public void shouldCalculateSha512Hash() throws Exception {
@@ -21,8 +23,8 @@ public class ChunkHasherTest {
 		FileDto mockedFileDto = Mockito.mock(FileDto.class);
 
 		//when
-		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("SHA-512"), statistics);
-		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer(mockedFileDto), test.getBytes(), 1);
+		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("SHA-512"), statistics, performanceDataService);
+		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer("testId", 0, mockedFileDto), test.getBytes(), 1);
 		UploadChunkContainer result = chunkHasher.apply(uploadChunkContainer);
 
 		//then
@@ -36,8 +38,8 @@ public class ChunkHasherTest {
 		FileDto mockedFileDto = Mockito.mock(FileDto.class);
 
 		//when
-		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("MD5"), statistics);
-		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer(mockedFileDto), test.getBytes(), 1);
+		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("MD5"), statistics, performanceDataService);
+		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer("testId", 0, mockedFileDto), test.getBytes(), 1);
 		UploadChunkContainer result = chunkHasher.apply(uploadChunkContainer);
 
 		//then

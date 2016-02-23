@@ -5,6 +5,7 @@ import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -23,6 +24,7 @@ public class FileChunkIteratorTest {
 	private static final int MEBIBYTE = 1024 * 1024;
 
 	private Statistics statistics = mock(Statistics.class);
+	private PerformanceDataService performanceDataService = Mockito.mock(PerformanceDataService.class);
 
 	@Test
 	public void fileReadingWithNotAlignedChunks() throws Exception {
@@ -31,7 +33,7 @@ public class FileChunkIteratorTest {
 		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
 		writeFile(filePath, 10);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer(mockedFileDto), 3, statistics);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", 0, mockedFileDto), 3, statistics, performanceDataService);
 		fileChunkIterator.process();
 
 		assertThat(fileChunkIterator.next().getData().length, is(3));
@@ -48,7 +50,7 @@ public class FileChunkIteratorTest {
 		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
 		writeFile(filePath, MEBIBYTE);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer(mockedFileDto), 1024, statistics);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", 0, mockedFileDto), 1024, statistics, performanceDataService);
 		fileChunkIterator.process();
 		int counter = 0;
 		while (fileChunkIterator.hasNext()) {
@@ -70,7 +72,7 @@ public class FileChunkIteratorTest {
 
 		int deviation = 512;
 		int fetchSize = 1024;
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer(mockedFileDto), fetchSize, deviation, statistics);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", 0, mockedFileDto), fetchSize, deviation, statistics, performanceDataService);
 		fileChunkIterator.process();
 		// last chunks can be shorter than deviation, so let say we have 20 tries
 		for (int i = 0; i < 20; i++) {

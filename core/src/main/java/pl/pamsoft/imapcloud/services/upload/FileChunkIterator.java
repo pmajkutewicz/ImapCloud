@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
+import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +26,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private long maxSize;
 	private long currentPosition = 0;
 	private UploadChunkContainer ucc;
+	private final PerformanceDataService performanceDataService;
 	private int fetchSize;
 	private Statistics statistics;
 	private int currentChunkNumber = 1;
@@ -32,14 +35,16 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private int maxIncrease;
 	private int minFetchSize;
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, Statistics statistics) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.ucc = ucc;
 		this.fetchSize = fetchSize;
 		this.statistics = statistics;
+		this.performanceDataService = performanceDataService;
 	}
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, Statistics statistics) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.ucc = ucc;
+		this.performanceDataService = performanceDataService;
 		this.minFetchSize = fetchSize - deviation;
 		this.maxIncrease = 2 * deviation;
 		this.variableChunksMode = true;
@@ -84,6 +89,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 			mapped.get(data);
 			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data, currentChunkNumber++);
 			statistics.add(StatisticType.CHUNK_ENCODER, stopwatch.stop());
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_ENCODER, stopwatch));
 			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch);
 			return uploadChunkContainer;
 		} catch (IOException e) {

@@ -21,9 +21,13 @@ public class UploadRestController {
 
 	@RequestMapping(value = "start", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> startUpload(@RequestBody StartUploadRequest startUploadRequest) {
-		uploadService.upload(startUploadRequest.getSelectedAccount(), startUploadRequest.getSelectedFiles(), startUploadRequest.isChunkEncodingEnabled());
+		boolean taskAdded = uploadService.upload(startUploadRequest.getSelectedAccount(), startUploadRequest.getSelectedFiles(), startUploadRequest.isChunkEncodingEnabled());
 
-		return new ResponseEntity<>(HttpStatus.OK);
+		if (taskAdded) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 
 }

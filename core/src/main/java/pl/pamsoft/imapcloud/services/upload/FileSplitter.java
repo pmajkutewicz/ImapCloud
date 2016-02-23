@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.IOException;
 import java.util.Spliterator;
@@ -19,19 +20,23 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 
 	private int maxChunkSizeInMB;
 	private Statistics statistics;
+	private final PerformanceDataService performanceDataService;
 	private int deviationInPercent;
 	private boolean variableSize;
 
-	public FileSplitter(int maxChunkSizeMB, Statistics statistics) {
+	public FileSplitter(int maxChunkSizeMB, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.maxChunkSizeInMB = maxChunkSizeMB;
 		this.statistics = statistics;
+		this.performanceDataService = performanceDataService;
 	}
 
-	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, Statistics statistics) {
+	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.maxChunkSizeInMB = maxChunkSizeMB;
 		this.deviationInPercent = deviationInPercent;
 		this.statistics = statistics;
 		this.variableSize = true;
+
+		this.performanceDataService = performanceDataService;
 	}
 
 	@Override
@@ -39,7 +44,9 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
-		FileChunkIterator fileChunkIterator = variableSize ? new FileChunkIterator(ucc, maxSize, xPercent(maxSize), statistics) : new FileChunkIterator(ucc, maxSize, statistics);
+		FileChunkIterator fileChunkIterator = variableSize ?
+			new FileChunkIterator(ucc, maxSize, xPercent(maxSize), statistics, performanceDataService) :
+			new FileChunkIterator(ucc, maxSize, statistics, performanceDataService);
 		try {
 			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);

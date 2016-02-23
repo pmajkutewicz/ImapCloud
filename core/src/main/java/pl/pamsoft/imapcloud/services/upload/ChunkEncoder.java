@@ -10,6 +10,8 @@ import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
+import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import java.io.IOException;
 import java.util.function.Function;
@@ -19,11 +21,13 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkEncoder.class);
 	private CryptoService cs;
 	private Statistics statistics;
+	private final PerformanceDataService performanceDataService;
 	private PaddedBufferedBlockCipher encryptingCipher;
 
-	public ChunkEncoder(CryptoService cryptoService, String key, Statistics statistics) {
+	public ChunkEncoder(CryptoService cryptoService, String key, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.cs = cryptoService;
 		this.statistics = statistics;
+		this.performanceDataService = performanceDataService;
 		byte[] keyBytes = ByteUtils.fromHexString(key);
 		encryptingCipher = cs.getEncryptingCipher(keyBytes);
 	}
@@ -34,6 +38,7 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			byte[] encrypted = cs.encrypt(encryptingCipher, uploadChunkContainer.getData());
 			statistics.add(StatisticType.CHUNK_ENCODER, stopwatch.stop());
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_ENCODER, stopwatch));
 			LOG.debug("{} chunk encrypted in {} (size: {} -> {}",
 				uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch, uploadChunkContainer.getData().length, encrypted.length);
 			return UploadChunkContainer.addEncryptedData(uploadChunkContainer, encrypted);

@@ -10,6 +10,8 @@ import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
+import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -40,11 +42,13 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 	private GenericObjectPool<Store> connectionPool;
 	private final CryptoService cs;
 	private Statistics statistics;
+	private PerformanceDataService performanceDataService;
 
-	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, Statistics statistics) {
+	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.connectionPool = connectionPool;
 		this.cs = cryptoService;
 		this.statistics = statistics;
+		this.performanceDataService = performanceDataService;
 	}
 
 	@Override
@@ -61,6 +65,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			String[] header = message.getHeader("Message-ID");
 			destFolder.close(NO_EXPUNGE);
 			statistics.add(StatisticType.CHUNK_SAVER, stopwatch);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_SAVER, stopwatch));
 			LOG.debug("Chunk saved in {}", stopwatch);
 			return UploadChunkContainer.addMessageId(dataChunk, header[0]);
 		} catch (Exception e) {

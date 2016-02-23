@@ -72,7 +72,7 @@ public class PerformanceController implements Initializable {
 	}
 
 	private AreaChart.Series<Number, Number> createSeries() {
-		AreaChart.Series<Number, Number> series = new AreaChart.Series<Number, Number>();
+		AreaChart.Series<Number, Number> series = new AreaChart.Series<>();
 		series.setName("Area Chart Series");
 		return series;
 	}

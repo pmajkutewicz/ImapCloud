@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public class FileHasher implements Function<UploadChunkContainer, UploadChunkContainer> {
@@ -46,7 +45,7 @@ public class FileHasher implements Function<UploadChunkContainer, UploadChunkCon
 			byte[] hashedBytes = md.digest();
 			String hash = ByteUtils.toHexString(hashedBytes);
 			statistics.add(StatisticType.FILE_HASH, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, stopwatch.elapsed(TimeUnit.MICROSECONDS)));
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, stopwatch));
 			LOG.debug("File hash generated in {}", stopwatch);
 			return UploadChunkContainer.addFileHash(chunk, hash);
 		} catch (IOException ex) {
