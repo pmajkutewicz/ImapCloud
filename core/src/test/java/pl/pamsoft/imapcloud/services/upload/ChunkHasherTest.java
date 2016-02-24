@@ -24,7 +24,7 @@ public class ChunkHasherTest {
 
 		//when
 		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("SHA-512"), statistics, performanceDataService);
-		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer("testId", 0, mockedFileDto), test.getBytes(), 1);
+		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer("testId", mockedFileDto), test.getBytes().length, test.getBytes(), 1);
 		UploadChunkContainer result = chunkHasher.apply(uploadChunkContainer);
 
 		//then
@@ -39,7 +39,7 @@ public class ChunkHasherTest {
 
 		//when
 		ChunkHasher chunkHasher = new ChunkHasher(MessageDigest.getInstance("MD5"), statistics, performanceDataService);
-		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer("testId", 0, mockedFileDto), test.getBytes(), 1);
+		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer("testId", mockedFileDto), test.getBytes().length, test.getBytes(), 1);
 		UploadChunkContainer result = chunkHasher.apply(uploadChunkContainer);
 
 		//then
