@@ -8,25 +8,25 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
+import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
 
 @Component
-public class PerformanceDataSocketHandler extends TextWebSocketHandler {
+public class TasksProgressSocketHandler extends TextWebSocketHandler {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PerformanceDataSocketHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TasksProgressSocketHandler.class);
 
 	@Autowired
-	private PerformanceDataService performanceDataService;
+	private TasksProgressService tasksProgressService;
 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		performanceDataService.add(session);
+		tasksProgressService.add(session);
 		super.afterConnectionEstablished(session);
 	}
 
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		performanceDataService.remove(session);
+		tasksProgressService.remove(session);
 		super.afterConnectionClosed(session, status);
 	}
 

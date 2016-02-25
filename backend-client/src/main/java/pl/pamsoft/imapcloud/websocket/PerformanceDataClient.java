@@ -26,14 +26,14 @@ public class PerformanceDataClient {
 	private static final Logger LOG = LoggerFactory.getLogger(PerformanceDataClient.class);
 	ObjectMapper mapper = new ObjectMapper();
 	private CountDownLatch latch = new CountDownLatch(1);
-	private List<EventListener<PerformanceDataEvent>> listeners = new ArrayList<>();
+	private List<PerformanceDataEventListener> listeners = new ArrayList<>();
 	private Session websocketSession;
 
-	public void addListener(EventListener<PerformanceDataEvent> listener) {
+	public void addListener(PerformanceDataEventListener listener) {
 		this.listeners.add(listener);
 	}
 
-	public void removeListener(EventListener<PerformanceDataEvent> listener) {
+	public void removeListener(PerformanceDataEventListener listener) {
 		this.listeners.remove(listener);
 	}
 
@@ -59,7 +59,7 @@ public class PerformanceDataClient {
 
 	@OnMessage
 	public void onText(String message, Session session) {
-		for (EventListener<PerformanceDataEvent> listener : listeners) {
+		for (PerformanceDataEventListener listener : listeners) {
 			try {
 				PerformanceDataEvent eventData = mapper.readValue(message, PerformanceDataEvent.class);
 				listener.onEventReceived(eventData);

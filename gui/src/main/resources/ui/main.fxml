@@ -22,5 +22,10 @@
 				<fx:include fx:id="performanceTabPage" source="tab_performance.fxml" />
 			</content>
 		</Tab>
+		<Tab id="tasksTab" closable="false" text="%main.tab.tasks">
+			<content>
+				<fx:include fx:id="tasksTabPage" source="tab_tasks.fxml" />
+			</content>
+		</Tab>
 	</tabs>
 </TabPane>

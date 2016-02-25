@@ -5,6 +5,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
@@ -21,6 +22,7 @@ import pl.pamsoft.imapcloud.services.upload.FileHasher;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
+import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
 
 import javax.annotation.PostConstruct;
 import javax.mail.Store;
@@ -35,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -47,6 +50,7 @@ public class UploadService {
 
 	private ExecutorService executor;
 	private Map<String, Future<?>> taskMap = new HashMap<>();
+	private Map<String, TaskProgressEvent> taskProgressMap = new HashMap<>();
 
 	@Autowired
 	private AccountRepository accountRepository;
@@ -66,6 +70,9 @@ public class UploadService {
 	@Autowired
 	private PerformanceDataService performanceDataService;
 
+	@Autowired
+	private TasksProgressService tasksProgressService;
+
 
 	@PostConstruct
 	void init() {
@@ -80,14 +87,16 @@ public class UploadService {
 		try {
 			final String taskId = UUID.randomUUID().toString();
 			Future<?> task = executor.submit(() -> {
-
 				Thread.currentThread().setName("UploadTask-" + taskId);
 				try {
 					final MessageDigest instance = MessageDigest.getInstance("SHA-512");
 					final Account account = accountRepository.getById(selectedAccount.getId());
 					final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, statistics, performanceDataService).apply(selectedFiles);
+					taskProgressMap.put(taskId, new TaskProgressEvent(taskId, bytesToProcess));
 
 					Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
+					Consumer<UploadChunkContainer> updateProgress = ucc -> taskProgressMap.get(ucc.getTaskId()).process(ucc.getChunkSize());
+
 					Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 					Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics, performanceDataService);
 					Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance, statistics, performanceDataService);
@@ -98,6 +107,8 @@ public class UploadService {
 					Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
 					Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService, statistics, performanceDataService);
 					Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
+					Consumer<UploadChunkContainer> broadcastTaskProgress = ucc -> tasksProgressService.broadcast(taskProgressMap.get(ucc.getTaskId()));
+
 
 					selectedFiles.stream()
 						.map(packInContainer)
@@ -114,6 +125,8 @@ public class UploadService {
 						.map(saveOnIMAPServer)
 						.filter(filterEmptyUcc)
 						.map(storeFileChunk)
+						.peek(updateProgress)
+						.peek(broadcastTaskProgress)
 						.forEach(System.out::println);
 				} catch (NoSuchAlgorithmException e) {
 					e.printStackTrace();
