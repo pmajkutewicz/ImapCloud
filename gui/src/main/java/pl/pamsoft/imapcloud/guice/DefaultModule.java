@@ -8,6 +8,7 @@ import pl.pamsoft.imapcloud.rest.FilesRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 import pl.pamsoft.imapcloud.websocket.OnFailedInitNotification;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataClient;
+import pl.pamsoft.imapcloud.websocket.TaskProgressClient;
 
 import javax.inject.Singleton;
 
@@ -28,6 +29,12 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	PerformanceDataClient getPerformanceDataClient() {
 		return new PerformanceDataClient();
+	}
+
+	@Provides
+	@Singleton
+	TaskProgressClient getTaskProgressClient() {
+		return new TaskProgressClient();
 	}
 
 	@Provides

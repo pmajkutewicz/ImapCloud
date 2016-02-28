@@ -1,12 +1,10 @@
 package pl.pamsoft.imapcloud.websocket;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 public class TaskProgressEvent {
 	private String taskId;
 	private long bytesOverall;
