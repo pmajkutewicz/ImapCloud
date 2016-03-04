@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.controls.TaskProgressControl;
 import pl.pamsoft.imapcloud.websocket.TaskProgressClient;
 
 import javax.inject.Inject;
@@ -26,10 +27,12 @@ public class TasksController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		tasksContainer.getChildren().addAll(new TaskProgressControl("test"));
+		tasksContainer.getChildren().addAll(new TaskProgressControl("test2"));
 		try {
 			taskProgressClient.connect();
 		} catch (IOException | URISyntaxException | DeploymentException | InterruptedException e) {
-			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
 		}
 	}
 }
