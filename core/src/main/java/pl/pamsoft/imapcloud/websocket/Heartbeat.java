@@ -18,7 +18,7 @@ public class Heartbeat {
 	private TasksProgressService tasksProgressService;
 
 	private long sum = 0;
-	private TaskProgressEvent id = new TaskProgressEvent("id", Long.MAX_VALUE);
+	private TaskProgressEvent id = new TaskProgressEvent("id", 100000);
 
 	@Scheduled(fixedRate = 1000)
 	public void doIt() {

@@ -5,24 +5,17 @@ import com.davidhampgonsalves.identicon.IdenticonGenerator;
 import com.davidhampgonsalves.identicon.MessageDigestHashGenerator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelFormat;
-import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
-import javafx.scene.image.WritablePixelFormat;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.IntBuffer;
 
 public class TaskProgressControl extends AbstractControl {
 
+	@FXML
+	private Label taskIdLabel;
 	@FXML
 	private ProgressBar progressBar;
 	@FXML
@@ -32,10 +25,16 @@ public class TaskProgressControl extends AbstractControl {
 
 	public TaskProgressControl(String taskId) {
 		this.taskId = taskId;
-		updateIdenticon(taskId);
+		this.taskIdLabel.setText(taskId);
+		generateIdenticon(taskId);
 	}
 
-	private void updateIdenticon(String taskId) {
+	public void updateProgress(double value) {
+		progressBar.setProgress(value);
+	}
+
+
+	private void generateIdenticon(String taskId) {
 		HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("sha-512");
 		BufferedImage awtImage = IdenticonGenerator.generate(taskId, hashGenerator);
 

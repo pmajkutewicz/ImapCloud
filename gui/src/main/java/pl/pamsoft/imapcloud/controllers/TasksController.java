@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.VBox;
@@ -7,12 +8,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
 import pl.pamsoft.imapcloud.websocket.TaskProgressClient;
+import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 
 import javax.inject.Inject;
 import javax.websocket.DeploymentException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class TasksController implements Initializable {
@@ -25,14 +29,32 @@ public class TasksController implements Initializable {
 	@Inject
 	private TaskProgressClient taskProgressClient;
 
+	private Map<String, TaskProgressControl> currentTasks = new HashMap<>();
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		tasksContainer.getChildren().addAll(new TaskProgressControl("test"));
-		tasksContainer.getChildren().addAll(new TaskProgressControl("test2"));
 		try {
+			taskProgressClient.addListener(this::onTaskProgressEventReceived);
 			taskProgressClient.connect();
 		} catch (IOException | URISyntaxException | DeploymentException | InterruptedException e) {
 			LOG.error(e.getMessage(), e);
 		}
+	}
+
+	private void onTaskProgressEventReceived(TaskProgressEvent event) {
+		TaskProgressControl current;
+		String taskId = event.getTaskId();
+		if (!currentTasks.containsKey(taskId)) {
+			current = new TaskProgressControl(taskId);
+			currentTasks.put(taskId, current);
+			Platform.runLater(() -> tasksContainer.getChildren().addAll(current));
+		} else {
+			current = currentTasks.get(taskId);
+		}
+		double currentProgressInPrc = event.getBytesProcessed() / (double) event.getBytesOverall();
+		Platform.runLater(() -> current.updateProgress(currentProgressInPrc));
+		System.out.println(currentProgressInPrc);
+
+
 	}
 }
