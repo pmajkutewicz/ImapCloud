@@ -6,7 +6,6 @@ import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
-import pl.pamsoft.imapcloud.websocket.OnFailedInitNotification;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataClient;
 import pl.pamsoft.imapcloud.websocket.TaskProgressClient;
 
@@ -15,11 +14,6 @@ import javax.inject.Singleton;
 public class DefaultModule extends AbstractModule {
 
 	private static final String ENDPOINT = "http://localhost:9000/";
-	private OnFailedInitNotification notification;
-
-	public DefaultModule(OnFailedInitNotification notification) {
-		this.notification = notification;
-	}
 
 	@Override
 	protected void configure() {

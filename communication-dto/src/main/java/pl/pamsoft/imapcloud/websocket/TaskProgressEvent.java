@@ -1,10 +1,12 @@
 package pl.pamsoft.imapcloud.websocket;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
+@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class TaskProgressEvent {
 	private String taskId;
 	private long bytesOverall;
@@ -18,10 +20,10 @@ public class TaskProgressEvent {
 		this.bytesOverall = bytesOverall;
 	}
 
-	public void process(long bytesProcessed, String currentFile, long currentFileProgress, long currentFileSize) {
-		this.bytesProcessed += bytesProcessed;
-		this.currentFile = currentFile;
-		this.currentFileSize = currentFileSize;
-		this.currentFileProgress = currentFileProgress;
+	public void process(long overallBytesProcessed, String currentFileName, long fileProgress, long fileSize) {
+		this.bytesProcessed += overallBytesProcessed;
+		this.currentFile = currentFileName;
+		this.currentFileSize = fileSize;
+		this.currentFileProgress = fileProgress;
 	}
 }

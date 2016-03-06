@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.controls;
 import com.davidhampgonsalves.identicon.HashGeneratorInterface;
 import com.davidhampgonsalves.identicon.IdenticonGenerator;
 import com.davidhampgonsalves.identicon.MessageDigestHashGenerator;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -26,12 +27,10 @@ public class TaskProgressControl extends AbstractControl {
 	@FXML
 	private ImageView identicon;
 
-	private String taskId;
-
-	public TaskProgressControl(String taskId) {
-		this.taskId = taskId;
-		this.taskIdLabel.setText(taskId);
-		generateIdenticon(taskId);
+	@SuppressFBWarnings("UR_UNINIT_READ")
+	public TaskProgressControl(String id) {
+		this.taskIdLabel.setText(id);
+		generateIdenticon(id);
 	}
 
 	public void updateProgress(double overallProgressValue, double currentFileProgressValue, String message) {
@@ -41,9 +40,9 @@ public class TaskProgressControl extends AbstractControl {
 	}
 
 
-	private void generateIdenticon(String taskId) {
+	private void generateIdenticon(String hash) {
 		HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("sha-512");
-		BufferedImage awtImage = IdenticonGenerator.generate(taskId, hashGenerator);
+		BufferedImage awtImage = IdenticonGenerator.generate(hash, hashGenerator);
 
 		identicon.setSmooth(false);
 		identicon.setPreserveRatio(true);

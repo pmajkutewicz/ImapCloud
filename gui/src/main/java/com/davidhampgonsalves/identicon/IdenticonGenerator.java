@@ -4,8 +4,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
 public class IdenticonGenerator {
-	private static int height = 8;
-	private static int width = 8;
+	private static final int ZERO = 0;
+	private static final int ONE = 1;
+	private static final int SIX = 6;
+	private static final int SEVEN = 7;
+	private static final int EIGTH = 8;
+	private static final int TWO_FIVE_FIVE = 255;
+
+	private static int height = EIGTH;
+	private static int width = EIGTH;
 
 	public static BufferedImage generate(String userName, HashGeneratorInterface hashGenerator) {
 		byte[] hash = hashGenerator.generate(userName);
@@ -14,21 +21,22 @@ public class IdenticonGenerator {
 		WritableRaster raster = identicon.getRaster();
 
 		//get byte values as unsigned ints
-		int r = hash[0] & 255;
-		int g = hash[1] & 255;
-		int b = hash[2] & 255;
+		int r = hash[0] & TWO_FIVE_FIVE;
+		int g = hash[1] & TWO_FIVE_FIVE;
+		int b = hash[2] & TWO_FIVE_FIVE;
 
-		int[] background = new int[]{255, 255, 255, 0};
-		int[] foreground = new int[]{r, g, b, 255};
+		int[] background = new int[]{TWO_FIVE_FIVE, TWO_FIVE_FIVE, TWO_FIVE_FIVE, ZERO};
+		int[] foreground = new int[]{r, g, b, TWO_FIVE_FIVE};
 
-		for (int x = 0; x < width; x++) {
-			int i = x < 6 ? x : 7 - x;
-			for (int y = 0; y < height; y++) {
+		for (int x = ZERO; x < width; x++) {
+			int i = x < SIX ? x : SEVEN - x;
+			for (int y = ZERO; y < height; y++) {
 				int[] pixelColor;
-				if ((hash[i] >> y & 1) == 1)
+				if ((hash[i] >> y & ONE) == ONE) {
 					pixelColor = foreground;
-				else
+				} else {
 					pixelColor = background;
+				}
 				raster.setPixel(x, y, pixelColor);
 			}
 		}

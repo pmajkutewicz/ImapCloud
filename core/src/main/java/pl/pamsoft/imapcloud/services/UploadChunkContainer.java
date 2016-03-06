@@ -31,6 +31,7 @@ public class UploadChunkContainer {
 		this(taskId, fileDto, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 0, 0, null, 0, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
 	}
 
+	//CSOFF: ParameterNumberCheck
 	private UploadChunkContainer(String taskId, FileDto fileDto, String fileHash, String savedFileId, String fileUniqueId, long chunkSize, long currentFileChunkCumulativeSize,
 	                             byte[] data, int chunkNumber, String chunkHash, String fileChunkUniqueId, String messageId) {
 		this.taskId = taskId;
@@ -46,6 +47,7 @@ public class UploadChunkContainer {
 		this.fileChunkUniqueId = fileChunkUniqueId;
 		this.messageId = messageId;
 	}
+	//CSON
 
 	public static UploadChunkContainer addFileDto(UploadChunkContainer ucc, FileDto file) {
 		return new UploadChunkContainer(ucc.getTaskId(), file, ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),

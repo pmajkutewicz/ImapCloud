@@ -88,7 +88,8 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 				generateNextFetchSize();
 			}
 			mapped.get(data);
-			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data.length, chunkSizeCumulative += data.length, data, currentChunkNumber++);
+			chunkSizeCumulative += data.length;
+			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data.length, chunkSizeCumulative, data, currentChunkNumber++);
 			statistics.add(StatisticType.CHUNK_ENCODER, stopwatch.stop());
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_ENCODER, stopwatch));
 			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch);

@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.controls;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -32,7 +33,7 @@ public abstract class AbstractControl extends Region {
 			setMaxSize(root);
 			this.getChildren().add(root);
 		} catch (IOException ex) {
-			LOG.error(ex.getMessage(), ex);
+			LOG.error("Can't load fxml", ex);
 		}
 	}
 
@@ -40,6 +41,7 @@ public abstract class AbstractControl extends Region {
 		return String.format("/ui/controls/%s.fxml", this.getClass().getSimpleName());
 	}
 
+	@SuppressFBWarnings("UI_INHERITANCE_UNSAFE_GETRESOURCE")
 	private URL getViewURL() {
 		return this.getClass().getResource(this.getViewPath());
 	}
@@ -52,7 +54,7 @@ public abstract class AbstractControl extends Region {
 	}
 
 	private void setMaxSize(Node node) {
-		if (node != null && node instanceof Region) {
+		if (node instanceof Region) {
 			Region region = (Region) node;
 			region.setMaxWidth(Double.MAX_VALUE);
 			region.setMaxHeight(Double.MAX_VALUE);

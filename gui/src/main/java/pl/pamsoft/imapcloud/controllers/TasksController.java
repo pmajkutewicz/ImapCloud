@@ -37,7 +37,7 @@ public class TasksController implements Initializable {
 			taskProgressClient.addListener(this::onTaskProgressEventReceived);
 			taskProgressClient.connect();
 		} catch (IOException | URISyntaxException | DeploymentException | InterruptedException e) {
-			LOG.error(e.getMessage(), e);
+			LOG.error("Can't connect to backend", e);
 		}
 	}
 

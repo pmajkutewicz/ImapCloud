@@ -38,11 +38,11 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 			if (FileDto.Type.DIRECTORY == fileDto.getType()) {
 				long dirSize = filesIOService.calculateDirSize(new File(fileDto.getAbsolutePath()));
 				LOG.debug("{} is {} bytes", fileDto.getAbsolutePath(), dirSize);
-				result =+ dirSize;
+				result = +dirSize;
 			} else {
 				long fileSize = new File(fileDto.getAbsolutePath()).length();
 				LOG.debug("{} is {} bytes", fileDto.getAbsolutePath(), fileSize);
-				result =+ fileSize;
+				result = +fileSize;
 			}
 		}
 		statistics.add(StatisticType.DIRECTORY_SIZE_CALCULATOR, stopwatch.stop());

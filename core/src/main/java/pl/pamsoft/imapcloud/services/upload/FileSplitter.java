@@ -44,9 +44,9 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
-		FileChunkIterator fileChunkIterator = variableSize ?
-			new FileChunkIterator(ucc, maxSize, xPercent(maxSize), statistics, performanceDataService) :
-			new FileChunkIterator(ucc, maxSize, statistics, performanceDataService);
+		FileChunkIterator fileChunkIterator = variableSize
+			? new FileChunkIterator(ucc, maxSize, xPercent(maxSize), statistics, performanceDataService)
+			: new FileChunkIterator(ucc, maxSize, statistics, performanceDataService);
 		try {
 			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);

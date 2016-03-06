@@ -1,9 +1,12 @@
 package com.davidhampgonsalves.identicon;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
 public class MessageDigestHashGenerator implements HashGeneratorInterface {
-	MessageDigest messageDigest;
+	private static final String CHARSET = StandardCharsets.UTF_8.toString();
+	private MessageDigest messageDigest;
 
 	public MessageDigestHashGenerator(String algorithim) {
 		try {
@@ -14,6 +17,10 @@ public class MessageDigestHashGenerator implements HashGeneratorInterface {
 	}
 
 	public byte[] generate(String input) {
-		return messageDigest.digest(input.getBytes());
+		try {
+			return messageDigest.digest(input.getBytes(CHARSET));
+		} catch (UnsupportedEncodingException e) {
+			return new byte[0];
+		}
 	}
 }

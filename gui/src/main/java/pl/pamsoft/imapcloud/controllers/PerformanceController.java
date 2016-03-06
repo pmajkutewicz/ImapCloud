@@ -30,6 +30,8 @@ public class PerformanceController implements Initializable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PerformanceController.class);
 	private static final int MAX_DATA_POINTS = 100;
+	private static final int TEN = 10;
+	private static final int TWENTY = 20;
 
 	@Inject
 	PerformanceDataClient performanceDataClient;
@@ -42,7 +44,7 @@ public class PerformanceController implements Initializable {
 
 	private ResourceBundle bundle;
 
-	private Map<StatisticType, ConcurrentLinkedQueue<Number>> dataQueue = new EnumMap<>(StatisticType.class);
+	private Map<StatisticType, ConcurrentLinkedQueue<Number>> dataQueueMap = new EnumMap<>(StatisticType.class);
 	private Map<StatisticType, NumberAxis> xAxises = new EnumMap<>(StatisticType.class);
 	private Map<StatisticType, XYChart.Series> series = new EnumMap<>(StatisticType.class);
 	private Map<StatisticType, AtomicInteger> seriesCounter = new EnumMap<>(StatisticType.class);
@@ -57,7 +59,7 @@ public class PerformanceController implements Initializable {
 
 	private void initCharts() {
 		for (StatisticType statisticType : StatisticType.values()) {
-			dataQueue.put(statisticType, new ConcurrentLinkedQueue<>());
+			dataQueueMap.put(statisticType, new ConcurrentLinkedQueue<>());
 			seriesCounter.put(statisticType, new AtomicInteger(0));
 
 			NumberAxis xAxis = createXAxis();
@@ -72,9 +74,9 @@ public class PerformanceController implements Initializable {
 	}
 
 	private AreaChart.Series<Number, Number> createSeries() {
-		AreaChart.Series<Number, Number> series = new AreaChart.Series<>();
-		series.setName("Area Chart Series");
-		return series;
+		AreaChart.Series<Number, Number> areaSerie = new AreaChart.Series<>();
+		areaSerie.setName("Area Chart Series");
+		return areaSerie;
 	}
 
 	private AreaChart<Number, Number> createChart(StatisticType type, NumberAxis xAxis, NumberAxis yAxis) {
@@ -82,7 +84,7 @@ public class PerformanceController implements Initializable {
 		final AreaChart<Number, Number> sc = new AreaChart<Number, Number>(xAxis, yAxis) {
 			// Override to remove symbols on each data point
 			@Override
-			protected void dataItemAdded(Series<Number, Number> series, int itemIndex, Data<Number, Number> item) {
+			protected void dataItemAdded(Series<Number, Number> chartSerie, int itemIndex, Data<Number, Number> item) {
 			}
 		};
 		sc.setAnimated(false);
@@ -98,7 +100,7 @@ public class PerformanceController implements Initializable {
 	}
 
 	private NumberAxis createXAxis() {
-		NumberAxis xAxis = new NumberAxis(0, MAX_DATA_POINTS, MAX_DATA_POINTS / 10);
+		NumberAxis xAxis = new NumberAxis(0, MAX_DATA_POINTS, MAX_DATA_POINTS / TEN);
 		xAxis.setForceZeroInRange(false);
 		xAxis.setAutoRanging(false);
 		xAxis.setTickLabelsVisible(false);
@@ -120,11 +122,11 @@ public class PerformanceController implements Initializable {
 
 	private void addDataToSeries() {
 		for (StatisticType statisticType : StatisticType.values()) {
-			ConcurrentLinkedQueue<Number> queue = dataQueue.get(statisticType);
+			ConcurrentLinkedQueue<Number> queue = dataQueueMap.get(statisticType);
 			XYChart.Series serie = series.get(statisticType);
 			AtomicInteger serieCounter = seriesCounter.get(statisticType);
 			NumberAxis numberAxis = xAxises.get(statisticType);
-			for (int i = 0; i < 20; i++) { //-- add 20 numbers to the plot+
+			for (int i = 0; i < TWENTY; i++) { //-- add 20 numbers to the plot+
 				if (queue.isEmpty()) {
 					break;
 				}
@@ -160,7 +162,7 @@ public class PerformanceController implements Initializable {
 	}
 
 	private void processEvent(PerformanceDataEvent performanceEvent) {
-		ConcurrentLinkedQueue<Number> numbers = dataQueue.get(performanceEvent.getType());
+		ConcurrentLinkedQueue<Number> numbers = dataQueueMap.get(performanceEvent.getType());
 		numbers.add(performanceEvent.getCurrentValue());
 	}
 }

@@ -16,7 +16,7 @@ public class Start extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		DefaultModule module = new DefaultModule(e -> handleConnectionInitializationFailed());
+		DefaultModule module = new DefaultModule();
 
 		ResourceBundle bundle = ResourceBundle.getBundle("i18n");
 		Parent root = FXMLLoader.load(getClass().getResource("ui/main.fxml"), bundle, new JavaFXBuilderFactory(), new GuiceControllerFactoryCallback(module));
@@ -27,7 +27,4 @@ public class Start extends Application {
 		stage.show();
 	}
 
-	private void handleConnectionInitializationFailed() {
-		//TODO: show error message
-	}
 }
