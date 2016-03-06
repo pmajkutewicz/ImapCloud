@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
+import com.google.common.cache.CacheBuilder;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -32,11 +33,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -49,8 +54,9 @@ public class UploadService {
 	private static final int MAX_TASKS = 10;
 
 	private ExecutorService executor;
-	private Map<String, Future<?>> taskMap = new HashMap<>();
-	private Map<String, TaskProgressEvent> taskProgressMap = new HashMap<>();
+	private ScheduledExecutorService scheduledExecutorService;
+	private Map<String, Future<?>> taskMap = new ConcurrentHashMap<>();
+	private Map<String, TaskProgressEvent> taskProgressMap = new ConcurrentHashMap<>();
 
 	@Autowired
 	private AccountRepository accountRepository;
@@ -73,6 +79,15 @@ public class UploadService {
 	@Autowired
 	private TasksProgressService tasksProgressService;
 
+	private Callable<Void> cleanUpTask = () -> {
+		for (Map.Entry<String, Future<?>> taskEntry : taskMap.entrySet()) {
+			if (taskEntry.getValue().isDone()) {
+				taskProgressMap.remove(taskEntry.getKey());
+				taskMap.remove(taskEntry.getKey());
+			}
+		}
+		return null;
+	};
 
 	@PostConstruct
 	void init() {
@@ -81,6 +96,8 @@ public class UploadService {
 			.setDaemon(false)
 			.build();
 		executor = Executors.newFixedThreadPool(MAX_TASKS, threadFactory);
+		scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+		scheduledExecutorService.schedule(cleanUpTask, 15, TimeUnit.MINUTES);
 	}
 
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncodingEnabled) {
@@ -95,7 +112,8 @@ public class UploadService {
 					taskProgressMap.put(taskId, new TaskProgressEvent(taskId, bytesToProcess));
 
 					Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
-					Consumer<UploadChunkContainer> updateProgress = ucc -> taskProgressMap.get(ucc.getTaskId()).process(ucc.getChunkSize());
+					Consumer<UploadChunkContainer> updateProgress = ucc -> taskProgressMap.get(ucc.getTaskId())
+						.process(ucc.getChunkSize(), ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize(), ucc.getFileDto().getSize());
 
 					Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 					Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics, performanceDataService);
@@ -108,7 +126,6 @@ public class UploadService {
 					Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService, statistics, performanceDataService);
 					Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 					Consumer<UploadChunkContainer> broadcastTaskProgress = ucc -> tasksProgressService.broadcast(taskProgressMap.get(ucc.getTaskId()));
-
 
 					selectedFiles.stream()
 						.map(packInContainer)
@@ -139,7 +156,6 @@ public class UploadService {
 		}
 		return false;
 	}
-
 
 	private GenericObjectPool<Store> createConnectionPool(Account account) {
 		IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), account.getImapServerAddress());

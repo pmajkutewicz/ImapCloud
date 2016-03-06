@@ -51,10 +51,10 @@ public class TasksController implements Initializable {
 		} else {
 			current = currentTasks.get(taskId);
 		}
-		double currentProgressInPrc = event.getBytesProcessed() / (double) event.getBytesOverall();
-		Platform.runLater(() -> current.updateProgress(currentProgressInPrc));
-		System.out.println(currentProgressInPrc);
-
-
+		double overallProgress = event.getBytesProcessed() / (double) event.getBytesOverall();
+		double currentFileProgress = event.getCurrentFileProgress() / (double) event.getCurrentFileSize();
+		String currentFile = String.format("Uploading: %s", event.getCurrentFile());
+		Platform.runLater(() -> current.updateProgress(overallProgress, currentFileProgress, currentFile));
+		System.out.println(overallProgress);
 	}
 }

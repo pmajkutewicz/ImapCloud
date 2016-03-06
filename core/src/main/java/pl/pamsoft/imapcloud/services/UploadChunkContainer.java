@@ -19,6 +19,7 @@ public class UploadChunkContainer {
 	private final String savedFileId;
 	private final String fileUniqueId;
 	private final long chunkSize;
+	private final long currentFileChunkCumulativeSize;
 	@SuppressFBWarnings("EI_EXPOSE_REP")
 	private final byte[] data;
 	private final int chunkNumber;
@@ -27,10 +28,10 @@ public class UploadChunkContainer {
 	private final String messageId;
 
 	public UploadChunkContainer(String taskId, FileDto fileDto) {
-		this(taskId, fileDto, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 0, null, 0, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
+		this(taskId, fileDto, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 0, 0, null, 0, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY);
 	}
 
-	private UploadChunkContainer(String taskId, FileDto fileDto, String fileHash, String savedFileId, String fileUniqueId, long chunkSize,
+	private UploadChunkContainer(String taskId, FileDto fileDto, String fileHash, String savedFileId, String fileUniqueId, long chunkSize, long currentFileChunkCumulativeSize,
 	                             byte[] data, int chunkNumber, String chunkHash, String fileChunkUniqueId, String messageId) {
 		this.taskId = taskId;
 		this.fileDto = fileDto;
@@ -38,6 +39,7 @@ public class UploadChunkContainer {
 		this.savedFileId = savedFileId;
 		this.fileUniqueId = fileUniqueId;
 		this.chunkSize = chunkSize;
+		this.currentFileChunkCumulativeSize = currentFileChunkCumulativeSize;
 		this.data = data;
 		this.chunkNumber = chunkNumber;
 		this.chunkHash = chunkHash;
@@ -46,42 +48,42 @@ public class UploadChunkContainer {
 	}
 
 	public static UploadChunkContainer addFileDto(UploadChunkContainer ucc, FileDto file) {
-		return new UploadChunkContainer(ucc.getTaskId(), file, ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(),
+		return new UploadChunkContainer(ucc.getTaskId(), file, ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileChunkUniqueId(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addFileHash(UploadChunkContainer ucc, String fileHash) {
-		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), fileHash, ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(),
+		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), fileHash, ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileChunkUniqueId(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addIds(UploadChunkContainer ucc, String savedFileId, String fileUniqueId) {
-		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), savedFileId, fileUniqueId, ucc.getChunkSize(),
+		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), savedFileId, fileUniqueId, ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileChunkUniqueId(), ucc.getMessageId());
 	}
 
-	public static UploadChunkContainer addChunk(UploadChunkContainer ucc, long chunkSize, byte[] data, int chunkNumber) {
-		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), chunkSize,
+	public static UploadChunkContainer addChunk(UploadChunkContainer ucc, long chunkSize, long currentFileChunkCumulativeSize, byte[] data, int chunkNumber) {
+		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), chunkSize, currentFileChunkCumulativeSize,
 			data, chunkNumber, ucc.getChunkHash(), ucc.getFileChunkUniqueId(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addChunkHash(UploadChunkContainer ucc, String chunkHash) {
-		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(),
+		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.getChunkNumber(), chunkHash, ucc.getFileChunkUniqueId(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addEncryptedData(UploadChunkContainer ucc, byte[] encoded) {
-		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(),
+		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			encoded, ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileChunkUniqueId(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addChunkId(UploadChunkContainer ucc, String fileChunkUniqueId) {
-		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(),
+		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), fileChunkUniqueId, ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addMessageId(UploadChunkContainer ucc, String messageId) {
-		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(),
+		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.getChunkNumber(), ucc.getChunkHash(), ucc.getFileUniqueId(), messageId);
 	}
 

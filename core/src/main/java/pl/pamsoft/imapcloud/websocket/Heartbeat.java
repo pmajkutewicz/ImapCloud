@@ -17,14 +17,13 @@ public class Heartbeat {
 	@Autowired
 	private TasksProgressService tasksProgressService;
 
-	private long sum = 0;
-	private TaskProgressEvent id = new TaskProgressEvent("id", 100000);
+	private TaskProgressEvent id = new TaskProgressEvent("id", 200000);
 
 	@Scheduled(fixedRate = 1000)
 	public void doIt() {
 		long currentValue = (long) RandomUtils.nextInt(100);
 		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_HASH, currentValue));
-		id.process(currentValue);
+		id.process(currentValue * 2, "filename", currentValue, 100);
 		tasksProgressService.broadcast(id);
 	}
 }

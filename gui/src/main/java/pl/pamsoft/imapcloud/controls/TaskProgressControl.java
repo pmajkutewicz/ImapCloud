@@ -7,6 +7,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 
@@ -17,7 +18,11 @@ public class TaskProgressControl extends AbstractControl {
 	@FXML
 	private Label taskIdLabel;
 	@FXML
-	private ProgressBar progressBar;
+	private ProgressBar currentFileProgress;
+	@FXML
+	private Label taskMessage;
+	@FXML
+	private ProgressIndicator overallProgress;
 	@FXML
 	private ImageView identicon;
 
@@ -29,8 +34,10 @@ public class TaskProgressControl extends AbstractControl {
 		generateIdenticon(taskId);
 	}
 
-	public void updateProgress(double value) {
-		progressBar.setProgress(value);
+	public void updateProgress(double overallProgressValue, double currentFileProgressValue, String message) {
+		currentFileProgress.setProgress(currentFileProgressValue);
+		overallProgress.setProgress(overallProgressValue);
+		taskMessage.setText(message);
 	}
 
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -16,11 +16,12 @@
 		</ImageView>
 		<VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
 			<children>
-				<Label maxWidth="1.7976931348623157E308" text="Label" fx:id="taskIdLabel"/>
-				<ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" prefWidth="200.0" progress="0"/>
-				<Label maxWidth="1.7976931348623157E308" text="message "/>
+				<Label fx:id="taskIdLabel" maxWidth="1.7976931348623157E308" text="Task ID"/>
+				<ProgressBar fx:id="currentFileProgress" maxWidth="1.7976931348623157E308" prefWidth="200.0" progress="0"/>
+				<Label fx:id="taskMessage" maxWidth="1.7976931348623157E308" text="Task message" />
 			</children>
 		</VBox>
+		<ProgressIndicator fx:id="overallProgress" progress="0.0"/>
 	</children>
 	<padding>
 		<Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
