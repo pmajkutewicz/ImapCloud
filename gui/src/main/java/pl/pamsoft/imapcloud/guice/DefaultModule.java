@@ -15,6 +15,16 @@ public class DefaultModule extends AbstractModule {
 
 	private static final String ENDPOINT = "http://localhost:9000/";
 
+	private final String endpoint;
+	private final String username;
+	private final String password;
+
+	public DefaultModule(String endpoint, String username, String password) {
+		this.endpoint = endpoint;
+		this.username = username;
+		this.password = password;
+	}
+
 	@Override
 	protected void configure() {
 	}
@@ -34,19 +44,19 @@ public class DefaultModule extends AbstractModule {
 	@Provides
 	@Singleton
 	AccountRestClient getAccountRestClient() {
-		return new AccountRestClient(ENDPOINT);
+		return new AccountRestClient("http://" + endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
 	FilesRestClient getFilesRestClient() {
-		return new FilesRestClient(ENDPOINT);
+		return new FilesRestClient("http://" + endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
 	UploadsRestClient getUploadRestClient() {
-		return new UploadsRestClient(ENDPOINT);
+		return new UploadsRestClient("http://" + endpoint, username, password);
 	}
 
 	@Provides

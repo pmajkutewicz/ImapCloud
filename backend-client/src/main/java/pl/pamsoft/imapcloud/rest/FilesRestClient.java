@@ -15,15 +15,14 @@ public class FilesRestClient extends AbstractRestClient {
 	private static final Logger LOG = LoggerFactory.getLogger(FilesRestClient.class);
 	private static final String GET_HOME_DIR = "/files/homeDir";
 	private static final String LIST_FILES_IN_DIR = "/files";
-	private final String endpoint;
 
-	public FilesRestClient(String endpoint) {
-		this.endpoint = endpoint;
+	public FilesRestClient(String endpoint, String username, String pass) {
+		super(endpoint, username, pass);
 	}
 
 	public GetHomeDirResponse getHomeDir() throws IOException {
 		try {
-			HttpResponse<GetHomeDirResponse> response = Unirest.get(endpoint + GET_HOME_DIR)
+			HttpResponse<GetHomeDirResponse> response = Unirest.get(endpoint + GET_HOME_DIR).basicAuth(bAuthUsername, bAuthPassword)
 				.asObject(GetHomeDirResponse.class);
 			throwExceptionIfNotValidResponse(response);
 			return response.getBody();
@@ -34,7 +33,7 @@ public class FilesRestClient extends AbstractRestClient {
 
 	public ListFilesInDirResponse listDir(String dir) throws IOException {
 		try {
-			HttpResponse<ListFilesInDirResponse> response = Unirest.get(endpoint + LIST_FILES_IN_DIR)
+			HttpResponse<ListFilesInDirResponse> response = Unirest.get(endpoint + LIST_FILES_IN_DIR).basicAuth(bAuthUsername, bAuthPassword)
 				.queryString("dir", dir)
 				.asObject(ListFilesInDirResponse.class);
 			throwExceptionIfNotValidResponse(response);

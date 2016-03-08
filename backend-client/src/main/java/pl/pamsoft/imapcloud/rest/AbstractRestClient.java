@@ -10,11 +10,17 @@ import java.io.IOException;
 
 abstract class AbstractRestClient {
 
+	private final ObjectMapper objectMapper = new JacksonObjectMapper();
+	final String endpoint;
+	final String bAuthUsername;
+	final String bAuthPassword;
 	boolean initialized;
-	ObjectMapper objectMapper = new JacksonObjectMapper();
 
-	AbstractRestClient() {
+	AbstractRestClient(String endpoint, String username, String pass) {
 		initUnirest();
+		this.endpoint = endpoint;
+		this.bAuthUsername = username;
+		this.bAuthPassword = pass;
 	}
 
 	void throwExceptionIfNotValidResponse(HttpResponse response) throws IOException {

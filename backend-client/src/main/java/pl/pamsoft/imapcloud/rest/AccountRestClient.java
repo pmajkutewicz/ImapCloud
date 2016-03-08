@@ -20,15 +20,14 @@ public class AccountRestClient extends AbstractRestClient {
 	private static final Logger LOG = LoggerFactory.getLogger(AccountRestClient.class);
 	private static final String LIST_EMAIL_PROVIDERS = "/accounts/emailProviders";
 	private static final String CREATE_ACCOUNT = "/accounts";
-	private final String endpoint;
 
-	public AccountRestClient(String endpoint) {
-		this.endpoint = endpoint;
+	public AccountRestClient(String endpoint, String username, String pass) {
+		super(endpoint, username, pass);
 	}
 
 	public EmailProviderInfoList getAvailableEmailAccounts() throws IOException {
 		try {
-			HttpResponse<EmailProviderInfoList> response = Unirest.get(endpoint + LIST_EMAIL_PROVIDERS)
+			HttpResponse<EmailProviderInfoList> response = Unirest.get(endpoint + LIST_EMAIL_PROVIDERS).basicAuth(bAuthUsername, bAuthPassword)
 				.asObject(EmailProviderInfoList.class);
 			throwExceptionIfNotValidResponse(response);
 			return response.getBody();
@@ -39,7 +38,7 @@ public class AccountRestClient extends AbstractRestClient {
 
 	public void createAccount(EmailProviderInfo selectedEmailProvider, String username, String password) throws IOException {
 		try {
-			HttpResponse<JsonNode> httpResponse = Unirest.post(endpoint + CREATE_ACCOUNT)
+			HttpResponse<JsonNode> httpResponse = Unirest.post(endpoint + CREATE_ACCOUNT).basicAuth(bAuthUsername, bAuthPassword)
 				.body(new CreateAccountRequest(username, password, selectedEmailProvider))
 				.asJson();
 			LOG.debug(httpResponse.toString());
@@ -50,7 +49,8 @@ public class AccountRestClient extends AbstractRestClient {
 
 	public List<AccountDto> listAccounts() throws IOException {
 		try {
-			HttpResponse<ListAccountResponse> httpResponse = Unirest.get(endpoint + CREATE_ACCOUNT).asObject(ListAccountResponse.class);
+			HttpResponse<ListAccountResponse> httpResponse = Unirest.get(endpoint + CREATE_ACCOUNT).basicAuth(bAuthUsername, bAuthPassword).asObject(ListAccountResponse.class);
+			throwExceptionIfNotValidResponse(httpResponse);
 			return httpResponse.getBody().getAccount();
 		} catch (UnirestException e) {
 			throw new IOException(e);

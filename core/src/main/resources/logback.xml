@@ -3,5 +3,6 @@
 	<include resource="org/springframework/boot/logging/logback/base.xml"/>
 	<logger name="org.springframework.web" level="ERROR"/>
 
-	<logger name="pl.pamsoft" level="DEBUG"/>
+	<logger name="pl.pamsoft" level="INFO"/>
+	<logger name="org.springframework.boot.autoconfigure.security" level="INFO"/>
 </configuration>

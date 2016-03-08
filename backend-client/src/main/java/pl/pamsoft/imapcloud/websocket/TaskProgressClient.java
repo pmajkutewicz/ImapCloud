@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-@ClientEndpoint
+@ClientEndpoint(configurator = AuthorizationConfigurator.class)
 public class TaskProgressClient {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TaskProgressClient.class);

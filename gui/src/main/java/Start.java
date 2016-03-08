@@ -16,12 +16,9 @@ public class Start extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		DefaultModule module = new DefaultModule();
-
 		ResourceBundle bundle = ResourceBundle.getBundle("i18n");
-		Parent root = FXMLLoader.load(getClass().getResource("ui/main.fxml"), bundle, new JavaFXBuilderFactory(), new GuiceControllerFactoryCallback(module));
+		Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("ui/login.fxml"), bundle, new JavaFXBuilderFactory(), null);
 		Scene scene = new Scene(root);
-		scene.getStylesheets().add(getClass().getResource("css/custom.css").toExternalForm());
 		stage.setTitle("IMAP Cloud");
 		stage.setScene(scene);
 		stage.show();

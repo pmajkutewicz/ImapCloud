@@ -11,4 +11,4 @@ server:
   tomcat.accesslog.enabled: true
   port: 9000
 
-
+security.user.password: test

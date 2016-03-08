@@ -17,15 +17,14 @@ public class UploadsRestClient extends AbstractRestClient {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UploadsRestClient.class);
 	private static final String START_UPLOADS = "/uploads/start";
-	private final String endpoint;
 
-	public UploadsRestClient(String endpoint) {
-		this.endpoint = endpoint;
+	public UploadsRestClient(String endpoint, String username, String pass) {
+		super(endpoint, username, pass);
 	}
 
 	public void startUpload(List<FileDto> selectedFiles, AccountDto selectedAccount) throws IOException {
 		try {
-			HttpResponse<JsonNode> httpResponse = Unirest.post(endpoint + START_UPLOADS)
+			HttpResponse<JsonNode> httpResponse = Unirest.post(endpoint + START_UPLOADS).basicAuth(bAuthUsername, bAuthPassword)
 				.body(new StartUploadRequest(selectedFiles, selectedAccount, true))
 				.asJson();
 			LOG.debug(httpResponse.toString());

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+<?import java.net.URL?>
+<?scenebuilder-stylesheet ../css/login.css?>
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+          alignment="center" hgap="10" vgap="10" fx:controller="pl.pamsoft.imapcloud.controllers.LoginController" styleClass="root"
+          xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+	<stylesheets>
+		<URL value="@../css/login.css"/>
+	</stylesheets>
+	<padding>
+		<Insets top="25" right="25" bottom="10" left="25"/>
+	</padding>
+	<Text id="welcome-text" text="Welcome" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"/>
+
+	<Label text="%login.host" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+	<TextField fx:id="host" GridPane.columnIndex="1" GridPane.rowIndex="1" text="localhost:9000"/>
+
+	<Label text="%login.user" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+	<TextField fx:id="username" GridPane.columnIndex="1" GridPane.rowIndex="2" text="user"/>
+
+	<Label text="%login.pass" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+	<PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="3" text="test"/>
+
+	<HBox spacing="10" alignment="bottom_right" GridPane.columnIndex="1" GridPane.rowIndex="5">
+		<Button text="%login.connect" onAction="#handleSubmitButtonAction"/>
+	</HBox>
+	<Text fx:id="actiontarget" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+</GridPane>
