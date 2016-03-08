@@ -32,13 +32,13 @@ public class DefaultModule extends AbstractModule {
 	@Provides
 	@Singleton
 	PerformanceDataClient getPerformanceDataClient() {
-		return new PerformanceDataClient();
+		return new PerformanceDataClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
 	TaskProgressClient getTaskProgressClient() {
-		return new TaskProgressClient();
+		return new TaskProgressClient(endpoint, username, password);
 	}
 
 	@Provides

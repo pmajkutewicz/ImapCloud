@@ -4,8 +4,6 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import pl.pamsoft.imapcloud.guice.DefaultModule;
-import pl.pamsoft.imapcloud.guice.GuiceControllerFactoryCallback;
 
 import java.util.ResourceBundle;
 
