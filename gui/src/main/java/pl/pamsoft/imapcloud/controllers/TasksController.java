@@ -34,6 +34,16 @@ public class TasksController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		try {
+			currentTasks.put("a", new TaskProgressControl("a"));
+			currentTasks.put("ab", new TaskProgressControl("ab"));
+			currentTasks.put("ac", new TaskProgressControl("ac"));
+			currentTasks.put("ad", new TaskProgressControl("ad"));
+			currentTasks.put("ae", new TaskProgressControl("ae"));
+			currentTasks.put("af", new TaskProgressControl("af"));
+			currentTasks.put("ag", new TaskProgressControl("ag"));
+			currentTasks.put("ah", new TaskProgressControl("ah"));
+			currentTasks.put("aj", new TaskProgressControl("aj"));
+			Platform.runLater(() -> tasksContainer.getChildren().addAll(currentTasks.values()));
 			taskProgressClient.addListener(this::onTaskProgressEventReceived);
 			taskProgressClient.connect();
 		} catch (IOException | URISyntaxException | DeploymentException | InterruptedException e) {
