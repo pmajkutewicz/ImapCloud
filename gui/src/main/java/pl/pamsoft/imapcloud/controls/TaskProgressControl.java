@@ -42,13 +42,11 @@ public class TaskProgressControl extends AbstractControl {
 
 	private void generateIdenticon(String hash) {
 		HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("sha-512");
-		BufferedImage awtImage = IdenticonGenerator.generate(hash, hashGenerator);
+		WritableImage writableImage = IdenticonGenerator.generateWithoutSmoothing(hash, hashGenerator);
 
 		identicon.setSmooth(false);
 		identicon.setPreserveRatio(true);
-		WritableImage fxImage = new WritableImage(awtImage.getWidth(), awtImage.getHeight());
-		SwingFXUtils.toFXImage(awtImage, fxImage);
-		identicon.setImage(fxImage);
+		identicon.setImage(writableImage);
 	}
 
 }
