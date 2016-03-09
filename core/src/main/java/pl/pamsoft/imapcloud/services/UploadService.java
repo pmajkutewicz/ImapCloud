@@ -114,18 +114,21 @@ public class UploadService {
 				Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 				Consumer<UploadChunkContainer> updateProgress = ucc -> taskProgressMap.get(ucc.getTaskId())
 					.process(ucc.getChunkSize(), ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize(), ucc.getFileDto().getSize());
+				Consumer<UploadChunkContainer> markFileProcessed = ucc -> taskProgressMap.get(ucc.getTaskId())
+					.markFileProcessed(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
+
+				Consumer<UploadChunkContainer> broadcastTaskProgress = ucc -> tasksProgressService.broadcast(taskProgressMap.get(ucc.getTaskId()));
 
 				Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance, statistics, performanceDataService);
 				Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
-				Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account);
+				Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileProcessed, broadcastTaskProgress);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
-				Consumer<UploadChunkContainer> broadcastTaskProgress = ucc -> tasksProgressService.broadcast(taskProgressMap.get(ucc.getTaskId()));
 
 				selectedFiles.stream()
 					.map(packInContainer)

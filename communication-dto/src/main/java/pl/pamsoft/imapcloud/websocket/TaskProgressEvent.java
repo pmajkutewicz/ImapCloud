@@ -26,4 +26,11 @@ public class TaskProgressEvent {
 		this.currentFileSize = fileSize;
 		this.currentFileProgress = fileProgress;
 	}
+
+	public void markFileProcessed(String currentFileName, long fileSize) {
+		this.bytesProcessed = fileSize;
+		this.currentFile = currentFileName;
+		this.currentFileSize = fileSize;
+		this.currentFileProgress = fileSize;
+	}
 }
