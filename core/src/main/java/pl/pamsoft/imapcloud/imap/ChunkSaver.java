@@ -3,7 +3,6 @@ package pl.pamsoft.imapcloud.imap;
 import com.google.common.base.Stopwatch;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
@@ -26,7 +25,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.File;
-import java.io.IOException;
 import java.util.function.Function;
 
 import static javax.mail.Folder.HOLDS_MESSAGES;
@@ -80,7 +78,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		return UploadChunkContainer.EMPTY;
 	}
 
-	private Folder getFolder(Store store, String absolutePathName) throws IOException, InvalidCipherTextException, MessagingException {
+	private Folder getFolder(Store store, String absolutePathName) throws MessagingException {
 		String imapPath = createFolderName(absolutePathName);
 		return createFolderIfDoesntExist(store, imapPath);
 	}

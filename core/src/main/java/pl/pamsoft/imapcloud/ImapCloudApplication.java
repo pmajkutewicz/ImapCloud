@@ -23,7 +23,7 @@ public class ImapCloudApplication extends SpringBootServletInitializer {
 		return application.sources(ImapCloudApplication.class);
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		SpringApplication.run(ImapCloudApplication.class, args);
 	}
 
