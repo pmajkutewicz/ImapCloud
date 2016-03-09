@@ -4,15 +4,12 @@ import com.davidhampgonsalves.identicon.HashGeneratorInterface;
 import com.davidhampgonsalves.identicon.IdenticonGenerator;
 import com.davidhampgonsalves.identicon.MessageDigestHashGenerator;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-
-import java.awt.image.BufferedImage;
 
 public class TaskProgressControl extends AbstractControl {
 
