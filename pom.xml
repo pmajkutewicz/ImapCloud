@@ -48,6 +48,7 @@
 		<module>communication-dto</module>
 		<module>gui</module>
 		<module>backend-client</module>
+		<module>distribution</module>
 	</modules>
 
 	<dependencyManagement>
@@ -60,6 +61,16 @@
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>backend-client</artifactId>
+				<version>${version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>core</artifactId>
+				<version>${version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>gui</artifactId>
 				<version>${version}</version>
 			</dependency>
 
@@ -129,6 +140,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-pool2</artifactId>
+				<version>${commons-pool2.version}</version>
 			</dependency>
 
 			<dependency>
