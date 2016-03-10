@@ -1,3 +1,5 @@
+package pl.pamsoft.imapcloud;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
