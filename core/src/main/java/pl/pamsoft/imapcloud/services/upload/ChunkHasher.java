@@ -29,6 +29,7 @@ public class ChunkHasher implements Function<UploadChunkContainer, UploadChunkCo
 
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
+		LOG.debug("Hashing chunk {} of {}", chunk.getChunkNumber(), chunk.getFileDto().getName());
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		byte[] digest = md.digest(chunk.getData());
 		String hash = String.format("%s", ByteUtils.toHexString(digest));

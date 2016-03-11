@@ -13,6 +13,7 @@ public class EmailProviderInfo {
 	private String domain;
 	private String imapHost;
 	private LoginType loginType;
+	private Integer maxConcurrentConnections;
 	private Integer sizeMB;
 	private Integer attachmentSizeMB;
 }

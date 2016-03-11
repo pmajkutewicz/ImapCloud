@@ -29,6 +29,7 @@ public class FileStorer implements Function<UploadChunkContainer, UploadChunkCon
 
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer ucc) {
+		LOG.debug("Saving file data {}", ucc.getFileDto().getName());
 		try {
 			File savedFile = fileServices.saveFile(ucc, account);
 			return UploadChunkContainer.addIds(ucc, savedFile.getId(), savedFile.getFileUniqueId());

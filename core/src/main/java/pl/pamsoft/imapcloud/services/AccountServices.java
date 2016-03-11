@@ -45,6 +45,7 @@ public class AccountServices {
 		account.setImapServerAddress(request.getSelectedEmailProvider().getImapHost());
 		account.setSizeMB(request.getSelectedEmailProvider().getSizeMB());
 		account.setAttachmentSizeMB(request.getSelectedEmailProvider().getAttachmentSizeMB());
+		account.setMaxConcurrentConnections(request.getSelectedEmailProvider().getMaxConcurrentConnections());
 
 		try {
 			byte[] keyBytes = cryptoService.generateKey();

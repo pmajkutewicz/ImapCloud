@@ -53,8 +53,10 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 	public UploadChunkContainer apply(UploadChunkContainer dataChunk) {
 		Store store = null;
 		try {
+			LOG.info("Uploading chunk {} of {}", dataChunk.getChunkNumber(), dataChunk.getFileDto().getName());
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			store = connectionPool.borrowObject();
+			printPoolStats(connectionPool);
 			Folder destFolder = getFolder(store, dataChunk.getFileDto().getAbsolutePath());
 			destFolder.open(READ_WRITE);
 			Message message = createMessage(dataChunk);
@@ -72,6 +74,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		} finally {
 			if (null != store) {
 				connectionPool.returnObject(store);
+				printPoolStats(connectionPool);
 			}
 		}
 		LOG.warn("Returning EMPTY from ChunkSaver");
@@ -126,5 +129,15 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 
 	private String createFileName(String fileName, int partNumber) {
 		return String.format("%s.%04d", fileName, partNumber);
+	}
+
+
+
+	private void printPoolStats(GenericObjectPool<Store> pool){
+		LOG.info("Stats start");
+		LOG.info("Poolid: {}", pool.hashCode());
+		LOG.info("getNumActive: {}", pool.getNumActive());
+		LOG.info("getNumIdle: {}", pool.getNumIdle());
+		LOG.info("Stats end");
 	}
 }

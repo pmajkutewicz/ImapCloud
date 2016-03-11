@@ -16,6 +16,7 @@ public class Account {
 	private String email;
 	private String imapServerAddress;
 	private String password;
+	private Integer maxConcurrentConnections;
 	private Integer sizeMB;
 	private Integer attachmentSizeMB;
 	private String cryptoKey;

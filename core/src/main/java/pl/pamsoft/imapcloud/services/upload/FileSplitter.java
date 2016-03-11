@@ -41,6 +41,7 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 
 	@Override
 	public Stream<UploadChunkContainer> apply(UploadChunkContainer ucc) {
+		LOG.debug("Splitting file {}", ucc.getFileDto().getName());
 		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));

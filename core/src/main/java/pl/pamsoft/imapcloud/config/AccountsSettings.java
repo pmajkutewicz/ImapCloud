@@ -42,7 +42,8 @@ public class AccountsSettings {
 		LoginType loginType = LoginType.valueOf((String) values.get("loginType"));
 		Integer sizeMB = (Integer) values.get("sizeMB");
 		Integer attachmentSizeMB = (Integer) values.get("attachmentSizeMB");
-		return new EmailProviderInfo(domain, imapHost, loginType, sizeMB, attachmentSizeMB);
+		Integer maxConcurrentConnections = (Integer) values.get("maxConcurrentConnections");
+		return new EmailProviderInfo(domain, imapHost, loginType, maxConcurrentConnections, sizeMB, attachmentSizeMB);
 	}
 
 }

@@ -34,6 +34,7 @@ public class DirectoryProcessor implements Function<UploadChunkContainer, Stream
 
 	@Override
 	public Stream<UploadChunkContainer> apply(UploadChunkContainer ucc) {
+		LOG.debug("Parsing {}", ucc.getFileDto().getAbsolutePath());
 		if (FileDto.Type.DIRECTORY == ucc.getFileDto().getType()) {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			List<FileDto> dtos = parseDirectories(ucc.getFileDto());

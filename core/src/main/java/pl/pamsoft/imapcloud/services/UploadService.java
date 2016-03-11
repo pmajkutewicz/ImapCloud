@@ -49,7 +49,6 @@ import java.util.stream.Stream;
 @Service
 public class UploadService {
 
-	private static final int MAX_CONNECTIONS_TO_IMAP_SERVER = 4;
 	private static final int MAX_TASKS = 10;
 	private static final int FIVETEEN = 15;
 
@@ -57,6 +56,7 @@ public class UploadService {
 	private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 	private Map<String, Future<?>> taskMap = new ConcurrentHashMap<>();
 	private Map<String, TaskProgressEvent> taskProgressMap = new ConcurrentHashMap<>();
+	private Map<String, GenericObjectPool<Store>> accountPoolMap = new ConcurrentHashMap<>();
 
 	@Autowired
 	private AccountRepository accountRepository;
@@ -130,7 +130,7 @@ public class UploadService {
 				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
-				selectedFiles.stream()
+				selectedFiles.stream().parallel()
 					.map(packInContainer)
 					.flatMap(parseDirectories)
 					.map(generateFilehash)
@@ -157,9 +157,16 @@ public class UploadService {
 	}
 
 	private GenericObjectPool<Store> createConnectionPool(Account account) {
-		IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), account.getImapServerAddress());
-		GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-		config.setMaxTotal(MAX_CONNECTIONS_TO_IMAP_SERVER);
-		return new GenericObjectPool<>(connectionFactory, config);
+		String key = account.getImapServerAddress();
+		if (accountPoolMap.containsKey(key)) {
+			return accountPoolMap.get(key);
+		} else {
+			IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), key);
+			GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+			config.setMaxTotal(account.getMaxConcurrentConnections());
+			GenericObjectPool<Store> pool = new GenericObjectPool<>(connectionFactory, config);
+			accountPoolMap.put(key, pool);
+			return pool;
+		}
 	}
 }

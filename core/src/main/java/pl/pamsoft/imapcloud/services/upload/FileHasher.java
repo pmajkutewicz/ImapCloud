@@ -35,6 +35,7 @@ public class FileHasher implements Function<UploadChunkContainer, UploadChunkCon
 	@Override
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
+		LOG.debug("Hashing file {}", chunk.getFileDto().getName());
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		try (FileInputStream inputStream = new FileInputStream(new File(chunk.getFileDto().getAbsolutePath()))) {
 			byte[] bytesBuffer = new byte[MEGABYTE];

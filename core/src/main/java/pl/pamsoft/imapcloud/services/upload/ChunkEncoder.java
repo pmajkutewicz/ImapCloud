@@ -34,6 +34,7 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer uploadChunkContainer) {
+		LOG.debug("Encrypting chunk {} of {}", uploadChunkContainer.getChunkNumber(), uploadChunkContainer.getFileDto().getName());
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			byte[] encrypted = cs.encrypt(encryptingCipher, uploadChunkContainer.getData());
