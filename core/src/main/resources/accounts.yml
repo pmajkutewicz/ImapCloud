@@ -14,4 +14,19 @@ mail_com: {
   sizeMB: 9999999,
   attachmentSizeMB: 50
   }
-
+yandex_com: {
+  domain: yandex.com,
+  imapHost: imap.yandex.com,
+  loginType: USERNAME_ONLY,
+  maxConcurrentConnections: 4,
+  sizeMB: 9999999,
+  attachmentSizeMB: 30
+  }
+yahoo_com: {
+  domain: yahoo.com,
+  imapHost: imap.mail.yahoo.com,
+  loginType: WITH_DOMAIN,
+  maxConcurrentConnections: 4,
+  sizeMB: 9999999,
+  attachmentSizeMB: 25
+  }
