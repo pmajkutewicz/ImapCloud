@@ -69,8 +69,12 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			LOG.debug("Chunk saved in {}", stopwatch);
 			return UploadChunkContainer.addMessageId(dataChunk, header[0]);
 		} catch (Exception e) {
-			e.printStackTrace();
-			//TODO
+			LOG.error("Error in stream", e);
+			try {
+				connectionPool.invalidateObject(store);
+			} catch (Exception e1) {
+				LOG.error("Error invalidating", e1);
+			}
 		} finally {
 			if (null != store) {
 				connectionPool.returnObject(store);

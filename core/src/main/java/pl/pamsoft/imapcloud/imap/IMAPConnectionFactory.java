@@ -33,13 +33,16 @@ public class IMAPConnectionFactory implements PooledObjectFactory<Store> {
 		Session session = Session.getDefaultInstance(props, null);
 		Store store = session.getStore("imaps");
 		store.connect(host, username, password);
-		return new DefaultPooledObject<>(store);
+		DefaultPooledObject<Store> storeDefaultPooledObject = new DefaultPooledObject<>(store);
+		LOG.debug("Store created: {}", storeDefaultPooledObject);
+		return storeDefaultPooledObject;
 	}
 
 	@Override
 	public void destroyObject(PooledObject<Store> pooledObject) throws Exception {
 		try {
 			pooledObject.getObject().close();
+			LOG.debug("Store destroyed: {}", pooledObject);
 		} catch (MessagingException e) {
 			LOG.warn("Can't close imap client.");
 		}
@@ -47,16 +50,17 @@ public class IMAPConnectionFactory implements PooledObjectFactory<Store> {
 
 	@Override
 	public boolean validateObject(PooledObject<Store> pooledObject) {
+		LOG.debug("Store validated: {}", pooledObject);
 		return pooledObject.getObject().isConnected();
 	}
 
 	@Override
 	public void activateObject(PooledObject<Store> pooledObject) throws Exception {
-
+		LOG.debug("Store activated: {}", pooledObject);
 	}
 
 	@Override
 	public void passivateObject(PooledObject<Store> pooledObject) throws Exception {
-
+		LOG.debug("Store passivated: {}", pooledObject);
 	}
 }
