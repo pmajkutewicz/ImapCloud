@@ -1,17 +1,17 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 
 import java.io.File;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 
 public class FilesServiceTest {
 
@@ -23,17 +23,17 @@ public class FilesServiceTest {
 		List<FileDto> files = fs.listFilesInDir(new File("").getAbsoluteFile());
 		FileDto pom = getPom(files);
 		assertNotNull(pom);
-		assertThat(pom.getType(), is(FileDto.Type.FILE));
-		assertThat(pom.getSize(), not(nullValue()));
-		assertThat(pom.getSize(), not(0));
+		assertEquals(pom.getType(), FileDto.Type.FILE);
+		assertNotNull(pom.getSize());
+		assertNotEquals(pom.getSize(), 0);
 	}
 
 	@Test
 	public void calculateDirSize() {
 		long size = fs.calculateDirSize(new File(".").getAbsoluteFile());
-		assertThat(size, not(nullValue()));
-		assertThat(size, not(0));
-		assertThat(size > MEBIBYTE, is(true));
+		assertNotNull(size);
+		assertNotEquals(size, 0);
+		assertTrue(size > MEBIBYTE);
 	}
 
 	private FileDto getPom(List<FileDto> files) {

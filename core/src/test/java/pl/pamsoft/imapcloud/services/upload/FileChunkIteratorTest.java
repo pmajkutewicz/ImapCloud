@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.junit.Test;
 import org.mockito.Mockito;
+import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
@@ -13,11 +13,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class FileChunkIteratorTest {
 
@@ -36,10 +35,10 @@ public class FileChunkIteratorTest {
 		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 3, statistics, performanceDataService);
 		fileChunkIterator.process();
 
-		assertThat(fileChunkIterator.next().getData().length, is(3));
-		assertThat(fileChunkIterator.next().getData().length, is(3));
-		assertThat(fileChunkIterator.next().getData().length, is(3));
-		assertThat(fileChunkIterator.next().getData().length, is(1));
+		assertEquals(3, fileChunkIterator.next().getData().length);
+		assertEquals(3, fileChunkIterator.next().getData().length);
+		assertEquals(3, fileChunkIterator.next().getData().length);
+		assertEquals(1, fileChunkIterator.next().getData().length);
 		deleteFile(filePath);
 	}
 
@@ -58,7 +57,7 @@ public class FileChunkIteratorTest {
 			counter++;
 		}
 		//There was 1024 chunks
-		assertThat(counter, is(1024));
+		assertEquals(1024, counter);
 		deleteFile(filePath);
 	}
 
@@ -98,7 +97,7 @@ public class FileChunkIteratorTest {
 		} finally {
 			try {
 				outputStream.close();
-			} catch (IOException e) {
+			} catch (IOException ignored) {
 			}
 		}
 	}

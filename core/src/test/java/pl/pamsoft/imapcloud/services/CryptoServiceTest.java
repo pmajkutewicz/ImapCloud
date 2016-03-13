@@ -2,12 +2,13 @@ package pl.pamsoft.imapcloud.services;
 
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.Random;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
+
 
 public class CryptoServiceTest {
 
@@ -26,7 +27,7 @@ public class CryptoServiceTest {
 		byte[] encoded = cs.encrypt(encryptingCipher, testData);
 		byte[] unencoded = cs.decrypt(decryptingCipher, encoded);
 
-		assertArrayEquals(testData, unencoded);
+		assertArrayEquals(unencoded, testData);
 	}
 
 }

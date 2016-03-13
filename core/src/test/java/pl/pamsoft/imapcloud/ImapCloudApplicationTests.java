@@ -1,17 +1,16 @@
 package pl.pamsoft.imapcloud;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.Test;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(ImapCloudApplication.class)
 @WebIntegrationTest(randomPort = true)
 @DirtiesContext
-public class ImapCloudApplicationTests {
+public class ImapCloudApplicationTests extends AbstractTestNGSpringContextTests {
 
 	@Test
 	public void contextLoads() {
