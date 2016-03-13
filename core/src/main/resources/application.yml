@@ -12,3 +12,5 @@ server:
   port: 9000
 
 security.user.password: test
+
+logging.file: imapcloud.log
