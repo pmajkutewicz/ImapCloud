@@ -109,11 +109,11 @@ public class UploadService {
 				final MessageDigest instance = MessageDigest.getInstance("SHA-512");
 				final Account account = accountRepository.getById(selectedAccount.getId());
 				final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, statistics, performanceDataService).apply(selectedFiles);
-				taskProgressMap.put(taskId, new TaskProgressEvent(taskId, bytesToProcess));
+				taskProgressMap.put(taskId, new TaskProgressEvent(taskId, bytesToProcess, selectedFiles));
 
 				Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 				Consumer<UploadChunkContainer> updateProgress = ucc -> taskProgressMap.get(ucc.getTaskId())
-					.process(ucc.getChunkSize(), ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize(), ucc.getFileDto().getSize());
+					.process(ucc.getChunkSize(), ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize());
 				Consumer<UploadChunkContainer> markFileProcessed = ucc -> taskProgressMap.get(ucc.getTaskId())
 					.markFileProcessed(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
 
@@ -164,6 +164,9 @@ public class UploadService {
 			IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), key);
 			GenericObjectPoolConfig config = new GenericObjectPoolConfig();
 			config.setMaxTotal(account.getMaxConcurrentConnections());
+			config.setTestOnBorrow(true);
+			config.setTestOnReturn(true);
+			config.setTestWhileIdle(true);
 			GenericObjectPool<Store> pool = new GenericObjectPool<>(connectionFactory, config);
 			accountPoolMap.put(key, pool);
 			return pool;

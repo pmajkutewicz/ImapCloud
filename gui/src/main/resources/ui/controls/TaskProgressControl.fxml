@@ -23,7 +23,7 @@
 		<VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
 			<children>
 				<Label fx:id="taskIdLabel" maxWidth="1.7976931348623157E308" text="Task ID" />
-				<ProgressBar fx:id="currentFileProgress" maxWidth="1.7976931348623157E308" prefWidth="200.0" progress="0" />
+                <VBox fx:id="filesInfo"/>
 				<Label fx:id="taskMessage" maxWidth="1.7976931348623157E308" text="Task message" />
 			</children>
 		</VBox>

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 
-<TabPane minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<TabPane minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
 	<tabs>
 		<Tab id="accountsTab" closable="false" text="%main.tab.accounts">
 			<content>

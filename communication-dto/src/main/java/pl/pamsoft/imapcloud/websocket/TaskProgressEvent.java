@@ -3,6 +3,11 @@ package pl.pamsoft.imapcloud.websocket;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.pamsoft.imapcloud.dto.FileDto;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Data
@@ -11,26 +16,28 @@ public class TaskProgressEvent {
 	private String taskId;
 	private long bytesOverall;
 	private long bytesProcessed;
-	private String currentFile;
-	private long currentFileSize;
-	private long currentFileProgress;
+	private Map<String, FileProgressData> fileProgressDataMap;
 
-	public TaskProgressEvent(String taskId, long bytesOverall) {
+	public TaskProgressEvent(String taskId, long bytesOverall, List<FileDto> selectedFiles) {
 		this.taskId = taskId;
 		this.bytesOverall = bytesOverall;
+		fileProgressDataMap = buildFileMap(selectedFiles);
 	}
 
-	public void process(long overallBytesProcessed, String currentFileName, long fileProgress, long fileSize) {
-		this.bytesProcessed += overallBytesProcessed;
-		this.currentFile = currentFileName;
-		this.currentFileSize = fileSize;
-		this.currentFileProgress = fileProgress;
+	public void process(long processedBytes, String currentFileAbsolutePath, long cumulativeFileProgress) {
+		this.bytesProcessed += processedBytes;
+		fileProgressDataMap.get(currentFileAbsolutePath).setProgress(cumulativeFileProgress);
 	}
 
-	public void markFileProcessed(String currentFileName, long fileSize) {
+	public void markFileProcessed(String currentFileAbsolutePath, long fileSize) {
 		this.bytesProcessed = fileSize;
-		this.currentFile = currentFileName;
-		this.currentFileSize = fileSize;
-		this.currentFileProgress = fileSize;
+		fileProgressDataMap.get(currentFileAbsolutePath).setProgress(fileSize);
+	}
+
+	private Map<String, FileProgressData> buildFileMap(List<FileDto> selectedFiles) {
+		Map<String, FileProgressData> result = selectedFiles.stream()
+			.map(file -> new FileProgressData(file.getAbsolutePath(), file.getSize()))
+			.collect(Collectors.toMap(FileProgressData::getAbsolutePath, c -> c));
+		return result;
 	}
 }

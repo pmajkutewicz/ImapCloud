@@ -29,7 +29,7 @@ public abstract class AbstractControl extends Region {
 		loader.setLocation(viewURL);
 
 		try {
-			Node root = (Node) loader.load();
+			Node root = loader.load();
 			setMaxSize(root);
 			this.getChildren().add(root);
 		} catch (IOException ex) {

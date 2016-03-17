@@ -56,22 +56,22 @@
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>communication-dto</artifactId>
-				<version>${version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>backend-client</artifactId>
-				<version>${version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>core</artifactId>
-				<version>${version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>gui</artifactId>
-				<version>${version}</version>
+				<version>${project.version}</version>
 			</dependency>
 
 			<!-- backend client deps -->

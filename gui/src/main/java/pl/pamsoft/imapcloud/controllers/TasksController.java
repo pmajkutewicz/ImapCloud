@@ -7,6 +7,7 @@ import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
+import pl.pamsoft.imapcloud.websocket.FileProgressData;
 import pl.pamsoft.imapcloud.websocket.TaskProgressClient;
 import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 
@@ -45,16 +46,23 @@ public class TasksController implements Initializable {
 		TaskProgressControl current;
 		String taskId = event.getTaskId();
 		if (!currentTasks.containsKey(taskId)) {
-			current = new TaskProgressControl(taskId);
+			current = new TaskProgressControl(taskId, event.getFileProgressDataMap());
 			currentTasks.put(taskId, current);
 			Platform.runLater(() -> tasksContainer.getChildren().addAll(current));
 		} else {
 			current = currentTasks.get(taskId);
 		}
 		double overallProgress = event.getBytesProcessed() / (double) event.getBytesOverall();
-		double currentFileProgress = event.getCurrentFileProgress() / (double) event.getCurrentFileSize();
-		String currentFile = String.format("Uploading: %s", event.getCurrentFile());
-		Platform.runLater(() -> current.updateProgress(overallProgress, currentFileProgress, currentFile));
+
+		Platform.runLater(() -> {
+				for (FileProgressData entry : event.getFileProgressDataMap().values()) {
+					double fileProgress = entry.getProgress() / (double) entry.getSize();
+					current.updateProgress(entry.getAbsolutePath(), entry.getProgress());
+				}
+				current.updateProgress(overallProgress);
+			}
+		);
 		System.out.println(overallProgress);
 	}
+
 }
