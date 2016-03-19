@@ -70,6 +70,7 @@ class OrientDB {
 		db.setAutomaticSchemaGeneration(true);
 
 		db.getEntityManager().registerEntityClass(Account.class);
+		db.getEntityManager().registerEntityClass(File.class);
 		OSchemaProxyObject schema = db.getMetadata().getSchema();
 //		if (schema.existsClass(Account.class.getSimpleName())) {
 //			OClass accountClass = schema.getClass(Account.class.getSimpleName());

@@ -5,12 +5,16 @@ import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 
 import java.nio.file.FileAlreadyExistsException;
+import java.util.Collection;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class FileServices {
@@ -20,6 +24,10 @@ public class FileServices {
 
 	@Autowired
 	private FileChunkRepository fileChunkRepository;
+
+	public Collection<File> findUploadedFiles() {
+		return fileRepository.findAll();
+	}
 
 	public File saveFile(UploadChunkContainer uploadChunkContainer, Account account) throws FileAlreadyExistsException {
 		FileDto fileDto = uploadChunkContainer.getFileDto();

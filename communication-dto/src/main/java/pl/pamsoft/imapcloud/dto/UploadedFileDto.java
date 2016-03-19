@@ -7,27 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import pl.pamsoft.imapcloud.utils.ReadableSize;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@JsonIgnoreProperties({ "readableFileSize"})
+@JsonIgnoreProperties({"readableFileSize"})
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class FileDto {
-
-	public enum Type {FILE, DIRECTORY}
+public class UploadedFileDto extends FileDto {
 
 	@Getter @Setter
-	private String name;
-	@Getter @Setter
-	private String absolutePath;
-	@Getter @Setter
-	private Type type;
-	@Getter @Setter
-	private Long size;
+	private boolean completed;
 
-	public String getReadableFileSize() {
-		return ReadableSize.getReadableFileSize(this);
-	}
 }

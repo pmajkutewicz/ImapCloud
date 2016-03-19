@@ -148,6 +148,7 @@ public class UploadService {
 					.peek(updateProgress)
 					.peek(broadcastTaskProgress)
 					.forEach(System.out::println);
+
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
