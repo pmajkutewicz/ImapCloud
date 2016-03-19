@@ -44,7 +44,11 @@ public class FileServices {
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
 		chunk.setChunkHash(uploadChunkContainer.getChunkHash());
 		chunk.setMessageId(uploadChunkContainer.getMessageId());
-		return fileChunkRepository.save(chunk);
+		FileChunk fileChunk = fileChunkRepository.save(chunk);
+		if (uploadChunkContainer.isLastChunk()) {
+			fileRepository.markFileCompleted(uploadChunkContainer.getSavedFileId());
+		}
+		return fileChunk;
 	}
 
 	private String createChunkId(String fileId, int partNumber) {

@@ -16,6 +16,7 @@ public class GraphProperties {
 	public static final String FILE_NAME = "name";
 	public static final String FILE_ABSOLUTE_PATH = "absolutePath";
 	public static final String FILE_SIZE = "size";
+	public static final String FILE_COMPLETED = "completed";
 	public static final String FILE_EDGE_ACCOUNT = "is_owned_by";
 
 	public static final String FILE_CHUNK_UNIQUE_ID = "fileChunkUniqueId";

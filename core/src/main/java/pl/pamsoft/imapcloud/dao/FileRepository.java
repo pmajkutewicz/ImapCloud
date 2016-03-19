@@ -51,7 +51,8 @@ public class FileRepository extends AbstractRepository<File> {
 			OrientVertex orientVertex = graphDB.addVertex(
 				"class:" + File.class.getSimpleName(),
 				GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath(),
-				GraphProperties.FILE_HASH, file.getFileHash());
+				GraphProperties.FILE_HASH, file.getFileHash(),
+				GraphProperties.FILE_COMPLETED, false);
 			fillProperties(graphDB, orientVertex, file);
 			updateIdAndVersionFields(file, orientVertex);
 			graphDB.shutdown();
@@ -60,6 +61,12 @@ public class FileRepository extends AbstractRepository<File> {
 			throw new FileAlreadyExistsException(file.getAbsolutePath());
 		}
 		return file;
+	}
+
+	public void markFileCompleted(String id) {
+		OrientGraphNoTx graphDB = getDb().getGraphDB();
+		Vertex storedFile = graphDB.getVertex(new ORecordId(id));
+		storedFile.setProperty(GraphProperties.FILE_COMPLETED, true);
 	}
 
 	private void updateIdAndVersionFields(File file, OrientVertex orientVertex) {

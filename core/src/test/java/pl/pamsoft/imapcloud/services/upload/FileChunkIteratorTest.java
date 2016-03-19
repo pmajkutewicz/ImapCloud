@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import org.mockito.Mockito;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
@@ -16,6 +17,7 @@ import java.io.OutputStream;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 public class FileChunkIteratorTest {
@@ -25,12 +27,32 @@ public class FileChunkIteratorTest {
 	private Statistics statistics = mock(Statistics.class);
 	private PerformanceDataService performanceDataService = Mockito.mock(PerformanceDataService.class);
 
+	@DataProvider
+	public Object[][] lastChunkShouldBeMarkedAsLastDataProvider() {
+		return new Object[][] {
+			{10, 1, 9},
+			{10, 3, 3}
+		};
+	}
+
+	@Test(dataProvider = "lastChunkShouldBeMarkedAsLastDataProvider")
+	public void lastChunkShouldBeMarkedAsLast(int fileSize, int readSize, int nbOfNonLastChunks) throws IOException {
+		String filePath = getTempDir() + "/last_chunk.txt";
+		FileDto mockedFileDto = createFile(filePath, fileSize);
+
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), readSize, statistics, performanceDataService);
+		fileChunkIterator.process();
+
+		for (int i = 0; i < nbOfNonLastChunks; i++) {
+			assertFalse(fileChunkIterator.next().isLastChunk());
+		}
+		assertTrue(fileChunkIterator.next().isLastChunk());
+	}
+
 	@Test
-	public void fileReadingWithNotAlignedChunks() throws Exception {
+	public void fileReadingWithNotAlignedChunks() throws IOException {
 		String filePath = getTempDir() + "/not_aligned.txt";
-		FileDto mockedFileDto = Mockito.mock(FileDto.class);
-		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
-		writeFile(filePath, 10);
+		FileDto mockedFileDto = createFile(filePath, 10);
 
 		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 3, statistics, performanceDataService);
 		fileChunkIterator.process();
@@ -43,11 +65,9 @@ public class FileChunkIteratorTest {
 	}
 
 	@Test
-	public void fileShouldBeReadUsingConstantChunks() throws Exception {
+	public void fileShouldBeReadUsingConstantChunks() throws IOException {
 		String filePath = getTempDir() + "/constant_chunks.txt";
-		FileDto mockedFileDto = Mockito.mock(FileDto.class);
-		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
-		writeFile(filePath, MEBIBYTE);
+		FileDto mockedFileDto = createFile(filePath, MEBIBYTE);
 
 		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 1024, statistics, performanceDataService);
 		fileChunkIterator.process();
@@ -62,12 +82,9 @@ public class FileChunkIteratorTest {
 	}
 
 	@Test
-	public void fileShouldBeReadUsingVariableChunks() throws Exception {
+	public void fileShouldBeReadUsingVariableChunks() throws IOException {
 		String filePath = getTempDir() + "/variable_chunks.txt";
-		FileDto mockedFileDto = Mockito.mock(FileDto.class);
-		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
-		writeFile(filePath, MEBIBYTE);
-
+		FileDto mockedFileDto = createFile(filePath, MEBIBYTE);
 
 		int deviation = 512;
 		int fetchSize = 1024;
@@ -82,7 +99,14 @@ public class FileChunkIteratorTest {
 		deleteFile(filePath);
 	}
 
-	private void writeFile(String path, int bytes) throws Exception {
+	private FileDto createFile(String filePath, int bytes) throws IOException {
+		FileDto mockedFileDto = Mockito.mock(FileDto.class);
+		when(mockedFileDto.getAbsolutePath()).thenReturn(filePath);
+		writeFile(filePath, bytes);
+		return mockedFileDto;
+	}
+
+	private void writeFile(String path, int bytes) throws IOException {
 		OutputStream outputStream = null;
 		File f = null;
 		try {
@@ -92,8 +116,6 @@ public class FileChunkIteratorTest {
 			outputStream = new BufferedOutputStream(new FileOutputStream(f));
 			outputStream.write(buf);
 			outputStream.flush();
-		} catch (Exception e) {
-			throw new Exception();
 		} finally {
 			try {
 				outputStream.close();
