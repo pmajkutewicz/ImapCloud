@@ -113,7 +113,7 @@ class OrientDB {
 		if (tx.getVertexType(FileChunk.class.getSimpleName()) == null) {
 			OrientVertexType vertexType = tx.createVertexType(FileChunk.class.getSimpleName());
 			vertexType.createProperty(FILE_CHUNK_UNIQUE_ID, OType.STRING);
-			vertexType.createProperty(FILE_CHUNK_NUMBER, OType.STRING);
+			vertexType.createProperty(FILE_CHUNK_NUMBER, OType.INTEGER);
 			vertexType.createProperty(FILE_CHUNK_HASH, OType.STRING);
 			vertexType.createProperty(FILE_CHUNK_SIZE, OType.LONG);
 			vertexType.createEdgeProperty(Direction.OUT, File.class.getSimpleName(), OType.LINK);

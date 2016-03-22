@@ -5,16 +5,14 @@ import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class FileServices {
@@ -57,6 +55,10 @@ public class FileServices {
 			fileRepository.markFileCompleted(uploadChunkContainer.getSavedFileId());
 		}
 		return fileChunk;
+	}
+
+	public List<FileChunk> getFileChunks(String fileUniqueId){
+		return fileChunkRepository.getFileChunks(fileUniqueId);
 	}
 
 	private String createChunkId(String fileId, int partNumber) {

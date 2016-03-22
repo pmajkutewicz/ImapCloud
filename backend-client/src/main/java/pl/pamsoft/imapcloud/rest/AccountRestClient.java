@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
-import pl.pamsoft.imapcloud.dto.EmailProviderInfoList;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
+import pl.pamsoft.imapcloud.responses.EmailProviderInfoResponse;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
 
 import java.io.IOException;
@@ -25,10 +25,10 @@ public class AccountRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
-	public EmailProviderInfoList getAvailableEmailAccounts() throws IOException {
+	public EmailProviderInfoResponse getAvailableEmailAccounts() throws IOException {
 		try {
-			HttpResponse<EmailProviderInfoList> response = Unirest.get(endpoint + LIST_EMAIL_PROVIDERS).basicAuth(bAuthUsername, bAuthPassword)
-				.asObject(EmailProviderInfoList.class);
+			HttpResponse<EmailProviderInfoResponse> response = Unirest.get(endpoint + LIST_EMAIL_PROVIDERS).basicAuth(bAuthUsername, bAuthPassword)
+				.asObject(EmailProviderInfoResponse.class);
 			throwExceptionIfNotValidResponse(response);
 			return response.getBody();
 		} catch (UnirestException e) {

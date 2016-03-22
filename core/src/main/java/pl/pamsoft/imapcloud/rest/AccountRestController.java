@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.EmailProviderInfoList;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
+import pl.pamsoft.imapcloud.responses.EmailProviderInfoResponse;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
 import pl.pamsoft.imapcloud.services.AccountServices;
 
@@ -25,8 +26,8 @@ public class AccountRestController {
 	private AccountServices accountServices;
 
 	@RequestMapping(value = "emailProviders", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public EmailProviderInfoList listSupportedEmailProviders() {
-		return supportedEmailProviders;
+	public EmailProviderInfoResponse listSupportedEmailProviders() {
+		return new EmailProviderInfoResponse(supportedEmailProviders.getEmailProviders());
 	}
 
 	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

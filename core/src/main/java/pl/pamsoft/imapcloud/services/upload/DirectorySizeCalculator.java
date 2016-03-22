@@ -35,7 +35,7 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 		long result = 0;
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		for (FileDto fileDto : fileDtos) {
-			if (FileDto.Type.DIRECTORY == fileDto.getType()) {
+			if (FileDto.FileType.DIRECTORY == fileDto.getType()) {
 				long dirSize = filesIOService.calculateDirSize(new File(fileDto.getAbsolutePath()));
 				LOG.debug("{} is {} bytes", fileDto.getAbsolutePath(), dirSize);
 				result = +dirSize;

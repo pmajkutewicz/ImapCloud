@@ -14,8 +14,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static pl.pamsoft.imapcloud.dto.FileDto.Type.DIRECTORY;
-import static pl.pamsoft.imapcloud.dto.FileDto.Type.FILE;
+import static pl.pamsoft.imapcloud.dto.FileDto.FileType.DIRECTORY;
+import static pl.pamsoft.imapcloud.dto.FileDto.FileType.FILE;
 
 @Service
 public class FilesIOService {

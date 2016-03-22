@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pl.pamsoft.imapcloud.dto.UploadedFileChunkDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.entity.File;
+import pl.pamsoft.imapcloud.entity.FileChunk;
+import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
 import pl.pamsoft.imapcloud.responses.UploadedFilesResponse;
 import pl.pamsoft.imapcloud.services.FileServices;
 
@@ -28,10 +32,22 @@ public class UploadedFileRestController {
 		uploadedFileDto.setAbsolutePath(file.getAbsolutePath());
 		uploadedFileDto.setSize(file.getSize());
 		uploadedFileDto.setCompleted(file.isCompleted());
+		uploadedFileDto.setFileUniqueId(file.getFileUniqueId());
 		return uploadedFileDto;
 	};
 
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	private Function<FileChunk, UploadedFileChunkDto> toUploadedFileChunkDtoConverter = fileChunk -> {
+		UploadedFileChunkDto ufcd = new UploadedFileChunkDto();
+		ufcd.setMessageId(fileChunk.getMessageId());
+		ufcd.setChunkNumber(fileChunk.getChunkNumber());
+		ufcd.setSize(fileChunk.getSize());
+		ufcd.setFileChunkUniqueId(fileChunk.getFileChunkUniqueId());
+		ufcd.setChunkHash(fileChunk.getChunkHash());
+		return ufcd;
+	};
+
+
+	@RequestMapping(value = "files", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public UploadedFilesResponse getUploadedFiles() {
 		Collection<File> uploadedFiles = fileServices.findUploadedFiles();
 		List<UploadedFileDto> uploadedFileDtos = uploadedFiles.stream()
@@ -39,6 +55,13 @@ public class UploadedFileRestController {
 			.collect(Collectors.toList());
 
 		return new UploadedFilesResponse(uploadedFileDtos);
+	}
+
+	@RequestMapping(value = "chunks", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public UploadedFileChunksResponse getUploadedChunks(@RequestParam(name = "fileId") String fileUniqueId) {
+		List<FileChunk> fileChunks = fileServices.getFileChunks(fileUniqueId);
+		List<UploadedFileChunkDto> converted = fileChunks.stream().map(toUploadedFileChunkDtoConverter).collect(Collectors.toList());
+		return new UploadedFileChunksResponse(converted);
 	}
 
 }

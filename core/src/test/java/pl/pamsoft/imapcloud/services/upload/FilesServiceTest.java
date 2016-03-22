@@ -23,7 +23,7 @@ public class FilesServiceTest {
 		List<FileDto> files = fs.listFilesInDir(new File("").getAbsoluteFile());
 		FileDto pom = getPom(files);
 		assertNotNull(pom);
-		assertEquals(pom.getType(), FileDto.Type.FILE);
+		assertEquals(pom.getType(), FileDto.FileType.FILE);
 		assertNotNull(pom.getSize());
 		assertNotEquals(pom.getSize(), 0);
 	}

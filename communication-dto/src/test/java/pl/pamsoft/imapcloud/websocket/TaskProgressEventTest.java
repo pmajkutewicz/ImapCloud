@@ -48,9 +48,9 @@ public class TaskProgressEventTest {
 
 	private List<FileDto> createFileList() {
 		return Arrays.asList(
-			new FileDto("test1", TEST1_PATH, FileDto.Type.FILE, SIZE_1K),
-			new FileDto("test2", "/tmp/test2", FileDto.Type.FILE, SIZE_2K),
-			new FileDto("test3", "/tmp/test3", FileDto.Type.FILE, SIZE_3K)
+			new FileDto("test1", TEST1_PATH, FileDto.FileType.FILE, SIZE_1K),
+			new FileDto("test2", "/tmp/test2", FileDto.FileType.FILE, SIZE_2K),
+			new FileDto("test3", "/tmp/test3", FileDto.FileType.FILE, SIZE_3K)
 		);
 	}
 }
