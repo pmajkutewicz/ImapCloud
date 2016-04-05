@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.function.Function;
 
 @Component
-public class VertexToFileChunkConverter implements Function<Vertex, FileChunk> {
+public class VertexToFileChunkConverter extends AbstractVertexConverter implements Function<Vertex, FileChunk> {
 
 	@Autowired
 	private Function<Vertex, File> converter;
@@ -34,11 +34,7 @@ public class VertexToFileChunkConverter implements Function<Vertex, FileChunk> {
 	}
 
 	private File getOwningFile(Vertex v) {
-		Iterator<Edge> iterator = v.getEdges(Direction.OUT, GraphProperties.FILE_CHUNK_EDGE_FILE).iterator();
-		if (iterator.hasNext()) {
-			Vertex vertex = iterator.next().getVertex(Direction.IN);
-			return converter.apply(vertex);
-		}
-		return null;
+		Vertex parentVertex = getParentVertex(v, GraphProperties.FILE_CHUNK_EDGE_FILE);
+		return parentVertex == null ? null : converter.apply(parentVertex);
 	}
 }
