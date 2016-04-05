@@ -26,7 +26,12 @@ public class UploadedFileChunkDto {
 	private Long size;
 	@Getter @Setter
 	private String messageId;
+	@Getter @Setter
+	private Long lastVerifiedAt;
+	@Getter @Setter
+	private boolean chunkExists;
 
+	// used as javafx property
 	public String getReadableFileSize() {
 		return ReadableSize.getReadableFileSize(size);
 	}

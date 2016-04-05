@@ -20,4 +20,7 @@ public class FileChunk {
 	private Long size;
 	private File ownerFile;
 	private String messageId;
+	private Long lastVerifiedAt;
+	private boolean chunkExists;
+
 }

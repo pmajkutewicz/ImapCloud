@@ -45,9 +45,10 @@ public class UploadedFileRestController {
 		ufcd.setSize(fileChunk.getSize());
 		ufcd.setFileChunkUniqueId(fileChunk.getFileChunkUniqueId());
 		ufcd.setChunkHash(fileChunk.getChunkHash());
+		ufcd.setChunkExists(fileChunk.isChunkExists());
+		ufcd.setLastVerifiedAt(fileChunk.getLastVerifiedAt());
 		return ufcd;
 	};
-
 
 	@RequestMapping(value = "files", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public UploadedFilesResponse getUploadedFiles() {

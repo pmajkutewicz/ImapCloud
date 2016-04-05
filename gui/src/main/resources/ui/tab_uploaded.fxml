@@ -75,6 +75,16 @@
 						<PropertyValueFactory property="messageId" />
 					</cellValueFactory>
 				</TableColumn>
+				<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.verified_at">
+					<cellValueFactory>
+						<PropertyValueFactory property="lastVerifiedAt" />
+					</cellValueFactory>
+				</TableColumn>
+				<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.exists">
+					<cellValueFactory>
+						<PropertyValueFactory property="chunkExists" />
+					</cellValueFactory>
+				</TableColumn>
 			</columns>
 			<columnResizePolicy>
 				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
