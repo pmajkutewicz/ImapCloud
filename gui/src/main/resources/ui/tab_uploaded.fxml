@@ -9,6 +9,8 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.UploadedController">
 	<columnConstraints>
 		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
@@ -19,7 +21,11 @@
 		<RowConstraints vgrow="NEVER" />
 	</rowConstraints>
 	<children>
-		<Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile" GridPane.rowIndex="1" />
+		<HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
+			<Button mnemonicParsing="true" onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile" />
+			<Button mnemonicParsing="true" onAction="#verifyButtonClick" text="%uploaded.table.button.verifyfile" />
+		</HBox>
+
 		<TableView fx:id="uploadedTable" prefHeight="200.0" prefWidth="281.0">
 			<columns>
 				<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.name">

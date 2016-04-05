@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileChunkDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.entity.File;
@@ -32,6 +33,7 @@ public class UploadedFileRestController {
 		uploadedFileDto.setAbsolutePath(file.getAbsolutePath());
 		uploadedFileDto.setSize(file.getSize());
 		uploadedFileDto.setCompleted(file.isCompleted());
+		uploadedFileDto.setType(FileDto.FileType.FILE);
 		uploadedFileDto.setFileUniqueId(file.getFileUniqueId());
 		return uploadedFileDto;
 	};

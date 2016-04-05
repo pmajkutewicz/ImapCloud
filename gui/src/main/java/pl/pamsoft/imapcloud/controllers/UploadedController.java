@@ -36,6 +36,7 @@ public class UploadedController implements Initializable {
 	private ChangeListener<UploadedFileDto> uploadedFileDtoChangeListener = (observable, oldValue, newValue) -> {
 		try {
 			UploadedFileChunksResponse uploadedFileChunks = uploadedFileRestClient.getUploadedFileChunks(newValue.getFileUniqueId());
+			uploadedChunksTable.getItems().clear();
 			uploadedChunksTable.getItems().addAll(uploadedFileChunks.getFileChunks());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -60,5 +61,13 @@ public class UploadedController implements Initializable {
 		System.out.println(selectedItem);
 		System.out.println(eventType);
 		//TODO: Delete file
+	}
+
+	public void verifyButtonClick(ActionEvent event) {
+		UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
+		EventType<? extends ActionEvent> eventType = event.getEventType();
+		System.out.println(selectedItem);
+		System.out.println(eventType);
+		//TODO: Verify file and chunks
 	}
 }
