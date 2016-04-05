@@ -80,12 +80,14 @@ public class UploadService {
 	private TasksProgressService tasksProgressService;
 
 	private Callable<Void> cleanUpTask = () -> {
-		for (Map.Entry<String, Future<?>> taskEntry : taskMap.entrySet()) {
-			if (taskEntry.getValue().isDone()) {
+		taskMap.entrySet()
+			.stream()
+			.filter(taskEntry -> taskEntry.getValue().isDone())
+			.forEach(taskEntry -> {
 				taskProgressMap.remove(taskEntry.getKey());
 				taskMap.remove(taskEntry.getKey());
 			}
-		}
+			);
 		return null;
 	};
 
