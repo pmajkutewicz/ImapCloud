@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.rest;
 
 import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ public class UploadedFileRestClient extends AbstractRestClient {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UploadedFileRestClient.class);
 	private static final String FIND_ALL_FILES = "/uploaded/files";
+	private static final String VERIFY_FILE = "/uploaded/verify";
 	private static final String FIND_ALL_FILE_CHUNKS = "/uploaded/chunks";
 
 	public UploadedFileRestClient(String endpoint, String username, String pass) {
@@ -38,6 +40,16 @@ public class UploadedFileRestClient extends AbstractRestClient {
 				.asObject(UploadedFileChunksResponse.class);
 			throwExceptionIfNotValidResponse(response);
 			return response.getBody();
+		} catch (UnirestException e) {
+			throw new IOException(e);
+		}
+	}
+
+	public void verifyFile(String fileId) throws IOException {
+		try {
+			HttpResponse<JsonNode> response = Unirest.get(endpoint + VERIFY_FILE).basicAuth(bAuthUsername, bAuthPassword)
+				.queryString("fileId", fileId).asJson();
+			throwExceptionIfNotValidResponse(response);
 		} catch (UnirestException e) {
 			throw new IOException(e);
 		}

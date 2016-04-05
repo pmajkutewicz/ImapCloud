@@ -64,10 +64,11 @@ public class UploadedController implements Initializable {
 	}
 
 	public void verifyButtonClick(ActionEvent event) {
-		UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
-		EventType<? extends ActionEvent> eventType = event.getEventType();
-		System.out.println(selectedItem);
-		System.out.println(eventType);
-		//TODO: Verify file and chunks
+		try {
+			UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
+			uploadedFileRestClient.verifyFile(selectedItem.getFileUniqueId());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

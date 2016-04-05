@@ -67,4 +67,10 @@ public class UploadedFileRestController {
 		return new UploadedFileChunksResponse(converted);
 	}
 
+	@RequestMapping(value = "verify", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void verifyFile(@RequestParam(name = "fileId") String fileUniqueId) {
+		List<FileChunk> fileChunks = fileServices.getFileChunks(fileUniqueId);
+		System.out.println(fileChunks);
+	}
+
 }
