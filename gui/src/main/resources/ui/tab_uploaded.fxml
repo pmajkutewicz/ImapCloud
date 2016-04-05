@@ -2,93 +2,99 @@
 
 <?scenebuilder-stylesheet css/custom.css?>
 
+
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.UploadedController">
-	<columnConstraints>
-		<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" />
-		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-	</columnConstraints>
-	<rowConstraints>
-		<RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="ALWAYS" />
-		<RowConstraints vgrow="NEVER" />
-	</rowConstraints>
-	<children>
-		<HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
-			<Button mnemonicParsing="true" onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile" />
-			<Button mnemonicParsing="true" onAction="#verifyButtonClick" text="%uploaded.table.button.verifyfile" />
-		</HBox>
+<?import javafx.scene.layout.RowConstraints?>
+<SplitPane dividerPositions="0.5" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.UploadedController">
+	<items>
+		<GridPane>
+			<columnConstraints>
+				<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0"/>
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="ALWAYS"/>
+				<RowConstraints vgrow="NEVER"/>
+			</rowConstraints>
+			<children>
+				<HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
+					<children>
+						<Button mnemonicParsing="true" onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile"/>
+						<Button mnemonicParsing="true" onAction="#verifyButtonClick" text="%uploaded.table.button.verifyfile"/>
+					</children>
+				</HBox>
 
-		<TableView fx:id="uploadedTable" prefHeight="200.0" prefWidth="281.0">
-			<columns>
-				<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.name">
-					<cellValueFactory>
-						<PropertyValueFactory property="name" />
-					</cellValueFactory>
-				</TableColumn>
-				<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.path">
-					<cellValueFactory>
-						<PropertyValueFactory property="absolutePath" />
-					</cellValueFactory>
-				</TableColumn>
-				<TableColumn prefWidth="60.0" text="%uploaded.table.column.file.size">
-					<cellValueFactory>
-						<PropertyValueFactory property="readableFileSize" />
-					</cellValueFactory>
-				</TableColumn>
-				<TableColumn prefWidth="30.0" text="%uploaded.table.column.file.completed">
-					<cellValueFactory>
-						<PropertyValueFactory property="completed" />
-					</cellValueFactory>
-				</TableColumn>
-			</columns>
-			<columnResizePolicy>
-				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-			</columnResizePolicy>
-		</TableView>
-		<TableView fx:id="uploadedChunksTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+				<TableView fx:id="uploadedTable" prefHeight="200.0" prefWidth="281.0">
+					<columns>
+						<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.name">
+							<cellValueFactory>
+								<PropertyValueFactory property="name"/>
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.path">
+							<cellValueFactory>
+								<PropertyValueFactory property="absolutePath"/>
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn prefWidth="60.0" text="%uploaded.table.column.file.size">
+							<cellValueFactory>
+								<PropertyValueFactory property="readableFileSize"/>
+							</cellValueFactory>
+						</TableColumn>
+						<TableColumn prefWidth="30.0" text="%uploaded.table.column.file.completed">
+							<cellValueFactory>
+								<PropertyValueFactory property="completed"/>
+							</cellValueFactory>
+						</TableColumn>
+					</columns>
+					<columnResizePolicy>
+						<TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+					</columnResizePolicy>
+				</TableView>
+			</children>
+		</GridPane>
+		<TableView fx:id="uploadedChunksTable" prefHeight="200.0" prefWidth="200.0">
 			<columns>
 				<TableColumn prefWidth="250.0" text="%uploaded.table.column.chunk.number">
 					<cellValueFactory>
-						<PropertyValueFactory property="chunkNumber" />
+						<PropertyValueFactory property="chunkNumber"/>
 					</cellValueFactory>
 				</TableColumn>
 				<TableColumn prefWidth="250.0" text="%uploaded.table.column.chunk.hash">
 					<cellValueFactory>
-						<PropertyValueFactory property="chunkHash" />
+						<PropertyValueFactory property="chunkHash"/>
 					</cellValueFactory>
 				</TableColumn>
 				<TableColumn prefWidth="60.0" text="%uploaded.table.column.chunk.size">
 					<cellValueFactory>
-						<PropertyValueFactory property="readableFileSize" />
+						<PropertyValueFactory property="readableFileSize"/>
 					</cellValueFactory>
 				</TableColumn>
 				<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.message_id">
 					<cellValueFactory>
-						<PropertyValueFactory property="messageId" />
+						<PropertyValueFactory property="messageId"/>
 					</cellValueFactory>
 				</TableColumn>
 				<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.verified_at">
 					<cellValueFactory>
-						<PropertyValueFactory property="lastVerifiedAt" />
+						<PropertyValueFactory property="lastVerifiedAt"/>
 					</cellValueFactory>
 				</TableColumn>
 				<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.exists">
 					<cellValueFactory>
-						<PropertyValueFactory property="chunkExists" />
+						<PropertyValueFactory property="chunkExists"/>
 					</cellValueFactory>
 				</TableColumn>
 			</columns>
 			<columnResizePolicy>
-				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
 			</columnResizePolicy>
 		</TableView>
-	</children>
-</GridPane>
+	</items>
+</SplitPane>
