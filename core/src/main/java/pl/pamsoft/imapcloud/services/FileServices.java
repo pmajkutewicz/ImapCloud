@@ -9,6 +9,7 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 
+import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +26,10 @@ public class FileServices {
 
 	public Collection<File> findUploadedFiles() {
 		return fileRepository.findAll();
+	}
+
+	public File getFileByUniqueId(String fileUniqueId) throws FileNotFoundException {
+		return fileRepository.getByFileUniqueId(fileUniqueId);
 	}
 
 	public File saveFile(UploadChunkContainer uploadChunkContainer, Account account) throws FileAlreadyExistsException {

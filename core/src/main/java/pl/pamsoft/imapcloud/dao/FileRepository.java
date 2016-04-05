@@ -7,10 +7,12 @@ import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.entity.File;
 
+import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Iterator;
 import java.util.function.Function;
@@ -20,24 +22,25 @@ public class FileRepository extends AbstractRepository<File> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileRepository.class);
 
-	private Function<Vertex, File> converter = v -> {
-		File f = new File();
-		f.setId(v.getId().toString());
-		f.setVersion(((OrientVertex) v).getRecord().getVersion());
-		f.setSize(v.getProperty(GraphProperties.FILE_SIZE));
-		f.setFileUniqueId(v.getProperty(GraphProperties.FILE_UNIQUE_ID));
-		f.setName(v.getProperty(GraphProperties.FILE_NAME));
-		f.setAbsolutePath(v.getProperty(GraphProperties.FILE_ABSOLUTE_PATH));
-		f.setFileHash(v.getProperty(GraphProperties.FILE_HASH));
-		//TODO: add owner account
-		return f;
-	};
+	@Autowired
+	private Function<Vertex, File> converter;
 
 	@Override
 	public File getById(String id) {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Vertex storedFile = graphDB.getVertex(new ORecordId(id));
 		return converter.apply(storedFile);
+	}
+
+	public File getByFileUniqueId(String fileUniqueId) throws FileNotFoundException {
+		OrientGraphNoTx graphDB = getDb().getGraphDB();
+		Iterable<Vertex> storedFiles = graphDB.getVertices(GraphProperties.FILE_UNIQUE_ID, fileUniqueId);
+		Iterator<Vertex> iterator = storedFiles.iterator();
+		if (iterator.hasNext()){
+			return converter.apply(iterator.next());
+		} else {
+			throw new FileNotFoundException(String.format("File with id: %s doesn't exist.", fileUniqueId));
+		}
 	}
 
 	@Override
