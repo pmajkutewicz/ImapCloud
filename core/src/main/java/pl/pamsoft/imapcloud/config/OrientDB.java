@@ -3,9 +3,6 @@ package pl.pamsoft.imapcloud.config;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
-import com.orientechnologies.orient.object.db.OObjectDatabasePool;
-import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
-import com.orientechnologies.orient.object.metadata.schema.OSchemaProxyObject;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
@@ -49,9 +46,6 @@ class OrientDB {
 	private static final Logger LOG = LoggerFactory.getLogger(OrientDB.class);
 
 	private OrientGraphFactory graphDB;
-
-	private OObjectDatabaseTx db;
-
 	@Value("${spring.data.orient.url}")
 	private String url;
 
@@ -65,23 +59,6 @@ class OrientDB {
 	public void init() {
 		LOG.debug("DB Location: {}", url);
 		configGraphDb();
-		configObjectDb();
-	}
-
-	private void configObjectDb() {
-		db = OObjectDatabasePool.global().acquire(url, username, password);
-		db.setAutomaticSchemaGeneration(true);
-
-		db.getEntityManager().registerEntityClass(Account.class);
-		db.getEntityManager().registerEntityClass(File.class);
-		OSchemaProxyObject schema = db.getMetadata().getSchema();
-//		if (schema.existsClass(Account.class.getSimpleName())) {
-//			OClass accountClass = schema.getClass(Account.class.getSimpleName());
-//			if (accountClass.getClassIndex("Account__email") != null) {
-//				accountClass.createIndex("Account__email", OClass.INDEX_TYPE.UNIQUE, "email");
-//			}
-//		}
-		schema.save();
 	}
 
 	private void configGraphDb() {
@@ -144,17 +121,11 @@ class OrientDB {
 	@PreDestroy
 	public void destroy() {
 		graphDB.close();
-		db.close();
 		LOG.info("DB destroyed");
 	}
 
 	@Bean
 	public OrientGraphFactory getGraphDB() {
 		return graphDB;
-	}
-
-	@Bean
-	public OObjectDatabaseTx getObjectDB() {
-		return db;
 	}
 }

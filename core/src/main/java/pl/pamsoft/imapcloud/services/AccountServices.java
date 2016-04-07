@@ -11,6 +11,7 @@ import pl.pamsoft.imapcloud.dto.LoginType;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
+import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -55,7 +56,7 @@ public class AccountServices {
 		}
 		try {
 			accountRepository.save(account);
-		} catch (FileAlreadyExistsException e) {
+		} catch (IOException e) {
 			LOG.warn("Account already exists.");
 		}
 	}

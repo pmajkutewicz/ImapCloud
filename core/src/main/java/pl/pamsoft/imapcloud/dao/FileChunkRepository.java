@@ -85,4 +85,9 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_MESSAGE_ID, chunk.getMessageId());
 		fileVertex.addEdge(GraphProperties.FILE_CHUNK_EDGE_FILE, vertex);
 	}
+
+	@Override
+	public Function<Vertex, FileChunk> getConverter() {
+		return converter;
+	}
 }

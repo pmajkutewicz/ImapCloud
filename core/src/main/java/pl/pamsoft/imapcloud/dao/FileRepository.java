@@ -25,13 +25,6 @@ public class FileRepository extends AbstractRepository<File> {
 	@Autowired
 	private Function<Vertex, File> converter;
 
-	@Override
-	public File getById(String id) {
-		OrientGraphNoTx graphDB = getDb().getGraphDB();
-		Vertex storedFile = graphDB.getVertex(new ORecordId(id));
-		return converter.apply(storedFile);
-	}
-
 	public File getByFileUniqueId(String fileUniqueId) throws FileNotFoundException {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Iterable<Vertex> storedFiles = graphDB.getVertices(GraphProperties.FILE_UNIQUE_ID, fileUniqueId);
@@ -85,5 +78,10 @@ public class FileRepository extends AbstractRepository<File> {
 		fileVertex.setProperty(GraphProperties.FILE_SIZE, file.getSize());
 		fileVertex.setProperty(GraphProperties.FILE_UNIQUE_ID, file.getFileUniqueId());
 		fileVertex.addEdge(GraphProperties.FILE_EDGE_ACCOUNT, vertex);
+	}
+
+	@Override
+	public Function<Vertex, File> getConverter() {
+		return converter;
 	}
 }
