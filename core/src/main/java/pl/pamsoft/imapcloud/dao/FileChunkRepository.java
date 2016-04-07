@@ -51,6 +51,14 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 		return chunk;
 	}
 
+	public void markChunkVerified(String chunkDbId, boolean isExist) {
+		OrientGraphNoTx graphDB = getDb().getGraphDB();
+		Vertex storedChunk = graphDB.getVertex(chunkDbId);
+		storedChunk.setProperty(GraphProperties.FILE_CHUNK_LAST_VERIFIED_AT, System.currentTimeMillis());
+		storedChunk.setProperty(GraphProperties.FILE_CHUNK_EXISTS, isExist);
+		graphDB.shutdown();
+	}
+
 	public List<FileChunk> getFileChunks(String fileUniqueId) {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Iterable<Vertex> vertices = graphDB.getVertices(GraphProperties.FILE_UNIQUE_ID, fileUniqueId);

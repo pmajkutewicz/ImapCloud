@@ -29,7 +29,7 @@ public class UploadedFileChunkDto {
 	@Getter @Setter
 	private Long lastVerifiedAt;
 	@Getter @Setter
-	private boolean chunkExists;
+	private Boolean chunkExists;
 
 	// used as javafx property
 	public String getReadableFileSize() {

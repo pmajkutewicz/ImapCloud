@@ -14,6 +14,7 @@ import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
 import pl.pamsoft.imapcloud.responses.UploadedFilesResponse;
 import pl.pamsoft.imapcloud.services.FileServices;
+import pl.pamsoft.imapcloud.services.VerificationService;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +27,9 @@ public class UploadedFileRestController {
 
 	@Autowired
 	private FileServices fileServices;
+
+	@Autowired
+	private VerificationService verificationService;
 
 	private Function<File, UploadedFileDto> converter = file -> {
 		UploadedFileDto uploadedFileDto = new UploadedFileDto();
@@ -45,7 +49,7 @@ public class UploadedFileRestController {
 		ufcd.setSize(fileChunk.getSize());
 		ufcd.setFileChunkUniqueId(fileChunk.getFileChunkUniqueId());
 		ufcd.setChunkHash(fileChunk.getChunkHash());
-		ufcd.setChunkExists(fileChunk.isChunkExists());
+		ufcd.setChunkExists(fileChunk.getChunkExists());
 		ufcd.setLastVerifiedAt(fileChunk.getLastVerifiedAt());
 		return ufcd;
 	};
@@ -70,7 +74,7 @@ public class UploadedFileRestController {
 	@RequestMapping(value = "verify", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void verifyFile(@RequestParam(name = "fileId") String fileUniqueId) {
 		List<FileChunk> fileChunks = fileServices.getFileChunks(fileUniqueId);
-		System.out.println(fileChunks);
+		verificationService.validate(fileChunks);
 	}
 
 }

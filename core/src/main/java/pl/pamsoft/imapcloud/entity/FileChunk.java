@@ -21,6 +21,6 @@ public class FileChunk {
 	private File ownerFile;
 	private String messageId;
 	private Long lastVerifiedAt;
-	private boolean chunkExists;
+	private Boolean chunkExists;
 
 }

@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.imap;
 
 import com.google.common.base.Stopwatch;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +20,11 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.function.Function;
 
 import static javax.mail.Folder.HOLDS_MESSAGES;
@@ -35,8 +35,6 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkSaver.class);
 
-	private static final String IMAP_CLOUD_FOLDER_NAME = "IC";
-	private static final boolean NO_EXPUNGE = false;
 	private GenericObjectPool<Store> connectionPool;
 	private final CryptoService cs;
 	private Statistics statistics;
@@ -63,8 +61,8 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			Message[] msg = {message};
 			destFolder.appendMessages(msg);
 			String[] header = message.getHeader("Message-ID");
-			destFolder.close(NO_EXPUNGE);
-			statistics.add(StatisticType.CHUNK_SAVER, stopwatch);
+			destFolder.close(IMAPUtils.NO_EXPUNGE);
+			statistics.add(StatisticType.CHUNK_SAVER, stopwatch.stop());
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_SAVER, stopwatch));
 			LOG.debug("Chunk saved in {}", stopwatch);
 			return UploadChunkContainer.addMessageId(dataChunk, header[0]);
@@ -86,28 +84,22 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 	}
 
 	private Folder getFolder(Store store, String absolutePathName) throws MessagingException {
-		String imapPath = createFolderName(absolutePathName);
+		String imapPath = IMAPUtils.createFolderName(cs, absolutePathName);
 		return createFolderIfDoesntExist(store, imapPath);
 	}
 
-	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
-	private String createFolderName(String absoluteFilePath) {
-		String absolutePath = new File(absoluteFilePath).getParent();
-		return cs.rot13(absolutePath.replace(File.separator, ""));
-	}
-
 	private Folder createFolderIfDoesntExist(Store store, String path) throws MessagingException {
-		Folder folder = store.getFolder(IMAP_CLOUD_FOLDER_NAME).getFolder(path);
+		Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(path);
 		if (!folder.exists()) {
 			boolean result = folder.create(HOLDS_MESSAGES);
 			folder.open(READ_ONLY);
-			folder.close(NO_EXPUNGE);
+			folder.close(IMAPUtils.NO_EXPUNGE);
 			LOG.debug("Folder {} crated?: {}", path, result);
 		}
 		return folder;
 	}
 
-	private Message createMessage(UploadChunkContainer dataChunk) throws MessagingException {
+	private Message createMessage(UploadChunkContainer dataChunk) throws MessagingException, UnsupportedEncodingException {
 		String htmlBody = "";
 		Message msg = new CustomMessageIdMimeMessage(Session.getInstance(System.getProperties()));
 
@@ -124,6 +116,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		attachment.setDisposition(Part.ATTACHMENT);
 		mp.addBodyPart(attachment);
 		msg.setContent(mp);
+		msg.setFrom(new InternetAddress("ic@ic", "IMAPCloud"));
 		msg.setSubject(fileName);
 		msg.setHeader("IC-ChunkNumber", String.valueOf(dataChunk.getChunkNumber()));
 		msg.setHeader("IC-ChunkId", String.valueOf(dataChunk.getFileChunkUniqueId()));

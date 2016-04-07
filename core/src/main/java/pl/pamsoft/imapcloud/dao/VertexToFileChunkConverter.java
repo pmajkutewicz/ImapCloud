@@ -1,19 +1,18 @@
 package pl.pamsoft.imapcloud.dao;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 
-import java.util.Iterator;
 import java.util.function.Function;
 
 @Component
+@SuppressFBWarnings("SCII_SPOILED_CHILD_INTERFACE_IMPLEMENTOR")
 public class VertexToFileChunkConverter extends AbstractVertexConverter implements Function<Vertex, FileChunk> {
 
 	@Autowired
@@ -30,6 +29,14 @@ public class VertexToFileChunkConverter extends AbstractVertexConverter implemen
 		f.setSize(v.getProperty(GraphProperties.FILE_CHUNK_SIZE));
 		f.setFileChunkUniqueId(v.getProperty(GraphProperties.FILE_CHUNK_UNIQUE_ID));
 		f.setOwnerFile(getOwningFile(v));
+		Boolean exists = v.getProperty(GraphProperties.FILE_CHUNK_EXISTS);
+		if (null != exists) {
+			f.setChunkExists(exists);
+		}
+		Long lastVerifiedAt = v.getProperty(GraphProperties.FILE_CHUNK_LAST_VERIFIED_AT);
+		if (null != lastVerifiedAt) {
+			f.setLastVerifiedAt(lastVerifiedAt);
+		}
 		return f;
 	}
 

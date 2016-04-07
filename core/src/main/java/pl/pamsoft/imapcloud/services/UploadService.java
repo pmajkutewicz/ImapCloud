@@ -2,8 +2,6 @@ package pl.pamsoft.imapcloud.services;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
@@ -11,7 +9,6 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkSaver;
-import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
 import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
@@ -27,7 +24,6 @@ import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.mail.Store;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -56,7 +52,9 @@ public class UploadService {
 	private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 	private Map<String, Future<?>> taskMap = new ConcurrentHashMap<>();
 	private Map<String, TaskProgressEvent> taskProgressMap = new ConcurrentHashMap<>();
-	private Map<String, GenericObjectPool<Store>> accountPoolMap = new ConcurrentHashMap<>();
+
+	@Autowired
+	private ConnectionPoolService connectionPoolService;
 
 	@Autowired
 	private AccountRepository accountRepository;
@@ -129,7 +127,7 @@ public class UploadService {
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
-				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(createConnectionPool(account), cryptoService, statistics, performanceDataService);
+				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 				selectedFiles.stream().parallel()
@@ -159,20 +157,5 @@ public class UploadService {
 		return true;
 	}
 
-	private GenericObjectPool<Store> createConnectionPool(Account account) {
-		String key = account.getImapServerAddress();
-		if (accountPoolMap.containsKey(key)) {
-			return accountPoolMap.get(key);
-		} else {
-			IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), key);
-			GenericObjectPoolConfig config = new GenericObjectPoolConfig();
-			config.setMaxTotal(account.getMaxConcurrentConnections());
-			config.setTestOnBorrow(true);
-			config.setTestOnReturn(true);
-			config.setTestWhileIdle(true);
-			GenericObjectPool<Store> pool = new GenericObjectPool<>(connectionFactory, config);
-			accountPoolMap.put(key, pool);
-			return pool;
-		}
-	}
+
 }
