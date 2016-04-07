@@ -34,9 +34,9 @@ public class VerificationService {
 		fileChunks.stream().parallel()
 			.forEach(chunk -> {
 				GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());
-				ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, cryptoService, fileChunkRepository, statistics, performanceDataService);
+				ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, cryptoService, statistics, performanceDataService);
 				Boolean chunkExists = chunkVerifier.apply(chunk);
-				System.out.println(String.format("Chunk %s exists: %s", chunk.getMessageId(), chunkExists));
+				fileChunkRepository.markChunkVerified(chunk.getId(), chunkExists);
 				}
 			);
 	}
