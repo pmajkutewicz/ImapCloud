@@ -1,45 +1,92 @@
 package pl.pamsoft.imapcloud.rest;
 
-import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.ObjectMapper;
-import com.mashape.unirest.http.Unirest;
-import org.apache.http.HttpStatus;
-import pl.pamsoft.imapcloud.responses.AbstractResponse;
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import java.io.IOException;
 
 abstract class AbstractRestClient {
 
-	private final ObjectMapper objectMapper = new JacksonObjectMapper();
-	final String endpoint;
 	final String bAuthUsername;
 	final String bAuthPassword;
-	boolean initialized;
+	final ObjectMapper objectMapper = new JacksonObjectMapper();
+	private final String host;
+	private final int port;
+	private final Authenticator authenticator;
+	private final static MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
 
 	AbstractRestClient(String endpoint, String username, String pass) {
-		initUnirest();
-		this.endpoint = endpoint;
+		String[] end = endpoint.split(":");
+		this.host = end[0];
+		this.port = Integer.parseInt(end[1]);
 		this.bAuthUsername = username;
 		this.bAuthPassword = pass;
+		this.authenticator = (route, response) -> response.request().newBuilder().header("Authorization", Credentials.basic(username, pass)).build();
 	}
 
-	void throwExceptionIfNotValidResponse(HttpResponse response) throws IOException {
-		if (HttpStatus.SC_OK != response.getStatus()) {
-			AbstractResponse body = (AbstractResponse) response.getBody();
-			throw new IOException(body.getMessage());
-		}
+	<T> T sendGet(String url, Class<T> cls) throws IOException {
+		return objectMapper.readValue(sendGet(buildUrl(url)).body().string(), cls);
 	}
 
-	boolean isSuccessResponse(HttpResponse response) {
-		return HttpStatus.SC_OK == response.getStatus();
+	<T> T sendGet(String url, Class<T> cls, String paramName, String paramValue) throws IOException {
+		return objectMapper.readValue(sendGet(buildUrl(url, paramName, paramValue)).body().string(), cls);
 	}
 
-	private void initUnirest() {
-		if (!initialized) {
-			Unirest.setObjectMapper(objectMapper);
-			Unirest.setDefaultHeader("Accept", "application/json");
-			Unirest.setDefaultHeader("Content-Type", "application/json");
-			initialized = true;
+	Response sendGet(String url, String paramName, String paramValue) throws IOException {
+		return sendGet(buildUrl(url, paramName, paramValue));
+	}
+
+	Response sendPost(String url, Object pojo) throws IOException {
+		return sendPost(buildUrl(url), pojo);
+	}
+
+	private Response sendGet(HttpUrl httpUrl) throws IOException {
+		return send(getRequest().url(httpUrl.url()).build());
+	}
+
+	private Response sendPost(HttpUrl httpUrl, Object pojo) throws IOException {
+		RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValue(pojo));
+		Request req = getRequest().url(httpUrl.url()).post(requestBody).build();
+		return send(req);
+	}
+
+	private Response send(Request req) throws IOException {
+		Response response = getClient().newCall(req).execute();
+		throwExceptionIfNotValidResponse(response);
+		return response;
+	}
+
+	private HttpUrl buildUrl(String url) {
+		return new HttpUrl.Builder().scheme("http").host(host).port(port).addPathSegments(url).build();
+	}
+
+	private HttpUrl buildUrl(String url, String paramName, String paramValue) {
+		return new HttpUrl.Builder().scheme("http").host(host).port(port).addPathSegments(url).addQueryParameter(paramName, paramValue).build();
+	}
+
+	private OkHttpClient getClient() {
+		OkHttpClient.Builder client = new OkHttpClient.Builder();
+		client.authenticator(authenticator);
+		return client.build();
+	}
+
+	private Request.Builder getRequest() {
+		return new Request.Builder()
+			.header("User-Agent", "IC JavaFX")
+			.addHeader("Accept", "application/json")
+			.addHeader("Content-Type", "application/json");
+	}
+
+	private void throwExceptionIfNotValidResponse(Response response) throws IOException {
+		if (!response.isSuccessful()) {
+			throw new IOException(response.body().string());
 		}
 	}
 }

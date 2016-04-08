@@ -14,9 +14,6 @@ import javax.inject.Singleton;
 
 public class DefaultModule extends AbstractModule {
 
-	private static final String ENDPOINT = "http://localhost:9000/";
-	private static final String HTTP = "http://";
-
 	private final String endpoint;
 	private final String username;
 	private final String password;
@@ -46,25 +43,25 @@ public class DefaultModule extends AbstractModule {
 	@Provides
 	@Singleton
 	AccountRestClient getAccountRestClient() {
-		return new AccountRestClient(HTTP + endpoint, username, password);
+		return new AccountRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
 	FilesRestClient getFilesRestClient() {
-		return new FilesRestClient(HTTP + endpoint, username, password);
+		return new FilesRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
 	UploadsRestClient getUploadRestClient() {
-		return new UploadsRestClient(HTTP + endpoint, username, password);
+		return new UploadsRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
 	UploadedFileRestClient getUploadedFileRestClient() {
-		return new UploadedFileRestClient(HTTP + endpoint, username, password);
+		return new UploadedFileRestClient(endpoint, username, password);
 	}
 
 	@Provides

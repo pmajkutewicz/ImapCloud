@@ -39,6 +39,7 @@ public class UploadedController implements Initializable {
 			uploadedChunksTable.getItems().clear();
 			uploadedChunksTable.getItems().addAll(uploadedFileChunks.getFileChunks());
 		} catch (IOException e) {
+			uploadedChunksTable.getItems().clear();
 			e.printStackTrace();
 		}
     };
