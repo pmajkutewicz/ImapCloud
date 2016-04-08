@@ -68,7 +68,7 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 		} else {
 			Vertex firstFile = fileIterator.next();
 			Spliterator<Edge> spliterator = firstFile.getEdges(Direction.IN, GraphProperties.FILE_CHUNK_EDGE_FILE).spliterator();
-			return StreamSupport.stream(spliterator, true)
+			return StreamSupport.stream(spliterator, false)
 				.map(r -> r.getVertex(Direction.OUT))
 				.map(converter)
 				.sorted((o1, o2) -> Integer.compare(o1.getChunkNumber(), o2.getChunkNumber()))
