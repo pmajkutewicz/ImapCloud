@@ -2,7 +2,6 @@ package pl.pamsoft.imapcloud.dao;
 
 import com.tinkerpop.blueprints.Vertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.entity.Account;
@@ -12,9 +11,6 @@ import java.util.function.Function;
 @Component
 @SuppressFBWarnings("SCII_SPOILED_CHILD_INTERFACE_IMPLEMENTOR")
 public class VertexToAccountConverter extends AbstractVertexConverter implements Function<Vertex, Account> {
-
-	@Autowired
-	private AccountRepository accountRepository;
 
 	@Override
 	public Account apply(Vertex v) {

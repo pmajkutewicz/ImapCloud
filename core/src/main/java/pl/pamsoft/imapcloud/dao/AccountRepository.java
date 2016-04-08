@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.dao;
 
 import com.orientechnologies.orient.core.id.ORecordId;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -44,12 +45,12 @@ public class AccountRepository extends AbstractRepository<Account> {
 		return account;
 	}
 
-	private void updateIdAndVersionFields(Account account, OrientVertex orientVertex) {
+	private void updateIdAndVersionFields(Account account, Element orientVertex) {
 		ORecordId id = (ORecordId) orientVertex.getId();
 		account.setId(id.toString());
 	}
 
-	private void fillProperties(OrientVertex accountVertex, Account account) {
+	private void fillProperties(Element accountVertex, Account account) {
 		accountVertex.setProperty(GraphProperties.ACCOUNT_LOGIN, account.getLogin());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_IMAP_SERVER, account.getImapServerAddress());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_PASSWORD, account.getPassword());

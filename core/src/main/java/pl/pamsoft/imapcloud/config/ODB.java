@@ -13,6 +13,7 @@ public class ODB {
 
 
 	public OrientGraphNoTx getGraphDB() {
+		graphDB.getDatabase().activateOnCurrentThread();
 		return graphDB.getNoTx();
 	}
 

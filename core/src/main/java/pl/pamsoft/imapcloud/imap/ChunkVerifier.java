@@ -69,7 +69,7 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 		return Boolean.FALSE;
 	}
 
-	private class MySearchTerm extends SearchTerm {
+	private static class MySearchTerm extends SearchTerm {
 		private String expectedId;
 
 		MySearchTerm(String expectedId) {
@@ -89,6 +89,4 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 			return false;
 		}
 	}
-
-	;
 }

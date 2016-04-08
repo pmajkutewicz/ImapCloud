@@ -4,6 +4,7 @@ import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.impls.orient.OrientConfigurableGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
@@ -44,6 +45,8 @@ import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_UNIQUE_ID;
 class OrientDB {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OrientDB.class);
+	private static final int MAX = 10;
+	private static final int MIN = 1;
 
 	private OrientGraphFactory graphDB;
 	@Value("${spring.data.orient.url}")
@@ -65,6 +68,8 @@ class OrientDB {
 		OGlobalConfiguration.FILE_LOCK.setValue(Boolean.FALSE);
 		graphDB = new OrientGraphFactory(url, username, password);
 		graphDB.setUseLightweightEdges(true);
+		graphDB.setThreadMode(OrientConfigurableGraph.THREAD_MODE.ALWAYS_AUTOSET);
+		graphDB.setupPool(MIN, MAX);
 		OrientGraphNoTx tx = graphDB.getNoTx();
 		if (tx.getVertexType(Account.class.getSimpleName()) == null) {
 			OrientVertexType vertexType = tx.createVertexType(Account.class.getSimpleName());

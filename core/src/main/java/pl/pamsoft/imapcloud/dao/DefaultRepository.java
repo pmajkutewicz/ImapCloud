@@ -9,12 +9,10 @@ import pl.pamsoft.imapcloud.config.ODB;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Repository
 public interface DefaultRepository<T> {
@@ -30,12 +28,15 @@ public interface DefaultRepository<T> {
 		java.lang.Class<T> tClass = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(), DefaultRepository.class);
 		Iterable<Vertex> verticesOfClass = getDb().getGraphDB().getVerticesOfClass(tClass.getSimpleName());
 
-		int characteristics = Spliterator.SORTED | Spliterator.ORDERED;
-		Spliterator<Vertex> spliterator = Spliterators.spliteratorUnknownSize(verticesOfClass.iterator(), characteristics);
-		boolean parallel = false;
-		Stream<Vertex> stream = StreamSupport.stream(spliterator, parallel);
+		List<T> result = new LinkedList<>();
+		Iterator<Vertex> iterator = verticesOfClass.iterator();
+		while (iterator.hasNext()) {
+			Vertex v = iterator.next();
+			T pojo = getConverter().apply(v);
+			result.add(pojo);
+		}
 
-		return stream.map(getConverter()).collect(Collectors.toList());
+		return result;
 	}
 
 	T save(T entity) throws IOException;

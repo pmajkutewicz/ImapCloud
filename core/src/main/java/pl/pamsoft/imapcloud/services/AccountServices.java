@@ -12,7 +12,6 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Collection;
