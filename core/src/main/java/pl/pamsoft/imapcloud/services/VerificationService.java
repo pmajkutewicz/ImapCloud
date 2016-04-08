@@ -11,9 +11,11 @@ import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Future;
 
 @Service
-public class VerificationService {
+public class VerificationService extends AbstractBackgroundService {
 
 	@Autowired
 	private ConnectionPoolService connectionPoolService;
@@ -30,14 +32,25 @@ public class VerificationService {
 	@Autowired
 	private PerformanceDataService performanceDataService;
 
-	public void validate(List<FileChunk> fileChunks) {
-		fileChunks.stream().parallel()
-			.forEach(chunk -> {
-				GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());
-				ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, cryptoService, statistics, performanceDataService);
-				Boolean chunkExists = chunkVerifier.apply(chunk);
-				fileChunkRepository.markChunkVerified(chunk.getId(), chunkExists);
-				}
-			);
+	public boolean validate(List<FileChunk> fileChunks) {
+		final String taskId = UUID.randomUUID().toString();
+		Future<?> task = getExecutor().submit(() -> {
+			Thread.currentThread().setName("VerificationTask-" + taskId);
+			fileChunks.stream()
+				.forEach(chunk -> {
+						GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());
+						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, cryptoService, statistics, performanceDataService);
+						Boolean chunkExists = chunkVerifier.apply(chunk);
+						fileChunkRepository.markChunkVerified(chunk.getId(), chunkExists);
+					}
+				);
+		});
+		getTaskMap().put(taskId, task);
+		return true;
+	}
+
+	@Override
+	int getMaxTasks() {
+		return DEFAULT_MAX_TASKS;
 	}
 }

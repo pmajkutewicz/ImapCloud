@@ -1,6 +1,5 @@
 package pl.pamsoft.imapcloud.services;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,36 +21,19 @@ import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
 import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @Service
-public class UploadService {
-
-	private static final int MAX_TASKS = 10;
-	private static final int FIVETEEN = 15;
-
-	private ExecutorService executor = Executors.newFixedThreadPool(MAX_TASKS, new ThreadFactoryBuilder().setNameFormat("UploadTask-%d").setDaemon(false).build());
-	private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-	private Map<String, Future<?>> taskMap = new ConcurrentHashMap<>();
-	private Map<String, TaskProgressEvent> taskProgressMap = new ConcurrentHashMap<>();
+public class UploadService extends AbstractBackgroundService {
 
 	@Autowired
 	private ConnectionPoolService connectionPoolService;
@@ -77,47 +59,24 @@ public class UploadService {
 	@Autowired
 	private TasksProgressService tasksProgressService;
 
-	private Callable<Void> cleanUpTask = () -> {
-		taskMap.entrySet()
-			.stream()
-			.filter(taskEntry -> taskEntry.getValue().isDone())
-			.forEach(taskEntry -> {
-				taskProgressMap.remove(taskEntry.getKey());
-				taskMap.remove(taskEntry.getKey());
-			}
-			);
-		return null;
-	};
-
-	@PostConstruct
-	void init() {
-		scheduledExecutorService.schedule(cleanUpTask, FIVETEEN, TimeUnit.MINUTES);
-	}
-
-	@PreDestroy
-	void destroy() {
-		executor.shutdown();
-		scheduledExecutorService.shutdown();
-	}
-
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncodingEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
-		Future<?> task = executor.submit(() -> {
+		Future<?> task = getExecutor().submit(() -> {
 			Thread.currentThread().setName("UploadTask-" + taskId);
 			try {
 				final MessageDigest instance = MessageDigest.getInstance("SHA-512");
 				final Account account = accountRepository.getById(selectedAccount.getId());
 				final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, statistics, performanceDataService).apply(selectedFiles);
-				taskProgressMap.put(taskId, new TaskProgressEvent(taskId, bytesToProcess, selectedFiles));
+				getTaskProgressMap().put(taskId, new TaskProgressEvent(taskId, bytesToProcess, selectedFiles));
 
 				Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
-				Consumer<UploadChunkContainer> updateProgress = ucc -> taskProgressMap.get(ucc.getTaskId())
+				Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
 					.process(ucc.getChunkSize(), ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize());
-				Consumer<UploadChunkContainer> markFileProcessed = ucc -> taskProgressMap.get(ucc.getTaskId())
+				Consumer<UploadChunkContainer> markFileProcessed = ucc -> getTaskProgressMap().get(ucc.getTaskId())
 					.markFileProcessed(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
 
-				Consumer<UploadChunkContainer> broadcastTaskProgress = ucc -> tasksProgressService.broadcast(taskProgressMap.get(ucc.getTaskId()));
+				Consumer<UploadChunkContainer> broadcastTaskProgress = ucc -> tasksProgressService.broadcast(getTaskProgressMap().get(ucc.getTaskId()));
 
 				Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics, performanceDataService);
@@ -153,9 +112,12 @@ public class UploadService {
 				e.printStackTrace();
 			}
 		});
-		taskMap.put(taskId, task);
+		getTaskMap().put(taskId, task);
 		return true;
 	}
 
+	int getMaxTasks() {
+		return DEFAULT_MAX_TASKS;
+	}
 
 }
