@@ -130,7 +130,7 @@ public class UploadService {
 				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
-				selectedFiles.stream().parallel()
+				selectedFiles.stream()
 					.map(packInContainer)
 					.flatMap(parseDirectories)
 					.map(generateFilehash)

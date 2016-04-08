@@ -25,7 +25,6 @@ public class ConnectionPoolService {
 			config.setMaxTotal(account.getMaxConcurrentConnections());
 			config.setTestOnBorrow(true);
 			config.setTestOnReturn(true);
-			config.setTestWhileIdle(true);
 			GenericObjectPool<Store> pool = new GenericObjectPool<>(connectionFactory, config);
 			accountPoolMap.put(key, pool);
 			return pool;

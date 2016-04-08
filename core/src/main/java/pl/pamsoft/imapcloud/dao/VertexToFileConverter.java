@@ -28,12 +28,17 @@ public class VertexToFileConverter extends AbstractVertexConverter implements Fu
 		f.setName(v.getProperty(GraphProperties.FILE_NAME));
 		f.setAbsolutePath(v.getProperty(GraphProperties.FILE_ABSOLUTE_PATH));
 		f.setFileHash(v.getProperty(GraphProperties.FILE_HASH));
+		f.setCompleted(v.getProperty(GraphProperties.FILE_COMPLETED));
 		f.setOwnerAccount(getOwningAccount(v));
 		return f;
 	}
 
 	private Account getOwningAccount(Vertex v) {
 		Vertex parentVertex = getParentVertex(v, GraphProperties.FILE_EDGE_ACCOUNT);
-		return accountRepository.getById(parentVertex.getId().toString());
+		if (null != parentVertex) {
+			return accountRepository.getById(parentVertex.getId().toString());
+		} else {
+			return null;
+		}
 	}
 }
