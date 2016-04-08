@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.services;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 
 import javax.annotation.PostConstruct;
@@ -14,12 +15,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@SuppressFBWarnings("PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS")
 abstract class AbstractBackgroundService {
 
 	static final int DEFAULT_MAX_TASKS = 10;
 	private static final int FIVETEEN = 15;
 
-	private ExecutorService executor = Executors.newFixedThreadPool(getMaxTasks(), new ThreadFactoryBuilder().setNameFormat("UploadTask-%d").setDaemon(false).build());
+	private ExecutorService executor = Executors.newFixedThreadPool(getMaxTasks(), new ThreadFactoryBuilder().setNameFormat(getNameFormat()).setDaemon(false).build());
 	private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 	private Map<String, Future<?>> taskMap = new ConcurrentHashMap<>();
 	private Map<String, TaskProgressEvent> taskProgressMap = new ConcurrentHashMap<>();
@@ -61,4 +63,6 @@ abstract class AbstractBackgroundService {
 	}
 
 	abstract int getMaxTasks();
+
+	abstract String getNameFormat();
 }

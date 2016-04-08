@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.rest;
 
-import com.mashape.unirest.http.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
@@ -14,20 +14,16 @@ import java.io.IOException;
 
 abstract class AbstractRestClient {
 
-	final String bAuthUsername;
-	final String bAuthPassword;
-	final ObjectMapper objectMapper = new JacksonObjectMapper();
+	private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
+	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final String host;
 	private final int port;
 	private final Authenticator authenticator;
-	private final static MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
 
 	AbstractRestClient(String endpoint, String username, String pass) {
 		String[] end = endpoint.split(":");
 		this.host = end[0];
 		this.port = Integer.parseInt(end[1]);
-		this.bAuthUsername = username;
-		this.bAuthPassword = pass;
 		this.authenticator = (route, response) -> response.request().newBuilder().header("Authorization", Credentials.basic(username, pass)).build();
 	}
 
@@ -52,7 +48,7 @@ abstract class AbstractRestClient {
 	}
 
 	private Response sendPost(HttpUrl httpUrl, Object pojo) throws IOException {
-		RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValue(pojo));
+		RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValueAsString(pojo));
 		Request req = getRequest().url(httpUrl.url()).post(requestBody).build();
 		return send(req);
 	}

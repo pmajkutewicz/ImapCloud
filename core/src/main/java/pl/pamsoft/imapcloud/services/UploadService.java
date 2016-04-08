@@ -120,4 +120,8 @@ public class UploadService extends AbstractBackgroundService {
 		return DEFAULT_MAX_TASKS;
 	}
 
+	@Override
+	String getNameFormat() {
+		return "UploadTask-%d";
+	}
 }

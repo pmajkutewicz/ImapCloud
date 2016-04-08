@@ -53,4 +53,9 @@ public class VerificationService extends AbstractBackgroundService {
 	int getMaxTasks() {
 		return DEFAULT_MAX_TASKS;
 	}
+
+	@Override
+	String getNameFormat() {
+		return "VerificationTask-%d";
+	}
 }
