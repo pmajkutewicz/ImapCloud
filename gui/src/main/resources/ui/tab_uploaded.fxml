@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import pl.pamsoft.imapcloud.formatters.*?>
 <SplitPane dividerPositions="0.5" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.UploadedController">
 	<items>
 		<GridPane>
@@ -82,6 +83,9 @@
 					</cellValueFactory>
 				</TableColumn>
 				<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.verified_at">
+					<cellFactory>
+						<CellDateFormatter />
+					</cellFactory>
 					<cellValueFactory>
 						<PropertyValueFactory property="lastVerifiedAt"/>
 					</cellValueFactory>
