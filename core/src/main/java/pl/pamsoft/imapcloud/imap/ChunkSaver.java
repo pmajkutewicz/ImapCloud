@@ -1,7 +1,11 @@
 package pl.pamsoft.imapcloud.imap;
 
 import com.google.common.base.Stopwatch;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
@@ -20,11 +24,12 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 
 import static javax.mail.Folder.HOLDS_MESSAGES;
@@ -39,10 +44,12 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 	private final CryptoService cs;
 	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
+	private PaddedBufferedBlockCipher encryptingCipher;
 
-	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, Statistics statistics, PerformanceDataService performanceDataService) {
+	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.connectionPool = connectionPool;
 		this.cs = cryptoService;
+		encryptingCipher = cs.getEncryptingCipher(ByteUtils.fromHexString(cryptoKey));
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
@@ -55,7 +62,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			store = connectionPool.borrowObject();
 			printPoolStats(connectionPool);
-			Folder destFolder = getFolder(store, dataChunk.getFileDto().getAbsolutePath());
+			Folder destFolder = getFolder(store, dataChunk);
 			destFolder.open(READ_WRITE);
 			Message message = createMessage(dataChunk);
 			Message[] msg = {message};
@@ -83,8 +90,9 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		return UploadChunkContainer.EMPTY;
 	}
 
-	private Folder getFolder(Store store, String absolutePathName) throws MessagingException {
-		String imapPath = IMAPUtils.createFolderName(cs, absolutePathName);
+	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
+	private Folder getFolder(Store store, UploadChunkContainer ucc) throws MessagingException {
+		String imapPath = IMAPUtils.createFolderName(ucc);
 		return createFolderIfDoesntExist(store, imapPath);
 	}
 
@@ -116,19 +124,27 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		attachment.setDisposition(Part.ATTACHMENT);
 		mp.addBodyPart(attachment);
 		msg.setContent(mp);
-		msg.setFrom(new InternetAddress("ic@ic", "IMAPCloud"));
 		msg.setSubject(fileName);
 		msg.setHeader("IC-ChunkNumber", String.valueOf(dataChunk.getChunkNumber()));
 		msg.setHeader("IC-ChunkId", String.valueOf(dataChunk.getFileChunkUniqueId()));
 		msg.setHeader("IC-FileId", String.valueOf(dataChunk.getFileUniqueId()));
+		msg.setHeader("IC-FileName", encrypt(dataChunk.getFileDto().getName()));
+		msg.setHeader("IC-FilePath", encrypt(dataChunk.getFileDto().getAbsolutePath()));
+		msg.setHeader("IC-FileHash", dataChunk.getFileHash());
 		return msg;
+	}
+
+	private  String encrypt(String toEncrypt) throws MessagingException {
+		try {
+			return cs.encryptHex(encryptingCipher, toEncrypt.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException | InvalidCipherTextException e) {
+			throw new MessagingException("Unable to encrypt string: " + toEncrypt, e);
+		}
 	}
 
 	private String createFileName(String fileName, int partNumber) {
 		return String.format("%s.%04d", fileName, partNumber);
 	}
-
-
 
 	private void printPoolStats(GenericObjectPool<Store> pool){
 		LOG.info("Stats start");

@@ -28,8 +28,7 @@ public class ChunkEncoder implements Function<UploadChunkContainer, UploadChunkC
 		this.cs = cryptoService;
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
-		byte[] keyBytes = ByteUtils.fromHexString(key);
-		encryptingCipher = cs.getEncryptingCipher(keyBytes);
+		encryptingCipher = cs.getEncryptingCipher(ByteUtils.fromHexString(key));
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
+import com.google.common.io.BaseEncoding;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -22,7 +23,7 @@ public class CryptoService {
 	private static final int COPY_BUFFER_SIZE = 1024 * 1024;
 	private static final int KEYSIZE_IN_BYTES = 256;
 	private static final int TO_BITS = 8;
-	public static final int ROT_13 = 13;
+	private static final int ROT_13 = 13;
 
 	public byte[] generateKey() throws NoSuchProviderException, NoSuchAlgorithmException {
 		byte[] key = new byte[KEYSIZE_IN_BYTES / TO_BITS];
@@ -53,6 +54,16 @@ public class CryptoService {
 
 	public byte[] encrypt(PaddedBufferedBlockCipher encryptCipher, byte[] in) throws IOException, InvalidCipherTextException {
 		return process(encryptCipher, in);
+	}
+
+	public byte[] decryptHex(PaddedBufferedBlockCipher decryptCipher, String hexString) throws IOException, InvalidCipherTextException {
+		byte[] toDecode = BaseEncoding.base16().upperCase().decode(hexString);
+		return decrypt(decryptCipher, toDecode);
+	}
+
+	public String encryptHex(PaddedBufferedBlockCipher encryptCipher, byte[] in) throws IOException, InvalidCipherTextException {
+		byte[] encrypt = encrypt(encryptCipher, in);
+		return BaseEncoding.base16().upperCase().encode(encrypt);
 	}
 
 	private byte[] process(PaddedBufferedBlockCipher cipher, byte[] in) throws IOException, InvalidCipherTextException {

@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
-import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
@@ -26,11 +25,9 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 	private final GenericObjectPool<Store> connectionPool;
 	private final Statistics statistics;
 	private final PerformanceDataService performanceDataService;
-	private CryptoService cryptoService;
 
-	public ChunkVerifier(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, Statistics statistics, PerformanceDataService performanceDataService) {
+	public ChunkVerifier(GenericObjectPool<Store> connectionPool, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.connectionPool = connectionPool;
-		this.cryptoService = cryptoService;
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
@@ -42,7 +39,7 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 			LOG.info("Verifying chunk {}", fileChunk.getFileChunkUniqueId());
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			store = connectionPool.borrowObject();
-			String folderName = IMAPUtils.createFolderName(cryptoService, fileChunk.getOwnerFile().getAbsolutePath());
+			String folderName = IMAPUtils.createFolderName(fileChunk);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
 			folder.open(Folder.READ_ONLY);
 

@@ -21,9 +21,6 @@ public class VerificationService extends AbstractBackgroundService {
 	private ConnectionPoolService connectionPoolService;
 
 	@Autowired
-	private CryptoService cryptoService;
-
-	@Autowired
 	private FileChunkRepository fileChunkRepository;
 
 	@Autowired
@@ -39,7 +36,7 @@ public class VerificationService extends AbstractBackgroundService {
 			fileChunks.stream()
 				.forEach(chunk -> {
 						GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());
-						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, cryptoService, statistics, performanceDataService);
+						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, statistics, performanceDataService);
 						Boolean chunkExists = chunkVerifier.apply(chunk);
 						fileChunkRepository.markChunkVerified(chunk.getId(), chunkExists);
 					}

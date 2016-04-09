@@ -49,7 +49,7 @@ public class FileServices {
 
 	public FileChunk saveChunk(UploadChunkContainer uploadChunkContainer) {
 		FileChunk chunk = new FileChunk();
-		chunk.setFileChunkUniqueId(createChunkId(uploadChunkContainer.getFileUniqueId(), uploadChunkContainer.getChunkNumber()));
+		chunk.setFileChunkUniqueId(uploadChunkContainer.getFileChunkUniqueId());
 		chunk.setOwnerFile(fileRepository.getById(uploadChunkContainer.getSavedFileId()));
 		chunk.setSize((long) uploadChunkContainer.getData().length);
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
@@ -66,7 +66,4 @@ public class FileServices {
 		return fileChunkRepository.getFileChunks(fileUniqueId);
 	}
 
-	private String createChunkId(String fileId, int partNumber) {
-		return String.format("%s.%04d", fileId, partNumber);
-	}
 }
