@@ -91,6 +91,9 @@
 					</cellValueFactory>
 				</TableColumn>
 				<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.exists">
+					<cellFactory>
+						<CellTrueFalseImageFormatter />
+					</cellFactory>
 					<cellValueFactory>
 						<PropertyValueFactory property="chunkExists"/>
 					</cellValueFactory>

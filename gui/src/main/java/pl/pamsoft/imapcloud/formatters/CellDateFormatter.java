@@ -20,11 +20,10 @@ public class CellDateFormatter<S> implements Callback<TableColumn<S, Long>, Tabl
 		return new TableCell<S, Long>() {
 			@Override
 			protected void updateItem(Long item, boolean empty) {
-				if (null == item) {
+				if (empty || null == item) {
 					setText("");
 				} else {
-					SimpleDateFormat simpleDateFormat = SDF.get();
-					setText(simpleDateFormat.format(new Date(item)));
+					setText(SDF.get().format(new Date(item)));
 				}
 			}
 		};
