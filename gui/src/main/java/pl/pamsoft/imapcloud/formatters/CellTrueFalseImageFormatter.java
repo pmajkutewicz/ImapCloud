@@ -8,6 +8,8 @@ import javafx.util.Callback;
 
 public class CellTrueFalseImageFormatter<S> implements Callback<TableColumn<S, Boolean>, TableCell<S, Boolean>> {
 
+	private static final int IMG_SIZE = 16;
+
 	@Override
 	public TableCell<S, Boolean> call(TableColumn<S, Boolean> param) {
 		return new TableCell<S, Boolean>() {
@@ -17,8 +19,8 @@ public class CellTrueFalseImageFormatter<S> implements Callback<TableColumn<S, B
 					setText("");
 				} else {
 					ImageView imageview = new ImageView();
-					imageview.setFitHeight(16);
-					imageview.setFitWidth(16);
+					imageview.setFitHeight(IMG_SIZE);
+					imageview.setFitWidth(IMG_SIZE);
 					String fileName = String.format("img/%s.png", item);
 					imageview.setImage(new Image(getClass().getClassLoader().getResource(fileName).toExternalForm()));
 					setGraphic(imageview);

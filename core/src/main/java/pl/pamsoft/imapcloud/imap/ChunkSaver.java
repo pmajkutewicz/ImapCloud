@@ -24,6 +24,7 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
@@ -123,6 +124,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		attachment.setFileName(fileName);
 		attachment.setDisposition(Part.ATTACHMENT);
 		mp.addBodyPart(attachment);
+		msg.setFrom(new InternetAddress("ic@127.0.0.1", "IMAPCloud"));
 		msg.setContent(mp);
 		msg.setSubject(fileName);
 		msg.setHeader("IC-ChunkNumber", String.valueOf(dataChunk.getChunkNumber()));
