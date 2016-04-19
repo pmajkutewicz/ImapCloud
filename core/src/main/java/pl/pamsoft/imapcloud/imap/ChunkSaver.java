@@ -31,6 +31,7 @@ import javax.mail.util.ByteArrayDataSource;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import static javax.mail.Folder.HOLDS_MESSAGES;
@@ -40,12 +41,14 @@ import static javax.mail.Folder.READ_WRITE;
 public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkContainer> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkSaver.class);
+	private static final int MAX_RETRIES = 10;
 
 	private GenericObjectPool<Store> connectionPool;
 	private final CryptoService cs;
 	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 	private PaddedBufferedBlockCipher encryptingCipher;
+	private AtomicInteger retryCounter = new AtomicInteger(0);
 
 	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.connectionPool = connectionPool;
@@ -57,9 +60,21 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer dataChunk) {
+		return retryLoop(dataChunk, retryCounter.get());
+	}
+
+	private UploadChunkContainer retryLoop(UploadChunkContainer dataChunk, int retryNumber) {
+		UploadChunkContainer uploadedResult = upload(dataChunk, retryNumber);
+		if (UploadChunkContainer.EMPTY == uploadedResult && MAX_RETRIES > retryCounter.get()) {
+			retryLoop(dataChunk, retryCounter.incrementAndGet());
+		}
+		return uploadedResult;
+	}
+
+	private UploadChunkContainer upload(UploadChunkContainer dataChunk, int retryNumber) {
 		Store store = null;
 		try {
-			LOG.info("Uploading chunk {} of {}", dataChunk.getChunkNumber(), dataChunk.getFileDto().getName());
+			LOG.info("Uploading chunk {} of {}, retry: {}", dataChunk.getChunkNumber(), dataChunk.getFileDto().getName(), retryNumber);
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			store = connectionPool.borrowObject();
 			printPoolStats(connectionPool);
@@ -90,6 +105,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		LOG.warn("Returning EMPTY from ChunkSaver");
 		return UploadChunkContainer.EMPTY;
 	}
+
 
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	private Folder getFolder(Store store, UploadChunkContainer ucc) throws MessagingException {
