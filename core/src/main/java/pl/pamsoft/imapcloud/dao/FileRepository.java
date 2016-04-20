@@ -26,9 +26,7 @@ public class FileRepository extends AbstractRepository<File> {
 	private Function<Vertex, File> converter;
 
 	public File getByFileUniqueId(String fileUniqueId) throws FileNotFoundException {
-		OrientGraphNoTx graphDB = getDb().getGraphDB();
-		Iterable<Vertex> storedFiles = graphDB.getVertices(GraphProperties.FILE_UNIQUE_ID, fileUniqueId);
-		Iterator<Vertex> iterator = storedFiles.iterator();
+		Iterator<Vertex> iterator = findByFileUniqueId(fileUniqueId);
 		if (iterator.hasNext()){
 			return converter.apply(iterator.next());
 		} else {

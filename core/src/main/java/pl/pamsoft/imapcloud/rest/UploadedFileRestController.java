@@ -13,9 +13,11 @@ import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
 import pl.pamsoft.imapcloud.responses.UploadedFilesResponse;
+import pl.pamsoft.imapcloud.services.DeletionService;
 import pl.pamsoft.imapcloud.services.FileServices;
 import pl.pamsoft.imapcloud.services.VerificationService;
 
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -30,6 +32,9 @@ public class UploadedFileRestController {
 
 	@Autowired
 	private VerificationService verificationService;
+
+	@Autowired
+	private DeletionService deletionService;
 
 	private Function<File, UploadedFileDto> converter = file -> {
 		UploadedFileDto uploadedFileDto = new UploadedFileDto();
@@ -77,4 +82,13 @@ public class UploadedFileRestController {
 		verificationService.validate(fileChunks);
 	}
 
+	@RequestMapping(value = "delete", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void deleteFile(@RequestParam(name = "fileId") String fileUniqueId) {
+		try {
+			File fileByUniqueId = fileServices.getFileByUniqueId(fileUniqueId);
+			deletionService.delete(fileByUniqueId);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 }

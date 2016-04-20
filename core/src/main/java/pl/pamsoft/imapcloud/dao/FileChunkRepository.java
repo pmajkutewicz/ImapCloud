@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.dao;
 import com.orientechnologies.orient.core.id.ORecordId;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
@@ -59,10 +60,20 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 		graphDB.shutdown();
 	}
 
+	public void deleteFileChunks(String fileUniqueId) {
+		Iterator<Vertex> fileIterator = findByFileUniqueId(fileUniqueId);
+		if (fileIterator.hasNext()) {
+			Vertex firstFile = fileIterator.next();
+			Spliterator<Edge> spliterator = firstFile.getEdges(Direction.IN, GraphProperties.FILE_CHUNK_EDGE_FILE).spliterator();
+			StreamSupport.stream(spliterator, false)
+				.map(r -> r.getVertex(Direction.OUT))
+				.forEach(Element::remove);
+			firstFile.remove();
+		}
+	}
+
 	public List<FileChunk> getFileChunks(String fileUniqueId) {
-		OrientGraphNoTx graphDB = getDb().getGraphDB();
-		Iterable<Vertex> vertices = graphDB.getVertices(GraphProperties.FILE_UNIQUE_ID, fileUniqueId);
-		Iterator<Vertex> fileIterator = vertices.iterator();
+		Iterator<Vertex> fileIterator = findByFileUniqueId(fileUniqueId);
 		if (!fileIterator.hasNext()) {
 			return Collections.emptyList();
 		} else {

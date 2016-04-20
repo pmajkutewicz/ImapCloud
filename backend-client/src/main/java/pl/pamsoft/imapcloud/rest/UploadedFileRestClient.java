@@ -9,6 +9,7 @@ public class UploadedFileRestClient extends AbstractRestClient {
 
 	private static final String FIND_ALL_FILES = "uploaded/files";
 	private static final String VERIFY_FILE = "uploaded/verify";
+	private static final String DELETE_FILE = "uploaded/delete";
 	private static final String FIND_ALL_FILE_CHUNKS = "uploaded/chunks";
 
 	public UploadedFileRestClient(String endpoint, String username, String pass) {
@@ -26,4 +27,9 @@ public class UploadedFileRestClient extends AbstractRestClient {
 	public void verifyFile(String fileId) throws IOException {
 		sendGet(VERIFY_FILE, "fileId", fileId);
 	}
+
+	public void deleteFile(String fileId) throws IOException {
+		sendGet(DELETE_FILE, "fileId", fileId);
+	}
+
 }

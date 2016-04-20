@@ -143,13 +143,17 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		msg.setFrom(new InternetAddress("ic@127.0.0.1", "IMAPCloud"));
 		msg.setContent(mp);
 		msg.setSubject(fileName);
-		msg.setHeader("IC-ChunkNumber", String.valueOf(dataChunk.getChunkNumber()));
-		msg.setHeader("IC-ChunkId", String.valueOf(dataChunk.getFileChunkUniqueId()));
-		msg.setHeader("IC-FileId", String.valueOf(dataChunk.getFileUniqueId()));
-		msg.setHeader("IC-FileName", encrypt(dataChunk.getFileDto().getName()));
-		msg.setHeader("IC-FilePath", encrypt(dataChunk.getFileDto().getAbsolutePath()));
-		msg.setHeader("IC-FileHash", dataChunk.getFileHash());
+		setHeader(msg, MessageHeaders.ChunkNumber, String.valueOf(dataChunk.getChunkNumber()));
+		setHeader(msg, MessageHeaders.ChunkId, String.valueOf(dataChunk.getFileChunkUniqueId()));
+		setHeader(msg, MessageHeaders.FileId, String.valueOf(dataChunk.getFileUniqueId()));
+		setHeader(msg, MessageHeaders.FileName, encrypt(dataChunk.getFileDto().getName()));
+		setHeader(msg, MessageHeaders.FilePath, encrypt(dataChunk.getFileDto().getAbsolutePath()));
+		setHeader(msg, MessageHeaders.FileHash, dataChunk.getFileHash());
 		return msg;
+	}
+
+	private void setHeader(Message msg, MessageHeaders header, String value) throws MessagingException {
+		msg.setHeader(header.toString(), value);
 	}
 
 	private  String encrypt(String toEncrypt) throws MessagingException {

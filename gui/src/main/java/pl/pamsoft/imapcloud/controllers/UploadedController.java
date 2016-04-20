@@ -57,11 +57,13 @@ public class UploadedController implements Initializable {
 	}
 
 	public void deleteButtonClick(ActionEvent event) {
-		UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
-		EventType<? extends ActionEvent> eventType = event.getEventType();
-		System.out.println(selectedItem);
-		System.out.println(eventType);
-		//TODO: Delete file
+		try {
+			UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
+			EventType<? extends ActionEvent> eventType = event.getEventType();
+			uploadedFileRestClient.deleteFile(selectedItem.getFileUniqueId());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void verifyButtonClick(ActionEvent event) {
