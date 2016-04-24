@@ -165,7 +165,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 	}
 
 	private String createFileName(String fileName, int partNumber) {
-		return String.format("%s.%04d", fileName, partNumber);
+		return String.format("%s.%05d", fileName, partNumber);
 	}
 
 	private void printPoolStats(GenericObjectPool<Store> pool){
