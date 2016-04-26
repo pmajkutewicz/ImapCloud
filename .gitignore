@@ -1,5 +1,6 @@
-.imapcloud_db
+.imapcloud_db*
 */target
+*.log
 
 # Created by .ignore support plugin (hsz.mobi)
 ### JetBrains template
