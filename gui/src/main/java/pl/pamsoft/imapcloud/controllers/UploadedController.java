@@ -3,7 +3,6 @@ package pl.pamsoft.imapcloud.controllers;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableView;
@@ -59,7 +58,6 @@ public class UploadedController implements Initializable {
 	public void deleteButtonClick(ActionEvent event) {
 		try {
 			UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
-			EventType<? extends ActionEvent> eventType = event.getEventType();
 			uploadedFileRestClient.deleteFile(selectedItem.getFileUniqueId());
 		} catch (IOException e) {
 			e.printStackTrace();
