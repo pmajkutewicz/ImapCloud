@@ -15,17 +15,25 @@ public class CellTrueFalseImageFormatter<S> implements Callback<TableColumn<S, B
 		return new TableCell<S, Boolean>() {
 			@Override
 			protected void updateItem(Boolean item, boolean empty) {
-				if (empty || null == item) {
+				if (empty && null == item) {
 					setText("");
+					setGraphic(null);
+				} else if (!empty && null == item) {
+					setText("");
+					setGraphic(createIcon("unknown"));
 				} else {
-					ImageView imageview = new ImageView();
-					imageview.setFitHeight(IMG_SIZE);
-					imageview.setFitWidth(IMG_SIZE);
-					String fileName = String.format("img/%s.png", item);
-					imageview.setImage(new Image(getClass().getClassLoader().getResource(fileName).toExternalForm()));
-					setGraphic(imageview);
+					setGraphic(item ? createIcon("true") : createIcon("false"));
 				}
 			}
 		};
+	}
+
+	private ImageView createIcon(String iconFileName) {
+		ImageView imageview = new ImageView();
+		imageview.setFitHeight(IMG_SIZE);
+		imageview.setFitWidth(IMG_SIZE);
+		String fileName = String.format("img/%s.png", iconFileName);
+		imageview.setImage(new Image(getClass().getClassLoader().getResource(fileName).toExternalForm()));
+		return imageview;
 	}
 }
