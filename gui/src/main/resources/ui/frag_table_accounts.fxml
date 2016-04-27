@@ -16,7 +16,7 @@
 		</TableColumn>
 		<TableColumn prefWidth="60.0" text="%accounts.table.column.used">
 			<cellValueFactory>
-				<PropertyValueFactory property="usedSpace"/>
+				<PropertyValueFactory property="readableFileSize"/>
 			</cellValueFactory>
 		</TableColumn>
 	</columns>

@@ -1,8 +1,11 @@
 package pl.pamsoft.imapcloud.dao;
 
 import com.orientechnologies.orient.core.id.ORecordId;
+import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.orient.OrientDynaElementIterable;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -14,6 +17,7 @@ import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.exceptions.AccountAlreadyExistException;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -21,6 +25,7 @@ import java.util.function.Function;
 public class AccountRepository extends AbstractRepository<Account> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccountRepository.class);
+	private static final OSQLSynchQuery<ODocument> USED_SPACE_QUERY = new OSQLSynchQuery<>("select sum(IN('is_owned_by').in('is_part_of').size) as sum from Account where @rid = :id");
 
 	@Autowired
 	private Function<Vertex, Account> converter;
@@ -43,6 +48,17 @@ public class AccountRepository extends AbstractRepository<Account> {
 			throw new AccountAlreadyExistException(account.getEmail());
 		}
 		return account;
+	}
+
+	public long getUsedSpace(String accountId) {
+		OrientDynaElementIterable result = getDb().getGraphDB().command(USED_SPACE_QUERY).execute(Collections.singletonMap("id", accountId));
+		Iterator<Object> iterator = result.iterator();
+		if (iterator.hasNext()) {
+			OrientVertex next = (OrientVertex) iterator.next();
+			return next.getProperty("sum");
+		} else  {
+			return 0L;
+		}
 	}
 
 	private void updateIdAndVersionFields(Account account, Element orientVertex) {
