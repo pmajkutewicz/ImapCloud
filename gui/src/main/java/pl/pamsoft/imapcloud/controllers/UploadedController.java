@@ -8,29 +8,27 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
-import lombok.Getter;
-import lombok.Setter;
+import javafx.stage.DirectoryChooser;
 import pl.pamsoft.imapcloud.dto.UploadedFileChunkDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-@Getter
-@Setter
 public class UploadedController implements Initializable {
 
 	@Inject
 	private UploadedFileRestClient uploadedFileRestClient;
 
 	@FXML
-	private TableView<UploadedFileDto> uploadedTable;
+	private TableView<UploadedFileDto> embeddedUploadedFilesTable;
 
 	@FXML
 	private TableView<UploadedFileChunkDto> uploadedChunksTable;
@@ -44,14 +42,14 @@ public class UploadedController implements Initializable {
 			uploadedChunksTable.getItems().clear();
 			e.printStackTrace();
 		}
-    };
+	};
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		uploadedTable.getSelectionModel().selectedItemProperty().addListener(uploadedFileDtoChangeListener);
+		embeddedUploadedFilesTable.getSelectionModel().selectedItemProperty().addListener(uploadedFileDtoChangeListener);
 		try {
 			List<UploadedFileDto> files = uploadedFileRestClient.getUploadedFiles().getFiles();
-			ObservableList<UploadedFileDto> items = uploadedTable.getItems();
+			ObservableList<UploadedFileDto> items = embeddedUploadedFilesTable.getItems();
 			items.addAll(files);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -59,7 +57,7 @@ public class UploadedController implements Initializable {
 	}
 
 	public void deleteButtonClick(ActionEvent event) {
-		UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
+		UploadedFileDto selectedItem = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem();
 		try {
 			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
@@ -78,7 +76,7 @@ public class UploadedController implements Initializable {
 
 	public void verifyButtonClick(ActionEvent event) {
 		try {
-			UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
+			UploadedFileDto selectedItem = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem();
 			uploadedFileRestClient.verifyFile(selectedItem.getFileUniqueId());
 		} catch (IOException e) {
 			e.printStackTrace();

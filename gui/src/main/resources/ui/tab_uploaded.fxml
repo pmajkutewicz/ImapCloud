@@ -26,38 +26,11 @@
 			<children>
 				<HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
 					<children>
-						<Button mnemonicParsing="true" onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile"/>
 						<Button mnemonicParsing="true" onAction="#verifyButtonClick" text="%uploaded.table.button.verifyfile"/>
+						<Button mnemonicParsing="true" onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile"/>
 					</children>
 				</HBox>
-
-				<TableView fx:id="uploadedTable" prefHeight="200.0" prefWidth="281.0">
-					<columns>
-						<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.name">
-							<cellValueFactory>
-								<PropertyValueFactory property="name"/>
-							</cellValueFactory>
-						</TableColumn>
-						<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.path">
-							<cellValueFactory>
-								<PropertyValueFactory property="absolutePath"/>
-							</cellValueFactory>
-						</TableColumn>
-						<TableColumn prefWidth="60.0" text="%uploaded.table.column.file.size">
-							<cellValueFactory>
-								<PropertyValueFactory property="readableFileSize"/>
-							</cellValueFactory>
-						</TableColumn>
-						<TableColumn prefWidth="30.0" text="%uploaded.table.column.file.completed">
-							<cellValueFactory>
-								<PropertyValueFactory property="completed"/>
-							</cellValueFactory>
-						</TableColumn>
-					</columns>
-					<columnResizePolicy>
-						<TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-					</columnResizePolicy>
-				</TableView>
+				<fx:include fx:id="embeddedUploadedFilesTable" source="frag_table_uploaded.fxml"/>
 			</children>
 		</GridPane>
 		<TableView fx:id="uploadedChunksTable" prefHeight="200.0" prefWidth="200.0">
