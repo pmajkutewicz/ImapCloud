@@ -5,6 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +19,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 @Getter
@@ -56,9 +59,18 @@ public class UploadedController implements Initializable {
 	}
 
 	public void deleteButtonClick(ActionEvent event) {
+		UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
 		try {
-			UploadedFileDto selectedItem = uploadedTable.getSelectionModel().getSelectedItem();
-			uploadedFileRestClient.deleteFile(selectedItem.getFileUniqueId());
+			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+
+			//TODO: externalize strings
+			alert.setTitle("Warning");
+			alert.setHeaderText("Are You sure You want to delete:\n" + selectedItem.getName());
+
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.isPresent() && ButtonType.OK == result.get()) {
+				uploadedFileRestClient.deleteFile(selectedItem.getFileUniqueId());
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
