@@ -32,26 +32,7 @@
 				<Insets right="10" />
 			</padding>
 			<children>
-				<Label text="%uploads.label.source.dir" />
-				<TextField fx:id="currentDir" onAction="#onEnterCurrentDir" />
-				<Label text="%uploads.label.source.files" />
-				<TableView fx:id="fileList" minHeight="200" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-					<columns>
-						<TableColumn prefWidth="250.0" text="%uploads.table.column.filename">
-							<cellValueFactory>
-								<PropertyValueFactory property="name" />
-							</cellValueFactory>
-						</TableColumn>
-						<TableColumn prefWidth="75.0" text="%uploads.table.column.filesize">
-							<cellValueFactory>
-								<PropertyValueFactory property="readableFileSize" />
-							</cellValueFactory>
-						</TableColumn>
-					</columns>
-					<columnResizePolicy>
-						<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-					</columnResizePolicy>
-				</TableView>
+				<fx:include fx:id="embeddedFileListTable" minHeight="200" source="frag_table_filelist.fxml" />
 			</children>
 		</VBox>
 		<VBox GridPane.columnIndex="1">
