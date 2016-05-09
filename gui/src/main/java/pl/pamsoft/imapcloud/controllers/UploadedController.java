@@ -8,14 +8,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
-import javafx.stage.DirectoryChooser;
 import pl.pamsoft.imapcloud.dto.UploadedFileChunkDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 
 import javax.inject.Inject;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;

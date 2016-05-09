@@ -5,12 +5,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.TableView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.rest.FilesRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 
 import javax.inject.Inject;
@@ -19,11 +16,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class FilesController implements Initializable {
-
-	private static final Logger LOG = LoggerFactory.getLogger(FilesController.class);
-
-	@Inject
-	private FilesRestClient filesRestClient;
 
 	@Inject
 	private UploadsRestClient uploadsRestClient;

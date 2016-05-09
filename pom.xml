@@ -6,15 +6,19 @@
 	<packaging>pom</packaging>
 	<name>IMAP Cloud parent</name>
 
+	<prerequisites>
+		<maven>3.0.3</maven>
+	</prerequisites>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<jetty.version>9.2.11.v20150529</jetty.version>
+		<jetty.version>9.3.9.M1</jetty.version>
+		<spring-boot.version>1.3.4.RELEASE</spring-boot.version>
 		<tomcat.version>8.0.30</tomcat.version>
 		<guice.version>4.0</guice.version>
 		<guava.version>19.0</guava.version>
-		<gson.version>2.5</gson.version>
+		<gson.version>2.6.2</gson.version>
 		<okhttp.version>3.2.0</okhttp.version>
 		<ignite-guice.version>1.0.0</ignite-guice.version>
 		<logback-classic.version>1.1.6</logback-classic.version>
@@ -22,9 +26,9 @@
 		<snakeyaml.version>1.17</snakeyaml.version>
 		<orientdb.version>2.1.15</orientdb.version>
 		<lombok.version>1.16.8</lombok.version>
-		<joda-time.version>2.9.2</joda-time.version>
+		<joda-time.version>2.9.3</joda-time.version>
 		<jackson-datatype-jdk8.version>2.6.3</jackson-datatype-jdk8.version>
-		<jackson.version>2.7.0</jackson.version>
+		<jackson.version>2.7.2</jackson.version>
 		<controlsfx.version>8.40.10</controlsfx.version>
 
 		<skip.findbugs>false</skip.findbugs>
@@ -36,11 +40,12 @@
 		<findbugs-maven-plugin.failOnError>true</findbugs-maven-plugin.failOnError>
 		<findsecbugs-plugin.version>1.4.5</findsecbugs-plugin.version>
 		<fb-contrib.version>6.6.0</fb-contrib.version>
-		<findbugs-annotation.version>3.0.0</findbugs-annotation.version>
+		<findbugs-annotation.version>3.0.1u2</findbugs-annotation.version>
 
 		<main.basedir>${project.basedir}</main.basedir>
 		<commons-pool2.version>2.4.2</commons-pool2.version>
 		<bouncycastle.version>1.54</bouncycastle.version>
+		<testng.version>6.9.10</testng.version>
 	</properties>
 
 	<modules>
@@ -87,6 +92,33 @@
 			</dependency>
 
 			<!-- core -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-websocket</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-security</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-configuration-processor</artifactId>
+				<version>${spring-boot.version}</version>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-test</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.tomcat.embed</groupId>
 				<artifactId>tomcat-embed-websocket</artifactId>
@@ -209,7 +241,7 @@
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
-				<version>6.8.21</version>
+				<version>${testng.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
