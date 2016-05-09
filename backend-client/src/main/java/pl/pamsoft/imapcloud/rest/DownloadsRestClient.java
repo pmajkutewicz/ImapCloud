@@ -15,6 +15,6 @@ public class DownloadsRestClient extends AbstractRestClient {
 	}
 
 	public void startDownload(UploadedFileDto fileToDownload, FileDto destDir) throws IOException {
-		sendPost(START_UPLOADS, new StartDownloadRequest(fileToDownload, destDir, true));
+		sendPost(START_UPLOADS, new StartDownloadRequest(fileToDownload, destDir));
 	}
 }

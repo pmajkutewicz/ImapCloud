@@ -23,6 +23,7 @@
 		<ignite-guice.version>1.0.0</ignite-guice.version>
 		<logback-classic.version>1.1.6</logback-classic.version>
 		<javax.mail-api.version>1.5.5</javax.mail-api.version>
+		<commons-io.version>2.5</commons-io.version>
 		<snakeyaml.version>1.17</snakeyaml.version>
 		<orientdb.version>2.1.15</orientdb.version>
 		<lombok.version>1.16.8</lombok.version>
@@ -134,6 +135,13 @@
 				<artifactId>javax.mail</artifactId>
 				<version>${javax.mail-api.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
+
+
 			<dependency>
 				<groupId>org.yaml</groupId>
 				<artifactId>snakeyaml</artifactId>

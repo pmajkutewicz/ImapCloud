@@ -14,5 +14,4 @@ import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 public class StartDownloadRequest {
 	private UploadedFileDto fileToDownload;
 	private FileDto destDir;
-	private boolean chunkEncodingEnabled;
 }

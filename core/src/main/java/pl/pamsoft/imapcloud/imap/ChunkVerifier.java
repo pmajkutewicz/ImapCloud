@@ -12,10 +12,7 @@ import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.mail.Folder;
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
 import java.util.function.Function;
 
 public class ChunkVerifier implements Function<FileChunk, Boolean> {
@@ -43,7 +40,7 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
 			folder.open(Folder.READ_ONLY);
 
-			Message[] search = folder.search(new MySearchTerm(fileChunk.getMessageId()));
+			Message[] search = folder.search(new MessageIdSearchTerm(fileChunk.getMessageId()));
 			boolean chunkExists = search.length == 1;
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
@@ -64,26 +61,5 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 			}
 		}
 		return Boolean.FALSE;
-	}
-
-	private static class MySearchTerm extends SearchTerm {
-		private String expectedId;
-
-		MySearchTerm(String expectedId) {
-			this.expectedId = expectedId;
-		}
-
-		@Override
-		public boolean match(Message message) {
-			try {
-				String messageID = ((MimeMessage) message).getMessageID();
-				if (messageID.contains(expectedId)) {
-					return true;
-				}
-			} catch (MessagingException ex) {
-				ex.printStackTrace();
-			}
-			return false;
-		}
 	}
 }
