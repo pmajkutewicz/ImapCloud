@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.controllers;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+@SuppressFBWarnings("FCBL_FIELD_COULD_BE_LOCAL")
 public class FilesController implements Initializable {
 
 	@Inject
