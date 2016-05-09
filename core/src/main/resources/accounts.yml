@@ -30,3 +30,11 @@ yahoo_com: {
   sizeMB: 9999999,
   attachmentSizeMB: 25
   }
+mail_ru_test: {
+  domain: mail.ru,
+  imapHost: imap.mail.ru,
+  loginType: WITH_DOMAIN,
+  maxConcurrentConnections: 8,
+  sizeMB: 9999999,
+  attachmentSizeMB: 1
+  }
