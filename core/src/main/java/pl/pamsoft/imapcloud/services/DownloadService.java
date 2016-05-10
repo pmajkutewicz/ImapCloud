@@ -92,7 +92,6 @@ public class DownloadService extends AbstractBackgroundService {
 					.map(fileSaver)
 					.forEach(c -> LOG.info("Done: {}", c.getChunkToDownload().getChunkNumber()));
 
-				fileToDownload.
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
