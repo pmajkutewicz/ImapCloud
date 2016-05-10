@@ -10,11 +10,11 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncoder;
-import pl.pamsoft.imapcloud.services.upload.ChunkHasher;
+import pl.pamsoft.imapcloud.services.upload.UploadChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
 import pl.pamsoft.imapcloud.services.upload.DirectorySizeCalculator;
 import pl.pamsoft.imapcloud.services.upload.FileChunkStorer;
-import pl.pamsoft.imapcloud.services.upload.FileHasher;
+import pl.pamsoft.imapcloud.services.upload.UploadFileHasher;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -80,11 +80,11 @@ public class UploadService extends AbstractBackgroundService {
 
 				Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics, performanceDataService);
-				Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new FileHasher(instance, statistics, performanceDataService);
+				Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(instance, statistics, performanceDataService);
 				Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 				Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileProcessed, broadcastTaskProgress);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics, performanceDataService);
-				Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new ChunkHasher(instance, statistics, performanceDataService);
+				Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(instance, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);

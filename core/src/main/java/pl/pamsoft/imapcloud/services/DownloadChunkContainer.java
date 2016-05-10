@@ -17,22 +17,34 @@ public class DownloadChunkContainer {
 	private final String taskId;
 	private final FileChunk chunkToDownload;
 	private final FileDto destinationDir;
-	private final byte[] chunkData;
+	private final byte[] data;
+	private final String chunkHash;
+	private final String fileHash;
 
 	public DownloadChunkContainer(String taskId, FileChunk chunkToDownload, FileDto destinationDir) {
-		this(taskId, chunkToDownload, destinationDir, null);
+		this(taskId, chunkToDownload, destinationDir, null, null, null);
 	}
 
 	//CSOFF: ParameterNumberCheck
-	private DownloadChunkContainer(String taskId, FileChunk chunkToDownload, FileDto destinationDir, byte[] chunkData) {
+	private DownloadChunkContainer(String taskId, FileChunk chunkToDownload, FileDto destinationDir, byte[] data, String chunkHash, String fileHash) {
 		this.taskId = taskId;
 		this.chunkToDownload = chunkToDownload;
 		this.destinationDir = destinationDir;
-		this.chunkData = chunkData;
+		this.data = data;
+		this.chunkHash = chunkHash;
+		this.fileHash = fileHash;
 	}
 	//CSON
 
-	public static DownloadChunkContainer addChunkData(DownloadChunkContainer dcc, byte[] chunkData) {
-		return new DownloadChunkContainer(dcc.getTaskId(), dcc.getChunkToDownload(), dcc.getDestinationDir(), chunkData);
+	public static DownloadChunkContainer addData(DownloadChunkContainer dcc, byte[] data) {
+		return new DownloadChunkContainer(dcc.getTaskId(), dcc.getChunkToDownload(), dcc.getDestinationDir(), data, dcc.getChunkHash(), dcc.getFileHash());
+	}
+
+	public static DownloadChunkContainer addChunkHash(DownloadChunkContainer dcc, String chunkHash) {
+		return new DownloadChunkContainer(dcc.getTaskId(), dcc.getChunkToDownload(), dcc.getDestinationDir(), dcc.getData(), chunkHash, dcc.getFileHash());
+	}
+
+	public static DownloadChunkContainer addFileHash(DownloadChunkContainer dcc, String fileHash) {
+		return new DownloadChunkContainer(dcc.getTaskId(), dcc.getChunkToDownload(), dcc.getDestinationDir(), dcc.getData(), dcc.getChunkHash(), fileHash);
 	}
 }

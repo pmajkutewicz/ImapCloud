@@ -58,7 +58,7 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 			statistics.add(StatisticType.CHUNK_DOWNLOADER, stopwatch.stop());
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DOWNLOADER, stopwatch));
 			LOG.debug("Chunk downloaded in {}", stopwatch);
-			return DownloadChunkContainer.addChunkData(dcc, attachment);
+			return DownloadChunkContainer.addData(dcc, attachment);
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);
 			try {

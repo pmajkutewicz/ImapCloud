@@ -14,18 +14,24 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.imap.ChunkLoader;
-import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.services.download.ChunkDecoder;
+import pl.pamsoft.imapcloud.services.download.DownloadChunkHasher;
+import pl.pamsoft.imapcloud.services.download.DownloadFileHasher;
+import pl.pamsoft.imapcloud.services.download.FileSaver;
+import pl.pamsoft.imapcloud.services.download.HashVerifier;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
 
 import javax.mail.Store;
-import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Service
 public class DownloadService extends AbstractBackgroundService {
@@ -59,19 +65,34 @@ public class DownloadService extends AbstractBackgroundService {
 		Future<?> task = getExecutor().submit(() -> {
 			try {
 				Thread.currentThread().setName("DownloadTask-" + taskId);
+				final MessageDigest instance = MessageDigest.getInstance("SHA-512");
+				ConcurrentHashMap<String, String> invalidFileIds = new ConcurrentHashMap<>();
 				File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
-				Account ownerAccount = file.getOwnerAccount();
+				Account account = file.getOwnerAccount();
 				List<FileChunk> chunkToDownload = fileChunkRepository.getFileChunks(fileToDownload.getFileUniqueId());
-				GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(ownerAccount);
+				GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(account);
 
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
+				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.containsKey(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, statistics, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecoder(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(instance, statistics, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> hashVerifier = new HashVerifier(invalidFileIds);
+				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver();
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(instance, statistics, performanceDataService);
 
 				chunkToDownload.stream()
 					.peek(c -> LOG.info("Processing {}", c.getChunkNumber()))
 					.map(packInContainer)
+					.filter(filterOutInvalidFiles)
 					.map(chunkLoader)
+					.map(chunkDecoder)
+					.map(downloadChunkHasher)
+					.map(hashVerifier)
+					.map(fileSaver)
 					.forEach(c -> LOG.info("Done: {}", c.getChunkToDownload().getChunkNumber()));
+
+				fileToDownload.
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
