@@ -4,10 +4,8 @@ import com.google.common.base.Stopwatch;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
-import org.bouncycastle.util.encoders.Base64Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.Base64Utils;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
@@ -16,7 +14,6 @@ import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.function.Function;
 
 public class ChunkDecoder implements Function<DownloadChunkContainer, DownloadChunkContainer> {

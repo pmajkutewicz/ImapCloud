@@ -9,7 +9,7 @@ import java.util.function.Function;
 
 public class HashVerifier implements Function<DownloadChunkContainer, DownloadChunkContainer> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DownloadChunkHasher.class);
+	private static final Logger LOG = LoggerFactory.getLogger(HashVerifier.class);
 	private ConcurrentHashMap<String, String> invalidFileIds;
 
 	public HashVerifier(ConcurrentHashMap<String, String> invalidFileIds) {

@@ -90,8 +90,8 @@ public class DownloadService extends AbstractBackgroundService {
 					.map(downloadChunkHasher)
 					.map(hashVerifier)
 					.map(fileSaver)
+					.map(downloadFileHasher)
 					.forEach(c -> LOG.info("Done: {}", c.getChunkToDownload().getChunkNumber()));
-
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

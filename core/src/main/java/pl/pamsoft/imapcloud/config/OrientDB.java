@@ -31,6 +31,7 @@ import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_SIZE_MB;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_ABSOLUTE_PATH;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_EXISTS;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_HASH;
+import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_LAST_CHUNK;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_LAST_VERIFIED_AT;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_MESSAGE_ID;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_NUMBER;
@@ -102,6 +103,7 @@ class OrientDB {
 			vertexType.createProperty(FILE_CHUNK_HASH, OType.STRING);
 			vertexType.createProperty(FILE_CHUNK_SIZE, OType.LONG);
 			vertexType.createProperty(FILE_CHUNK_MESSAGE_ID, OType.STRING);
+			vertexType.createProperty(FILE_CHUNK_LAST_CHUNK, OType.BOOLEAN);
 			vertexType.createProperty(FILE_CHUNK_LAST_VERIFIED_AT, OType.LONG);
 			vertexType.createProperty(FILE_CHUNK_EXISTS, OType.BOOLEAN);
 			vertexType.createEdgeProperty(Direction.OUT, File.class.getSimpleName(), OType.LINK);

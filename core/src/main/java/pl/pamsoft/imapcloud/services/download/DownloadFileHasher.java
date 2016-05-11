@@ -32,18 +32,20 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 	@Override
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
-		LOG.debug("Hashing file {}", dcc.getChunkToDownload().getOwnerFile().getName());
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		try {
-			String hash = hash(DestFileUtils.generateFilePath(dcc).toFile());
-			statistics.add(StatisticType.FILE_HASH, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, stopwatch));
-			LOG.debug("File hash generated in {}", stopwatch);
-			return DownloadChunkContainer.addFileHash(dcc, hash);
-		} catch (IOException ex) {
-			LOG.error(String.format("Can't calculate hash for file: %s", dcc.getChunkToDownload().getOwnerFile().getName()), ex);
+		if (dcc.getChunkToDownload().isLastChunk()) {
+			LOG.debug("Hashing file {}", dcc.getChunkToDownload().getOwnerFile().getName());
+			Stopwatch stopwatch = Stopwatch.createStarted();
+			try {
+				String hash = hash(DestFileUtils.generateFilePath(dcc).toFile());
+				statistics.add(StatisticType.FILE_HASH, stopwatch.stop());
+				performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, stopwatch));
+				LOG.debug("File hash generated in {}", stopwatch);
+				return DownloadChunkContainer.addFileHash(dcc, hash);
+			} catch (IOException ex) {
+				LOG.error(String.format("Can't calculate hash for file: %s", dcc.getChunkToDownload().getOwnerFile().getName()), ex);
+			}
+			LOG.warn("Returning EMPTY from DownloadFileHasher");
 		}
-		LOG.warn("Returning EMPTY from DownloadFileHasher");
 		return DownloadChunkContainer.EMPTY;
 	}
 

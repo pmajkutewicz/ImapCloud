@@ -55,6 +55,7 @@ public class FileServices {
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
 		chunk.setChunkHash(uploadChunkContainer.getChunkHash());
 		chunk.setMessageId(uploadChunkContainer.getMessageId());
+		chunk.setLastChunk(uploadChunkContainer.isLastChunk());
 		FileChunk fileChunk = fileChunkRepository.save(chunk);
 		if (uploadChunkContainer.isLastChunk()) {
 			fileRepository.markFileCompleted(uploadChunkContainer.getSavedFileId());

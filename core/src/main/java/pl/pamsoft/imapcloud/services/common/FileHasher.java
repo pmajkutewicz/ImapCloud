@@ -4,12 +4,11 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.MessageDigest;
 
 public interface FileHasher {
-	static final int MEGABYTE = 1024 * 1024;
+	int MEGABYTE = 1024 * 1024;
 
 	default String hash(File file) throws IOException {
 		try (FileInputStream inputStream = new FileInputStream(file)) {

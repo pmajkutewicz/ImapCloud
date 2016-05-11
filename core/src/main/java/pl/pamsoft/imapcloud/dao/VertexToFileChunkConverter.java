@@ -28,6 +28,7 @@ public class VertexToFileChunkConverter extends AbstractVertexConverter implemen
 		f.setChunkNumber(v.getProperty(GraphProperties.FILE_CHUNK_NUMBER));
 		f.setSize(v.getProperty(GraphProperties.FILE_CHUNK_SIZE));
 		f.setFileChunkUniqueId(v.getProperty(GraphProperties.FILE_CHUNK_UNIQUE_ID));
+		f.setLastChunk(v.getProperty(GraphProperties.FILE_CHUNK_LAST_CHUNK));
 		f.setOwnerFile(getOwningFile(v));
 		Boolean exists = v.getProperty(GraphProperties.FILE_CHUNK_EXISTS);
 		if (null != exists) {
