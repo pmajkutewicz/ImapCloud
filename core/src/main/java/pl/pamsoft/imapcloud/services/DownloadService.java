@@ -21,7 +21,6 @@ import pl.pamsoft.imapcloud.services.download.DownloadFileHasher;
 import pl.pamsoft.imapcloud.services.download.FileSaver;
 import pl.pamsoft.imapcloud.services.download.HashVerifier;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
 
 import javax.mail.Store;
 import java.security.MessageDigest;
@@ -55,9 +54,6 @@ public class DownloadService extends AbstractBackgroundService {
 
 	@Autowired
 	private PerformanceDataService performanceDataService;
-
-	@Autowired
-	private TasksProgressService tasksProgressService;
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean download(UploadedFileDto fileToDownload, FileDto destDir) throws RejectedExecutionException {

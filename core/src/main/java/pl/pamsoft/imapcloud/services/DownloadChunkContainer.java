@@ -17,6 +17,7 @@ public class DownloadChunkContainer {
 	private final String taskId;
 	private final FileChunk chunkToDownload;
 	private final FileDto destinationDir;
+	@SuppressFBWarnings("EI_EXPOSE_REP")
 	private final byte[] data;
 	private final String chunkHash;
 	private final String fileHash;
