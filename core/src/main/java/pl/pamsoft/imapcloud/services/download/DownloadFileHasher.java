@@ -46,7 +46,7 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 			}
 			LOG.warn("Returning EMPTY from DownloadFileHasher");
 		}
-		return DownloadChunkContainer.EMPTY;
+		return dcc;
 	}
 
 	@Override

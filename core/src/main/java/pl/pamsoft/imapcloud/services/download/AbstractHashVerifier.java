@@ -7,18 +7,18 @@ import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-public class HashVerifier implements Function<DownloadChunkContainer, DownloadChunkContainer> {
+abstract class AbstractHashVerifier implements Function<DownloadChunkContainer, DownloadChunkContainer> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(HashVerifier.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractHashVerifier.class);
 	private ConcurrentHashMap<String, String> invalidFileIds;
 
-	public HashVerifier(ConcurrentHashMap<String, String> invalidFileIds) {
+	AbstractHashVerifier(ConcurrentHashMap<String, String> invalidFileIds) {
 		this.invalidFileIds = invalidFileIds;
 	}
 
 	@Override
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
-		boolean validHash = dcc.getChunkToDownload().getChunkHash().equals(dcc.getChunkHash());
+		boolean validHash = getExpectedHash(dcc).equals(getCurrentHash(dcc));
 		if (validHash) {
 			return dcc;
 		} else {
@@ -28,4 +28,8 @@ public class HashVerifier implements Function<DownloadChunkContainer, DownloadCh
 			return DownloadChunkContainer.EMPTY;
 		}
 	}
+
+	abstract String getCurrentHash(DownloadChunkContainer dcc);
+
+	abstract String getExpectedHash(DownloadChunkContainer dcc);
 }

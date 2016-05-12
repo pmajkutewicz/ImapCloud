@@ -16,10 +16,11 @@ import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.imap.ChunkLoader;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.download.ChunkDecoder;
+import pl.pamsoft.imapcloud.services.download.ChunkHashVerifier;
 import pl.pamsoft.imapcloud.services.download.DownloadChunkHasher;
 import pl.pamsoft.imapcloud.services.download.DownloadFileHasher;
 import pl.pamsoft.imapcloud.services.download.FileSaver;
-import pl.pamsoft.imapcloud.services.download.HashVerifier;
+import pl.pamsoft.imapcloud.services.download.FileHashVerifier;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
@@ -73,9 +74,10 @@ public class DownloadService extends AbstractBackgroundService {
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, statistics, performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecoder(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(instance, statistics, performanceDataService);
-				Function<DownloadChunkContainer, DownloadChunkContainer> hashVerifier = new HashVerifier(invalidFileIds);
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver();
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(instance, statistics, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
 
 				chunkToDownload.stream()
 					.peek(c -> LOG.info("Processing {}", c.getChunkNumber()))
@@ -84,9 +86,10 @@ public class DownloadService extends AbstractBackgroundService {
 					.map(chunkLoader)
 					.map(chunkDecoder)
 					.map(downloadChunkHasher)
-					.map(hashVerifier)
+					.map(chunkHashVerifier)
 					.map(fileSaver)
 					.map(downloadFileHasher)
+					.map(fileHashVerifier)
 					.forEach(c -> LOG.info("Done: {}", c.getChunkToDownload().getChunkNumber()));
 			} catch (Exception e) {
 				e.printStackTrace();
