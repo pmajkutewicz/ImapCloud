@@ -13,4 +13,10 @@ server:
 
 security.user.password: test
 
-logging.file: imapcloud.log
+logging:
+  file: imapcloud.log
+  level:
+    org.springframework.web: ERROR
+    org.springframework.boot.autoconfigure.security: INFO
+    pl.pamsoft: DEBUG
+
