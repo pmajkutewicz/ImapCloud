@@ -16,9 +16,16 @@ import lombok.ToString;
 public class UploadedFileDto extends FileDto {
 
 	@Getter @Setter
-	private boolean completed;
+	private Boolean completed;
 
 	@Getter @Setter
 	private String fileUniqueId;
 
+
+	public static UploadedFileDto folder(String name){
+		UploadedFileDto uploadedFileDto = new UploadedFileDto();
+		uploadedFileDto.setName(name);
+		uploadedFileDto.setType(FileType.DIRECTORY);
+		return uploadedFileDto;
+	}
 }

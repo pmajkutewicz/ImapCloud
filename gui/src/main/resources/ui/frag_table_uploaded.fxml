@@ -2,33 +2,34 @@
 
 <?scenebuilder-stylesheet css/custom.css?>
 
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<TableView fx:id="uploadedTable" prefHeight="200.0" prefWidth="281.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.control.cell.TreeItemPropertyValueFactory?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.control.TreeTableView?>
+<TreeTableView fx:id="embeddedUploadedFilesTable" prefHeight="200.0" prefWidth="281.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+               fx:controller="pl.pamsoft.imapcloud.controllers.FragUploadedFilesController">
 	<columns>
-		<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.name">
+		<TreeTableColumn prefWidth="250.0" text="%uploaded.table.column.file.name">
 			<cellValueFactory>
-				<PropertyValueFactory property="name"/>
+				<TreeItemPropertyValueFactory property="name"/>
 			</cellValueFactory>
-		</TableColumn>
-		<TableColumn prefWidth="250.0" text="%uploaded.table.column.file.path">
+		</TreeTableColumn>
+		<TreeTableColumn prefWidth="250.0" text="%uploaded.table.column.file.path">
 			<cellValueFactory>
-				<PropertyValueFactory property="absolutePath"/>
+				<TreeItemPropertyValueFactory property="absolutePath"/>
 			</cellValueFactory>
-		</TableColumn>
-		<TableColumn prefWidth="60.0" text="%uploaded.table.column.file.size">
+		</TreeTableColumn>
+		<TreeTableColumn prefWidth="60.0" text="%uploaded.table.column.file.size">
 			<cellValueFactory>
-				<PropertyValueFactory property="readableFileSize"/>
+				<TreeItemPropertyValueFactory property="readableFileSize"/>
 			</cellValueFactory>
-		</TableColumn>
-		<TableColumn prefWidth="30.0" text="%uploaded.table.column.file.completed">
+		</TreeTableColumn>
+		<TreeTableColumn prefWidth="30.0" text="%uploaded.table.column.file.completed">
 			<cellValueFactory>
-				<PropertyValueFactory property="completed"/>
+				<TreeItemPropertyValueFactory property="completed"/>
 			</cellValueFactory>
-		</TableColumn>
+		</TreeTableColumn>
 	</columns>
 	<columnResizePolicy>
-		<TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+		<TreeTableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
 	</columnResizePolicy>
-</TableView>
+</TreeTableView>

@@ -15,7 +15,7 @@ import static org.testng.Assert.assertTrue;
 
 public class FilesServiceTest {
 
-	private static final int MEBIBYTE = 1024 * 1024;
+	private static final int KIBIBYTE = 1024;
 	private FilesIOService fs = new FilesIOService();
 
 	@Test
@@ -33,7 +33,7 @@ public class FilesServiceTest {
 		long size = fs.calculateDirSize(new File(".").getAbsoluteFile());
 		assertNotNull(size);
 		assertNotEquals(size, 0);
-		assertTrue(size > MEBIBYTE);
+		assertTrue(size > KIBIBYTE);
 	}
 
 	private FileDto getPom(List<FileDto> files) {
