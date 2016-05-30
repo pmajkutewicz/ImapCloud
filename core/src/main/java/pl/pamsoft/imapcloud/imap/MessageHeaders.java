@@ -6,7 +6,8 @@ public enum MessageHeaders {
 	FileId("IC-FileId"),
 	FileName("IC-FileName"),
 	FilePath("IC-FilePath"),
-	FileHash("IC-FileHash");
+	FileHash("IC-FileHash"),
+	MagicNumber("IC-MagicNumber");
 
 	private String headerName;
 

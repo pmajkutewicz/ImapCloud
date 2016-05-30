@@ -13,6 +13,7 @@ import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
+import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.activation.DataHandler;
@@ -29,7 +30,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -47,15 +47,17 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 	private final CryptoService cs;
 	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
+	private GitStatsUtil gitStatsUtil;
 	private PaddedBufferedBlockCipher encryptingCipher;
 	private AtomicInteger retryCounter = new AtomicInteger(0);
 
-	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, Statistics statistics, PerformanceDataService performanceDataService) {
+	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, Statistics statistics, PerformanceDataService performanceDataService, GitStatsUtil gitStatsUtil) {
 		this.connectionPool = connectionPool;
 		this.cs = cryptoService;
 		encryptingCipher = cs.getEncryptingCipher(ByteUtils.fromHexString(cryptoKey));
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
+		this.gitStatsUtil = gitStatsUtil;
 	}
 
 	@Override
@@ -124,7 +126,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		return folder;
 	}
 
-	private Message createMessage(UploadChunkContainer dataChunk) throws MessagingException, UnsupportedEncodingException {
+	private Message createMessage(UploadChunkContainer dataChunk) throws MessagingException, IOException {
 		String htmlBody = "";
 		Message msg = new CustomMessageIdMimeMessage(Session.getInstance(System.getProperties()));
 
@@ -149,6 +151,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		setHeader(msg, MessageHeaders.FileName, encrypt(dataChunk.getFileDto().getName()));
 		setHeader(msg, MessageHeaders.FilePath, encrypt(dataChunk.getFileDto().getAbsolutePath()));
 		setHeader(msg, MessageHeaders.FileHash, dataChunk.getFileHash());
+		setHeader(msg, MessageHeaders.MagicNumber, gitStatsUtil.getGitRepositoryState().getCommitId());
 		return msg;
 	}
 

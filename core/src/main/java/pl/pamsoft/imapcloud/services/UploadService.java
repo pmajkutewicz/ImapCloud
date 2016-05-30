@@ -19,6 +19,7 @@ import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
+import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 
 import java.security.MessageDigest;
@@ -59,6 +60,9 @@ public class UploadService extends AbstractBackgroundService {
 	@Autowired
 	private TasksProgressService tasksProgressService;
 
+	@Autowired
+	private GitStatsUtil gitStatsUtil;
+
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncodingEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
@@ -86,7 +90,7 @@ public class UploadService extends AbstractBackgroundService {
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(instance, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncoder(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
-				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), statistics, performanceDataService);
+				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), statistics, performanceDataService, gitStatsUtil);
 				Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 				selectedFiles.stream()
