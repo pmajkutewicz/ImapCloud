@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TableView;
@@ -20,7 +21,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class UploadedController implements Initializable {
+public class UploadedController implements Initializable, Refreshable {
 
 	@Inject
 	private UploadedFileRestClient uploadedFileRestClient;
@@ -29,7 +30,13 @@ public class UploadedController implements Initializable {
 	private TreeTableView<UploadedFileDto> embeddedUploadedFilesTable;
 
 	@FXML
+	private FragUploadedFilesController embeddedUploadedFilesTableController;
+
+	@FXML
 	private TableView<UploadedFileChunkDto> uploadedChunksTable;
+
+	@FXML
+	private Node root;
 
 	private ChangeListener<TreeItem<UploadedFileDto>> uploadedFileDtoChangeListener = (observable, oldValue, newValue) -> {
 		try {
@@ -45,6 +52,7 @@ public class UploadedController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		embeddedUploadedFilesTable.getSelectionModel().selectedItemProperty().addListener(uploadedFileDtoChangeListener);
+		initRefreshable();
 	}
 
 	public void deleteButtonClick(ActionEvent event) {
@@ -72,5 +80,15 @@ public class UploadedController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void refresh() {
+		embeddedUploadedFilesTableController.refresh();
+	}
+
+	@Override
+	public Node getRoot() {
+		return root;
 	}
 }

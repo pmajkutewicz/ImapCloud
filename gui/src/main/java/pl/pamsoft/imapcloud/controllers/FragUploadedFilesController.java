@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
-public class FragUploadedFilesController implements Initializable {
+public class FragUploadedFilesController implements Initializable, Refreshable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FragUploadedFilesController.class);
 
@@ -33,12 +34,8 @@ public class FragUploadedFilesController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		try {
-			embeddedUploadedFilesTable.setRoot(populate());
-			embeddedUploadedFilesTable.setShowRoot(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		refresh();
+		initRefreshable();
 	}
 
 	private TreeItem<UploadedFileDto> populate() throws IOException {
@@ -78,5 +75,20 @@ public class FragUploadedFilesController implements Initializable {
 		//empty cache, lets create root node
 		cacheTable.put(0, "", new TreeItem<>(UploadedFileDto.folder("")));
 		return 0;
+	}
+
+	@Override
+	public void refresh() {
+		try {
+			embeddedUploadedFilesTable.setRoot(populate());
+			embeddedUploadedFilesTable.setShowRoot(false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Node getRoot() {
+		return embeddedUploadedFilesTable;
 	}
 }

@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.controllers;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TableView;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ import java.util.ResourceBundle;
 
 @Getter
 @Setter
-public class AccountsTableController implements Initializable {
+public class FragAccountsTableController implements Initializable, Refreshable {
 
 	@Inject
 	private AccountRestClient accountRestClient;
@@ -27,12 +28,24 @@ public class AccountsTableController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		refresh();
+		initRefreshable();
+	}
+
+	@Override
+	public void refresh() {
 		try {
 			List<AccountDto> accountDtos = accountRestClient.listAccounts();
 			ObservableList<AccountDto> items = accountsTable.getItems();
+			items.clear();
 			items.addAll(accountDtos);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public Node getRoot() {
+		return accountsTable;
 	}
 }

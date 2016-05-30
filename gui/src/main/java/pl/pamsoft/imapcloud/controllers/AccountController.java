@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.controllers;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
@@ -16,7 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class AccountController implements Initializable {
+public class AccountController implements Initializable, Refreshable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccountController.class);
 
@@ -32,11 +33,11 @@ public class AccountController implements Initializable {
 	@FXML
 	private TextField usernameTextField;
 
-//	@FXML
-//	private AccountsTableController embeddedAccountTableController;
-//
-//	@FXML
-//	private Parent embeddedAccountTable;
+	@FXML
+	private FragAccountsTableController embeddedAccountTableController;
+
+	@FXML
+	private Node root;
 
 	public void createButtonClick(ActionEvent event) {
 		try {
@@ -59,5 +60,16 @@ public class AccountController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		initRefreshable();
+	}
+
+	@Override
+	public void refresh() {
+		embeddedAccountTableController.refresh();
+	}
+
+	@Override
+	public Node getRoot() {
+		return root;
 	}
 }

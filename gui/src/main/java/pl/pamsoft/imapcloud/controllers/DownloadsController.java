@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.controllers;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TreeTableView;
 import pl.pamsoft.imapcloud.dto.FileDto;
@@ -16,7 +17,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 @SuppressFBWarnings("FCBL_FIELD_COULD_BE_LOCAL")
-public class DownloadsController implements Initializable {
+public class DownloadsController implements Initializable, Refreshable {
 
 	@Inject
 	private DownloadsRestClient downloadsRestClient;
@@ -36,9 +37,12 @@ public class DownloadsController implements Initializable {
 	@FXML
 	private FragFileListController embeddedFileListTableController;
 
+	@FXML
+	private Node root;
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		initRefreshable();
 	}
 
 	public void onDownloadClick() {
@@ -51,5 +55,15 @@ public class DownloadsController implements Initializable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void refresh() {
+		embeddedUploadedFilesTableController.refresh();
+	}
+
+	@Override
+	public Node getRoot() {
+		return root;
 	}
 }
