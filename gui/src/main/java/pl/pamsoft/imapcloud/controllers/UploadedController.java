@@ -13,6 +13,7 @@ import javafx.scene.control.TreeTableView;
 import pl.pamsoft.imapcloud.dto.UploadedFileChunkDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
+import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 
 import javax.inject.Inject;
@@ -39,14 +40,20 @@ public class UploadedController implements Initializable, Refreshable {
 	private Node root;
 
 	private ChangeListener<TreeItem<UploadedFileDto>> uploadedFileDtoChangeListener = (observable, oldValue, newValue) -> {
-		try {
-			UploadedFileChunksResponse uploadedFileChunks = uploadedFileRestClient.getUploadedFileChunks(newValue.getValue().getFileUniqueId());
-			uploadedChunksTable.getItems().clear();
-			uploadedChunksTable.getItems().addAll(uploadedFileChunks.getFileChunks());
-		} catch (IOException e) {
-			uploadedChunksTable.getItems().clear();
-			e.printStackTrace();
-		}
+		uploadedFileRestClient.getUploadedFileChunksAsync(newValue.getValue().getFileUniqueId(), new RequestCallback<UploadedFileChunksResponse>() {
+			@Override
+			public void onFailure(IOException e) {
+				markAsInvalid(uploadedChunksTable);
+				uploadedChunksTable.getItems().clear();
+			}
+
+			@Override
+			public void onSuccess(UploadedFileChunksResponse data) {
+				markAsValid(uploadedChunksTable);
+				uploadedChunksTable.getItems().clear();
+				uploadedChunksTable.getItems().addAll(data.getFileChunks());
+			}
+		});
 	};
 
 	@Override

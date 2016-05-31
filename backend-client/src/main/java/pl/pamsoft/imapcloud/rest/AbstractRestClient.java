@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Authenticator;
+import okhttp3.Callback;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -11,6 +12,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 abstract class AbstractRestClient {
 
@@ -31,8 +33,16 @@ abstract class AbstractRestClient {
 		return objectMapper.readValue(sendGet(buildUrl(url)).body().string(), cls);
 	}
 
+	<T> void sendGetAsync(String url, Class<T> cls, RequestCallback<T> requestCallback) throws IOException {
+		sendGetAsync(buildUrl(url), new OKDefaultCallback<T>(cls, requestCallback));
+	}
+
 	<T> T sendGet(String url, Class<T> cls, String paramName, String paramValue) throws IOException {
 		return objectMapper.readValue(sendGet(buildUrl(url, paramName, paramValue)).body().string(), cls);
+	}
+
+	<T> void sendGetAsync(String url, Class<T> cls, String paramName, String paramValue, RequestCallback<T> requestCallback) {
+		sendGetAsync(buildUrl(url, paramName, paramValue), new OKDefaultCallback<T>(cls, requestCallback));
 	}
 
 	Response sendGet(String url, String paramName, String paramValue) throws IOException {
@@ -47,6 +57,10 @@ abstract class AbstractRestClient {
 		return send(getRequest().url(httpUrl.url()).build());
 	}
 
+	private void sendGetAsync(HttpUrl httpUrl, Callback callback) {
+		sendAsync(getRequest().url(httpUrl.url()).build(), callback);
+	}
+
 	private Response sendPost(HttpUrl httpUrl, Object pojo) throws IOException {
 		RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValueAsString(pojo));
 		Request req = getRequest().url(httpUrl.url()).post(requestBody).build();
@@ -59,6 +73,10 @@ abstract class AbstractRestClient {
 		return response;
 	}
 
+	private void sendAsync(Request req, Callback callback) {
+		getClient().newCall(req).enqueue(callback);
+	}
+
 	private HttpUrl buildUrl(String url) {
 		return new HttpUrl.Builder().scheme("http").host(host).port(port).addPathSegments(url).build();
 	}
@@ -68,9 +86,11 @@ abstract class AbstractRestClient {
 	}
 
 	private OkHttpClient getClient() {
-		OkHttpClient.Builder client = new OkHttpClient.Builder();
-		client.authenticator(authenticator);
-		return client.build();
+		return new OkHttpClient.Builder()
+			.authenticator(authenticator)
+			.connectTimeout(2, TimeUnit.SECONDS)
+			.writeTimeout(2, TimeUnit.SECONDS)
+			.readTimeout(2, TimeUnit.SECONDS).build();
 	}
 
 	private Request.Builder getRequest() {

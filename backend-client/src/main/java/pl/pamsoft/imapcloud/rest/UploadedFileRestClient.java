@@ -24,6 +24,10 @@ public class UploadedFileRestClient extends AbstractRestClient {
 		return sendGet(FIND_ALL_FILE_CHUNKS, UploadedFileChunksResponse.class, "fileId", fileId);
 	}
 
+	public void getUploadedFileChunksAsync(String fileId, RequestCallback<UploadedFileChunksResponse> callback) {
+		sendGetAsync(FIND_ALL_FILE_CHUNKS, UploadedFileChunksResponse.class, "fileId", fileId, callback);
+	}
+
 	public void verifyFile(String fileId) throws IOException {
 		sendGet(VERIFY_FILE, "fileId", fileId);
 	}
