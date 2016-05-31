@@ -18,14 +18,17 @@ public class AccountRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
+	@Deprecated
 	public EmailProviderInfoResponse getAvailableEmailAccounts() throws IOException {
 		return sendGet(LIST_EMAIL_PROVIDERS, EmailProviderInfoResponse.class);
 	}
 
+	@Deprecated
 	public void createAccount(EmailProviderInfo selectedEmailProvider, String username, String password) throws IOException {
 		sendPost(CREATE_ACCOUNT, new CreateAccountRequest(username, password, selectedEmailProvider));
 	}
 
+	@Deprecated
 	public List<AccountDto> listAccounts() throws IOException {
 		return sendGet(CREATE_ACCOUNT, ListAccountResponse.class).getAccount();
 	}

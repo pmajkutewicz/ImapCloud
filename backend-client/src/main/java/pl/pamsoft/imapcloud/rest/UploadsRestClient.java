@@ -15,6 +15,7 @@ public class UploadsRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
+	@Deprecated
 	public void startUpload(List<FileDto> selectedFiles, AccountDto selectedAccount) throws IOException {
 		sendPost(START_UPLOADS, new StartUploadRequest(selectedFiles, selectedAccount, true));
 	}

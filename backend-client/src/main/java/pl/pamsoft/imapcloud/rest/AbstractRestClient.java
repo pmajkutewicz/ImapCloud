@@ -29,6 +29,7 @@ abstract class AbstractRestClient {
 		this.authenticator = (route, response) -> response.request().newBuilder().header("Authorization", Credentials.basic(username, pass)).build();
 	}
 
+	@Deprecated
 	<T> T sendGet(String url, Class<T> cls) throws IOException {
 		return objectMapper.readValue(sendGet(buildUrl(url)).body().string(), cls);
 	}
@@ -37,6 +38,7 @@ abstract class AbstractRestClient {
 		sendGetAsync(buildUrl(url), new OKDefaultCallback<T>(cls, requestCallback));
 	}
 
+	@Deprecated
 	<T> T sendGet(String url, Class<T> cls, String paramName, String paramValue) throws IOException {
 		return objectMapper.readValue(sendGet(buildUrl(url, paramName, paramValue)).body().string(), cls);
 	}
@@ -45,14 +47,17 @@ abstract class AbstractRestClient {
 		sendGetAsync(buildUrl(url, paramName, paramValue), new OKDefaultCallback<T>(cls, requestCallback));
 	}
 
+	@Deprecated
 	Response sendGet(String url, String paramName, String paramValue) throws IOException {
 		return sendGet(buildUrl(url, paramName, paramValue));
 	}
 
+	@Deprecated
 	Response sendPost(String url, Object pojo) throws IOException {
 		return sendPost(buildUrl(url), pojo);
 	}
 
+	@Deprecated
 	private Response sendGet(HttpUrl httpUrl) throws IOException {
 		return send(getRequest().url(httpUrl.url()).build());
 	}
@@ -61,12 +66,14 @@ abstract class AbstractRestClient {
 		sendAsync(getRequest().url(httpUrl.url()).build(), callback);
 	}
 
+	@Deprecated
 	private Response sendPost(HttpUrl httpUrl, Object pojo) throws IOException {
 		RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValueAsString(pojo));
 		Request req = getRequest().url(httpUrl.url()).post(requestBody).build();
 		return send(req);
 	}
 
+	@Deprecated
 	private Response send(Request req) throws IOException {
 		Response response = getClient().newCall(req).execute();
 		throwExceptionIfNotValidResponse(response);

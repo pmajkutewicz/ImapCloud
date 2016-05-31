@@ -14,6 +14,7 @@ public class DownloadsRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
+	@Deprecated
 	public void startDownload(UploadedFileDto fileToDownload, FileDto destDir) throws IOException {
 		sendPost(START_UPLOADS, new StartDownloadRequest(fileToDownload, destDir));
 	}

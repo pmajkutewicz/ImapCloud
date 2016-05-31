@@ -14,10 +14,12 @@ public class FilesRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
+	@Deprecated
 	public GetHomeDirResponse getHomeDir() throws IOException {
 		return sendGet(GET_HOME_DIR, GetHomeDirResponse.class);
 	}
 
+	@Deprecated
 	public ListFilesInDirResponse listDir(String dir) throws IOException {
 		return sendGet(LIST_FILES_IN_DIR, ListFilesInDirResponse.class, "dir", dir);
 	}
