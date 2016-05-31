@@ -5,7 +5,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -15,13 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.responses.ListFilesInDirResponse;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static javafx.scene.control.SelectionMode.MULTIPLE;
 
 public class FragFileListController implements Initializable {
 
@@ -61,16 +61,15 @@ public class FragFileListController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		try {
-			String homeDir = filesRestClient.getHomeDir().getHomeDir();
-			fileList.setOnMousePressed(doubleClickHandler);
-			fileList.getSelectionModel().setSelectionMode(
-				SelectionMode.MULTIPLE
-			);
-			updateUI(homeDir);
-		} catch (IOException e) {
-			utils.showWarning(e.getMessage());
-		}
+		fileList.setOnMousePressed(doubleClickHandler);
+		fileList.getSelectionModel().setSelectionMode(MULTIPLE);
+		filesRestClient.getHomeDir(data -> {
+			try {
+				updateUI(data.getHomeDir());
+			} catch (IOException e) {
+				utils.showWarning(e.getMessage());
+			}
+		});
 	}
 
 	public void onEnterCurrentDir() {
@@ -83,8 +82,6 @@ public class FragFileListController implements Initializable {
 
 	private void updateUI(String directory) throws IOException {
 		currentDir.setText(directory);
-
-		ListFilesInDirResponse listFilesInDirResponse = filesRestClient.listDir(directory);
-		fileList.setItems(FXCollections.observableArrayList(listFilesInDirResponse.getFiles()));
+		filesRestClient.listDir(directory, data -> fileList.setItems(FXCollections.observableArrayList(data.getFiles())));
 	}
 }

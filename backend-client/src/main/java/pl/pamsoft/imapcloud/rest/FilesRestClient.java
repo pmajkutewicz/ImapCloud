@@ -3,8 +3,6 @@ package pl.pamsoft.imapcloud.rest;
 import pl.pamsoft.imapcloud.responses.GetHomeDirResponse;
 import pl.pamsoft.imapcloud.responses.ListFilesInDirResponse;
 
-import java.io.IOException;
-
 public class FilesRestClient extends AbstractRestClient {
 
 	private static final String GET_HOME_DIR = "files/homeDir";
@@ -14,13 +12,11 @@ public class FilesRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
-	@Deprecated
-	public GetHomeDirResponse getHomeDir() throws IOException {
-		return sendGet(GET_HOME_DIR, GetHomeDirResponse.class);
+	public void getHomeDir(RequestCallback<GetHomeDirResponse> callback) {
+		sendGet(GET_HOME_DIR, GetHomeDirResponse.class, callback);
 	}
 
-	@Deprecated
-	public ListFilesInDirResponse listDir(String dir) throws IOException {
-		return sendGet(LIST_FILES_IN_DIR, ListFilesInDirResponse.class, "dir", dir);
+	public void listDir(String dir, RequestCallback<ListFilesInDirResponse> callback) {
+		sendGet(LIST_FILES_IN_DIR, ListFilesInDirResponse.class, "dir", dir, callback);
 	}
 }

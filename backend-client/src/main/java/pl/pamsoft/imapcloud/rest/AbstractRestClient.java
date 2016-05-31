@@ -1,6 +1,8 @@
 package pl.pamsoft.imapcloud.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Authenticator;
 import okhttp3.Callback;
 import okhttp3.Credentials;
@@ -9,9 +11,7 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 abstract class AbstractRestClient {
@@ -29,58 +29,39 @@ abstract class AbstractRestClient {
 		this.authenticator = (route, response) -> response.request().newBuilder().header("Authorization", Credentials.basic(username, pass)).build();
 	}
 
-	@Deprecated
-	<T> T sendGet(String url, Class<T> cls) throws IOException {
-		return objectMapper.readValue(sendGet(buildUrl(url)).body().string(), cls);
+	<T> void sendGet(String url, Class<T> cls, RequestCallback<T> requestCallback) {
+		sendGet(buildUrl(url), new OKDefaultCallback<T>(cls, requestCallback));
 	}
 
-	<T> void sendGetAsync(String url, Class<T> cls, RequestCallback<T> requestCallback) throws IOException {
-		sendGetAsync(buildUrl(url), new OKDefaultCallback<T>(cls, requestCallback));
+	<T> void sendGet(String url, Class<T> cls, String paramName, String paramValue, RequestCallback<T> requestCallback) {
+		sendGet(buildUrl(url, paramName, paramValue), new OKDefaultCallback<T>(cls, requestCallback));
 	}
 
-	@Deprecated
-	<T> T sendGet(String url, Class<T> cls, String paramName, String paramValue) throws IOException {
-		return objectMapper.readValue(sendGet(buildUrl(url, paramName, paramValue)).body().string(), cls);
+	void sendGet(String url, String paramName, String paramValue, RequestCallback<Void> callback) {
+		sendGet(buildUrl(url, paramName, paramValue), new OKVoidCallback(callback));
 	}
 
-	<T> void sendGetAsync(String url, Class<T> cls, String paramName, String paramValue, RequestCallback<T> requestCallback) {
-		sendGetAsync(buildUrl(url, paramName, paramValue), new OKDefaultCallback<T>(cls, requestCallback));
+	void sendPost(String url, Object pojo, RequestCallback<Void> callback) {
+		sendPost(buildUrl(url), pojo, new OKVoidCallback(callback));
 	}
 
-	@Deprecated
-	Response sendGet(String url, String paramName, String paramValue) throws IOException {
-		return sendGet(buildUrl(url, paramName, paramValue));
+	private void sendGet(HttpUrl httpUrl, Callback callback) {
+		send(getRequest().url(httpUrl.url()).build(), callback);
 	}
 
-	@Deprecated
-	Response sendPost(String url, Object pojo) throws IOException {
-		return sendPost(buildUrl(url), pojo);
+	@SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE")
+	private void sendPost(HttpUrl httpUrl, Object pojo, Callback callback) {
+		Request req = null;
+		try {
+			RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValueAsString(pojo));
+			req = getRequest().url(httpUrl.url()).post(requestBody).build();
+			send(req, callback);
+		} catch (JsonProcessingException e) {
+			callback.onFailure(null != req ? getClient().newCall(req) : null, e);
+		}
 	}
 
-	@Deprecated
-	private Response sendGet(HttpUrl httpUrl) throws IOException {
-		return send(getRequest().url(httpUrl.url()).build());
-	}
-
-	private void sendGetAsync(HttpUrl httpUrl, Callback callback) {
-		sendAsync(getRequest().url(httpUrl.url()).build(), callback);
-	}
-
-	@Deprecated
-	private Response sendPost(HttpUrl httpUrl, Object pojo) throws IOException {
-		RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValueAsString(pojo));
-		Request req = getRequest().url(httpUrl.url()).post(requestBody).build();
-		return send(req);
-	}
-
-	@Deprecated
-	private Response send(Request req) throws IOException {
-		Response response = getClient().newCall(req).execute();
-		throwExceptionIfNotValidResponse(response);
-		return response;
-	}
-
-	private void sendAsync(Request req, Callback callback) {
+	private void send(Request req, Callback callback) {
 		getClient().newCall(req).enqueue(callback);
 	}
 
@@ -105,11 +86,5 @@ abstract class AbstractRestClient {
 			.header("User-Agent", "IC JavaFX")
 			.addHeader("Accept", "application/json")
 			.addHeader("Content-Type", "application/json");
-	}
-
-	private void throwExceptionIfNotValidResponse(Response response) throws IOException {
-		if (!response.isSuccessful()) {
-			throw new IOException(response.body().string());
-		}
 	}
 }

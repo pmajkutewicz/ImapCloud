@@ -6,20 +6,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
 import pl.pamsoft.imapcloud.renderers.EmailProviderInfoRenderer;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AccountController implements Initializable, Refreshable {
-
-	private static final Logger LOG = LoggerFactory.getLogger(AccountController.class);
 
 	@Inject
 	private AccountRestClient accountRestClient;
@@ -40,26 +35,20 @@ public class AccountController implements Initializable, Refreshable {
 	private Node root;
 
 	public void createButtonClick(ActionEvent event) {
-		try {
-			EmailProviderInfo selectedItem = emailProvidersComboBox.getSelectionModel().getSelectedItem();
-			String username = usernameTextField.getText();
-			String password = passwordTextField.getText();
-			accountRestClient.createAccount(selectedItem, username, password);
-		} catch (IOException e) {
-			LOG.error("Failed", e);
-		}
+		EmailProviderInfo selectedItem = emailProvidersComboBox.getSelectionModel().getSelectedItem();
+		String username = usernameTextField.getText();
+		String password = passwordTextField.getText();
+		accountRestClient.createAccount(selectedItem, username, password, data -> {});
 	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		try {
-			emailProvidersComboBox.setButtonCell(new EmailProviderInfoRenderer());
-			emailProvidersComboBox.setCellFactory(p -> new EmailProviderInfoRenderer());
-			emailProvidersComboBox.getItems().addAll(accountRestClient.getAvailableEmailAccounts().getEmailProviders());
-			emailProvidersComboBox.getSelectionModel().selectFirst();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		emailProvidersComboBox.setButtonCell(new EmailProviderInfoRenderer());
+		emailProvidersComboBox.setCellFactory(p -> new EmailProviderInfoRenderer());
+		accountRestClient.getAvailableEmailAccounts(data -> {
+            emailProvidersComboBox.getItems().addAll(data.getEmailProviders());
+            emailProvidersComboBox.getSelectionModel().selectFirst();
+        });
 		initRefreshable();
 	}
 

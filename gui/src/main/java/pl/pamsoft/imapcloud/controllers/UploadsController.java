@@ -10,6 +10,7 @@ import javafx.scene.control.TableView;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 
 import javax.inject.Inject;
@@ -47,14 +48,17 @@ public class UploadsController implements Initializable, Refreshable {
 	}
 
 	public void onUploadClick() {
-		try {
-			ObservableList<FileDto> selectedFiles = embeddedFileListTableController.getFileList().getSelectionModel().getSelectedItems();
-			AccountDto selectedAccountDto = embeddedAccountTable.getSelectionModel().getSelectedItem();
-			uploadsRestClient.startUpload(selectedFiles, selectedAccountDto);
-		} catch (IOException e) {
-			utils.showWarning(e.getMessage());
-		}
+		ObservableList<FileDto> selectedFiles = embeddedFileListTableController.getFileList().getSelectionModel().getSelectedItems();
+		AccountDto selectedAccountDto = embeddedAccountTable.getSelectionModel().getSelectedItem();
+		uploadsRestClient.startUpload(selectedFiles, selectedAccountDto, new RequestCallback<Void>() {
+			@Override
+			public void onFailure(IOException e) {
+				utils.showWarning(e.getMessage());
+			}
 
+			@Override
+			public void onSuccess(Void data) { }
+		});
 	}
 
 	@Override

@@ -4,7 +4,6 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.requests.StartUploadRequest;
 
-import java.io.IOException;
 import java.util.List;
 
 public class UploadsRestClient extends AbstractRestClient {
@@ -15,8 +14,8 @@ public class UploadsRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
-	@Deprecated
-	public void startUpload(List<FileDto> selectedFiles, AccountDto selectedAccount) throws IOException {
-		sendPost(START_UPLOADS, new StartUploadRequest(selectedFiles, selectedAccount, true));
+	public void startUpload(List<FileDto> selectedFiles, AccountDto selectedAccount, RequestCallback<Void> callback) {
+		sendPost(START_UPLOADS, new StartUploadRequest(selectedFiles, selectedAccount, true), callback);
 	}
+
 }

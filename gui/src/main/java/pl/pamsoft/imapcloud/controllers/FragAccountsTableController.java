@@ -11,9 +11,7 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 @Getter
@@ -34,14 +32,11 @@ public class FragAccountsTableController implements Initializable, Refreshable {
 
 	@Override
 	public void refresh() {
-		try {
-			List<AccountDto> accountDtos = accountRestClient.listAccounts();
+		accountRestClient.listAccounts(data -> {
 			ObservableList<AccountDto> items = accountsTable.getItems();
 			items.clear();
-			items.addAll(accountDtos);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			items.addAll(data.getAccount());
+		});
 	}
 
 	@Override

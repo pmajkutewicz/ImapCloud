@@ -14,9 +14,7 @@ import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 
 import javax.inject.Inject;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
@@ -38,7 +36,7 @@ public class FragUploadedFilesController implements Initializable, Refreshable {
 		initRefreshable();
 	}
 
-	private TreeItem<UploadedFileDto> populate() throws IOException {
+	private TreeItem<UploadedFileDto> populate() {
 		Consumer<UploadedFileDto> builder = dto -> {
 			String[] pathSplitted = dto.getAbsolutePath().split(File.separator);
 			// +1 because returned value is already created... we need to create rest of them starting from next one
@@ -54,8 +52,10 @@ public class FragUploadedFilesController implements Initializable, Refreshable {
 			cacheTable.get(pathSize-1, pathSplitted[pathSize-1]).getChildren().add(new TreeItem<>(dto));
 		};
 
-		List<UploadedFileDto> files = uploadedFileRestClient.getUploadedFiles().getFiles();
-		files.stream().forEach(builder);
+		uploadedFileRestClient.getUploadedFiles(files -> {
+			cacheTable.clear();
+			files.getFiles().stream().forEach(builder);
+		});
 		return cacheTable.get(0, "");
 	}
 
@@ -79,12 +79,8 @@ public class FragUploadedFilesController implements Initializable, Refreshable {
 
 	@Override
 	public void refresh() {
-		try {
-			embeddedUploadedFilesTable.setRoot(populate());
-			embeddedUploadedFilesTable.setShowRoot(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		embeddedUploadedFilesTable.setRoot(populate());
+		embeddedUploadedFilesTable.setShowRoot(false);
 	}
 
 	@Override

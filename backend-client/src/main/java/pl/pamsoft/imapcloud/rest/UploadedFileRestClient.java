@@ -3,8 +3,6 @@ package pl.pamsoft.imapcloud.rest;
 import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
 import pl.pamsoft.imapcloud.responses.UploadedFilesResponse;
 
-import java.io.IOException;
-
 public class UploadedFileRestClient extends AbstractRestClient {
 
 	private static final String FIND_ALL_FILES = "uploaded/files";
@@ -16,28 +14,20 @@ public class UploadedFileRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
-	@Deprecated
-	public UploadedFilesResponse getUploadedFiles() throws IOException {
-		return sendGet(FIND_ALL_FILES, UploadedFilesResponse.class);
+	public void getUploadedFiles(RequestCallback<UploadedFilesResponse> callback) {
+		sendGet(FIND_ALL_FILES, UploadedFilesResponse.class, callback);
 	}
 
-	@Deprecated
-	public UploadedFileChunksResponse getUploadedFileChunks(String fileId) throws IOException {
-		return sendGet(FIND_ALL_FILE_CHUNKS, UploadedFileChunksResponse.class, "fileId", fileId);
+	public void getUploadedFileChunks(String fileId, RequestCallback<UploadedFileChunksResponse> callback) {
+		sendGet(FIND_ALL_FILE_CHUNKS, UploadedFileChunksResponse.class, "fileId", fileId, callback);
 	}
 
-	public void getUploadedFileChunksAsync(String fileId, RequestCallback<UploadedFileChunksResponse> callback) {
-		sendGetAsync(FIND_ALL_FILE_CHUNKS, UploadedFileChunksResponse.class, "fileId", fileId, callback);
+	public void verifyFile(String fileId, RequestCallback<Void> callback) {
+		sendGet(VERIFY_FILE, "fileId", fileId, callback);
 	}
 
-	@Deprecated
-	public void verifyFile(String fileId) throws IOException {
-		sendGet(VERIFY_FILE, "fileId", fileId);
-	}
-
-	@Deprecated
-	public void deleteFile(String fileId) throws IOException {
-		sendGet(DELETE_FILE, "fileId", fileId);
+	public void deleteFile(String fileId, RequestCallback<Void> callback) {
+		sendGet(DELETE_FILE, "fileId", fileId, callback);
 	}
 
 }

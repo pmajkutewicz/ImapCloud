@@ -1,13 +1,9 @@
 package pl.pamsoft.imapcloud.rest;
 
-import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 import pl.pamsoft.imapcloud.responses.EmailProviderInfoResponse;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
-
-import java.io.IOException;
-import java.util.List;
 
 public class AccountRestClient extends AbstractRestClient {
 
@@ -18,18 +14,15 @@ public class AccountRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
-	@Deprecated
-	public EmailProviderInfoResponse getAvailableEmailAccounts() throws IOException {
-		return sendGet(LIST_EMAIL_PROVIDERS, EmailProviderInfoResponse.class);
+	public void getAvailableEmailAccounts(RequestCallback<EmailProviderInfoResponse> callback) {
+		sendGet(LIST_EMAIL_PROVIDERS, EmailProviderInfoResponse.class, callback);
 	}
 
-	@Deprecated
-	public void createAccount(EmailProviderInfo selectedEmailProvider, String username, String password) throws IOException {
-		sendPost(CREATE_ACCOUNT, new CreateAccountRequest(username, password, selectedEmailProvider));
+	public void createAccount(EmailProviderInfo selectedEmailProvider, String username, String password, RequestCallback<Void> callback) {
+		sendPost(CREATE_ACCOUNT, new CreateAccountRequest(username, password, selectedEmailProvider), callback);
 	}
 
-	@Deprecated
-	public List<AccountDto> listAccounts() throws IOException {
-		return sendGet(CREATE_ACCOUNT, ListAccountResponse.class).getAccount();
+	public void listAccounts(RequestCallback<ListAccountResponse> callback) {
+		sendGet(CREATE_ACCOUNT, ListAccountResponse.class, callback);
 	}
 }

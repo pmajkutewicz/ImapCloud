@@ -40,7 +40,7 @@ public class UploadedController implements Initializable, Refreshable {
 	private Node root;
 
 	private ChangeListener<TreeItem<UploadedFileDto>> uploadedFileDtoChangeListener = (observable, oldValue, newValue) -> {
-		uploadedFileRestClient.getUploadedFileChunksAsync(newValue.getValue().getFileUniqueId(), new RequestCallback<UploadedFileChunksResponse>() {
+		uploadedFileRestClient.getUploadedFileChunks(newValue.getValue().getFileUniqueId(), new RequestCallback<UploadedFileChunksResponse>() {
 			@Override
 			public void onFailure(IOException e) {
 				markAsInvalid(uploadedChunksTable);
@@ -64,29 +64,21 @@ public class UploadedController implements Initializable, Refreshable {
 
 	public void deleteButtonClick(ActionEvent event) {
 		UploadedFileDto selectedItem = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem().getValue();
-		try {
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
-			//TODO: externalize strings
-			alert.setTitle("Warning");
-			alert.setHeaderText("Are You sure You want to delete:\n" + selectedItem.getName());
+		//TODO: externalize strings
+		alert.setTitle("Warning");
+		alert.setHeaderText("Are You sure You want to delete:\n" + selectedItem.getName());
 
-			Optional<ButtonType> result = alert.showAndWait();
-			if (result.isPresent() && ButtonType.OK == result.get()) {
-				uploadedFileRestClient.deleteFile(selectedItem.getFileUniqueId());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.isPresent() && ButtonType.OK == result.get()) {
+			uploadedFileRestClient.deleteFile(selectedItem.getFileUniqueId(), data -> {});
 		}
 	}
 
 	public void verifyButtonClick(ActionEvent event) {
-		try {
-			UploadedFileDto selectedItem = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem().getValue();
-			uploadedFileRestClient.verifyFile(selectedItem.getFileUniqueId());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		UploadedFileDto selectedItem = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem().getValue();
+		uploadedFileRestClient.verifyFile(selectedItem.getFileUniqueId(), data -> {});
 	}
 
 	@Override

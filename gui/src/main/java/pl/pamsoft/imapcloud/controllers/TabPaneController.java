@@ -16,13 +16,13 @@ public class TabPaneController implements Initializable {
 	private TabPane tabPane;
 
 	private ChangeListener<? super Tab> tabChangeListener = (ChangeListener<Tab>) (observable, closedTab, openedTab) -> {
-		Parent root = (Parent)  openedTab.getContent();
+		Parent root = (Parent) openedTab.getContent();
 
 		Object userData = root.getUserData();
 		if (userData instanceof Refreshable) {
 			((Refreshable) userData).refresh();
-		};
-    };
+		}
+	};
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

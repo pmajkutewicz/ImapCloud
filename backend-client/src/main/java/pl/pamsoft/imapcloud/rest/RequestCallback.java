@@ -5,6 +5,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.Region;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -14,9 +16,12 @@ import static javafx.scene.layout.BackgroundRepeat.NO_REPEAT;
 
 public interface RequestCallback<T> {
 
+	Logger LOG = LoggerFactory.getLogger(RequestCallback.class);
+
 	void onSuccess(T data);
 
-	default void onFailure(IOException e){
+	default void onFailure(IOException e) {
+		LOG.error("Unhandled error", e);
 		e.printStackTrace();
 	}
 

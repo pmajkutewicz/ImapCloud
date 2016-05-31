@@ -12,7 +12,6 @@ import pl.pamsoft.imapcloud.rest.DownloadsRestClient;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -46,14 +45,10 @@ public class DownloadsController implements Initializable, Refreshable {
 	}
 
 	public void onDownloadClick() {
-		try {
-			FileDto destDir = embeddedFileListTableController.getFileList().getSelectionModel().getSelectedItem();
-			UploadedFileDto selectedAccountDto = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem().getValue();
-			if (null != destDir && null != selectedAccountDto) {
-				downloadsRestClient.startDownload(selectedAccountDto, destDir);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		FileDto destDir = embeddedFileListTableController.getFileList().getSelectionModel().getSelectedItem();
+		UploadedFileDto selectedAccountDto = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem().getValue();
+		if (null != destDir && null != selectedAccountDto) {
+			downloadsRestClient.startDownload(selectedAccountDto, destDir, data -> { });
 		}
 	}
 
