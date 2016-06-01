@@ -38,7 +38,9 @@ public class AccountController implements Initializable, Refreshable {
 		EmailProviderInfo selectedItem = emailProvidersComboBox.getSelectionModel().getSelectedItem();
 		String username = usernameTextField.getText();
 		String password = passwordTextField.getText();
-		accountRestClient.createAccount(selectedItem, username, password, data -> {});
+		accountRestClient.createAccount(selectedItem, username, password, data -> {
+			refresh();
+		});
 	}
 
 	@Override
