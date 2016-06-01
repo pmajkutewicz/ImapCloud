@@ -95,11 +95,14 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			LOG.error("Error in stream", e);
 			try {
 				connectionPool.invalidateObject(store);
+				// do not return the object to the pool twice
+				store = null;
 			} catch (Exception e1) {
 				LOG.error("Error invalidating", e1);
 			}
 		} finally {
 			if (null != store) {
+				// make sure the object is returned to the pool
 				connectionPool.returnObject(store);
 				printPoolStats(connectionPool);
 			}
