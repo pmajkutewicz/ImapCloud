@@ -41,7 +41,7 @@ import static javax.mail.Folder.READ_WRITE;
 public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkContainer> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkSaver.class);
-	private static final int MAX_RETRIES = 10;
+	private static final int MAX_RETRIES = 20;
 
 	private GenericObjectPool<Store> connectionPool;
 	private final CryptoService cs;
@@ -62,6 +62,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer dataChunk) {
+		retryCounter.set(0);
 		return retryLoop(dataChunk, retryCounter.get());
 	}
 
