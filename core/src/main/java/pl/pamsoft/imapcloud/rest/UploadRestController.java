@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import pl.pamsoft.imapcloud.requests.Encryption;
 import pl.pamsoft.imapcloud.requests.StartUploadRequest;
 import pl.pamsoft.imapcloud.responses.AbstractResponse;
 import pl.pamsoft.imapcloud.services.UploadService;
+
+import static pl.pamsoft.imapcloud.requests.Encryption.ON;
 
 @RestController
 @RequestMapping("uploads")
@@ -21,7 +24,7 @@ public class UploadRestController {
 
 	@RequestMapping(value = "start", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> startUpload(@RequestBody StartUploadRequest startUploadRequest) {
-		boolean taskAdded = uploadService.upload(startUploadRequest.getSelectedAccount(), startUploadRequest.getSelectedFiles(), startUploadRequest.isChunkEncodingEnabled());
+		boolean taskAdded = uploadService.upload(startUploadRequest.getSelectedAccount(), startUploadRequest.getSelectedFiles(), ON.equals(startUploadRequest.getChunkEncryption()));
 
 		if (taskAdded) {
 			return new ResponseEntity<>(HttpStatus.OK);

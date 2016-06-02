@@ -6,10 +6,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableView;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.requests.Encryption;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 
@@ -17,6 +19,9 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static pl.pamsoft.imapcloud.requests.Encryption.OFF;
+import static pl.pamsoft.imapcloud.requests.Encryption.ON;
 
 @SuppressFBWarnings("FCBL_FIELD_COULD_BE_LOCAL")
 public class UploadsController implements Initializable, Refreshable {
@@ -40,6 +45,9 @@ public class UploadsController implements Initializable, Refreshable {
 	private FragAccountsTableController embeddedAccountTableController;
 
 	@FXML
+	private CheckBox encrypt;
+
+	@FXML
 	private Node root;
 
 	@Override
@@ -50,7 +58,7 @@ public class UploadsController implements Initializable, Refreshable {
 	public void onUploadClick() {
 		ObservableList<FileDto> selectedFiles = embeddedFileListTableController.getFileList().getSelectionModel().getSelectedItems();
 		AccountDto selectedAccountDto = embeddedAccountTable.getSelectionModel().getSelectedItem();
-		uploadsRestClient.startUpload(selectedFiles, selectedAccountDto, new RequestCallback<Void>() {
+		uploadsRestClient.startUpload(selectedFiles, selectedAccountDto, encrypt.isSelected() ? ON : OFF, new RequestCallback<Void>() {
 			@Override
 			public void onFailure(IOException e) {
 				utils.showWarning(e.getMessage());

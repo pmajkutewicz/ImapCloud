@@ -64,7 +64,7 @@ public class UploadService extends AbstractBackgroundService {
 	private GitStatsUtil gitStatsUtil;
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
-	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncodingEnabled) throws RejectedExecutionException {
+	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
 		Future<?> task = getExecutor().submit(() -> {
 			Thread.currentThread().setName("UploadTask-" + taskId);
@@ -89,7 +89,7 @@ public class UploadService extends AbstractBackgroundService {
 				Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileProcessed, broadcastTaskProgress);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(instance, statistics, performanceDataService);
-				Function<UploadChunkContainer, UploadChunkContainer> chunkEncoder = new ChunkEncrypter(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
+				Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
 				Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), statistics, performanceDataService, gitStatsUtil);
 				Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
@@ -103,7 +103,7 @@ public class UploadService extends AbstractBackgroundService {
 					.flatMap(splitFileIntoChunks)
 					.filter(filterEmptyUcc)
 					.map(generateChunkHash)
-					.map(chunkEncoder)
+					.map(ucc -> chunkEncryptionEnabled ? chunkEncrypter.apply(ucc) : ucc)
 					.filter(filterEmptyUcc)
 					.map(saveOnIMAPServer)
 					.filter(filterEmptyUcc)

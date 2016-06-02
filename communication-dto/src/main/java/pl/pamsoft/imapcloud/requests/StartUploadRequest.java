@@ -16,5 +16,5 @@ import java.util.List;
 public class StartUploadRequest {
 	private List<FileDto> selectedFiles;
 	private AccountDto selectedAccount;
-	private boolean chunkEncodingEnabled;
+	private Encryption chunkEncryption;
 }
