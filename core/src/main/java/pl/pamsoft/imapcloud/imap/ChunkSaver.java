@@ -152,6 +152,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		setHeader(msg, MessageHeaders.ChunkNumber, String.valueOf(dataChunk.getChunkNumber()));
 		setHeader(msg, MessageHeaders.ChunkId, String.valueOf(dataChunk.getFileChunkUniqueId()));
 		setHeader(msg, MessageHeaders.ChunkHash, String.valueOf(dataChunk.getChunkHash()));
+		setHeader(msg, MessageHeaders.ChunkEncrypted, String.valueOf(dataChunk.isEncoded()));
 		setHeader(msg, MessageHeaders.LastChunk, String.valueOf(dataChunk.isLastChunk()));
 		setHeader(msg, MessageHeaders.FileId, String.valueOf(dataChunk.getFileUniqueId()));
 		setHeader(msg, MessageHeaders.FileName, encrypt(dataChunk.getFileDto().getName()));

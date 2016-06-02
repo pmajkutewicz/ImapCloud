@@ -5,6 +5,7 @@ public enum MessageHeaders {
 	ChunkId("IC-ChunkId"),
 	ChunkHash("IC-ChunkHash"),
 	LastChunk("IC-LastChunk"),
+	ChunkEncrypted("IC-ChunkEncrypted"),
 	FileId("IC-FileId"),
 	FileName("IC-FileName"),
 	FilePath("IC-FilePath"),
