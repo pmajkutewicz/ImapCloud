@@ -16,15 +16,15 @@ import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 import java.io.IOException;
 import java.util.function.Function;
 
-public class ChunkDecoder implements Function<DownloadChunkContainer, DownloadChunkContainer> {
+public class ChunkDecrypter implements Function<DownloadChunkContainer, DownloadChunkContainer> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ChunkDecoder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ChunkDecrypter.class);
 	private CryptoService cs;
 	private Statistics statistics;
 	private final PerformanceDataService performanceDataService;
 	private PaddedBufferedBlockCipher decryptingCipher;
 
-	public ChunkDecoder(CryptoService cryptoService, String key, Statistics statistics, PerformanceDataService performanceDataService) {
+	public ChunkDecrypter(CryptoService cryptoService, String key, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.cs = cryptoService;
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
@@ -38,15 +38,15 @@ public class ChunkDecoder implements Function<DownloadChunkContainer, DownloadCh
 		try {
 			Stopwatch stopwatch = Stopwatch.createStarted();
 			byte[] decrypted = cs.decrypt(decryptingCipher, dcc.getData());
-			statistics.add(StatisticType.CHUNK_DECODER, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DECODER, stopwatch));
+			statistics.add(StatisticType.CHUNK_DECRYPTER, stopwatch.stop());
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DECRYPTER, stopwatch));
 			LOG.debug("{} chunk decrypting in {} (size: {} -> {}",
 				fileName, stopwatch, decrypted.length, dcc.getData().length);
 			return DownloadChunkContainer.addData(dcc, decrypted);
 		} catch (InvalidCipherTextException | IOException e) {
 			LOG.error("Error decrypting chunk", e);
 		}
-		LOG.warn("Returning EMPTY from ChunkDecoder");
+		LOG.warn("Returning EMPTY from ChunkDecrypter");
 		return DownloadChunkContainer.EMPTY;
 	}
 }

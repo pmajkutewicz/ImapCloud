@@ -89,7 +89,7 @@ public class Statistics {
 
 	@ManagedAttribute
 	public String getChunkEncoderStats() {
-		return getStats(StatisticType.CHUNK_ENCODER).toString();
+		return getStats(StatisticType.CHUNK_ENCRYPTER).toString();
 	}
 
 	@ManagedAttribute
