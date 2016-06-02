@@ -23,10 +23,10 @@ public class CryptoServiceTest {
 		PaddedBufferedBlockCipher decryptingCipher = cs.getDecryptingCipher(key);
 		PaddedBufferedBlockCipher encryptingCipher = cs.getEncryptingCipher(key);
 
-		byte[] encoded = cs.encrypt(encryptingCipher, testData);
-		byte[] unencoded = cs.decrypt(decryptingCipher, encoded);
+		byte[] encrypted = cs.encrypt(encryptingCipher, testData);
+		byte[] decrypted = cs.decrypt(decryptingCipher, encrypted);
 
-		assertArrayEquals(unencoded, testData);
+		assertArrayEquals(decrypted, testData);
 	}
 
 	@Test
@@ -41,10 +41,10 @@ public class CryptoServiceTest {
 		PaddedBufferedBlockCipher decryptingCipher = cs.getDecryptingCipher(key);
 		PaddedBufferedBlockCipher encryptingCipher = cs.getEncryptingCipher(key);
 
-		String encoded = cs.encryptHex(encryptingCipher, testData);
-		byte[] unencoded = cs.decryptHex(decryptingCipher, encoded);
+		String encrypted = cs.encryptHex(encryptingCipher, testData);
+		byte[] decrypted = cs.decryptHex(decryptingCipher, encrypted);
 
-		assertArrayEquals(unencoded, testData);
+		assertArrayEquals(decrypted, testData);
 	}
 
 }

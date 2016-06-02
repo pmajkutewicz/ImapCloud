@@ -62,8 +62,8 @@ public class CryptoService {
 	}
 
 	public String encryptHex(PaddedBufferedBlockCipher encryptCipher, byte[] in) throws IOException, InvalidCipherTextException {
-		byte[] encrypt = encrypt(encryptCipher, in);
-		return BaseEncoding.base16().upperCase().encode(encrypt);
+		byte[] encrypted = encrypt(encryptCipher, in);
+		return BaseEncoding.base16().upperCase().encode(encrypted);
 	}
 
 	private byte[] process(PaddedBufferedBlockCipher cipher, byte[] in) throws IOException, InvalidCipherTextException {

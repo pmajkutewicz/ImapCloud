@@ -22,7 +22,7 @@ public class UploadChunkContainer {
 	private final long currentFileChunkCumulativeSize;
 	@SuppressFBWarnings("EI_EXPOSE_REP")
 	private final byte[] data;
-	private final boolean encoded;
+	private final boolean encrypted;
 	private final int chunkNumber;
 	private final boolean lastChunk;
 	private final String chunkHash;
@@ -34,7 +34,7 @@ public class UploadChunkContainer {
 
 	//CSOFF: ParameterNumberCheck
 	private UploadChunkContainer(String taskId, FileDto fileDto, String fileHash, String savedFileId, String fileUniqueId, long chunkSize, long currentFileChunkCumulativeSize,
-	                             byte[] data, boolean encoded, int chunkNumber, boolean lastChunk, String chunkHash, String messageId) {
+	                             byte[] data, boolean encrypted, int chunkNumber, boolean lastChunk, String chunkHash, String messageId) {
 		this.taskId = taskId;
 		this.fileDto = fileDto;
 		this.fileHash = fileHash;
@@ -43,7 +43,7 @@ public class UploadChunkContainer {
 		this.chunkSize = chunkSize;
 		this.currentFileChunkCumulativeSize = currentFileChunkCumulativeSize;
 		this.data = data;
-		this.encoded = encoded;
+		this.encrypted = encrypted;
 		this.chunkNumber = chunkNumber;
 		this.lastChunk = lastChunk;
 		this.chunkHash = chunkHash;
@@ -53,37 +53,37 @@ public class UploadChunkContainer {
 
 	public static UploadChunkContainer addFileDto(UploadChunkContainer ucc, FileDto file) {
 		return new UploadChunkContainer(ucc.getTaskId(), file, ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncoded(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addFileHash(UploadChunkContainer ucc, String fileHash) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), fileHash, ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncoded(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addIds(UploadChunkContainer ucc, String savedFileId, String fileUniqueId) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), savedFileId, fileUniqueId, ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncoded(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addChunk(UploadChunkContainer ucc, long chunkSize, long currentFileChunkCumulativeSize, byte[] data, int chunkNumber, boolean lastChunk) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), chunkSize, currentFileChunkCumulativeSize,
-			data, ucc.isEncoded(), chunkNumber, lastChunk, ucc.getChunkHash(), ucc.getMessageId());
+			data, ucc.isEncrypted(), chunkNumber, lastChunk, ucc.getChunkHash(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addChunkHash(UploadChunkContainer ucc, String chunkHash) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncoded(), ucc.getChunkNumber(), ucc.isLastChunk(), chunkHash, ucc.getMessageId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), chunkHash, ucc.getMessageId());
 	}
 
-	public static UploadChunkContainer addEncryptedData(UploadChunkContainer ucc, byte[] encoded) {
+	public static UploadChunkContainer addEncryptedData(UploadChunkContainer ucc, byte[] encrypted) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			encoded, true, ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
+			encrypted, true, ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
 	}
 
 	public static UploadChunkContainer addMessageId(UploadChunkContainer ucc, String messageId) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncoded(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), messageId);
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), messageId);
 	}
 
 	@Override
