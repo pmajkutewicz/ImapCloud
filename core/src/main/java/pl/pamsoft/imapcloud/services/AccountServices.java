@@ -30,7 +30,11 @@ public class AccountServices {
 	@Autowired
 	private CryptoService cryptoService;
 
-	private Function<? super Account, AccountDto> toAccount = a -> new AccountDto(a.getId(), a.getEmail(), 0L); //TODO: update used space
+	private Function<? super Account, AccountDto> toAccount = a -> {
+		long usedSpace = accountRepository.getUsedSpace(a.getId());
+		AccountDto accountDto = new AccountDto(a.getId(), a.getEmail(), usedSpace);
+		return accountDto;
+	};
 
 	public void addAccount(CreateAccountRequest request) {
 		Account account = new Account();
@@ -64,7 +68,6 @@ public class AccountServices {
 		Collection<Account> all = accountRepository.findAll();
 		return all.stream()
 			.map(toAccount)
-			.peek(dto -> dto.setUsedSpace(accountRepository.getUsedSpace(dto.getId())))
 			.collect(Collectors.toList());
 	}
 }
