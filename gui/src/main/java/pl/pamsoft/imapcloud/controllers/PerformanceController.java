@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.controllers;
 
 import javafx.animation.AnimationTimer;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,6 +10,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.VBox;
+import org.apache.commons.math3.stat.StatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
@@ -46,7 +48,8 @@ public class PerformanceController implements Initializable {
 
 	private Map<StatisticType, ConcurrentLinkedQueue<Number>> dataQueueMap = new EnumMap<>(StatisticType.class);
 	private Map<StatisticType, NumberAxis> xAxises = new EnumMap<>(StatisticType.class);
-	private Map<StatisticType, XYChart.Series> series = new EnumMap<>(StatisticType.class);
+	private Map<StatisticType, NumberAxis> yAxises = new EnumMap<>(StatisticType.class);
+	private Map<StatisticType, XYChart.Series<Number, Number>> series = new EnumMap<>(StatisticType.class);
 	private Map<StatisticType, AtomicInteger> seriesCounter = new EnumMap<>(StatisticType.class);
 
 
@@ -65,6 +68,7 @@ public class PerformanceController implements Initializable {
 			NumberAxis xAxis = createXAxis();
 			NumberAxis yAxis = createYAxis();
 			xAxises.put(statisticType, xAxis);
+			yAxises.put(statisticType, yAxis);
 			AreaChart<Number, Number> sc = createChart(statisticType, xAxis, yAxis);
 			XYChart.Series<Number, Number> serie = createSeries();
 			series.put(statisticType, serie);
@@ -95,7 +99,7 @@ public class PerformanceController implements Initializable {
 
 	private NumberAxis createYAxis() {
 		NumberAxis yAxis = new NumberAxis();
-		yAxis.setAutoRanging(true);
+		yAxis.setAutoRanging(false);
 		return yAxis;
 	}
 
@@ -123,23 +127,40 @@ public class PerformanceController implements Initializable {
 	private void addDataToSeries() {
 		for (StatisticType statisticType : StatisticType.values()) {
 			ConcurrentLinkedQueue<Number> queue = dataQueueMap.get(statisticType);
-			XYChart.Series serie = series.get(statisticType);
+			XYChart.Series<Number, Number> serie = series.get(statisticType);
 			AtomicInteger serieCounter = seriesCounter.get(statisticType);
 			NumberAxis numberAxis = xAxises.get(statisticType);
+			ObservableList<XYChart.Data<Number, Number>> data = serie.getData();
 			for (int i = 0; i < TWENTY; i++) { //-- add 20 numbers to the plot+
 				if (queue.isEmpty()) {
 					break;
 				}
-				serie.getData().add(new AreaChart.Data<Number, Number>(serieCounter.getAndIncrement(), queue.remove()));
+				data.add(new AreaChart.Data<Number, Number>(serieCounter.getAndIncrement(), queue.remove()));
 			}
 			// remove points to keep us at no more than MAX_DATA_POINTS
-			if (serie.getData().size() > MAX_DATA_POINTS) {
-				serie.getData().remove(0, serie.getData().size() - MAX_DATA_POINTS);
+			if (data.size() > MAX_DATA_POINTS) {
+				data.remove(0, serie.getData().size() - MAX_DATA_POINTS);
 			}
-			// update
-			numberAxis.setLowerBound(serieCounter.get() - MAX_DATA_POINTS);
-			numberAxis.setUpperBound(serieCounter.get() - 1);
+
+			updateYAxis(statisticType, data);
+			updateXAxis(serieCounter, numberAxis);
 		}
+	}
+
+	private void updateXAxis(AtomicInteger serieCounter, NumberAxis numberAxis) {
+		numberAxis.setLowerBound(serieCounter.get() - MAX_DATA_POINTS);
+		numberAxis.setUpperBound(serieCounter.get() - 1);
+	}
+
+	private void updateYAxis(StatisticType statisticType, ObservableList<XYChart.Data<Number, Number>> data) {
+		NumberAxis yAxis = yAxises.get(statisticType);
+		Double max = data.stream().map(XYChart.Data::getYValue).map(Number::doubleValue).max(Double::compare).orElse(0D);
+		Double min = data.stream().map(XYChart.Data::getYValue).map(Number::doubleValue).min(Double::compare).orElse(0D);
+		double tickUnit = (max - min) / 3;
+		yAxis.setUpperBound(max);
+		yAxis.setLowerBound(min);
+		yAxis.setTickUnit((int)tickUnit);
+
 	}
 
 	public void createToggleButton(ActionEvent event) {
