@@ -23,32 +23,26 @@
 		<RowConstraints/>
 		<RowConstraints vgrow="ALWAYS"/>
 	</rowConstraints>
-	<children>
-		<GridPane>
-			<columnConstraints>
-				<ColumnConstraints minWidth="10.0" prefWidth="100.0"/>
-				<ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
-			</columnConstraints>
-			<rowConstraints>
-				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-				<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-			</rowConstraints>
-			<children>
-				<Label text="%accounts.label.username" GridPane.rowIndex="0"/>
-				<HBox maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
-					<children>
-						<TextField fx:id="usernameTextField" HBox.hgrow="ALWAYS"/>
-						<ComboBox fx:id="emailProvidersComboBox" prefWidth="150.0"/>
-					</children>
-				</HBox>
-				<Label text="%accounts.label.password" GridPane.rowIndex="1"/>
-				<TextField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-				<Button mnemonicParsing="false" onAction="#createButtonClick" text="%accounts.button.create" GridPane.columnIndex="1" GridPane.halignment="RIGHT"
-				        GridPane.rowIndex="2"/>
-			</children>
-		</GridPane>
-		<fx:include fx:id="embeddedAccountTable" source="frag_table_accounts.fxml"/>
-	</children>
 
+	<GridPane>
+		<columnConstraints>
+			<ColumnConstraints minWidth="10.0" prefWidth="100.0"/>
+			<ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0"/>
+		</columnConstraints>
+		<rowConstraints>
+			<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+			<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+			<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+		</rowConstraints>
+		<Label text="%accounts.label.username" GridPane.rowIndex="0"/>
+		<HBox maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0">
+			<TextField fx:id="usernameTextField" HBox.hgrow="ALWAYS"/>
+			<ComboBox fx:id="emailProvidersComboBox" prefWidth="150.0"/>
+		</HBox>
+		<Label text="%accounts.label.password" GridPane.rowIndex="1"/>
+		<TextField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+		<Button mnemonicParsing="false" onAction="#createButtonClick" text="%accounts.button.create" GridPane.columnIndex="1" GridPane.halignment="RIGHT"
+		        GridPane.rowIndex="2"/>
+	</GridPane>
+	<fx:include fx:id="embeddedAccountTable" source="frag_table_accounts.fxml"/>
 </GridPane>

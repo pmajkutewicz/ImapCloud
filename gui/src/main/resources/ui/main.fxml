@@ -3,37 +3,23 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <TabPane fx:id="tabPane" minHeight="500.0" minWidth="600.0" prefHeight="500.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8"
-	fx:controller="pl.pamsoft.imapcloud.controllers.TabPaneController">
-	<tabs>
-		<Tab id="accountsTab" closable="false" text="%main.tab.accounts">
-			<content>
-				<fx:include fx:id="accountsTabPage" source="tab_accounts.fxml" />
-			</content>
-		</Tab>
-		<Tab id="uploadsTab" closable="false" text="%main.tab.uploads">
-			<content>
-				<fx:include fx:id="uploadsTabPage" source="tab_uploads.fxml" />
-			</content>
-		</Tab>
-		<Tab id="performanceTab" closable="false" text="%main.tab.performance">
-			<content>
-				<fx:include fx:id="performanceTabPage" source="tab_performance.fxml" />
-			</content>
-		</Tab>
-		<Tab id="tasksTab" closable="false" text="%main.tab.tasks">
-			<content>
-				<fx:include fx:id="tasksTabPage" source="tab_tasks.fxml" />
-			</content>
-		</Tab>
-		<Tab id="uploadedTab" closable="false" text="%main.tab.uploaded">
-			<content>
-				<fx:include fx:id="uploadedTabPage" source="tab_uploaded.fxml" />
-			</content>
-		</Tab>
-		<Tab id="downloadsTab" closable="false" text="%main.tab.downloads">
-			<content>
-				<fx:include fx:id="downloadsTabPage" source="tab_downloads.fxml" />
-			</content>
-		</Tab>
-	</tabs>
+         fx:controller="pl.pamsoft.imapcloud.controllers.TabPaneController">
+	<Tab id="accountsTab" closable="false" text="%main.tab.accounts">
+		<fx:include fx:id="accountsTabPage" source="tab_accounts.fxml"/>
+	</Tab>
+	<Tab id="uploadsTab" closable="false" text="%main.tab.uploads">
+		<fx:include fx:id="uploadsTabPage" source="tab_uploads.fxml"/>
+	</Tab>
+	<Tab id="performanceTab" closable="false" text="%main.tab.performance">
+		<fx:include fx:id="performanceTabPage" source="tab_performance.fxml"/>
+	</Tab>
+	<Tab id="tasksTab" closable="false" text="%main.tab.tasks">
+		<fx:include fx:id="tasksTabPage" source="tab_tasks.fxml"/>
+	</Tab>
+	<Tab id="uploadedTab" closable="false" text="%main.tab.uploaded">
+		<fx:include fx:id="uploadedTabPage" source="tab_uploaded.fxml"/>
+	</Tab>
+	<Tab id="downloadsTab" closable="false" text="%main.tab.downloads">
+		<fx:include fx:id="downloadsTabPage" source="tab_downloads.fxml"/>
+	</Tab>
 </TabPane>

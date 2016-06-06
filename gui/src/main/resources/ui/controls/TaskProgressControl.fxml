@@ -7,23 +7,20 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-	<children>
-		<ImageView fx:id="identicon" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true" smooth="false">
-			<HBox.margin>
-				<Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-			</HBox.margin>
-		</ImageView>
-		<VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
-			<children>
-				<Label fx:id="taskIdLabel" maxWidth="1.7976931348623157E308" text="Task ID" />
-                <VBox fx:id="filesInfo"/>
-				<Label fx:id="taskMessage" maxWidth="1.7976931348623157E308" text="Task message" />
-			</children>
-		</VBox>
-		<ProgressIndicator fx:id="overallProgress" progress="0.0" />
-	</children>
+<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1">
 	<padding>
-		<Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+		<Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
 	</padding>
+	<ImageView fx:id="identicon" fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true" smooth="false">
+		<HBox.margin>
+			<Insets bottom="4.0" left="4.0" right="4.0" top="4.0"/>
+		</HBox.margin>
+	</ImageView>
+	<VBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+		<Label fx:id="taskIdLabel" maxWidth="1.7976931348623157E308" text="Task ID"/>
+		<VBox fx:id="filesInfo"/>
+		<Label fx:id="taskMessage" maxWidth="1.7976931348623157E308" text="Task message"/>
+	</VBox>
+	<ProgressIndicator fx:id="overallProgress" progress="0.0"/>
 </HBox>
