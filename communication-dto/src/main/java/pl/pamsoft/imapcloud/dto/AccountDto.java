@@ -15,6 +15,7 @@ import pl.pamsoft.imapcloud.utils.ReadableSize;
 public class AccountDto {
 	private String id;
 	private String email;
+	private String cryptoKey;
 	private Long usedSpace;
 
 	// used as javafx property

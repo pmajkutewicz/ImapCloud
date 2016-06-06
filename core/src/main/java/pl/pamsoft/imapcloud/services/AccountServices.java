@@ -32,7 +32,7 @@ public class AccountServices {
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
 		long usedSpace = accountRepository.getUsedSpace(a.getId());
-		AccountDto accountDto = new AccountDto(a.getId(), a.getEmail(), usedSpace);
+		AccountDto accountDto = new AccountDto(a.getId(), String.format("%s@%s", a.getEmail(), a.getImapServerAddress()), a.getCryptoKey(), usedSpace);
 		return accountDto;
 	};
 
