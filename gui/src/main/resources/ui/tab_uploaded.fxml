@@ -26,8 +26,8 @@
 			<children>
 				<HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
 					<children>
-						<Button mnemonicParsing="true" onAction="#verifyButtonClick" text="%uploaded.table.button.verifyfile"/>
-						<Button mnemonicParsing="true" onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile"/>
+						<Button onAction="#verifyButtonClick" text="%uploaded.table.button.verifyfile"/>
+						<Button onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile"/>
 					</children>
 				</HBox>
 				<fx:include fx:id="embeddedUploadedFilesTable" source="frag_table_uploaded.fxml"/>
