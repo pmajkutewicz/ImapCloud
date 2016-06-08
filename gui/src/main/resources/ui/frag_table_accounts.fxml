@@ -14,7 +14,12 @@
 				<PropertyValueFactory property="email"/>
 			</cellValueFactory>
 		</TableColumn>
-		<TableColumn prefWidth="60.0" text="%accounts.table.column.used">
+		<TableColumn prefWidth="60.0" text="%accounts.table.column.secret_key">
+			<cellValueFactory>
+				<PropertyValueFactory property="cryptoKey"/>
+			</cellValueFactory>
+		</TableColumn>
+		<TableColumn prefWidth="30.0" text="%accounts.table.column.used">
 			<cellValueFactory>
 				<PropertyValueFactory property="readableFileSize"/>
 			</cellValueFactory>

@@ -18,8 +18,8 @@ public class AccountRestClient extends AbstractRestClient {
 		sendGet(LIST_EMAIL_PROVIDERS, EmailProviderInfoResponse.class, callback);
 	}
 
-	public void createAccount(EmailProviderInfo selectedEmailProvider, String username, String password, RequestCallback<Void> callback) {
-		sendPost(CREATE_ACCOUNT, new CreateAccountRequest(username, password, selectedEmailProvider), callback);
+	public void createAccount(EmailProviderInfo selectedEmailProvider, String username, String password, String cryptoKey, RequestCallback<Void> callback) {
+		sendPost(CREATE_ACCOUNT, new CreateAccountRequest(username, password, cryptoKey, selectedEmailProvider), callback);
 	}
 
 	public void listAccounts(RequestCallback<ListAccountResponse> callback) {

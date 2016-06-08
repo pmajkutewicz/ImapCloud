@@ -50,7 +50,7 @@ public class AccountRepository extends AbstractRepository<Account> {
 		return account;
 	}
 
-	public long getUsedSpace(String accountId) {
+	public Long getUsedSpace(String accountId) {
 		OrientDynaElementIterable result = getDb().getGraphDB().command(USED_SPACE_QUERY).execute(Collections.singletonMap("id", accountId));
 		Iterator<Object> iterator = result.iterator();
 		if (iterator.hasNext()) {

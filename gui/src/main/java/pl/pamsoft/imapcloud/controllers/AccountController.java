@@ -29,6 +29,9 @@ public class AccountController implements Initializable, Refreshable {
 	private TextField usernameTextField;
 
 	@FXML
+	private TextField secretKey;
+
+	@FXML
 	private FragAccountsTableController embeddedAccountTableController;
 
 	@FXML
@@ -38,9 +41,8 @@ public class AccountController implements Initializable, Refreshable {
 		EmailProviderInfo selectedItem = emailProvidersComboBox.getSelectionModel().getSelectedItem();
 		String username = usernameTextField.getText();
 		String password = passwordTextField.getText();
-		accountRestClient.createAccount(selectedItem, username, password, data -> {
-			refresh();
-		});
+		String cryptoKey = secretKey.getText();
+		accountRestClient.createAccount(selectedItem, username, password, cryptoKey, data -> refresh());
 	}
 
 	@Override

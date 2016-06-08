@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.services;
 
 import com.google.common.io.BaseEncoding;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -14,6 +15,7 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
+import java.util.Random;
 
 @Service
 public class CryptoService {
@@ -32,6 +34,14 @@ public class CryptoService {
 		random.nextBytes(key);
 		random.nextBytes(key);
 		return key;
+	}
+
+	@SuppressFBWarnings("PREDICTABLE_RANDOM")
+	public byte[] generateWeakKey() {
+		Random random = new Random();
+		final byte[] buffer = new byte[KEYSIZE_IN_BYTES];
+		random.nextBytes(buffer);
+		return buffer;
 	}
 
 	public PaddedBufferedBlockCipher getEncryptingCipher(byte[] key) {

@@ -34,6 +34,7 @@ public class FragAccountsTableController implements Initializable, Refreshable {
 	public void refresh() {
 		accountRestClient.listAccounts(data -> {
 			ObservableList<AccountDto> items = accountsTable.getItems();
+			items.forEach(System.out::println);
 			items.clear();
 			items.addAll(data.getAccount());
 		});

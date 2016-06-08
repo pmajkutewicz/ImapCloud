@@ -13,5 +13,6 @@ import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
 public class CreateAccountRequest {
 	private String username;
 	private String password;
+	private String cryptoKey;
 	private EmailProviderInfo selectedEmailProvider;
 }

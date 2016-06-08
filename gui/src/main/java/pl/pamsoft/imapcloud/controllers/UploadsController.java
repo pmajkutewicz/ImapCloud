@@ -11,7 +11,6 @@ import javafx.scene.control.TableView;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.requests.Encryption;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 

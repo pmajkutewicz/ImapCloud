@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
+import com.google.common.base.Strings;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Collection;
@@ -32,8 +34,7 @@ public class AccountServices {
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
 		long usedSpace = accountRepository.getUsedSpace(a.getId());
-		AccountDto accountDto = new AccountDto(a.getId(), String.format("%s@%s", a.getEmail(), a.getImapServerAddress()), a.getCryptoKey(), usedSpace);
-		return accountDto;
+		return new AccountDto(a.getId(), String.format("%s@%s", a.getEmail(), a.getImapServerAddress()), a.getCryptoKey(), usedSpace);
 	};
 
 	public void addAccount(CreateAccountRequest request) {
@@ -50,18 +51,26 @@ public class AccountServices {
 		account.setSizeMB(request.getSelectedEmailProvider().getSizeMB());
 		account.setAttachmentSizeMB(request.getSelectedEmailProvider().getAttachmentSizeMB());
 		account.setMaxConcurrentConnections(request.getSelectedEmailProvider().getMaxConcurrentConnections());
+		account.setCryptoKey(getCryptoKey(request));
 
-		try {
-			byte[] keyBytes = cryptoService.generateKey();
-			account.setCryptoKey(ByteUtils.toHexString(keyBytes));
-		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-			LOG.error("Can't create encryption key.", e);
-		}
 		try {
 			accountRepository.save(account);
 		} catch (IOException e) {
 			LOG.warn("Account already exists.");
 		}
+	}
+
+	private String getCryptoKey(CreateAccountRequest request) {
+		try {
+			if (Strings.isNullOrEmpty(request.getCryptoKey())) {
+				return ByteUtils.toHexString(cryptoService.generateKey());
+			} else {
+				return ByteUtils.toHexString(request.getCryptoKey().getBytes(StandardCharsets.UTF_8));
+			}
+		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+			LOG.error("Can't create encryption key.", e);
+		}
+		return ByteUtils.toHexString(cryptoService.generateWeakKey());
 	}
 
 	public List<AccountDto> listAccounts() {

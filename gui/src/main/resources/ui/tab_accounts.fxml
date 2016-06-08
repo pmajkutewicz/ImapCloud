@@ -39,10 +39,15 @@
 			<TextField fx:id="usernameTextField" HBox.hgrow="ALWAYS"/>
 			<ComboBox fx:id="emailProvidersComboBox" prefWidth="150.0"/>
 		</HBox>
+
 		<Label text="%accounts.label.password" GridPane.rowIndex="1"/>
 		<TextField fx:id="passwordTextField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+		<Label text="%accounts.label.secret_key" GridPane.rowIndex="2"/>
+		<TextField fx:id="secretKey" GridPane.columnIndex="1" GridPane.rowIndex="2" promptText="%accounts.label.secret_key.prompt"/>
+
 		<Button mnemonicParsing="false" onAction="#createButtonClick" text="%accounts.button.create" GridPane.columnIndex="1" GridPane.halignment="RIGHT"
-		        GridPane.rowIndex="2"/>
+		        GridPane.rowIndex="3"/>
 	</GridPane>
 	<fx:include fx:id="embeddedAccountTable" source="frag_table_accounts.fxml"/>
 </GridPane>

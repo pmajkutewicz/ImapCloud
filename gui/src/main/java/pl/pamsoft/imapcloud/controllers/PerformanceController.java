@@ -10,7 +10,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.VBox;
-import org.apache.commons.math3.stat.StatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
@@ -34,6 +33,7 @@ public class PerformanceController implements Initializable {
 	private static final int MAX_DATA_POINTS = 100;
 	private static final int TEN = 10;
 	private static final int TWENTY = 20;
+	private static final int NB_OF_TICKS = 3;
 
 	@Inject
 	PerformanceDataClient performanceDataClient;
@@ -156,7 +156,7 @@ public class PerformanceController implements Initializable {
 		NumberAxis yAxis = yAxises.get(statisticType);
 		Double max = data.stream().map(XYChart.Data::getYValue).map(Number::doubleValue).max(Double::compare).orElse(0D);
 		Double min = data.stream().map(XYChart.Data::getYValue).map(Number::doubleValue).min(Double::compare).orElse(0D);
-		double tickUnit = (max - min) / 3;
+		double tickUnit = (max - min) / NB_OF_TICKS;
 		yAxis.setUpperBound(max);
 		yAxis.setLowerBound(min);
 		yAxis.setTickUnit((int)tickUnit);
