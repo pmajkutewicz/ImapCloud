@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>pl.pamsoft.imapcloud</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.1.0</version>
+		<version>0.1.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>core</artifactId>
 	<name>IMAP Cloud core</name>
-	<version>0.1.0</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<properties>
