@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.services;
 
 import com.google.common.collect.Ordering;
 import com.google.common.io.Files;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
@@ -23,6 +24,11 @@ public class FilesIOService {
 	private Function<File, FileDto> toFileDto = f -> new FileDto(f.getName(), f.getAbsolutePath(), f.isDirectory() ? DIRECTORY : FILE, f.isDirectory() ? null : f.length());
 	private Comparator<FileDto> dirFirstSorter = (f1, f2) -> ((DIRECTORY == f1.getType()) && (FILE == f2.getType())) ? -1 : ((f1.getType() == f2.getType()) ? 0 : 1);
 	private Comparator<FileDto> byNameSorter = (f1, f2) -> String.CASE_INSENSITIVE_ORDER.compare(f1.getName(), f2.getName());
+
+	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
+	public File getFile(FileDto fileDto) {
+		return new File(fileDto.getAbsolutePath());
+	}
 
 	public List<FileDto> listFilesInDir(File dir) {
 		File[] filesInDir = dir.listFiles();

@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import com.google.common.base.Stopwatch;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
@@ -11,7 +10,6 @@ import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
-import java.io.File;
 import java.util.List;
 import java.util.function.Function;
 
@@ -30,19 +28,18 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 	}
 
 	@Override
-	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public Long apply(List<FileDto> fileDtos) {
 		long result = 0;
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		for (FileDto fileDto : fileDtos) {
 			if (FileDto.FileType.DIRECTORY == fileDto.getType()) {
-				long dirSize = filesIOService.calculateDirSize(new File(fileDto.getAbsolutePath()));
+				long dirSize = filesIOService.calculateDirSize(filesIOService.getFile(fileDto));
 				LOG.debug("{} is {} bytes", fileDto.getAbsolutePath(), dirSize);
 				result = +dirSize;
 			} else {
-				long fileSize = new File(fileDto.getAbsolutePath()).length();
+				long fileSize = filesIOService.getFile(fileDto).length();
 				LOG.debug("{} is {} bytes", fileDto.getAbsolutePath(), fileSize);
-				result = +fileSize;
+				result += fileSize;
 			}
 		}
 		statistics.add(StatisticType.DIRECTORY_SIZE_CALCULATOR, stopwatch.stop());
