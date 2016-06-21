@@ -7,6 +7,7 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.Arrays;
 
 @Immutable
 @Getter
@@ -23,7 +24,7 @@ public class DownloadChunkContainer {
 	private final String fileHash;
 
 	public DownloadChunkContainer(String taskId, FileChunk chunkToDownload, FileDto destinationDir) {
-		this(taskId, chunkToDownload, destinationDir, null, null, null);
+		this(taskId, chunkToDownload, destinationDir, new byte[0], null, null);
 	}
 
 	//CSOFF: ParameterNumberCheck
@@ -31,7 +32,7 @@ public class DownloadChunkContainer {
 		this.taskId = taskId;
 		this.chunkToDownload = chunkToDownload;
 		this.destinationDir = destinationDir;
-		this.data = data;
+		this.data = Arrays.copyOf(data, data.length);
 		this.chunkHash = chunkHash;
 		this.fileHash = fileHash;
 	}

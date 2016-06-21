@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.Arrays;
 
 @Immutable
 @Getter
@@ -29,7 +30,7 @@ public class UploadChunkContainer {
 	private final String messageId;
 
 	public UploadChunkContainer(String taskId, FileDto fileDto) {
-		this(taskId, fileDto, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 0, 0, null, false, 0, false, StringUtils.EMPTY, StringUtils.EMPTY);
+		this(taskId, fileDto, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 0, 0, new byte[0], false, 0, false, StringUtils.EMPTY, StringUtils.EMPTY);
 	}
 
 	//CSOFF: ParameterNumberCheck
@@ -42,7 +43,7 @@ public class UploadChunkContainer {
 		this.fileUniqueId = fileUniqueId;
 		this.chunkSize = chunkSize;
 		this.currentFileChunkCumulativeSize = currentFileChunkCumulativeSize;
-		this.data = data;
+		this.data = Arrays.copyOf(data, data.length);
 		this.encrypted = encrypted;
 		this.chunkNumber = chunkNumber;
 		this.lastChunk = lastChunk;
