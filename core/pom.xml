@@ -138,10 +138,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -363,6 +359,19 @@
 						-->
 						<forceLongFormat>false</forceLongFormat>
 					</gitDescribe>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.1.10</version>
+				<configuration>
+					<targetClasses>
+						<param>pl.pamsoft.imapcloud.services*</param>
+					</targetClasses>
+					<targetTests>
+						<param>pl.pamsoft.imapcloud.services*</param>
+					</targetTests>
 				</configuration>
 			</plugin>
 		</plugins>
