@@ -39,7 +39,7 @@ public class ChunkEncrypter implements Function<UploadChunkContainer, UploadChun
 			byte[] encrypted = cs.encrypt(encryptingCipher, uploadChunkContainer.getData());
 			statistics.add(StatisticType.CHUNK_ENCRYPTER, stopwatch.stop());
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_ENCRYPTER, stopwatch));
-			LOG.debug("{} chunk encrypted in {} (size: {} -> {}",
+			LOG.debug("{} chunk encrypted in {} (size: {} -> {})",
 				uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch, uploadChunkContainer.getData().length, encrypted.length);
 			return UploadChunkContainer.addEncryptedData(uploadChunkContainer, encrypted);
 		} catch (InvalidCipherTextException | IOException e) {
