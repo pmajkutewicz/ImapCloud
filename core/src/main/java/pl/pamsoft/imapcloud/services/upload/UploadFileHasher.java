@@ -12,7 +12,6 @@ import pl.pamsoft.imapcloud.services.common.FileHasher;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.util.function.Function;
