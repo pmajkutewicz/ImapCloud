@@ -45,6 +45,9 @@ public class DownloadService extends AbstractBackgroundService {
 	private FileRepository fileRepository;
 
 	@Autowired
+	private FilesIOService filesIOService;
+
+	@Autowired
 	private ConnectionPoolService connectionPoolService;
 
 	@Autowired
@@ -76,7 +79,7 @@ public class DownloadService extends AbstractBackgroundService {
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(instance, statistics, performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver();
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(instance, statistics, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(instance, filesIOService, statistics, performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
 
 				chunkToDownload.stream()

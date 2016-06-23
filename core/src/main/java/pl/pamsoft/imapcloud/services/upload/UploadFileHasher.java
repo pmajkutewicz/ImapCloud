@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.common.FileHasher;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -21,11 +22,13 @@ public class UploadFileHasher implements Function<UploadChunkContainer, UploadCh
 	private static final Logger LOG = LoggerFactory.getLogger(UploadFileHasher.class);
 
 	private MessageDigest md;
+	private FilesIOService filesIOService;
 	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public UploadFileHasher(MessageDigest messageDigest, Statistics statistics, PerformanceDataService performanceDataService) {
+	public UploadFileHasher(MessageDigest messageDigest, FilesIOService filesIOService, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.md = messageDigest;
+		this.filesIOService = filesIOService;
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
@@ -36,7 +39,7 @@ public class UploadFileHasher implements Function<UploadChunkContainer, UploadCh
 		LOG.debug("Hashing file {}", chunk.getFileDto().getName());
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		try {
-			String hash = hash(new File(chunk.getFileDto().getAbsolutePath()));
+			String hash = hash(filesIOService.getFile(chunk.getFileDto()));
 			statistics.add(StatisticType.FILE_HASH, stopwatch.stop());
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, stopwatch));
 			LOG.debug("File hash generated in {}", stopwatch);
@@ -51,5 +54,10 @@ public class UploadFileHasher implements Function<UploadChunkContainer, UploadCh
 	@Override
 	public MessageDigest getMessageDigest() {
 		return md;
+	}
+
+	@Override
+	public FilesIOService getFilesIOService() {
+		return filesIOService;
 	}
 }

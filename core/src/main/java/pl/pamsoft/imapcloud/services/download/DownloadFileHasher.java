@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.common.FileHasher;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -20,11 +21,13 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadFileHasher.class);
 
 	private MessageDigest md;
+	private FilesIOService filesIOService;
 	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public DownloadFileHasher(MessageDigest messageDigest, Statistics statistics, PerformanceDataService performanceDataService) {
+	public DownloadFileHasher(MessageDigest messageDigest, FilesIOService filesIOService, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.md = messageDigest;
+		this.filesIOService = filesIOService;
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
@@ -52,5 +55,10 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 	@Override
 	public MessageDigest getMessageDigest() {
 		return md;
+	}
+
+	@Override
+	public FilesIOService getFilesIOService() {
+		return filesIOService;
 	}
 }

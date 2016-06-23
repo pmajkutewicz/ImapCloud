@@ -84,7 +84,7 @@ public class UploadService extends AbstractBackgroundService {
 
 				Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics, performanceDataService);
-				Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(instance, statistics, performanceDataService);
+				Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(instance, filesIOService, statistics, performanceDataService);
 				Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 				Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileProcessed, broadcastTaskProgress);
 				Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, statistics, performanceDataService);

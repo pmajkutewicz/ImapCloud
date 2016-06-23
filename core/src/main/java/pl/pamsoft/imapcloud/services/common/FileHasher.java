@@ -1,17 +1,19 @@
 package pl.pamsoft.imapcloud.services.common;
 
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
+import pl.pamsoft.imapcloud.services.FilesIOService;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.MessageDigest;
 
 public interface FileHasher {
 	int MEGABYTE = 1024 * 1024;
 
 	default String hash(File file) throws IOException {
-		try (FileInputStream inputStream = new FileInputStream(file)) {
+		try (InputStream inputStream = getFilesIOService().getFileInputStream(file)) {
 			byte[] bytesBuffer = new byte[MEGABYTE];
 			int bytesRead = -1;
 			while ((bytesRead = inputStream.read(bytesBuffer)) != -1) {
@@ -23,4 +25,6 @@ public interface FileHasher {
 	}
 
 	MessageDigest getMessageDigest();
+
+	FilesIOService getFilesIOService();
 }

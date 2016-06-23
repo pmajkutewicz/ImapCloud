@@ -4,6 +4,7 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
@@ -11,7 +12,6 @@ import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.IOException;
-import java.util.Random;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
@@ -38,8 +38,8 @@ public class ChunkEncrypterTest {
 
 	@Test
 	public void shouldEncryptChunk() throws IOException, InvalidCipherTextException {
-		byte[] in = getRandomBytes(1024);
-		byte[] out = getRandomBytes(1024);
+		byte[] in = TestUtils.getRandomBytes(1024);
+		byte[] out = TestUtils.getRandomBytes(1024);
 		UploadChunkContainer ucc = createExampleUCC(in);
 		when(cryptoService.encrypt(any(PaddedBufferedBlockCipher.class), eq(in))).thenReturn(out);
 
@@ -50,8 +50,8 @@ public class ChunkEncrypterTest {
 
 	@Test
 	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException, InvalidCipherTextException {
-		byte[] in = getRandomBytes(1024);
-		byte[] out = getRandomBytes(1024);
+		byte[] in = TestUtils.getRandomBytes(1024);
+		byte[] out = TestUtils.getRandomBytes(1024);
 		UploadChunkContainer ucc = createExampleUCC(in);
 		when(cryptoService.encrypt(any(PaddedBufferedBlockCipher.class), eq(in))).thenThrow(new IOException("example"));
 
@@ -66,9 +66,4 @@ public class ChunkEncrypterTest {
 		return ucc;
 	}
 
-	private byte[] getRandomBytes(int size) {
-		byte[] in = new byte[size];
-		new Random().nextBytes(in);
-		return in;
-	}
 }

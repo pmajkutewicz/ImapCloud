@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -28,6 +31,10 @@ public class FilesIOService {
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public File getFile(FileDto fileDto) {
 		return new File(fileDto.getAbsolutePath());
+	}
+
+	public InputStream getFileInputStream(File file) throws FileNotFoundException {
+		return new FileInputStream(file);
 	}
 
 	public List<FileDto> listFilesInDir(File dir) {
