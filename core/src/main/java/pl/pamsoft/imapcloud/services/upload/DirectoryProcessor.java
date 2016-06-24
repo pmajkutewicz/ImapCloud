@@ -4,15 +4,14 @@ import com.google.common.base.Stopwatch;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.common.StatisticType;
+import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -50,7 +49,7 @@ public class DirectoryProcessor implements Function<UploadChunkContainer, Stream
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	private List<FileDto> parseDirectories(FileDto fileDto) {
 		List<FileDto> result = new ArrayList<>();
-		for (FileDto dto : filesService.listFilesInDir(new File(fileDto.getAbsolutePath()))) {
+		for (FileDto dto : filesService.listFilesInDir(filesService.getFile(fileDto))) {
 			if (FileDto.FileType.DIRECTORY == dto.getType()) {
 				result.addAll(parseDirectories(dto));
 			} else {
