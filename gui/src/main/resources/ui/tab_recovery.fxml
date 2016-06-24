@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?scenebuilder-stylesheet css/custom.css?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="root" minWidth="600.0" prefHeight="400.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.RecoveryController">
+	<HBox prefWidth="600.0">
+		<ComboBox fx:id="accountsCombo" prefWidth="300.0" />
+		<Button mnemonicParsing="false" text="%recovery.button.start" onAction="#startButtonClick"/>
+	</HBox>
+	<SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
+		<TableView fx:id="fileList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS" />
+		<TableView fx:id="chunkList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS" />
+	</SplitPane>
+</VBox>

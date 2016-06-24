@@ -22,4 +22,7 @@
 	<Tab id="downloadsTab" closable="false" text="%main.tab.downloads">
 		<fx:include fx:id="downloadsTabPage" source="tab_downloads.fxml"/>
 	</Tab>
+	<Tab id="recoveryTab" closable="false" text="%main.tab.recovery">
+		<fx:include fx:id="recoveryTabPage" source="tab_recovery.fxml"/>
+	</Tab>
 </TabPane>

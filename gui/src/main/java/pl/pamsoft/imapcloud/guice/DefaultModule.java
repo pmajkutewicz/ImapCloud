@@ -6,6 +6,7 @@ import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.DownloadsRestClient;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
+import pl.pamsoft.imapcloud.rest.RecoveryRestClient;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataClient;
@@ -69,6 +70,12 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	DownloadsRestClient getDownloadRestClient() {
 		return new DownloadsRestClient(endpoint, username, password);
+	}
+
+	@Provides
+	@Singleton
+	RecoveryRestClient getRecoveryRestClient() {
+		return new RecoveryRestClient(endpoint, username, password);
 	}
 
 	@Provides
