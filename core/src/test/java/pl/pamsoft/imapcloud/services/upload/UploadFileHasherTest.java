@@ -34,15 +34,13 @@ public class UploadFileHasherTest {
 	private UploadFileHasher uploadFileHasher;
 
 	private MessageDigest messageDigest;
-	private FileDto fileDto = mock(FileDto.class);
+	private FileDto fileDto = TestUtils.mockFileDto();
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private Statistics statistics = mock(Statistics.class);
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 
 	@BeforeClass
 	public void setup() throws NoSuchAlgorithmException {
-		when(fileDto.getName()).thenReturn("exampleName");
-		when(fileDto.getAbsolutePath()).thenReturn("/path/exampleName.txt");
 		messageDigest = MessageDigest.getInstance("SHA-512");
 		uploadFileHasher = new UploadFileHasher(messageDigest, filesIOService, statistics, performanceDataService);
 	}
@@ -68,7 +66,6 @@ public class UploadFileHasherTest {
 
 	@Test
 	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
-		when(fileDto.getAbsolutePath()).thenReturn("/path/example.txt");
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
 		when(filesIOService.getFileInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
 

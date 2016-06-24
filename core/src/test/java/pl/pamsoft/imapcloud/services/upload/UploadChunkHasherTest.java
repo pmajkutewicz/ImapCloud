@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.services.upload;
 
 import org.mockito.Mockito;
 import org.testng.annotations.Test;
+import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
@@ -21,7 +22,7 @@ public class UploadChunkHasherTest {
 	public void shouldCalculateSha512Hash() throws Exception {
 		//given
 		String test = "testData";
-		FileDto mockedFileDto = Mockito.mock(FileDto.class);
+		FileDto mockedFileDto = TestUtils.mockFileDto();
 
 		//when
 		UploadChunkHasher uploadChunkHasher = new UploadChunkHasher(MessageDigest.getInstance("SHA-512"), statistics, performanceDataService);
@@ -36,7 +37,7 @@ public class UploadChunkHasherTest {
 	public void shouldCalculateMD5Hash() throws Exception {
 		//given
 		String test = "testData";
-		FileDto mockedFileDto = Mockito.mock(FileDto.class);
+		FileDto mockedFileDto = TestUtils.mockFileDto();
 
 		//when
 		UploadChunkHasher uploadChunkHasher = new UploadChunkHasher(MessageDigest.getInstance("MD5"), statistics, performanceDataService);

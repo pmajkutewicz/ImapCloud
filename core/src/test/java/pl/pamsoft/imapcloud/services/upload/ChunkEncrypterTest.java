@@ -27,12 +27,10 @@ public class ChunkEncrypterTest {
 	private CryptoService cryptoService = mock(CryptoService.class);
 	private Statistics statistics = mock(Statistics.class);
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
-	private FileDto fileDto= mock(FileDto.class);
+	private FileDto fileDto = TestUtils.mockFileDto();
 
 	@BeforeClass
 	public void setup() {
-		when(fileDto.getName()).thenReturn("exampleName");
-		when(fileDto.getAbsolutePath()).thenReturn("/path/exampleName.txt");
 		chunkEncrypter = new ChunkEncrypter(cryptoService, "exampleKey", statistics, performanceDataService);
 	}
 
