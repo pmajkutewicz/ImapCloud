@@ -6,10 +6,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,6 +34,10 @@ public class FilesIOService {
 
 	public InputStream getFileInputStream(File file) throws FileNotFoundException {
 		return new FileInputStream(file);
+	}
+
+	public OutputStream getFileOutputStream(String nameWithPath) throws IOException {
+		return new FileOutputStream(java.nio.file.Files.createFile(Paths.get(nameWithPath)).toFile());
 	}
 
 	public List<FileDto> listFilesInDir(File dir) {

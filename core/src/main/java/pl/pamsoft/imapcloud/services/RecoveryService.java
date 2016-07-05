@@ -33,6 +33,9 @@ public class RecoveryService extends AbstractBackgroundService {
 	private Statistics statistics;
 
 	@Autowired
+	private FilesIOService filesIOService;
+
+	@Autowired
 	private PerformanceDataService performanceDataService;
 
 	public boolean recover(AccountDto selectedAccount) {
@@ -44,7 +47,7 @@ public class RecoveryService extends AbstractBackgroundService {
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);
 
 			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, statistics, performanceDataService);
-			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter();
+			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService);
 
 			Stream.of(new RecoveryChunkContainer(taskId, account))
 				.map(chunkRecovery)
