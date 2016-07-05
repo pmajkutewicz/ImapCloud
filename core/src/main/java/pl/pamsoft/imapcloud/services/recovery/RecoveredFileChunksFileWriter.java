@@ -2,16 +2,12 @@ package pl.pamsoft.imapcloud.services.recovery;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.function.Function;
 
 public class RecoveredFileChunksFileWriter implements Function<RecoveryChunkContainer, RecoveryChunkContainer> {
