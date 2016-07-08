@@ -12,7 +12,7 @@ public interface FileHasher {
 	int MEGABYTE = 1024 * 1024;
 
 	default String hash(File file) throws IOException {
-		try (InputStream inputStream = getFilesIOService().getFileInputStream(file)) {
+		try (InputStream inputStream = getFilesIOService().getInputStream(file)) {
 			byte[] bytesBuffer = new byte[MEGABYTE];
 			int bytesRead = -1;
 			while ((bytesRead = inputStream.read(bytesBuffer)) != -1) {

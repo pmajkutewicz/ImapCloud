@@ -4,6 +4,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
@@ -38,6 +39,9 @@ public class RecoveryService extends AbstractBackgroundService {
 	@Autowired
 	private PerformanceDataService performanceDataService;
 
+	@Value("${ic.recoveries.folder}")
+	private String recoveriesFolder;
+
 	public boolean recover(AccountDto selectedAccount) {
 		final String taskId = UUID.randomUUID().toString();
 		Future<?> task = getExecutor().submit(() -> {
@@ -47,7 +51,7 @@ public class RecoveryService extends AbstractBackgroundService {
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);
 
 			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, statistics, performanceDataService);
-			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService);
+			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, recoveriesFolder);
 
 			Stream.of(new RecoveryChunkContainer(taskId, account))
 				.map(chunkRecovery)

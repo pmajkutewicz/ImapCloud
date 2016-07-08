@@ -7,7 +7,7 @@ import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
 import org.json.JSONObject;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 
 public class RecoveredFileChunksFileWriterTest {
@@ -35,11 +34,12 @@ public class RecoveredFileChunksFileWriterTest {
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private FileSystemManager fsManager;
 
-	@BeforeClass
+	@BeforeMethod
 	public void setup() throws FileSystemException {
-		recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService);
+		recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, ".");
 		fsManager = VFS.getManager();
 		fsManager.createVirtualFileSystem(RAM_VIRTUAL);
+		reset(filesIOService);
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class RecoveredFileChunksFileWriterTest {
 		String random = RandomStringUtils.randomAlphanumeric(10);
 		String file = RAM_VIRTUAL + "/" + random + ".ic";
 		OutputStream os = create(file).getContent().getOutputStream();
-		when(filesIOService.getFileOutputStream(any())).thenReturn(os);
+		when(filesIOService.getOutputStream(any())).thenReturn(os);
 		RecoveryChunkContainer dummyData = create();
 
 		RecoveryChunkContainer result = recoveredFileChunksFileWriter.apply(dummyData);
@@ -57,6 +57,16 @@ public class RecoveredFileChunksFileWriterTest {
 		JSONObject jsonObject = new JSONObject(jsonAsString);
 		assertEquals(result, dummyData);
 		assertEquals(jsonObject.get("taskId"), dummyData.getTaskId());
+	}
+
+	@Test
+	public void shouldReturnEmptyContainerWhenErrorOccured() throws IOException {
+		when(filesIOService.getOutputStream(any())).thenThrow(new IOException("success"));
+		RecoveryChunkContainer dummyData = create();
+
+		RecoveryChunkContainer result = recoveredFileChunksFileWriter.apply(dummyData);
+
+		assertEquals(result, RecoveryChunkContainer.EMPTY);
 	}
 
 	private FileObject create(String file) throws FileSystemException {

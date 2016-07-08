@@ -56,7 +56,7 @@ public class UploadFileHasherTest {
 		fileObject.getContent().write(outputStream);
 		File file = new File(fileObject.getName().getPath());
 		when(filesIOService.getFile(eq(fileDto))).thenReturn(file);
-		when(filesIOService.getFileInputStream(file)).thenReturn(fileObject.getContent().getInputStream());
+		when(filesIOService.getInputStream(file)).thenReturn(fileObject.getContent().getInputStream());
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
 
 		UploadChunkContainer result = uploadFileHasher.apply(ucc);
@@ -67,7 +67,7 @@ public class UploadFileHasherTest {
 	@Test
 	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
-		when(filesIOService.getFileInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
+		when(filesIOService.getInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
 
 		UploadChunkContainer response = uploadFileHasher.apply(ucc);
 

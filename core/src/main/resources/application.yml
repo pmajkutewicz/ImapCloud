@@ -20,3 +20,5 @@ logging:
     org.springframework.boot.autoconfigure.security: INFO
     pl.pamsoft: DEBUG
 
+ic:
+  recoveries.folder: ./recoveries/

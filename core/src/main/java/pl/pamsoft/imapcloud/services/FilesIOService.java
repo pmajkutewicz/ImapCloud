@@ -1,19 +1,13 @@
 package pl.pamsoft.imapcloud.services;
 
 import com.google.common.collect.Ordering;
-import com.google.common.io.Files;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,12 +31,11 @@ public class FilesIOService {
 		return new File(fileDto.getAbsolutePath());
 	}
 
-	public InputStream getFileInputStream(File file) throws FileNotFoundException {
-		return new FileInputStream(file);
+	public InputStream getInputStream(File file) throws FileNotFoundException {
+		return new BufferedInputStream(new FileInputStream(file));
 	}
-
-	public OutputStream getFileOutputStream(String nameWithPath) throws IOException {
-		return new FileOutputStream(java.nio.file.Files.createFile(Paths.get(nameWithPath)).toFile());
+	public OutputStream getOutputStream(Path nameWithPath) throws IOException {
+		return new BufferedOutputStream(FileUtils.openOutputStream(nameWithPath.toFile()));
 	}
 
 	public List<FileDto> listFilesInDir(File dir) {
@@ -58,7 +51,7 @@ public class FilesIOService {
 	}
 
 	public long calculateDirSize(File directory) {
-		Iterable<File> files = Files.fileTreeTraverser().breadthFirstTraversal(directory);
+		Iterable<File> files = com.google.common.io.Files.fileTreeTraverser().breadthFirstTraversal(directory);
 		return StreamSupport.stream(files.spliterator(), false).mapToLong(File::length).sum();
 	}
 }
