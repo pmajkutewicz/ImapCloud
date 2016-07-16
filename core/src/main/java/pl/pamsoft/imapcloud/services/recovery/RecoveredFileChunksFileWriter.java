@@ -10,6 +10,9 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.function.Function;
+import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class RecoveredFileChunksFileWriter implements Function<RecoveryChunkContainer, RecoveryChunkContainer> {
 
@@ -28,13 +31,26 @@ public class RecoveredFileChunksFileWriter implements Function<RecoveryChunkCont
 			JSONObject jsonObject = new JSONObject(rcc);
 			String fileName = String.format("%s.%s", rcc.getTaskId(), "ic");
 			String data = jsonObject.toString(INDENT_FACTOR);
-			OutputStream os = filesIOService.getOutputStream(Paths.get(recoveries, fileName));
-			IOUtils.write(data, os, StandardCharsets.UTF_8);
-			IOUtils.closeQuietly(os);
+			OutputStream os = filesIOService.getOutputStream(Paths.get(recoveries, fileName + ".zip"));
+			ZipOutputStream zos = new ZipOutputStream(os);
+			zos.setLevel(9);
+			ZipEntry entry = new ZipEntry(fileName);
+			entry.setSize(data.length());
+			entry.setCrc(getCrc(data));
+			zos.putNextEntry(entry);
+			IOUtils.write(data, zos, StandardCharsets.UTF_8);
+			zos.closeEntry();
+			IOUtils.closeQuietly(zos);
 			return rcc;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return RecoveryChunkContainer.EMPTY;
+	}
+
+	private long getCrc(String data) {
+		CRC32 crc32 = new CRC32();
+		crc32.update(data.getBytes(StandardCharsets.UTF_8));
+		return crc32.getValue();
 	}
 }
