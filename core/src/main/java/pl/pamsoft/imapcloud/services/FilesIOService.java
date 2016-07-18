@@ -68,7 +68,7 @@ public class FilesIOService {
 	public String unPack(InputStream is) throws IOException {
 		ZipInputStream zipInputStream = new ZipInputStream(is);
 		ZipEntry nextEntry = zipInputStream.getNextEntry();
-		if (null!=nextEntry) {
+		if (null != nextEntry) {
 			return IOUtils.toString(zipInputStream, StandardCharsets.UTF_8);
 		}
 		return null;

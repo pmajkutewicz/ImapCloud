@@ -13,7 +13,7 @@ public class RecoveryRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
-	public void startUpload(AccountDto selectedAccount, RequestCallback<Void> callback) {
+	public void startAccountRecovery(AccountDto selectedAccount, RequestCallback<Void> callback) {
 		sendPost(START_RECOVERY, new StartRecoveryRequest(selectedAccount), callback);
 	}
 

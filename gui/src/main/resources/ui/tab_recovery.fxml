@@ -8,10 +8,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <VBox fx:id="root" minWidth="600.0" prefHeight="400.0" xmlns="http://javafx.com/javafx/8.0.91" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.RecoveryController">
 	<HBox prefWidth="600.0">
 		<ComboBox fx:id="accountsCombo" prefWidth="300.0" />
 		<Button mnemonicParsing="false" text="%recovery.button.start" onAction="#startButtonClick"/>
+	</HBox>
+	<HBox prefWidth="600.0">
+		<ComboBox fx:id="availableRecoveries" prefWidth="300.0" />
 	</HBox>
 	<SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
 		<TableView fx:id="fileList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS" />
