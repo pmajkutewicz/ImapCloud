@@ -18,9 +18,12 @@ import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -48,12 +51,15 @@ public class RecoveredFileChunksFileWriterTest {
 		String file = RAM_VIRTUAL + "/" + random + ".ic";
 		OutputStream os = create(file).getContent().getOutputStream();
 		when(filesIOService.getOutputStream(any())).thenReturn(os);
+		when(filesIOService.unPack(any())).thenCallRealMethod();
+		doCallRealMethod().when(filesIOService).packToFile(any(), anyString(), anyString());
 		RecoveryChunkContainer dummyData = create();
 
 		RecoveryChunkContainer result = recoveredFileChunksFileWriter.apply(dummyData);
 
 		InputStream is = fsManager.resolveFile(file).getContent().getInputStream();
-		String jsonAsString = IOUtils.toString(is);
+		String jsonAsString = filesIOService.unPack(is);
+
 		JSONObject jsonObject = new JSONObject(jsonAsString);
 		assertEquals(result, dummyData);
 		assertEquals(jsonObject.get("taskId"), dummyData.getTaskId());

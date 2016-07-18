@@ -7,9 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.requests.StartRecoveryRequest;
 import pl.pamsoft.imapcloud.responses.AbstractResponse;
+import pl.pamsoft.imapcloud.responses.RecoveryResultsResponse;
 import pl.pamsoft.imapcloud.services.RecoveryService;
 
 @RestController
@@ -20,7 +22,7 @@ public class RecoveryRestController {
 	private RecoveryService recoveryService;
 
 	@RequestMapping(value = "start", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<? extends AbstractResponse> startUpload(@RequestBody StartRecoveryRequest startRecoveryRequest) {
+	public ResponseEntity<? extends AbstractResponse> start(@RequestBody StartRecoveryRequest startRecoveryRequest) {
 		boolean taskAdded = recoveryService.recover(startRecoveryRequest.getSelectedAccount());
 
 		if (taskAdded) {
@@ -28,5 +30,11 @@ public class RecoveryRestController {
 		} else {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "results", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<? extends AbstractResponse> getResults() {
+		return new ResponseEntity<>(new RecoveryResultsResponse(recoveryService.getResults()), HttpStatus.OK);
 	}
 }

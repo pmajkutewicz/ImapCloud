@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,16 @@ import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileWriter;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
@@ -61,6 +72,24 @@ public class RecoveryService extends AbstractBackgroundService {
 		});
 		getTaskMap().put(taskId, task);
 		return true;
+	}
+
+	public Map<String, byte[]> getResults() {
+		try {
+			Map<String, byte[]> results = new HashMap<>();
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(recoveriesFolder))) {
+				for (Path entry : stream) {
+					Path fileName = entry.getFileName();
+					InputStream inputStream = filesIOService.getInputStream(entry.toFile());
+					byte[] bytes = IOUtils.toByteArray(inputStream);
+					results.put(fileName.toString(), Base64.getEncoder().encode(bytes));
+				}
+			}
+			return results;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Collections.emptyMap();
+		}
 	}
 
 	@Override

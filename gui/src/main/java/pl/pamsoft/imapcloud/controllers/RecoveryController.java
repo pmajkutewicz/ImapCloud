@@ -9,6 +9,7 @@ import javafx.scene.control.ComboBox;
 import pl.pamsoft.imapcloud.converters.AccountDtoConverter;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
+import pl.pamsoft.imapcloud.responses.RecoveryResultsResponse;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.RecoveryRestClient;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
@@ -37,6 +38,10 @@ public class RecoveryController implements Initializable, Refreshable {
 		Platform.runLater(() -> accountsCombo.getSelectionModel().selectFirst());
 	};
 
+	private RequestCallback<RecoveryResultsResponse> resultsCallback = results -> {
+		System.out.println(results);
+	};
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		accountsCombo.setConverter(new AccountDtoConverter());
@@ -46,6 +51,7 @@ public class RecoveryController implements Initializable, Refreshable {
 	@Override
 	public void refresh() {
 		accountRestClient.listAccounts(clientCallback);
+		recoveryRestClient.getResults(resultsCallback);
 	}
 
 	@Override
