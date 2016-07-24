@@ -1,6 +1,5 @@
 package pl.pamsoft.imapcloud.services;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,26 +8,31 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
+import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkRecovery;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.services.recovery.RCCtoRecoveredFileDtoConverter;
+import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileReader;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileWriter;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Service
 public class RecoveryService extends AbstractBackgroundService {
@@ -50,7 +54,6 @@ public class RecoveryService extends AbstractBackgroundService {
 	@Autowired
 	private PerformanceDataService performanceDataService;
 
-	@Value("${ic.recoveries.folder}")
 	private String recoveriesFolder;
 
 	public boolean recover(AccountDto selectedAccount) {
@@ -74,18 +77,19 @@ public class RecoveryService extends AbstractBackgroundService {
 		return true;
 	}
 
-	public Map<String, byte[]> getResults() {
+	public Map<String, List<RecoveredFileDto>> getResults() {
 		try {
-			Map<String, byte[]> results = new HashMap<>();
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(recoveriesFolder))) {
-				for (Path entry : stream) {
-					Path fileName = entry.getFileName();
-					InputStream inputStream = filesIOService.getInputStream(entry.toFile());
-					byte[] bytes = IOUtils.toByteArray(inputStream);
-					results.put(fileName.toString(), Base64.getEncoder().encode(bytes));
-				}
+			Function<Path, RecoveryChunkContainer> reader = new RecoveredFileChunksFileReader(filesIOService);
+			Function<RecoveryChunkContainer, List<RecoveredFileDto>> converter = new RCCtoRecoveredFileDtoConverter();
+
+			try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(recoveriesFolder))) {
+				Map<String, List<RecoveredFileDto>> results = new HashMap<>();
+				StreamSupport.stream(dirStream.spliterator(), false)
+					.map(reader)
+					.map(i -> new SimpleEntry<String, List<RecoveredFileDto>>(i.getTaskId(), converter.apply(i)))
+					.forEach(i-> results.put(i.getKey(), i.getValue()));
+				return results;
 			}
-			return results;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return Collections.emptyMap();
@@ -100,5 +104,10 @@ public class RecoveryService extends AbstractBackgroundService {
 	@Override
 	String getNameFormat() {
 		return "RecoveryTask-%d";
+	}
+
+	@Value("${ic.recoveries.folder}")
+	public void setRecoveriesFolder(String recoveriesFolder) {
+		this.recoveriesFolder = recoveriesFolder;
 	}
 }

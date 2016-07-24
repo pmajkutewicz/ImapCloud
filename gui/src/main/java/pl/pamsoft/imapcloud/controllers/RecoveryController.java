@@ -1,8 +1,8 @@
 package pl.pamsoft.imapcloud.controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,6 +11,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import pl.pamsoft.imapcloud.converters.AccountDtoConverter;
 import pl.pamsoft.imapcloud.dto.AccountDto;
+import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
 import pl.pamsoft.imapcloud.responses.RecoveryResultsResponse;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
@@ -18,15 +20,13 @@ import pl.pamsoft.imapcloud.rest.RecoveryRestClient;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+
+import static javafx.scene.control.SelectionMode.MULTIPLE;
 
 public class RecoveryController implements Initializable, Refreshable {
 
@@ -40,15 +40,15 @@ public class RecoveryController implements Initializable, Refreshable {
 	private ComboBox<AccountDto> accountsCombo;
 
 	@FXML
-	private ComboBox<String> availableRecoveries;
+	private ComboBox<String> availableRecoveriesCombo;
 
 	@FXML
-	private TableView<?> fileList;
+	private TableView<FileDto> fileList;
 
 	@FXML
 	private Node root;
 
-	private Map<String, JsonNode> recoveriesData = new HashMap<>();
+	private Map<String, List<RecoveredFileDto>> recoveriesData = Collections.emptyMap();
 
 	private RequestCallback<ListAccountResponse> clientCallback = accounts -> {
 		Platform.runLater(() -> {
@@ -59,29 +59,27 @@ public class RecoveryController implements Initializable, Refreshable {
 	};
 
 	private RequestCallback<RecoveryResultsResponse> resultsCallback = results -> {
-		results.getResults().entrySet().forEach(e -> {
-			byte[] value = e.getValue();
-			if (null != value) {
-				recoveriesData.put(e.getKey(), unpack(value));
-			}
-			Platform.runLater(() -> {
-				availableRecoveries.getItems().clear();
-				availableRecoveries.getItems().addAll(recoveriesData.keySet());
-				availableRecoveries.getSelectionModel().selectFirst();
-			});
+		recoveriesData = results.getRecoveredFiles();
+		Platform.runLater(() -> {
+			availableRecoveriesCombo.getItems().clear();
+			availableRecoveriesCombo.getItems().addAll(recoveriesData.keySet());
+			availableRecoveriesCombo.getSelectionModel().selectFirst();
 		});
+	};
+
+	private ChangeListener<String> availableRecoveriesComboChangeListener = (observable, oldValue, newValue) -> {
+		if (newValue != oldValue) {
+			System.out.println("Changed to: " + newValue);
+			List<RecoveredFileDto> data = recoveriesData.get(newValue);
+			fileList.setItems(FXCollections.observableArrayList(data));
+		}
 	};
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		accountsCombo.setConverter(new AccountDtoConverter());
-		availableRecoveries.valueProperty().addListener((observable, oldValue, newValue) -> {
-			if (newValue != oldValue) {
-				System.out.println("Changed to: " + newValue);
-			}
-		});
-
-		//fileList.getSelectionModel().selectedItemProperty().addListener(?);
+		availableRecoveriesCombo.valueProperty().addListener(availableRecoveriesComboChangeListener);
+		fileList.getSelectionModel().setSelectionMode(MULTIPLE);
 		initRefreshable();
 	}
 
@@ -101,17 +99,4 @@ public class RecoveryController implements Initializable, Refreshable {
 		recoveryRestClient.startAccountRecovery(selectedItem, data -> {});
 	}
 
-	private JsonNode unpack(byte[] data) {
-		byte[] decoded = Base64.getDecoder().decode(data);
-		ZipInputStream zipInputStream = new ZipInputStream(new ByteArrayInputStream(decoded));
-		try {
-			ZipEntry nextEntry = zipInputStream.getNextEntry();
-			if (null != nextEntry) {
-				return new ObjectMapper().readTree(zipInputStream);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 }
