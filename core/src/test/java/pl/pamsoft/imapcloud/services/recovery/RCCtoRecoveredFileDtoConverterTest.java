@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.services.recovery;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
+import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 
@@ -18,10 +19,11 @@ import static org.testng.Assert.assertTrue;
 
 public class RCCtoRecoveredFileDtoConverterTest {
 
-	private RCCtoRecoveredFileDtoConverter rcCtoFileDtoConverter = new RCCtoRecoveredFileDtoConverter();
+	private RCCtoRecoveredFileDtoConverter rcCtoFileDtoConverter;
 
 	private RecoveredFileChunksFileReader recoveredFileChunksFileReader;
 	private FilesIOService filesIOService = mock(FilesIOService.class);
+	private CryptoService cryptoService = mock(CryptoService.class);
 	private RecoveryChunkContainer exampleData;
 
 	@BeforeMethod
@@ -30,7 +32,7 @@ public class RCCtoRecoveredFileDtoConverterTest {
 		when(filesIOService.getInputStream(any())).thenCallRealMethod();
 		when(filesIOService.unPack(any())).thenCallRealMethod();
 		recoveredFileChunksFileReader = new RecoveredFileChunksFileReader(filesIOService);
-
+		rcCtoFileDtoConverter = new RCCtoRecoveredFileDtoConverter(cryptoService);
 		exampleData = recoveredFileChunksFileReader.apply(
 			Paths.get("src", "test", "resources", "b6a87830-1e0d-486c-a2c8-97efe71f01a5.ic.zip")
 		);

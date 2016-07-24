@@ -46,10 +46,13 @@ public class RecoveryService extends AbstractBackgroundService {
 	private AccountRepository accountRepository;
 
 	@Autowired
-	private Statistics statistics;
+	private CryptoService cryptoService;
 
 	@Autowired
 	private FilesIOService filesIOService;
+
+	@Autowired
+	private Statistics statistics;
 
 	@Autowired
 	private PerformanceDataService performanceDataService;
@@ -80,7 +83,7 @@ public class RecoveryService extends AbstractBackgroundService {
 	public Map<String, List<RecoveredFileDto>> getResults() {
 		try {
 			Function<Path, RecoveryChunkContainer> reader = new RecoveredFileChunksFileReader(filesIOService);
-			Function<RecoveryChunkContainer, List<RecoveredFileDto>> converter = new RCCtoRecoveredFileDtoConverter();
+			Function<RecoveryChunkContainer, List<RecoveredFileDto>> converter = new RCCtoRecoveredFileDtoConverter(cryptoService);
 
 			try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(recoveriesFolder))) {
 				Map<String, List<RecoveredFileDto>> results = new HashMap<>();
