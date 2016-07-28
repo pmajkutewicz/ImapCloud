@@ -23,7 +23,7 @@ public class RCCtoRecoveredFileDtoConverterTest {
 
 	private RecoveredFileChunksFileReader recoveredFileChunksFileReader;
 	private FilesIOService filesIOService = mock(FilesIOService.class);
-	private CryptoService cryptoService = mock(CryptoService.class);
+	private CryptoService cryptoService = new CryptoService();
 	private RecoveryChunkContainer exampleData;
 
 	@BeforeMethod
