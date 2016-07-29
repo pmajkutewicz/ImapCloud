@@ -47,7 +47,7 @@ public class RecoveryRestController {
 	@ResponseBody
 	@RequestMapping(value = "recover", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> recover(@RequestBody RecoverRequest recoverRequest) {
-		boolean taskAdded = recoveryService.recoverFiles(recoverRequest.getUniqueFilesIds());
+		boolean taskAdded = recoveryService.recoverFiles(recoverRequest.getTaskId(), recoverRequest.getUniqueFilesIds());
 
 		if (taskAdded) {
 			return new ResponseEntity<>(HttpStatus.OK);

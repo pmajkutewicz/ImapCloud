@@ -23,9 +23,6 @@ public class RecoveredFileChunksFileReaderTest {
 
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 
-	private final String taskId = "b6a87830-1e0d-486c-a2c8-97efe71f01a5";
-	private final Path path = Paths.get("src", "test", "resources", taskId + ".ic.zip");
-
 	@BeforeMethod
 	public void setup() throws FileSystemException {
 		reset(filesIOService);
@@ -37,16 +34,16 @@ public class RecoveredFileChunksFileReaderTest {
 		when(filesIOService.getInputStream(any())).thenCallRealMethod();
 		when(filesIOService.unPack(any())).thenCallRealMethod();
 
-		RecoveryChunkContainer result = recoveredFileChunksFileReader.apply(path);
+		RecoveryChunkContainer result = recoveredFileChunksFileReader.apply(RecoveryTestUtils.PATH);
 
-		Assert.assertEquals(result.getTaskId(), taskId);
+		Assert.assertEquals(result.getTaskId(), RecoveryTestUtils.TASK_ID);
 	}
 
 	@Test
 	public void shouldReturnEmptyContainerOnError() throws IOException {
 		when(filesIOService.getInputStream(any())).thenThrow(new FileNotFoundException("success"));
 
-		RecoveryChunkContainer result = recoveredFileChunksFileReader.apply(path);
+		RecoveryChunkContainer result = recoveredFileChunksFileReader.apply(RecoveryTestUtils.PATH);
 
 		Assert.assertEquals(result, RecoveryChunkContainer.EMPTY);
 	}

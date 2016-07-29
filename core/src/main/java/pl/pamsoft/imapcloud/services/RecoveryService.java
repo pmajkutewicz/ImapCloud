@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
+import pl.pamsoft.imapcloud.dao.FileChunkRepository;
+import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkRecovery;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.services.recovery.FileRecovery;
 import pl.pamsoft.imapcloud.services.recovery.RCCtoRecoveredFileDtoConverter;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileReader;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileWriter;
@@ -44,13 +47,19 @@ public class RecoveryService extends AbstractBackgroundService {
 	private ConnectionPoolService connectionPoolService;
 
 	@Autowired
-	private AccountRepository accountRepository;
-
-	@Autowired
 	private CryptoService cryptoService;
 
 	@Autowired
 	private FilesIOService filesIOService;
+
+	@Autowired
+	private FileRepository fileRepository;
+
+	@Autowired
+	private FileChunkRepository fileChunkRepository;
+
+	@Autowired
+	private AccountRepository accountRepository;
 
 	@Autowired
 	private Statistics statistics;
@@ -100,8 +109,20 @@ public class RecoveryService extends AbstractBackgroundService {
 		}
 	}
 
-	public boolean recoverFiles(Set<String> uniqueFilesIds) {
-		return false;  //TODO: Not implemented yet. To change body of created methods use File | Settings | File Templates.
+	public boolean recoverFiles(String taskId, Set<String> uniqueFilesIds) {
+		String fileName = String.format("%s.%s", taskId, "ic");
+		Path path = Paths.get(recoveriesFolder, fileName + ".zip");
+
+		Function<Path, RecoveryChunkContainer> reader = new RecoveredFileChunksFileReader(filesIOService);
+		Function<RecoveryChunkContainer, RecoveryChunkContainer> fileRecovery =
+			new FileRecovery(uniqueFilesIds, fileRepository, fileChunkRepository, accountRepository, cryptoService);
+
+		Stream.of(path)
+			.map(reader)
+			.map(fileRecovery)
+			.forEach(System.out::println);
+
+		return true;
 	}
 
 	@Override
