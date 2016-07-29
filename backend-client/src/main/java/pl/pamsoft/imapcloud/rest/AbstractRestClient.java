@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 abstract class AbstractRestClient {
 
 	private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
+	private static final int TIMEOUT = 5;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final String host;
 	private final int port;
@@ -76,9 +77,9 @@ abstract class AbstractRestClient {
 	private OkHttpClient getClient() {
 		return new OkHttpClient.Builder()
 			.authenticator(authenticator)
-			.connectTimeout(2, TimeUnit.SECONDS)
-			.writeTimeout(2, TimeUnit.SECONDS)
-			.readTimeout(2, TimeUnit.SECONDS).build();
+			.connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+			.writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+			.readTimeout(TIMEOUT, TimeUnit.SECONDS).build();
 	}
 
 	private Request.Builder getRequest() {

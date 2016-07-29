@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -97,6 +98,10 @@ public class RecoveryService extends AbstractBackgroundService {
 			e.printStackTrace();
 			return Collections.emptyMap();
 		}
+	}
+
+	public boolean recoverFiles(Set<String> uniqueFilesIds) {
+		return false;  //TODO: Not implemented yet. To change body of created methods use File | Settings | File Templates.
 	}
 
 	@Override

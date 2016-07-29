@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
+import pl.pamsoft.imapcloud.requests.RecoverRequest;
 import pl.pamsoft.imapcloud.requests.StartRecoveryRequest;
 import pl.pamsoft.imapcloud.responses.AbstractResponse;
 import pl.pamsoft.imapcloud.responses.RecoveryResultsResponse;
@@ -41,5 +42,17 @@ public class RecoveryRestController {
 	public ResponseEntity<? extends AbstractResponse> getResults() {
 		Map<String, List<RecoveredFileDto>> results = recoveryService.getResults();
 		return new ResponseEntity<>(new RecoveryResultsResponse(results), HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "recover", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<? extends AbstractResponse> recover(@RequestBody RecoverRequest recoverRequest) {
+		boolean taskAdded = recoveryService.recoverFiles(recoverRequest.getUniqueFilesIds());
+
+		if (taskAdded) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 }

@@ -11,7 +11,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import pl.pamsoft.imapcloud.converters.AccountDtoConverter;
 import pl.pamsoft.imapcloud.dto.AccountDto;
-import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
 import pl.pamsoft.imapcloud.responses.RecoveryResultsResponse;
@@ -25,7 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
+import static java.util.stream.Collectors.toSet;
 import static javafx.scene.control.SelectionMode.MULTIPLE;
 
 public class RecoveryController implements Initializable, Refreshable {
@@ -43,7 +44,7 @@ public class RecoveryController implements Initializable, Refreshable {
 	private ComboBox<String> availableRecoveriesCombo;
 
 	@FXML
-	private TableView<FileDto> fileList;
+	private TableView<RecoveredFileDto> fileList;
 
 	@FXML
 	private Node root;
@@ -100,6 +101,9 @@ public class RecoveryController implements Initializable, Refreshable {
 	}
 
 	public void recoverButtonClick(ActionEvent actionEvent) {
-
+		Set<String> selectedFilesIds = fileList.getSelectionModel().getSelectedItems()
+			.stream().map(RecoveredFileDto::getFileUniqueId).collect(toSet());
+		String taskId = availableRecoveriesCombo.getSelectionModel().getSelectedItem();
+		recoveryRestClient.recover(taskId, selectedFilesIds, data -> {});
 	}
 }
