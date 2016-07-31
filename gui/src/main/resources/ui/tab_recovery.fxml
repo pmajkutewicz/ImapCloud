@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import pl.pamsoft.imapcloud.formatters.CellTrueFalseImageFormatter?>
 <VBox fx:id="root" minWidth="600.0" prefHeight="400.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.RecoveryController">
 	<padding>
 		<Insets bottom="10" left="25" right="25" top="25" />
@@ -39,6 +40,9 @@
 				</cellValueFactory>
 			</TableColumn>
 			<TableColumn prefWidth="75.0" text="%recovery.table.column.file.completed">
+				<cellFactory>
+					<CellTrueFalseImageFormatter/>
+				</cellFactory>
 				<cellValueFactory>
 					<PropertyValueFactory property="completed" />
 				</cellValueFactory>
@@ -46,6 +50,22 @@
 			<TableColumn prefWidth="75.0" text="%recovery.table.column.file.size">
 				<cellValueFactory>
 					<PropertyValueFactory property="readableFileSize" />
+				</cellValueFactory>
+			</TableColumn>
+			<TableColumn prefWidth="75.0" text="%recovery.table.column.file.inDb">
+				<cellFactory>
+					<CellTrueFalseImageFormatter/>
+				</cellFactory>
+				<cellValueFactory>
+					<PropertyValueFactory property="inDb" />
+				</cellValueFactory>
+			</TableColumn>
+			<TableColumn prefWidth="75.0" text="%recovery.table.column.file.completedInDb">
+				<cellFactory>
+					<CellTrueFalseImageFormatter/>
+				</cellFactory>
+				<cellValueFactory>
+					<PropertyValueFactory property="completedInDb" />
 				</cellValueFactory>
 			</TableColumn>
 		</columns>

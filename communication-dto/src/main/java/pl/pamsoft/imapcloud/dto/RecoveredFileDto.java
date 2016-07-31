@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @NoArgsConstructor
@@ -19,6 +20,14 @@ public class RecoveredFileDto extends FileDto {
 
 	@Getter
 	private boolean completed;
+
+	@Getter
+	@Setter
+	private boolean inDb;
+
+	@Getter
+	@Setter
+	private Boolean completedInDb;
 
 	public RecoveredFileDto(String name, String absolutePath, FileType type, Long size,
 	                        String fileUniqueId, boolean completed) {

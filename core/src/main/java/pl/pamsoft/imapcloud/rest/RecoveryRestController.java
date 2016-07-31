@@ -10,14 +10,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
+import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.requests.RecoverRequest;
 import pl.pamsoft.imapcloud.requests.StartRecoveryRequest;
 import pl.pamsoft.imapcloud.responses.AbstractResponse;
 import pl.pamsoft.imapcloud.responses.RecoveryResultsResponse;
+import pl.pamsoft.imapcloud.services.FileServices;
 import pl.pamsoft.imapcloud.services.RecoveryService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 
 @RestController
 @RequestMapping("recovery")
@@ -25,6 +33,9 @@ public class RecoveryRestController {
 
 	@Autowired
 	private RecoveryService recoveryService;
+
+	@Autowired
+	private FileServices fileServices;
 
 	@RequestMapping(value = "start", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> start(@RequestBody StartRecoveryRequest startRecoveryRequest) {
@@ -41,6 +52,23 @@ public class RecoveryRestController {
 	@RequestMapping(value = "results", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> getResults() {
 		Map<String, List<RecoveredFileDto>> results = recoveryService.getResults();
+
+		// get ids of recovered files
+		Set<String> recoveredFilesIds = results.values()
+			.stream().flatMap(Collection::stream).map(RecoveredFileDto::getFileUniqueId).collect(toSet());
+
+		// check if some files already exists in db
+		Map<String, File> collect = fileServices.findUploadedFiles()
+			.stream()
+			.filter(i -> recoveredFilesIds.contains(i.getFileUniqueId()))
+			.collect(toMap(File::getFileUniqueId, Function.identity()));
+
+		// update RecoveredFileDto with above data
+		results.values().stream().flatMap(Collection::stream)
+			.forEach(recoveredFileDto -> {
+				recoveredFileDto.setInDb(true);
+				recoveredFileDto.setCompletedInDb(collect.get(recoveredFileDto.getFileUniqueId()).isCompleted());
+			});
 		return new ResponseEntity<>(new RecoveryResultsResponse(results), HttpStatus.OK);
 	}
 
