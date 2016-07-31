@@ -46,7 +46,7 @@ public class FileRepository extends AbstractRepository<File> {
 				"class:" + File.class.getSimpleName(),
 				GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath(),
 				GraphProperties.FILE_HASH, file.getFileHash(),
-				GraphProperties.FILE_COMPLETED, Boolean.FALSE);
+				GraphProperties.FILE_COMPLETED, file.isCompleted());
 			fillProperties(graphDB, orientVertex, file);
 			updateIdAndVersionFields(file, orientVertex);
 			graphDB.shutdown();
