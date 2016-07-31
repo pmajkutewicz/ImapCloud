@@ -431,31 +431,6 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.pitest</groupId>
-				<artifactId>pitest-maven</artifactId>
-				<version>1.1.10</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>mutationCoverage</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<goal>pitest:mutationCoverage</goal>
-					<targetClasses>
-						<param>pl.pamsoft*</param>
-					</targetClasses>
-					<targetTests>
-						<param>pl.pamsoft*</param>
-					</targetTests>
-					<outputFormats>
-						<outputFormat>HTML</outputFormat>
-						<outputFormat>XML</outputFormat>
-					</outputFormats>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<!-- 0.7.3, 0.7.4 and 0.7.5 don't works with sonar -->
