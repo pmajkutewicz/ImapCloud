@@ -58,7 +58,7 @@ public class RecoveryRestController {
 			.stream().flatMap(Collection::stream).map(RecoveredFileDto::getFileUniqueId).collect(toSet());
 
 		// check if some files already exists in db
-		Map<String, File> collect = fileServices.findUploadedFiles()
+		Map<String, File> filesInDb = fileServices.findUploadedFiles()
 			.stream()
 			.filter(i -> recoveredFilesIds.contains(i.getFileUniqueId()))
 			.collect(toMap(File::getFileUniqueId, Function.identity()));
@@ -66,8 +66,10 @@ public class RecoveryRestController {
 		// update RecoveredFileDto with above data
 		results.values().stream().flatMap(Collection::stream)
 			.forEach(recoveredFileDto -> {
-				recoveredFileDto.setInDb(true);
-				recoveredFileDto.setCompletedInDb(collect.get(recoveredFileDto.getFileUniqueId()).isCompleted());
+				if (filesInDb.containsKey(recoveredFileDto.getFileUniqueId())) {
+					recoveredFileDto.setInDb(true);
+					recoveredFileDto.setCompletedInDb(filesInDb.get(recoveredFileDto.getFileUniqueId()).isCompleted());
+				}
 			});
 		return new ResponseEntity<>(new RecoveryResultsResponse(results), HttpStatus.OK);
 	}
