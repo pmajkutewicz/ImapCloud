@@ -12,7 +12,6 @@ import java.util.Iterator;
 @Repository
 public abstract class AbstractRepository<T> implements DefaultRepository<T> {
 
-	@Autowired
 	private ODB db;
 
 	@Override
@@ -24,5 +23,10 @@ public abstract class AbstractRepository<T> implements DefaultRepository<T> {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Iterable<Vertex> storedFiles = graphDB.getVertices(GraphProperties.FILE_UNIQUE_ID, fileUniqueId);
 		return storedFiles.iterator();
+	}
+
+	@Autowired
+	public void setDb(ODB db) {
+		this.db = db;
 	}
 }
