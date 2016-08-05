@@ -33,7 +33,6 @@ public class UploadFileHasherTest {
 
 	private UploadFileHasher uploadFileHasher;
 
-	private MessageDigest messageDigest;
 	private FileDto fileDto = TestUtils.mockFileDto();
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private Statistics statistics = mock(Statistics.class);
@@ -41,8 +40,7 @@ public class UploadFileHasherTest {
 
 	@BeforeClass
 	public void setup() throws NoSuchAlgorithmException {
-		messageDigest = MessageDigest.getInstance("SHA-512");
-		uploadFileHasher = new UploadFileHasher(messageDigest, filesIOService, statistics, performanceDataService);
+		uploadFileHasher = new UploadFileHasher(filesIOService, statistics, performanceDataService);
 	}
 
 	@Test

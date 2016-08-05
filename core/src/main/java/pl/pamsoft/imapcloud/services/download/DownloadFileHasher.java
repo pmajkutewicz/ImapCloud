@@ -13,20 +13,17 @@ import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.util.function.Function;
 
 public class DownloadFileHasher implements Function<DownloadChunkContainer, DownloadChunkContainer>, FileHasher {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadFileHasher.class);
 
-	private MessageDigest md;
 	private FilesIOService filesIOService;
 	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public DownloadFileHasher(MessageDigest messageDigest, FilesIOService filesIOService, Statistics statistics, PerformanceDataService performanceDataService) {
-		this.md = messageDigest;
+	public DownloadFileHasher(FilesIOService filesIOService, Statistics statistics, PerformanceDataService performanceDataService) {
 		this.filesIOService = filesIOService;
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
@@ -50,11 +47,6 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 			LOG.warn("Returning EMPTY from DownloadFileHasher");
 		}
 		return dcc;
-	}
-
-	@Override
-	public MessageDigest getMessageDigest() {
-		return md;
 	}
 
 	@Override

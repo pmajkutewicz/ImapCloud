@@ -10,19 +10,16 @@ import pl.pamsoft.imapcloud.services.common.ChunkHasher;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
-import java.security.MessageDigest;
 import java.util.function.Function;
 
 public class DownloadChunkHasher implements Function<DownloadChunkContainer, DownloadChunkContainer>, ChunkHasher {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadChunkHasher.class);
 
-	private MessageDigest md;
 	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public DownloadChunkHasher(MessageDigest messageDigest, Statistics statistics, PerformanceDataService performanceDataService) {
-		this.md = messageDigest;
+	public DownloadChunkHasher(Statistics statistics, PerformanceDataService performanceDataService) {
 		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
@@ -36,10 +33,5 @@ public class DownloadChunkHasher implements Function<DownloadChunkContainer, Dow
 		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_HASH, stopwatch));
 		LOG.debug("Hash validated in {}", stopwatch);
 		return DownloadChunkContainer.addChunkHash(dcc, hash);
-	}
-
-	@Override
-	public MessageDigest getMessageDigest() {
-		return md;
 	}
 }

@@ -16,7 +16,6 @@
 		<main.basedir>${project.parent.basedir}</main.basedir>
 		<!-- The main class to start by executing java -jar -->
 		<start-class>pl.pamsoft.imapcloud.ImapCloudApplication</start-class>
-
 	</properties>
 
 	<repositories>
@@ -125,6 +124,11 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpg-jdk15on</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>net.openhft</groupId>
+			<artifactId>zero-allocation-hashing</artifactId>
 		</dependency>
 		<!-- test -->
 		<dependency>
