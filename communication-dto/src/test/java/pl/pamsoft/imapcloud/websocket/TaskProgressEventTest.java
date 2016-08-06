@@ -22,7 +22,7 @@ public class TaskProgressEventTest {
 		List<FileDto> fileList = createFileList();
 
 		//when
-		TaskProgressEvent task = new TaskProgressEvent(id, SIZE_1K + SIZE_2K + SIZE_3K, fileList);
+		TaskProgressEvent task = new TaskProgressEvent(TaskType.UPLOAD, id, SIZE_1K + SIZE_2K + SIZE_3K, fileList);
 
 		//then
 		assertEquals(task.getTaskId(), id);
@@ -38,7 +38,7 @@ public class TaskProgressEventTest {
 		List<FileDto> fileList = createFileList();
 
 		//when
-		TaskProgressEvent task = new TaskProgressEvent(id, SIZE_1K + SIZE_2K + SIZE_3K, fileList);
+		TaskProgressEvent task = new TaskProgressEvent(TaskType.UPLOAD, id, SIZE_1K + SIZE_2K + SIZE_3K, fileList);
 		task.process(processedBytes, TEST1_PATH, processedBytes);
 
 		//then

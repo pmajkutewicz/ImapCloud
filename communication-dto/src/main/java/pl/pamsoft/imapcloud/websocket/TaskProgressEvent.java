@@ -13,12 +13,14 @@ import java.util.stream.Collectors;
 @Data
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class TaskProgressEvent {
+	private TaskType type;
 	private String taskId;
 	private long bytesOverall;
 	private long bytesProcessed;
 	private Map<String, FileProgressData> fileProgressDataMap;
 
-	public TaskProgressEvent(String taskId, long bytesOverall, List<FileDto> selectedFiles) {
+	public TaskProgressEvent(TaskType type, String taskId, long bytesOverall, List<FileDto> selectedFiles) {
+		this.type = type;
 		this.taskId = taskId;
 		this.bytesOverall = bytesOverall;
 		fileProgressDataMap = buildFileMap(selectedFiles);

@@ -21,6 +21,7 @@ import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
+import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +69,7 @@ public class UploadService extends AbstractBackgroundService {
 			Thread.currentThread().setName("UploadTask-" + taskId);
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, statistics, performanceDataService).apply(selectedFiles);
-			getTaskProgressMap().put(taskId, new TaskProgressEvent(taskId, bytesToProcess, selectedFiles));
+			getTaskProgressMap().put(taskId, new TaskProgressEvent(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
 
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
