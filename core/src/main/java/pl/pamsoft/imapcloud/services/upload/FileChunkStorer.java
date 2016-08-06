@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.services.upload;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 import pl.pamsoft.imapcloud.services.FileServices;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
@@ -20,7 +21,11 @@ public class FileChunkStorer implements Function<UploadChunkContainer, UploadChu
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer ucc) {
 		LOG.debug("Saving chunk data for chunk {} of {}", ucc.getChunkNumber(), ucc.getFileDto().getName());
-		fileServices.saveChunk(ucc);
+		try {
+			fileServices.saveChunk(ucc);
+		} catch (ChunkAlreadyExistException e) {
+			LOG.error("Chunk already exists: {}", ucc.getFileChunkUniqueId());
+		}
 		return ucc;
 	}
 }

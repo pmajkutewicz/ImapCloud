@@ -8,11 +8,13 @@ import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
+import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -54,10 +56,19 @@ public class FileRecovery implements Function<RecoveryChunkContainer, RecoveryCh
 		List<FileChunk> fileChunks = rcc.getFileChunkMap().get(id);
 		Account savedAccount = accountRepository.getById(rcc.getAccount().getId());
 		file.setOwnerAccount(savedAccount);
-		File savedFile = fileRepository.save(file);
+		File savedFile;
+		try {
+			savedFile = fileRepository.save(file);
+		} catch (FileAlreadyExistsException e) {
+			savedFile = fileRepository.getByFileUniqueId(file.getFileUniqueId());
+		}
 		for (FileChunk fileChunk : fileChunks) {
 			fileChunk.setOwnerFile(savedFile);
-			fileChunkRepository.save(fileChunk);
+			try {
+				fileChunkRepository.save(fileChunk);
+			} catch (ChunkAlreadyExistException ignore) {
+				// already saved, lets recover next one
+			}
 		}
 	}
 

@@ -8,6 +8,7 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
+import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 
 import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
@@ -47,7 +48,7 @@ public class FileServices {
 		return fileRepository.save(file);
 	}
 
-	public FileChunk saveChunk(UploadChunkContainer uploadChunkContainer) {
+	public FileChunk saveChunk(UploadChunkContainer uploadChunkContainer) throws ChunkAlreadyExistException {
 		FileChunk chunk = new FileChunk();
 		chunk.setFileChunkUniqueId(uploadChunkContainer.getFileChunkUniqueId());
 		chunk.setOwnerFile(fileRepository.getById(uploadChunkContainer.getSavedFileId()));

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.entity.FileChunk;
+import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -33,7 +34,7 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 
 	@Override
 	@SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
-	public FileChunk save(FileChunk chunk) {
+	public FileChunk save(FileChunk chunk) throws ChunkAlreadyExistException {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Iterable<Vertex> storedFiles = graphDB.getVertices("FileChunk.fileChunkUniqueId", chunk.getFileChunkUniqueId());
 		Iterator<Vertex> iterator = storedFiles.iterator();
@@ -48,6 +49,7 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 			graphDB.shutdown();
 		} else {
 			LOG.warn("Duplicate chunk with id: {}", chunk.getFileChunkUniqueId());
+			throw new ChunkAlreadyExistException(chunk.getFileChunkUniqueId());
 		}
 		return chunk;
 	}

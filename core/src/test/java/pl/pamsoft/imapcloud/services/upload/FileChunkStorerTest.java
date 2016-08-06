@@ -4,6 +4,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.File;
+import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.FileServices;
@@ -31,7 +32,7 @@ public class FileChunkStorerTest {
 
 
 	@Test
-	public void shouldStorehunk() {
+	public void shouldStoreChunk() throws ChunkAlreadyExistException {
 		FileDto fileDto = mock(FileDto.class);
 		when(fileDto.getName()).thenReturn("exampleName");
 		when(fileDto.getAbsolutePath()).thenReturn("/path/exampleName.txt");
