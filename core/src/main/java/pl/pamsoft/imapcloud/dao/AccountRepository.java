@@ -55,7 +55,9 @@ public class AccountRepository extends AbstractRepository<Account> {
 		Iterator<Object> iterator = result.iterator();
 		if (iterator.hasNext()) {
 			OrientVertex next = (OrientVertex) iterator.next();
-			return next.getProperty("sum");
+			Long sum = next.getProperty("sum");
+			LOG.debug("Account {} have {} occupied disk space.", accountId, sum);
+			return sum;
 		} else  {
 			return 0L;
 		}
