@@ -2,7 +2,7 @@ package pl.pamsoft.imapcloud.services;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
+import pl.pamsoft.imapcloud.entity.TaskProgress;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -24,7 +24,7 @@ abstract class AbstractBackgroundService {
 	private ExecutorService executor = Executors.newFixedThreadPool(getMaxTasks(), new ThreadFactoryBuilder().setNameFormat(getNameFormat()).setDaemon(false).build());
 	private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 	private Map<String, Future<?>> taskMap = new ConcurrentHashMap<>();
-	private Map<String, TaskProgressEvent> taskProgressMap = new ConcurrentHashMap<>();
+	private Map<String, TaskProgress> taskProgressMap = new ConcurrentHashMap<>();
 
 	private Callable<Void> cleanUpTask = () -> {
 		getTaskMap().entrySet()
@@ -58,7 +58,7 @@ abstract class AbstractBackgroundService {
 		return taskMap;
 	}
 
-	Map<String, TaskProgressEvent> getTaskProgressMap() {
+	Map<String, TaskProgress> getTaskProgressMap() {
 		return taskProgressMap;
 	}
 

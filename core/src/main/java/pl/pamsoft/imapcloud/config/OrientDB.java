@@ -43,7 +43,7 @@ import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_SIZE;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_UNIQUE_ID;
 
 @Configuration
-class OrientDB {
+public class OrientDB {
 
 	private static final Logger LOG = LoggerFactory.getLogger(OrientDB.class);
 	private static final int MAX = 10;

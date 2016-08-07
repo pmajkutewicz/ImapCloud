@@ -20,7 +20,6 @@ import pl.pamsoft.imapcloud.services.upload.UploadFileHasher;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
-import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.List;
@@ -69,7 +68,7 @@ public class UploadService extends AbstractBackgroundService {
 			Thread.currentThread().setName("UploadTask-" + taskId);
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, statistics, performanceDataService).apply(selectedFiles);
-			getTaskProgressMap().put(taskId, new TaskProgressEvent(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
+			getTaskProgressMap().put(taskId, tasksProgressService.create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
 
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
@@ -78,6 +77,7 @@ public class UploadService extends AbstractBackgroundService {
 				.markFileProcessed(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
 
 			Consumer<UploadChunkContainer> broadcastTaskProgress = ucc -> tasksProgressService.broadcast(getTaskProgressMap().get(ucc.getTaskId()));
+			Consumer<UploadChunkContainer> persistTaskProgress = ucc -> tasksProgressService.update(getTaskProgressMap().get(ucc.getTaskId()));
 
 			Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, statistics, performanceDataService);
@@ -107,6 +107,7 @@ public class UploadService extends AbstractBackgroundService {
 				.map(storeFileChunk)
 				.peek(updateProgress)
 				.peek(broadcastTaskProgress)
+				.peek(persistTaskProgress)
 				.forEach(System.out::println);
 		});
 		getTaskMap().put(taskId, task);

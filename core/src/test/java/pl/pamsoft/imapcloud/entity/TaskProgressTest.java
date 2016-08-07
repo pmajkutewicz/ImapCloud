@@ -1,14 +1,15 @@
-package pl.pamsoft.imapcloud.websocket;
+package pl.pamsoft.imapcloud.entity;
 
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-public class TaskProgressEventTest {
+public class TaskProgressTest {
 
 	private static final long SIZE_1K = 1024L;
 	private static final long SIZE_2K = 2048L;
@@ -22,7 +23,11 @@ public class TaskProgressEventTest {
 		List<FileDto> fileList = createFileList();
 
 		//when
-		TaskProgressEvent task = new TaskProgressEvent(TaskType.UPLOAD, id, SIZE_1K + SIZE_2K + SIZE_3K, fileList);
+		TaskProgress task = new TaskProgress();
+		task.setTaskId(id);
+		task.setType(TaskType.UPLOAD);
+		task.setBytesOverall(SIZE_1K + SIZE_2K + SIZE_3K);
+		task.addSelectedFiles(fileList);
 
 		//then
 		assertEquals(task.getTaskId(), id);
@@ -38,7 +43,11 @@ public class TaskProgressEventTest {
 		List<FileDto> fileList = createFileList();
 
 		//when
-		TaskProgressEvent task = new TaskProgressEvent(TaskType.UPLOAD, id, SIZE_1K + SIZE_2K + SIZE_3K, fileList);
+		TaskProgress task = new TaskProgress();
+		task.setType(TaskType.UPLOAD);
+		task.setId(id);
+		task.setBytesOverall(SIZE_1K + SIZE_2K + SIZE_3K);
+		task.addSelectedFiles(fileList);
 		task.process(processedBytes, TEST1_PATH, processedBytes);
 
 		//then
