@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import pl.pamsoft.imapcloud.websocket.FileProgressData;
 
@@ -33,8 +34,10 @@ public class TaskProgressControl extends AbstractControl {
 	private Map<String, SimpleDoubleProperty> fileProgressMap;
 
 	@SuppressFBWarnings("UR_UNINIT_READ")
-	public TaskProgressControl(String id, Map<String, FileProgressData> fileProgressDataMap) {
-		this.taskIdLabel.setText(id);
+	public TaskProgressControl(String id, String type, Map<String, FileProgressData> fileProgressDataMap,
+	                           Background background) {
+		this.setBackground(background);
+		this.taskIdLabel.setText(type + ' ' + id);
 		fileProgressMap = createFileMap(fileProgressDataMap);
 		generateIdenticon(id);
 	}
