@@ -33,7 +33,7 @@ public class AccountServices {
 	private CryptoService cryptoService;
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
-		long usedSpace = accountRepository.getUsedSpace(a.getId());
+		long usedSpace = accountRepository.getUsedSpace(a.getLogin());
 		return new AccountDto(a.getId(), String.format("%s@%s", a.getEmail(), a.getImapServerAddress()), a.getCryptoKey(), usedSpace);
 	};
 

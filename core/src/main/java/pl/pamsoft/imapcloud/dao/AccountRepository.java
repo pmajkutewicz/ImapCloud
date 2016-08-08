@@ -25,7 +25,7 @@ import java.util.function.Function;
 public class AccountRepository extends AbstractRepository<Account> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccountRepository.class);
-	private static final OSQLSynchQuery<ODocument> USED_SPACE_QUERY = new OSQLSynchQuery<>("select sum(IN('is_owned_by').in('is_part_of').size) as sum from Account where @rid = :id");
+	private static final OSQLSynchQuery<ODocument> USED_SPACE_QUERY = new OSQLSynchQuery<>("select sum(size) as sum from FileChunk where OUT('is_part_of').OUT('is_owned_by')['login'] = :login");
 
 	@Autowired
 	private Function<Vertex, Account> converter;
@@ -51,13 +51,11 @@ public class AccountRepository extends AbstractRepository<Account> {
 	}
 
 	public Long getUsedSpace(String accountId) {
-		OrientDynaElementIterable result = getDb().getGraphDB().command(USED_SPACE_QUERY).execute(Collections.singletonMap("id", accountId));
+		OrientDynaElementIterable result = getDb().getGraphDB().command(USED_SPACE_QUERY).execute(Collections.singletonMap("login", accountId));
 		Iterator<Object> iterator = result.iterator();
 		if (iterator.hasNext()) {
 			OrientVertex next = (OrientVertex) iterator.next();
-			Long sum = next.getProperty("sum");
-			LOG.debug("Account {} have {} occupied disk space.", accountId, sum);
-			return sum;
+			return next.getProperty("sum");
 		} else  {
 			return 0L;
 		}
