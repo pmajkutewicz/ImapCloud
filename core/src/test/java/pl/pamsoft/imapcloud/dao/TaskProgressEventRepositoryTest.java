@@ -5,14 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.test.ConfigFileApplicationContextInitializer;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.SpringTestConfig;
 import pl.pamsoft.imapcloud.config.AccountsSettings;
 import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.config.ODB;
+import pl.pamsoft.imapcloud.config.OObjectDatabaseTxFactory;
 import pl.pamsoft.imapcloud.config.OrientDB;
 import pl.pamsoft.imapcloud.config.WebSocketConfig;
 import pl.pamsoft.imapcloud.dto.FileDto;
@@ -24,11 +27,11 @@ import java.io.IOException;
 import static com.google.common.collect.ImmutableList.of;
 import static org.testng.Assert.assertEquals;
 
-@ComponentScan
 @ContextConfiguration(
 	initializers = ConfigFileApplicationContextInitializer.class,
 	classes = {PropertyPlaceholderAutoConfiguration.class, SpringTestConfig.class,
-		AccountsSettings.class, GraphProperties.class, ODB.class, OrientDB.class, WebSocketConfig.class},
+		AccountsSettings.class, GraphProperties.class, ODB.class, OrientDB.class, OObjectDatabaseTxFactory.class,
+		WebSocketConfig.class},
 	loader=AnnotationConfigContextLoader.class)
 public class TaskProgressEventRepositoryTest extends AbstractTestNGSpringContextTests {
 

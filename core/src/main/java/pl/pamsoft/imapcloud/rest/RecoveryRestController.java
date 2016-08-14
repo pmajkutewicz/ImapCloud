@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.rest;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,6 +38,7 @@ public class RecoveryRestController {
 	@Autowired
 	private FileServices fileServices;
 
+	@ApiOperation("Start account recovery")
 	@RequestMapping(value = "start", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> start(@RequestBody StartRecoveryRequest startRecoveryRequest) {
 		boolean taskAdded = recoveryService.recover(startRecoveryRequest.getSelectedAccount());
@@ -48,8 +50,9 @@ public class RecoveryRestController {
 		}
 	}
 
+	@ApiOperation("Fetch available recovery results")
 	@ResponseBody
-	@RequestMapping(value = "results", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "results", method = RequestMethod.GET)
 	public ResponseEntity<? extends AbstractResponse> getResults() {
 		Map<String, List<RecoveredFileDto>> results = recoveryService.getResults();
 
@@ -74,6 +77,7 @@ public class RecoveryRestController {
 		return new ResponseEntity<>(new RecoveryResultsResponse(results), HttpStatus.OK);
 	}
 
+	@ApiOperation("Recover selected files")
 	@ResponseBody
 	@RequestMapping(value = "recover", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> recover(@RequestBody RecoverRequest recoverRequest) {

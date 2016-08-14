@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.rest;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ public class FilesRestController {
 	@Autowired
 	private FilesIOService filesService;
 
+	@ApiOperation("Lists files in given directory")
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> listFilesInDirectory(@RequestParam(name = "dir") String dir) {
@@ -39,8 +41,9 @@ public class FilesRestController {
 		return new ResponseEntity<>(new ListFilesInDirResponse(files), HttpStatus.OK);
 	}
 
+	@ApiOperation("Returns users home directory")
 	@ResponseBody
-	@RequestMapping(value = "homeDir", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "homeDir", method = RequestMethod.GET)
 	public ResponseEntity<?> getHomeDir() {
 		String homeDir = System.getProperty("user.home");
 		return new ResponseEntity<>(new GetHomeDirResponse(homeDir), HttpStatus.OK);

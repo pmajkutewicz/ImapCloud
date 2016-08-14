@@ -72,6 +72,7 @@
 		<commons-vfs2.version>2.1</commons-vfs2.version>
 		<bouncycastle.version>1.54</bouncycastle.version>
 		<testng.version>6.9.10</testng.version>
+		<springfox-swagger2.version>2.5.0</springfox-swagger2.version>
 	</properties>
 
 	<modules>
@@ -219,6 +220,17 @@
 				<groupId>net.openhft</groupId>
 				<artifactId>zero-allocation-hashing</artifactId>
 				<version>${zero-allocation-hashing.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${springfox-swagger2.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${springfox-swagger2.version}</version>
 			</dependency>
 
 			<!-- GUI -->

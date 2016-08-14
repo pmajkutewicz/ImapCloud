@@ -1,0 +1,5 @@
+http://localhost:9000/swagger-ui.html
+http://springfox.github.io/springfox/docs/current/#customizing-the-swagger-endpoints
+https://github.com/swagger-api/swagger-core/wiki/Annotations#apioperation
+http://stackoverflow.com/questions/26720090/a-simple-way-to-implement-swagger-in-a-spring-mvc-application
+http://stackoverflow.com/questions/33511638/swagger-codegen-content-type-for-get-not-getting-set-in-spring-mvc-generated

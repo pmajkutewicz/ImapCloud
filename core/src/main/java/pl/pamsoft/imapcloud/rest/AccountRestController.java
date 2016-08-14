@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.rest;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,17 +25,20 @@ public class AccountRestController {
 	@Autowired
 	private AccountServices accountServices;
 
-	@RequestMapping(value = "emailProviders", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation("List supported email providers")
+	@RequestMapping(value = "emailProviders", method = RequestMethod.GET)
 	public EmailProviderInfoResponse listSupportedEmailProviders() {
 		return new EmailProviderInfoResponse(supportedEmailProviders.getEmailProviders());
 	}
 
-	@RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation("Creates new account")
+	@RequestMapping(method = RequestMethod.POST)
 	public void createAccount(@RequestBody CreateAccountRequest createAccountRequest) {
 		accountServices.addAccount(createAccountRequest);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation("Returns list of accounts")
+	@RequestMapping(method = RequestMethod.GET)
 	public ListAccountResponse listAccounts() {
 		List<AccountDto> accountDtos = accountServices.listAccounts();
 		return new ListAccountResponse(accountDtos);

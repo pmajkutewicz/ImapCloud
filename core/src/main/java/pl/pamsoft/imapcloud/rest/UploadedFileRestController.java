@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.rest;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +60,8 @@ public class UploadedFileRestController {
 		return ufcd;
 	};
 
-	@RequestMapping(value = "files", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation("Get list of uploaded files")
+	@RequestMapping(value = "files", method = RequestMethod.GET)
 	public UploadedFilesResponse getUploadedFiles() {
 		Collection<File> uploadedFiles = fileServices.findUploadedFiles();
 		List<UploadedFileDto> uploadedFileDtos = uploadedFiles.stream()
@@ -69,6 +71,7 @@ public class UploadedFileRestController {
 		return new UploadedFilesResponse(uploadedFileDtos);
 	}
 
+	@ApiOperation("Get list of uploaded chunk for given file")
 	@RequestMapping(value = "chunks", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public UploadedFileChunksResponse getUploadedChunks(@RequestParam(name = "fileId") String fileUniqueId) {
 		List<FileChunk> fileChunks = fileServices.getFileChunks(fileUniqueId);
@@ -76,12 +79,14 @@ public class UploadedFileRestController {
 		return new UploadedFileChunksResponse(converted);
 	}
 
+	@ApiOperation("Verify selected file")
 	@RequestMapping(value = "verify", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void verifyFile(@RequestParam(name = "fileId") String fileUniqueId) {
 		List<FileChunk> fileChunks = fileServices.getFileChunks(fileUniqueId);
 		verificationService.validate(fileChunks);
 	}
 
+	@ApiOperation("Delete selected file")
 	@RequestMapping(value = "delete", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteFile(@RequestParam(name = "fileId") String fileUniqueId) {
 		try {

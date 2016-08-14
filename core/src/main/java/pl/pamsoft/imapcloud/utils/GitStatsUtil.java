@@ -15,10 +15,14 @@ public class GitStatsUtil {
 
 	public GitRepositoryState getGitRepositoryState() throws IOException {
 		if (gitRepositoryState == null) {
-			Properties properties = new Properties();
-			InputStream is = getClass().getClassLoader().getResourceAsStream("git.properties");
-			properties.load(new InputStreamReader(is, StandardCharsets.UTF_8));
-			gitRepositoryState = new GitRepositoryState(properties);
+			try (
+				InputStream is = getClass().getClassLoader().getResourceAsStream("git.properties");
+				InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+			) {
+				Properties properties = new Properties();
+				properties.load(reader);
+				gitRepositoryState = new GitRepositoryState(properties);
+			}
 		}
 		return gitRepositoryState;
 	}

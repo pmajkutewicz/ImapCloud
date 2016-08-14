@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.rest;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ public class UploadRestController {
 	@Autowired
 	private UploadService uploadService;
 
+	@ApiOperation("Uploads file")
 	@RequestMapping(value = "start", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<? extends AbstractResponse> startUpload(@RequestBody StartUploadRequest startUploadRequest) {
 		boolean taskAdded = uploadService.upload(startUploadRequest.getSelectedAccount(), startUploadRequest.getSelectedFiles(), ON == startUploadRequest.getChunkEncryption());

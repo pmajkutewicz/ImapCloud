@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.rest;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,8 +20,9 @@ public class DownloadRestController {
 	@Autowired
 	private DownloadService downloadService;
 
+	@ApiOperation("Downloads file")
 	@RequestMapping(value = "start", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<? extends AbstractResponse> startUpload(@RequestBody StartDownloadRequest startDownloadRequest) {
+	public ResponseEntity<? extends AbstractResponse> startDownload(@RequestBody StartDownloadRequest startDownloadRequest) {
 		boolean taskAdded = downloadService.download(startDownloadRequest.getFileToDownload(), startDownloadRequest.getDestDir());
 
 		if (taskAdded) {
