@@ -73,6 +73,7 @@
 		<bouncycastle.version>1.54</bouncycastle.version>
 		<testng.version>6.9.10</testng.version>
 		<springfox-swagger2.version>2.5.0</springfox-swagger2.version>
+		<jamon.version>2.81</jamon.version>
 	</properties>
 
 	<modules>
@@ -134,6 +135,11 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-security</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-log4j</artifactId>
 				<version>${spring-boot.version}</version>
 			</dependency>
 			<dependency>
@@ -231,6 +237,12 @@
 				<groupId>io.springfox</groupId>
 				<artifactId>springfox-swagger-ui</artifactId>
 				<version>${springfox-swagger2.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.jamonapi</groupId>
+				<artifactId>jamon</artifactId>
+				<version>${jamon.version}</version>
 			</dependency>
 
 			<!-- GUI -->

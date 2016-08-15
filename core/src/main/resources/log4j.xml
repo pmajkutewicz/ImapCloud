@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+
+		<param name="file" value="imapclooud.log"/>
+		<param name="immediateFlush" value="true"/>
+		<param name="threshold" value="debug"/>
+		<param name="append" value="false"/>
+		<param name="maxFileSize" value="10MB"/>
+
+		<layout class="org.apache.log4j.EnhancedPatternLayout">
+			<param name="conversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%15.15t] %-40.40c{1.} : %m%n"/>
+		</layout>
+	</appender>
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="Target" value="System.out"/>
+		<layout class="org.apache.log4j.EnhancedPatternLayout">
+			<param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%15.15t] %-40.40c{1.} : %m%n"/>
+		</layout>
+	</appender>
+
+	<appender name="JAMONAPPENDER" class="com.jamonapi.log4j.JAMonAppender">
+		<param name="EnableListeners" value="DEBUG"/>
+		<param name="EnableListeners" value="ERROR"/>
+		<param name="EnableListeners" value="FATAL"/>
+		<param name="EnableListeners" value="WARN"/>
+	</appender>
+
+	<root>
+		<priority value ="ERROR" />
+		<appender-ref ref="FILE" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="JAMONAPPENDER"/>
+	</root>
+
+</log4j:configuration>
