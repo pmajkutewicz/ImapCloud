@@ -1,12 +1,12 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -22,12 +22,10 @@ public class DirectoryProcessor implements Function<UploadChunkContainer, Stream
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryProcessor.class);
 
 	private FilesIOService filesService;
-	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public DirectoryProcessor(FilesIOService filesService, Statistics statistics, PerformanceDataService performanceDataService) {
+	public DirectoryProcessor(FilesIOService filesService, PerformanceDataService performanceDataService) {
 		this.filesService = filesService;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
 
@@ -35,11 +33,11 @@ public class DirectoryProcessor implements Function<UploadChunkContainer, Stream
 	public Stream<UploadChunkContainer> apply(UploadChunkContainer ucc) {
 		LOG.debug("Parsing {}", ucc.getFileDto().getAbsolutePath());
 		if (FileDto.FileType.DIRECTORY == ucc.getFileDto().getType()) {
-			Stopwatch stopwatch = Stopwatch.createStarted();
+			Monitor monitor = MonHelper.get(this);
 			List<FileDto> dtos = parseDirectories(ucc.getFileDto());
-			statistics.add(StatisticType.DIRECTORY_PARSER, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.DIRECTORY_PARSER, stopwatch));
-			LOG.debug("Directory {} parsed in {}", ucc.getFileDto().getAbsolutePath(), stopwatch);
+			double lastVal = MonHelper.stop(monitor);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.DIRECTORY_PARSER, lastVal));
+			LOG.debug("Directory {} parsed in {}", ucc.getFileDto().getAbsolutePath(), lastVal);
 			return dtos.stream().map(file -> UploadChunkContainer.addFileDto(ucc, file));
 		} else {
 			return Stream.of(ucc.getFileDto()).map(file -> UploadChunkContainer.addFileDto(ucc, file));

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.imap.ChunkVerifier;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
@@ -24,9 +23,6 @@ public class VerificationService extends AbstractBackgroundService {
 	private FileChunkRepository fileChunkRepository;
 
 	@Autowired
-	private Statistics statistics;
-
-	@Autowired
 	private PerformanceDataService performanceDataService;
 
 	public boolean validate(List<FileChunk> fileChunks) {
@@ -36,7 +32,7 @@ public class VerificationService extends AbstractBackgroundService {
 			fileChunks.stream()
 				.forEach(chunk -> {
 						GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());
-						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, statistics, performanceDataService);
+						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, performanceDataService);
 						Boolean chunkExists = chunkVerifier.apply(chunk);
 						fileChunkRepository.markChunkVerified(chunk.getId(), chunkExists);
 					}

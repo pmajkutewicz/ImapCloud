@@ -14,7 +14,6 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.imap.ChunkLoader;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.download.ChunkDecrypter;
 import pl.pamsoft.imapcloud.services.download.ChunkHashVerifier;
 import pl.pamsoft.imapcloud.services.download.DownloadChunkHasher;
@@ -53,9 +52,6 @@ public class DownloadService extends AbstractBackgroundService {
 	private CryptoService cryptoService;
 
 	@Autowired
-	private Statistics statistics;
-
-	@Autowired
 	private PerformanceDataService performanceDataService;
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
@@ -72,12 +68,12 @@ public class DownloadService extends AbstractBackgroundService {
 
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.containsKey(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, statistics, performanceDataService);
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), statistics, performanceDataService);
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(statistics, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver();
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, statistics, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
 
 				chunkToDownload.stream()

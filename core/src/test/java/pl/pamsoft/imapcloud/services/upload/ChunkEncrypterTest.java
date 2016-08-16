@@ -6,7 +6,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -25,13 +24,12 @@ public class ChunkEncrypterTest {
 	private ChunkEncrypter chunkEncrypter;
 
 	private CryptoService cryptoService = mock(CryptoService.class);
-	private Statistics statistics = mock(Statistics.class);
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 	private FileDto fileDto = TestUtils.mockFileDto();
 
 	@BeforeClass
 	public void setup() {
-		chunkEncrypter = new ChunkEncrypter(cryptoService, "exampleKey", statistics, performanceDataService);
+		chunkEncrypter = new ChunkEncrypter(cryptoService, "exampleKey", performanceDataService);
 	}
 
 	@Test

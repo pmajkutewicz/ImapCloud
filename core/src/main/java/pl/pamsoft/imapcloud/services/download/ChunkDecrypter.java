@@ -1,13 +1,13 @@
 package pl.pamsoft.imapcloud.services.download;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -20,13 +20,11 @@ public class ChunkDecrypter implements Function<DownloadChunkContainer, Download
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkDecrypter.class);
 	private CryptoService cs;
-	private Statistics statistics;
 	private final PerformanceDataService performanceDataService;
 	private PaddedBufferedBlockCipher decryptingCipher;
 
-	public ChunkDecrypter(CryptoService cryptoService, String key, Statistics statistics, PerformanceDataService performanceDataService) {
+	public ChunkDecrypter(CryptoService cryptoService, String key, PerformanceDataService performanceDataService) {
 		this.cs = cryptoService;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 		decryptingCipher = cs.getDecryptingCipher(ByteUtils.fromHexString(key));
 	}
@@ -36,12 +34,12 @@ public class ChunkDecrypter implements Function<DownloadChunkContainer, Download
 		String fileName = dcc.getChunkToDownload().getOwnerFile().getName();
 		LOG.debug("Decrypting chunk {} of {}", dcc.getChunkToDownload().getChunkNumber(), fileName);
 		try {
-			Stopwatch stopwatch = Stopwatch.createStarted();
+			Monitor monitor = MonHelper.get(this);
 			byte[] decrypted = cs.decrypt(decryptingCipher, dcc.getData());
-			statistics.add(StatisticType.CHUNK_DECRYPTER, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DECRYPTER, stopwatch));
+			double lastVal = MonHelper.stop(monitor);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DECRYPTER, lastVal));
 			LOG.debug("{} chunk decrypting in {} (size: {} -> {}",
-				fileName, stopwatch, decrypted.length, dcc.getData().length);
+				fileName, monitor, decrypted.length, dcc.getData().length);
 			return DownloadChunkContainer.addData(dcc, decrypted);
 		} catch (InvalidCipherTextException | IOException e) {
 			LOG.error("Error decrypting chunk", e);

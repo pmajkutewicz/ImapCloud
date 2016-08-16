@@ -1,11 +1,11 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -18,19 +18,17 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 	private static final Logger LOG = LoggerFactory.getLogger(DirectorySizeCalculator.class);
 
 	private FilesIOService filesIOService;
-	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public DirectorySizeCalculator(FilesIOService filesIOService, Statistics statistics, PerformanceDataService performanceDataService) {
+	public DirectorySizeCalculator(FilesIOService filesIOService, PerformanceDataService performanceDataService) {
 		this.filesIOService = filesIOService;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
 
 	@Override
 	public Long apply(List<FileDto> fileDtos) {
 		long result = 0;
-		Stopwatch stopwatch = Stopwatch.createStarted();
+		Monitor monitor = MonHelper.get(this);
 		for (FileDto fileDto : fileDtos) {
 			if (FileDto.FileType.DIRECTORY == fileDto.getType()) {
 				long dirSize = filesIOService.calculateDirSize(filesIOService.getFile(fileDto));
@@ -42,8 +40,8 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 				result += fileSize;
 			}
 		}
-		statistics.add(StatisticType.DIRECTORY_SIZE_CALCULATOR, stopwatch.stop());
-		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.DIRECTORY_SIZE_CALCULATOR, stopwatch));
+		double lastVal = MonHelper.stop(monitor);
+		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.DIRECTORY_SIZE_CALCULATOR, lastVal));
 		return result;
 	}
 

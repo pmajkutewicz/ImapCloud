@@ -1,11 +1,11 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.common.FileHasher;
@@ -20,12 +20,10 @@ public class UploadFileHasher implements Function<UploadChunkContainer, UploadCh
 	private static final Logger LOG = LoggerFactory.getLogger(UploadFileHasher.class);
 
 	private FilesIOService filesIOService;
-	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public UploadFileHasher(FilesIOService filesIOService, Statistics statistics, PerformanceDataService performanceDataService) {
+	public UploadFileHasher(FilesIOService filesIOService, PerformanceDataService performanceDataService) {
 		this.filesIOService = filesIOService;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
 
@@ -33,12 +31,12 @@ public class UploadFileHasher implements Function<UploadChunkContainer, UploadCh
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
 		LOG.debug("Hashing file {}", chunk.getFileDto().getName());
-		Stopwatch stopwatch = Stopwatch.createStarted();
+		Monitor monitor = MonHelper.get(this);
 		try {
 			String hash = hash(filesIOService.getFile(chunk.getFileDto()));
-			statistics.add(StatisticType.FILE_HASH, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, stopwatch));
-			LOG.debug("File hash generated in {}", stopwatch);
+			double lastVal = MonHelper.stop(monitor);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, lastVal));
+			LOG.debug("File hash generated in {}", lastVal);
 			return UploadChunkContainer.addFileHash(chunk, hash);
 		} catch (IOException ex) {
 			LOG.error(String.format("Can't calculate hash for file: %s", chunk.getFileDto().getAbsolutePath()), ex);

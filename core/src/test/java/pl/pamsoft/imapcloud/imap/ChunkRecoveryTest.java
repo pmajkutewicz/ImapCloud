@@ -5,15 +5,16 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.json.JSONObject;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
-import javax.mail.*;
+import javax.mail.Folder;
+import javax.mail.Header;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Store;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +23,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 public class ChunkRecoveryTest {
@@ -32,8 +37,6 @@ public class ChunkRecoveryTest {
 
 	@Mock
 	private GenericObjectPool<Store> pool;
-	@Mock
-	private Statistics statistics;
 	@Mock
 	private PerformanceDataService performanceDataService;
 
@@ -54,7 +57,7 @@ public class ChunkRecoveryTest {
 		when(mailICFolder.list()).thenReturn(folderList);
 		when(store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME)).thenReturn(mailICFolder);
 
-		this.chunkRecovery = new ChunkRecovery(pool, statistics, performanceDataService);
+		this.chunkRecovery = new ChunkRecovery(pool, performanceDataService);
 	}
 
 	@Test

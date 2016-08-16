@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.imap;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -9,7 +9,7 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -42,20 +42,19 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkSaver.class);
 	private static final int MAX_RETRIES = 20;
+	private static final int THOUSAND = 1000;
 
 	private GenericObjectPool<Store> connectionPool;
 	private final CryptoService cs;
-	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 	private GitStatsUtil gitStatsUtil;
 	private PaddedBufferedBlockCipher encryptingCipher;
 	private AtomicInteger retryCounter = new AtomicInteger(0);
 
-	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, Statistics statistics, PerformanceDataService performanceDataService, GitStatsUtil gitStatsUtil) {
+	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, PerformanceDataService performanceDataService, GitStatsUtil gitStatsUtil) {
 		this.connectionPool = connectionPool;
 		this.cs = cryptoService;
 		encryptingCipher = cs.getEncryptingCipher(ByteUtils.fromHexString(cryptoKey));
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 		this.gitStatsUtil = gitStatsUtil;
 	}
@@ -78,7 +77,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		Store store = null;
 		try {
 			LOG.info("Uploading chunk {} of {}, retry: {}", dataChunk.getChunkNumber(), dataChunk.getFileDto().getName(), retryNumber);
-			Stopwatch stopwatch = Stopwatch.createStarted();
+			Monitor monitor = MonHelper.get(this);
 			store = connectionPool.borrowObject();
 			printPoolStats(connectionPool);
 			Folder destFolder = getFolder(store, dataChunk);
@@ -88,9 +87,10 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			destFolder.appendMessages(msg);
 			String[] header = message.getHeader("Message-ID");
 			destFolder.close(IMAPUtils.NO_EXPUNGE);
-			statistics.add(StatisticType.CHUNK_SAVER, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_SAVER, stopwatch));
-			LOG.debug("Chunk saved in {}", stopwatch);
+			double lastVal = MonHelper.stop(monitor);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_SAVER, lastVal));
+			LOG.debug("Chunk saved in {}", lastVal);
+			monitor(lastVal, dataChunk.getChunkSize());
 			return UploadChunkContainer.addMessageId(dataChunk, header[0]);
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);
@@ -112,6 +112,9 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		return UploadChunkContainer.EMPTY;
 	}
 
+	private void monitor(double elapsedMs, long chunkSize) {
+		MonHelper.add(MonHelper.IMAP_THROUGHPUT, ((double) chunkSize / elapsedMs) * THOUSAND);
+	}
 
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	private Folder getFolder(Store store, UploadChunkContainer ucc) throws MessagingException {

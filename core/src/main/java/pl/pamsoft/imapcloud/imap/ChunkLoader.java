@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.imap;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -30,12 +30,10 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkLoader.class);
 	private static final int FIRST_MESSAGE = 0;
 	private final GenericObjectPool<Store> connectionPool;
-	private final Statistics statistics;
 	private final PerformanceDataService performanceDataService;
 
-	public ChunkLoader(GenericObjectPool<Store> connectionPool, Statistics statistics, PerformanceDataService performanceDataService) {
+	public ChunkLoader(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService) {
 		this.connectionPool = connectionPool;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
 
@@ -45,7 +43,7 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 		try {
 			FileChunk fileChunk = dcc.getChunkToDownload();
 			LOG.info("Downloading chunk {} of {}", fileChunk.getChunkNumber(), fileChunk.getOwnerFile().getName());
-			Stopwatch stopwatch = Stopwatch.createStarted();
+			Monitor monitor = MonHelper.get(this);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileChunk);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
@@ -55,9 +53,9 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 			byte[] attachment = getAttachment(search[FIRST_MESSAGE]);
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
-			statistics.add(StatisticType.CHUNK_DOWNLOADER, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DOWNLOADER, stopwatch));
-			LOG.debug("Chunk downloaded in {}", stopwatch);
+			double lastVal = MonHelper.stop(monitor);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DOWNLOADER, lastVal));
+			LOG.debug("Chunk downloaded in {}", lastVal);
 			return DownloadChunkContainer.addData(dcc, attachment);
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);

@@ -13,7 +13,6 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkRecovery;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.recovery.FileRecovery;
 import pl.pamsoft.imapcloud.services.recovery.RCCtoRecoveredFileDtoConverter;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileReader;
@@ -62,9 +61,6 @@ public class RecoveryService extends AbstractBackgroundService {
 	private AccountRepository accountRepository;
 
 	@Autowired
-	private Statistics statistics;
-
-	@Autowired
 	private PerformanceDataService performanceDataService;
 
 	private String recoveriesFolder;
@@ -77,7 +73,7 @@ public class RecoveryService extends AbstractBackgroundService {
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);
 
-			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, statistics, performanceDataService);
+			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, performanceDataService);
 			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, recoveriesFolder);
 
 			Stream.of(new RecoveryChunkContainer(taskId, account))

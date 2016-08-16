@@ -38,7 +38,6 @@ public class TaskProgressRepository extends AbstractRepository<TaskProgress> {
 		return result;
 	}
 
-
 	@Override
 	public Function<Vertex, TaskProgress> getConverter() {
 		throw new RuntimeException("No way!");

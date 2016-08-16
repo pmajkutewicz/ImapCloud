@@ -1,11 +1,11 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -28,7 +28,6 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private UploadChunkContainer ucc;
 	private final PerformanceDataService performanceDataService;
 	private int fetchSize;
-	private Statistics statistics;
 	private int currentChunkNumber = 1;
 	private long chunkSizeCumulative = 0;
 
@@ -36,20 +35,18 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private int maxIncrease;
 	private int minFetchSize;
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, Statistics statistics, PerformanceDataService performanceDataService) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, PerformanceDataService performanceDataService) {
 		this.ucc = ucc;
 		this.fetchSize = fetchSize;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, Statistics statistics, PerformanceDataService performanceDataService) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, PerformanceDataService performanceDataService) {
 		this.ucc = ucc;
 		this.performanceDataService = performanceDataService;
 		this.minFetchSize = fetchSize - deviation;
 		this.maxIncrease = 2 * deviation;
 		this.variableChunksMode = true;
-		this.statistics = statistics;
 		generateNextFetchSize();
 	}
 
@@ -76,7 +73,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	@Override
 	public UploadChunkContainer next() {
 		try {
-			Stopwatch stopwatch = Stopwatch.createStarted();
+			Monitor monitor = MonHelper.get(this);
 			if (currentPosition + fetchSize > maxSize) {
 				this.fetchSize = Math.toIntExact(maxSize - currentPosition);
 			}
@@ -90,9 +87,9 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 			mapped.get(data);
 			chunkSizeCumulative += data.length;
 			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data.length, chunkSizeCumulative, data, currentChunkNumber++, !hasNext());
-			statistics.add(StatisticType.FILE_CHUNK_CREATOR, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_CHUNK_CREATOR, stopwatch));
-			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), stopwatch);
+			double lastVal = MonHelper.stop(monitor);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_CHUNK_CREATOR, lastVal));
+			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), lastVal);
 			return uploadChunkContainer;
 		} catch (IOException e) {
 			LOG.warn("Returning EMPTY from FileChunkIterator");

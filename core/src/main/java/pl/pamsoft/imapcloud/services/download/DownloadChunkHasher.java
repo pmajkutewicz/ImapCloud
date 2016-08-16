@@ -1,10 +1,10 @@
 package pl.pamsoft.imapcloud.services.download;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.common.ChunkHasher;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -16,22 +16,20 @@ public class DownloadChunkHasher implements Function<DownloadChunkContainer, Dow
 
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadChunkHasher.class);
 
-	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public DownloadChunkHasher(Statistics statistics, PerformanceDataService performanceDataService) {
-		this.statistics = statistics;
+	public DownloadChunkHasher(PerformanceDataService performanceDataService) {
 		this.performanceDataService = performanceDataService;
 	}
 
 	@Override
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
 		LOG.debug("Validating chunk hash {} of {}", dcc.getChunkToDownload().getChunkNumber(), dcc.getChunkToDownload().getOwnerFile().getName());
-		Stopwatch stopwatch = Stopwatch.createStarted();
+		Monitor monitor = MonHelper.get(this);
 		String hash = hash(dcc.getData());
-		statistics.add(StatisticType.CHUNK_HASH, stopwatch.stop());
-		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_HASH, stopwatch));
-		LOG.debug("Hash validated in {}", stopwatch);
+		double lastVal = MonHelper.stop(monitor);
+		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_HASH, lastVal));
+		LOG.debug("Hash validated in {}", lastVal);
 		return DownloadChunkContainer.addChunkHash(dcc, hash);
 	}
 }

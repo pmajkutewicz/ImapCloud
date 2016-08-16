@@ -5,7 +5,6 @@ import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
@@ -25,13 +24,12 @@ public class DirectorySizeCalculatorTest {
 	private DirectorySizeCalculator directorySizeCalculator;
 
 	private FilesIOService filesIOService = mock(FilesIOService.class);
-	private Statistics statistics = mock(Statistics.class);
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 
 	@BeforeClass
 	public void setup() {
 		reset(filesIOService);
-		directorySizeCalculator = new DirectorySizeCalculator(filesIOService, statistics, performanceDataService);
+		directorySizeCalculator = new DirectorySizeCalculator(filesIOService, performanceDataService);
 		when(filesIOService.calculateDirSize(any(File.class))).thenCallRealMethod();
 	}
 

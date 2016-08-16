@@ -1,11 +1,11 @@
 package pl.pamsoft.imapcloud.services.download;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.common.FileHasher;
@@ -20,12 +20,10 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadFileHasher.class);
 
 	private FilesIOService filesIOService;
-	private Statistics statistics;
 	private PerformanceDataService performanceDataService;
 
-	public DownloadFileHasher(FilesIOService filesIOService, Statistics statistics, PerformanceDataService performanceDataService) {
+	public DownloadFileHasher(FilesIOService filesIOService, PerformanceDataService performanceDataService) {
 		this.filesIOService = filesIOService;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
 
@@ -34,12 +32,12 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
 		if (dcc.getChunkToDownload().isLastChunk()) {
 			LOG.debug("Hashing file {}", dcc.getChunkToDownload().getOwnerFile().getName());
-			Stopwatch stopwatch = Stopwatch.createStarted();
+			Monitor monitor = MonHelper.get(this);
 			try {
 				String hash = hash(DestFileUtils.generateFilePath(dcc).toFile());
-				statistics.add(StatisticType.FILE_HASH, stopwatch.stop());
-				performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, stopwatch));
-				LOG.debug("File hash generated in {}", stopwatch);
+				double lastVal = MonHelper.stop(monitor);
+				performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, lastVal));
+				LOG.debug("File hash generated in {}", lastVal);
 				return DownloadChunkContainer.addFileHash(dcc, hash);
 			} catch (IOException ex) {
 				LOG.error(String.format("Can't calculate hash for file: %s", dcc.getChunkToDownload().getOwnerFile().getName()), ex);

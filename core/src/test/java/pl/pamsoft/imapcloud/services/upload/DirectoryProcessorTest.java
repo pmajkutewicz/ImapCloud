@@ -3,7 +3,6 @@ package pl.pamsoft.imapcloud.services.upload;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -16,19 +15,18 @@ import java.util.stream.Stream;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 public class DirectoryProcessorTest {
 
 	private DirectoryProcessor directoryProcessor;
 
 	private FilesIOService filesService = mock(FilesIOService.class);
-	private Statistics statistics = mock(Statistics.class);
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 
 	@BeforeClass
 	public void setup(){
-		directoryProcessor = new DirectoryProcessor(filesService, statistics, performanceDataService);
+		directoryProcessor = new DirectoryProcessor(filesService, performanceDataService);
 	}
 
 	@Test

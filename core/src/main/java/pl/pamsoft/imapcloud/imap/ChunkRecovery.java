@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.imap;
 
-import com.google.common.base.Stopwatch;
+import com.jamonapi.Monitor;
 import com.sun.mail.imap.IMAPFolder.FetchProfileItem;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.joda.time.DateTime;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.mbeans.Statistics;
+import pl.pamsoft.imapcloud.monitoring.MonHelper;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -32,15 +32,13 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkRecovery.class);
 	private final GenericObjectPool<Store> connectionPool;
-	private final Statistics statistics;
 	private final PerformanceDataService performanceDataService;
 
 	private final Map<String, File> fileMap = new HashMap<>();
 	private final Map<String, List<FileChunk>> fileChunkMap = new HashMap<>();
 
-	public ChunkRecovery(GenericObjectPool<Store> connectionPool, Statistics statistics, PerformanceDataService performanceDataService) {
+	public ChunkRecovery(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService) {
 		this.connectionPool = connectionPool;
-		this.statistics = statistics;
 		this.performanceDataService = performanceDataService;
 	}
 
@@ -49,7 +47,7 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 		Store store = null;
 		try {
 			LOG.info("Recovering chunks");
-			Stopwatch stopwatch = Stopwatch.createStarted();
+			Monitor monitor = MonHelper.get(this);
 			store = connectionPool.borrowObject();
 			Folder mainFolder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME);
 			Folder[] list = mainFolder.list();
@@ -57,9 +55,9 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 				processFolder(folder);
 			}
 			determineSizeAndCompleteness();
-			statistics.add(StatisticType.CHUNK_RECOVERY, stopwatch.stop());
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_RECOVERY, stopwatch));
-			LOG.debug("Recovered chunks in {}", stopwatch);
+			double lastVal = MonHelper.stop(monitor);
+			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_RECOVERY, lastVal));
+			LOG.debug("Recovered chunks in {}", lastVal);
 			return RecoveryChunkContainer.addRecoveredFilesData(rcc, fileMap, fileChunkMap);
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);
