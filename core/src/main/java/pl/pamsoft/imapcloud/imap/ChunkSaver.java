@@ -77,7 +77,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 		Store store = null;
 		try {
 			LOG.info("Uploading chunk {} of {}, retry: {}", dataChunk.getChunkNumber(), dataChunk.getFileDto().getName(), retryNumber);
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.UL_CHUNK_SAVER);
 			store = connectionPool.borrowObject();
 			printPoolStats(connectionPool);
 			Folder destFolder = getFolder(store, dataChunk);

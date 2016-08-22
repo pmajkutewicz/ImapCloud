@@ -47,7 +47,7 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 		Store store = null;
 		try {
 			LOG.info("Recovering chunks");
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.RE_CHUNK_RECOVERY);
 			store = connectionPool.borrowObject();
 			Folder mainFolder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME);
 			Folder[] list = mainFolder.list();

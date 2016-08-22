@@ -73,7 +73,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	@Override
 	public UploadChunkContainer next() {
 		try {
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.UL_FILE_CHUNK_CREATOR);
 			if (currentPosition + fetchSize > maxSize) {
 				this.fetchSize = Math.toIntExact(maxSize - currentPosition);
 			}

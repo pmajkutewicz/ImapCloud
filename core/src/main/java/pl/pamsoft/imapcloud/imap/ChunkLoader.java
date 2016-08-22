@@ -43,7 +43,7 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 		try {
 			FileChunk fileChunk = dcc.getChunkToDownload();
 			LOG.info("Downloading chunk {} of {}", fileChunk.getChunkNumber(), fileChunk.getOwnerFile().getName());
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.DL_CHUNK_LOADER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileChunk);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);

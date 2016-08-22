@@ -35,7 +35,7 @@ public class FileDeleter implements Function<File, Boolean> {
 		Store store = null;
 		try {
 			LOG.info("Deleting file {}", fileToDelete.getName());
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.DE_FILE_DELETER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileToDelete);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);

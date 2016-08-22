@@ -33,7 +33,7 @@ public class ChunkEncrypter implements Function<UploadChunkContainer, UploadChun
 	public UploadChunkContainer apply(UploadChunkContainer uploadChunkContainer) {
 		LOG.debug("Encrypting chunk {} of {}", uploadChunkContainer.getChunkNumber(), uploadChunkContainer.getFileDto().getName());
 		try {
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.UL_CHUNK_ENCRYPTER);
 			byte[] encrypted = cs.encrypt(encryptingCipher, uploadChunkContainer.getData());
 			double lastVal = MonHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_ENCRYPTER, lastVal));

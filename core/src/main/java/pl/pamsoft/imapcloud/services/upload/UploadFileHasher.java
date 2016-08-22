@@ -31,7 +31,7 @@ public class UploadFileHasher implements Function<UploadChunkContainer, UploadCh
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
 		LOG.debug("Hashing file {}", chunk.getFileDto().getName());
-		Monitor monitor = MonHelper.get(this);
+		Monitor monitor = MonHelper.start(MonHelper.UL_FILE_HASHER);
 		try {
 			String hash = hash(filesIOService.getFile(chunk.getFileDto()));
 			double lastVal = MonHelper.stop(monitor);

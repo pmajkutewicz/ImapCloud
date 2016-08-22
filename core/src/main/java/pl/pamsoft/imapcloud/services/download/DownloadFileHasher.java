@@ -32,7 +32,7 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
 		if (dcc.getChunkToDownload().isLastChunk()) {
 			LOG.debug("Hashing file {}", dcc.getChunkToDownload().getOwnerFile().getName());
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.DL_FILE_HASHER);
 			try {
 				String hash = hash(DestFileUtils.generateFilePath(dcc).toFile());
 				double lastVal = MonHelper.stop(monitor);

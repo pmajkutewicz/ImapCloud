@@ -56,7 +56,7 @@ public class RecoveryRestController {
 	public ResponseEntity<? extends AbstractResponse> getResults() {
 		Map<String, List<RecoveredFileDto>> results = recoveryService.getResults();
 
-		// get ids of recovered files
+		// start ids of recovered files
 		Set<String> recoveredFilesIds = results.values()
 			.stream().flatMap(Collection::stream).map(RecoveredFileDto::getFileUniqueId).collect(toSet());
 

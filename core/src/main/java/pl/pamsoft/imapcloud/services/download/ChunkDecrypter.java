@@ -34,7 +34,7 @@ public class ChunkDecrypter implements Function<DownloadChunkContainer, Download
 		String fileName = dcc.getChunkToDownload().getOwnerFile().getName();
 		LOG.debug("Decrypting chunk {} of {}", dcc.getChunkToDownload().getChunkNumber(), fileName);
 		try {
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.DL_CHUNK_DECRYPTER);
 			byte[] decrypted = cs.decrypt(decryptingCipher, dcc.getData());
 			double lastVal = MonHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DECRYPTER, lastVal));

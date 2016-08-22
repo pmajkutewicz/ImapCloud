@@ -28,7 +28,7 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 	@Override
 	public Long apply(List<FileDto> fileDtos) {
 		long result = 0;
-		Monitor monitor = MonHelper.get(this);
+		Monitor monitor = MonHelper.start(MonHelper.UL_DIRECTORY_SIZE_CALC);
 		for (FileDto fileDto : fileDtos) {
 			if (FileDto.FileType.DIRECTORY == fileDto.getType()) {
 				long dirSize = filesIOService.calculateDirSize(filesIOService.getFile(fileDto));

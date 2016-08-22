@@ -32,7 +32,7 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 		Store store = null;
 		try {
 			LOG.info("Verifying chunk {}", fileChunk.getFileChunkUniqueId());
-			Monitor monitor = MonHelper.get(this);
+			Monitor monitor = MonHelper.start(MonHelper.VR_CHUNK_VERIFIER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileChunk);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);

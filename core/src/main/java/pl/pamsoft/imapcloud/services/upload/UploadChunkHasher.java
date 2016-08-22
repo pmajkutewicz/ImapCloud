@@ -25,7 +25,7 @@ public class UploadChunkHasher implements Function<UploadChunkContainer, UploadC
 	@Override
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
 		LOG.debug("Hashing chunk {} of {}", chunk.getChunkNumber(), chunk.getFileDto().getName());
-		Monitor monitor = MonHelper.get(this);
+		Monitor monitor = MonHelper.start(MonHelper.UL_CHUNK_HASHER);
 		String hash = hash(chunk.getData());
 		double lastVal = MonHelper.stop(monitor);
 		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_HASH, lastVal));

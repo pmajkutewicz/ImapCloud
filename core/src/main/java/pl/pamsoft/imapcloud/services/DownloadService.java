@@ -72,7 +72,7 @@ public class DownloadService extends AbstractBackgroundService {
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
-				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver();
+				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver(performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, performanceDataService);
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
 

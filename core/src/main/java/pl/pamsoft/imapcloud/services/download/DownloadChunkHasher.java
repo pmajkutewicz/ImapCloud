@@ -25,7 +25,7 @@ public class DownloadChunkHasher implements Function<DownloadChunkContainer, Dow
 	@Override
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
 		LOG.debug("Validating chunk hash {} of {}", dcc.getChunkToDownload().getChunkNumber(), dcc.getChunkToDownload().getOwnerFile().getName());
-		Monitor monitor = MonHelper.get(this);
+		Monitor monitor = MonHelper.start(MonHelper.DL_CHUNK_HASHER);
 		String hash = hash(dcc.getData());
 		double lastVal = MonHelper.stop(monitor);
 		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_HASH, lastVal));
