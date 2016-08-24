@@ -9,6 +9,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -34,10 +35,11 @@ public class UploadFileHasherTest {
 	private FileDto fileDto = TestUtils.mockFileDto();
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
+	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
 	public void setup() throws NoSuchAlgorithmException {
-		uploadFileHasher = new UploadFileHasher(filesIOService, performanceDataService);
+		uploadFileHasher = new UploadFileHasher(filesIOService, performanceDataService, monitoringHelper);
 	}
 
 	@Test

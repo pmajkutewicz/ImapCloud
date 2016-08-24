@@ -5,7 +5,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.common.FileHasher;
@@ -21,20 +22,22 @@ public class UploadFileHasher implements Function<UploadChunkContainer, UploadCh
 
 	private FilesIOService filesIOService;
 	private PerformanceDataService performanceDataService;
+	private MonitoringHelper monitoringHelper;
 
-	public UploadFileHasher(FilesIOService filesIOService, PerformanceDataService performanceDataService) {
+	public UploadFileHasher(FilesIOService filesIOService, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.filesIOService = filesIOService;
 		this.performanceDataService = performanceDataService;
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	public UploadChunkContainer apply(UploadChunkContainer chunk) {
 		LOG.debug("Hashing file {}", chunk.getFileDto().getName());
-		Monitor monitor = MonHelper.start(MonHelper.UL_FILE_HASHER);
+		Monitor monitor = monitoringHelper.start(Keys.UL_FILE_HASHER);
 		try {
 			String hash = hash(filesIOService.getFile(chunk.getFileDto()));
-			double lastVal = MonHelper.stop(monitor);
+			double lastVal = monitoringHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, lastVal));
 			LOG.debug("File hash generated in {}", lastVal);
 			return UploadChunkContainer.addFileHash(chunk, hash);

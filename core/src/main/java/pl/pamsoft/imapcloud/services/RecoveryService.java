@@ -13,6 +13,7 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkRecovery;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.recovery.FileRecovery;
 import pl.pamsoft.imapcloud.services.recovery.RCCtoRecoveredFileDtoConverter;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileReader;
@@ -63,6 +64,9 @@ public class RecoveryService extends AbstractBackgroundService {
 	@Autowired
 	private PerformanceDataService performanceDataService;
 
+	@Autowired
+	private MonitoringHelper monitoringHelper;
+
 	private String recoveriesFolder;
 
 	public boolean recover(AccountDto selectedAccount) {
@@ -73,7 +77,7 @@ public class RecoveryService extends AbstractBackgroundService {
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);
 
-			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, performanceDataService);
+			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, performanceDataService, monitoringHelper);
 			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, recoveriesFolder);
 
 			Stream.of(new RecoveryChunkContainer(taskId, account))
@@ -129,6 +133,11 @@ public class RecoveryService extends AbstractBackgroundService {
 	@Override
 	String getNameFormat() {
 		return "RecoveryTask-%d";
+	}
+
+	@Override
+	MonitoringHelper getMonitoringHelper() {
+		return monitoringHelper;
 	}
 
 	@Value("${ic.recoveries.folder}")

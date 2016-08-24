@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -33,13 +34,15 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkRecovery.class);
 	private final GenericObjectPool<Store> connectionPool;
 	private final PerformanceDataService performanceDataService;
+	private MonitoringHelper monitoringHelper;
 
 	private final Map<String, File> fileMap = new HashMap<>();
 	private final Map<String, List<FileChunk>> fileChunkMap = new HashMap<>();
 
-	public ChunkRecovery(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService) {
+	public ChunkRecovery(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
 		this.performanceDataService = performanceDataService;
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
@@ -47,7 +50,7 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 		Store store = null;
 		try {
 			LOG.info("Recovering chunks");
-			Monitor monitor = MonHelper.start(MonHelper.RE_CHUNK_RECOVERY);
+			Monitor monitor = monitoringHelper.start(Keys.RE_CHUNK_RECOVERY);
 			store = connectionPool.borrowObject();
 			Folder mainFolder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME);
 			Folder[] list = mainFolder.list();
@@ -55,7 +58,7 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 				processFolder(folder);
 			}
 			determineSizeAndCompleteness();
-			double lastVal = MonHelper.stop(monitor);
+			double lastVal = monitoringHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_RECOVERY, lastVal));
 			LOG.debug("Recovered chunks in {}", lastVal);
 			return RecoveryChunkContainer.addRecoveredFilesData(rcc, fileMap, fileChunkMap);

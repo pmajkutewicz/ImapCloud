@@ -5,7 +5,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -62,8 +63,8 @@ abstract class AbstractBackgroundService {
 	}
 
 	Map<String, Future<?>> getTaskMap() {
-		MonHelper.add(MonHelper.EXECUTOR_ACTIVE, executor.getActiveCount());
-		MonHelper.add(MonHelper.EXECUTOR_QUEUE, executor.getQueue().size());
+		getMonitoringHelper().add(Keys.EXECUTOR_ACTIVE, executor.getActiveCount());
+		getMonitoringHelper().add(Keys.EXECUTOR_QUEUE, executor.getQueue().size());
 		return taskMap;
 	}
 
@@ -74,4 +75,6 @@ abstract class AbstractBackgroundService {
 	abstract int getMaxTasks();
 
 	abstract String getNameFormat();
+
+	abstract MonitoringHelper getMonitoringHelper();
 }

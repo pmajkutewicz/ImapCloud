@@ -8,7 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -31,10 +32,12 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 	private static final int FIRST_MESSAGE = 0;
 	private final GenericObjectPool<Store> connectionPool;
 	private final PerformanceDataService performanceDataService;
+	private MonitoringHelper monitoringHelper;
 
-	public ChunkLoader(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService) {
+	public ChunkLoader(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
 		this.performanceDataService = performanceDataService;
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
@@ -43,7 +46,7 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 		try {
 			FileChunk fileChunk = dcc.getChunkToDownload();
 			LOG.info("Downloading chunk {} of {}", fileChunk.getChunkNumber(), fileChunk.getOwnerFile().getName());
-			Monitor monitor = MonHelper.start(MonHelper.DL_CHUNK_LOADER);
+			Monitor monitor = monitoringHelper.start(Keys.DL_CHUNK_LOADER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileChunk);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
@@ -53,7 +56,7 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 			byte[] attachment = getAttachment(search[FIRST_MESSAGE]);
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
-			double lastVal = MonHelper.stop(monitor);
+			double lastVal = monitoringHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DOWNLOADER, lastVal));
 			LOG.debug("Chunk downloaded in {}", lastVal);
 			return DownloadChunkContainer.addData(dcc, attachment);

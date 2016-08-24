@@ -7,7 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.File;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
@@ -24,10 +25,12 @@ public class FileDeleter implements Function<File, Boolean> {
 
 	private final GenericObjectPool<Store> connectionPool;
 	private final PerformanceDataService performanceDataService;
+	private MonitoringHelper monitoringHelper;
 
-	public FileDeleter(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService) {
+	public FileDeleter(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
 		this.performanceDataService = performanceDataService;
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
@@ -35,7 +38,7 @@ public class FileDeleter implements Function<File, Boolean> {
 		Store store = null;
 		try {
 			LOG.info("Deleting file {}", fileToDelete.getName());
-			Monitor monitor = MonHelper.start(MonHelper.DE_FILE_DELETER);
+			Monitor monitor = monitoringHelper.start(Keys.DE_FILE_DELETER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileToDelete);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
@@ -46,7 +49,7 @@ public class FileDeleter implements Function<File, Boolean> {
 				message.setFlag(Flags.Flag.DELETED, true);
 			}
 			folder.close(IMAPUtils.EXPUNGE);
-			double lastVal = MonHelper.stop(monitor);
+			double lastVal = monitoringHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_DELETER, lastVal));
 			LOG.debug("File deleted in {}", lastVal);
 			return Boolean.TRUE;

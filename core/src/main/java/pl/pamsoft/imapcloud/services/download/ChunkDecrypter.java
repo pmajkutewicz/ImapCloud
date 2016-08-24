@@ -7,7 +7,8 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -22,11 +23,13 @@ public class ChunkDecrypter implements Function<DownloadChunkContainer, Download
 	private CryptoService cs;
 	private final PerformanceDataService performanceDataService;
 	private PaddedBufferedBlockCipher decryptingCipher;
+	private MonitoringHelper monitoringHelper;
 
-	public ChunkDecrypter(CryptoService cryptoService, String key, PerformanceDataService performanceDataService) {
+	public ChunkDecrypter(CryptoService cryptoService, String key, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.cs = cryptoService;
 		this.performanceDataService = performanceDataService;
 		decryptingCipher = cs.getDecryptingCipher(ByteUtils.fromHexString(key));
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
@@ -34,9 +37,9 @@ public class ChunkDecrypter implements Function<DownloadChunkContainer, Download
 		String fileName = dcc.getChunkToDownload().getOwnerFile().getName();
 		LOG.debug("Decrypting chunk {} of {}", dcc.getChunkToDownload().getChunkNumber(), fileName);
 		try {
-			Monitor monitor = MonHelper.start(MonHelper.DL_CHUNK_DECRYPTER);
+			Monitor monitor = monitoringHelper.start(Keys.DL_CHUNK_DECRYPTER);
 			byte[] decrypted = cs.decrypt(decryptingCipher, dcc.getData());
-			double lastVal = MonHelper.stop(monitor);
+			double lastVal = monitoringHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DECRYPTER, lastVal));
 			LOG.debug("{} chunk decrypting in {} (size: {} -> {}",
 				fileName, monitor, decrypted.length, dcc.getData().length);

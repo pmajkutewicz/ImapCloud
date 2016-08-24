@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.imap;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import pl.pamsoft.imapcloud.entity.Account;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.ConnectionPoolService;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
@@ -16,7 +17,7 @@ public class ChunkRecoveryLiveTest {
 	private GenericObjectPool<Store> pool;
 
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
-
+	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	public void setup() {
 		Account a = new Account();
@@ -25,7 +26,7 @@ public class ChunkRecoveryLiveTest {
 		a.setImapServerAddress("imap.mail.yahoo.com");
 		a.setMaxConcurrentConnections(5);
 		pool = new ConnectionPoolService().getOrCreatePoolForAccount(a);
-		chunkRecovery = new ChunkRecovery(pool, performanceDataService);
+		chunkRecovery = new ChunkRecovery(pool, performanceDataService, monitoringHelper);
 	}
 
 	public void testLive() {

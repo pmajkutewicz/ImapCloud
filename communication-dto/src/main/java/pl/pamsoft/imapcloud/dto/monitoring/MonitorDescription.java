@@ -5,6 +5,8 @@ import pl.pamsoft.imapcloud.websocket.TaskType;
 
 public class MonitorDescription {
 
+	public static final MonitorDescription OTHER = new MonitorDescription(null, null);
+
 	private StatisticType statisticType;
 	private TaskType taskType;
 

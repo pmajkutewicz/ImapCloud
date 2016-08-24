@@ -6,7 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
@@ -21,10 +22,12 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 
 	private final GenericObjectPool<Store> connectionPool;
 	private final PerformanceDataService performanceDataService;
+	private MonitoringHelper monitoringHelper;
 
-	public ChunkVerifier(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService) {
+	public ChunkVerifier(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
 		this.performanceDataService = performanceDataService;
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
@@ -32,7 +35,7 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 		Store store = null;
 		try {
 			LOG.info("Verifying chunk {}", fileChunk.getFileChunkUniqueId());
-			Monitor monitor = MonHelper.start(MonHelper.VR_CHUNK_VERIFIER);
+			Monitor monitor = monitoringHelper.start(Keys.VR_CHUNK_VERIFIER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileChunk);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
@@ -42,7 +45,7 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 			boolean chunkExists = search.length == 1;
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
-			double lastVal = MonHelper.stop(monitor);
+			double lastVal = monitoringHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_VERIFIER, lastVal));
 			LOG.debug("Chunk verified in {}", lastVal);
 			return chunkExists;

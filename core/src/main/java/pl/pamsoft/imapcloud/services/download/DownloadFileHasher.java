@@ -5,7 +5,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.common.FileHasher;
@@ -21,10 +22,12 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 
 	private FilesIOService filesIOService;
 	private PerformanceDataService performanceDataService;
+	private MonitoringHelper monitoringHelper;
 
-	public DownloadFileHasher(FilesIOService filesIOService, PerformanceDataService performanceDataService) {
+	public DownloadFileHasher(FilesIOService filesIOService, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.filesIOService = filesIOService;
 		this.performanceDataService = performanceDataService;
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
@@ -32,10 +35,10 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
 		if (dcc.getChunkToDownload().isLastChunk()) {
 			LOG.debug("Hashing file {}", dcc.getChunkToDownload().getOwnerFile().getName());
-			Monitor monitor = MonHelper.start(MonHelper.DL_FILE_HASHER);
+			Monitor monitor = monitoringHelper.start(Keys.DL_FILE_HASHER);
 			try {
 				String hash = hash(DestFileUtils.generateFilePath(dcc).toFile());
-				double lastVal = MonHelper.stop(monitor);
+				double lastVal = monitoringHelper.stop(monitor);
 				performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_HASH, lastVal));
 				LOG.debug("File hash generated in {}", lastVal);
 				return DownloadChunkContainer.addFileHash(dcc, hash);

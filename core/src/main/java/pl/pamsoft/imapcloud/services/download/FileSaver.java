@@ -5,7 +5,8 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.common.StatisticType;
-import pl.pamsoft.imapcloud.monitoring.MonHelper;
+import pl.pamsoft.imapcloud.monitoring.Keys;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
@@ -21,21 +22,23 @@ public class FileSaver implements Function<DownloadChunkContainer, DownloadChunk
 	private static final Logger LOG = LoggerFactory.getLogger(FileSaver.class);
 
 	private PerformanceDataService performanceDataService;
+	private MonitoringHelper monitoringHelper;
 
-	public FileSaver(PerformanceDataService performanceDataService) {
+	public FileSaver(PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
 		this.performanceDataService = performanceDataService;
+		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
 	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
 		try {
 			LOG.debug("Appending chunk {} in {}", dcc.getChunkToDownload().getChunkNumber(), dcc.getDestinationDir().getName());
-			Monitor monitor = MonHelper.start(MonHelper.DL_CHINK_APPENDER);
+			Monitor monitor = monitoringHelper.start(Keys.DL_CHINK_APPENDER);
 			Path path = DestFileUtils.generateDirPath(dcc);
 			Path pathWithFile = DestFileUtils.generateFilePath(dcc);
 			createIfNecessary(path, pathWithFile);
 			Files.write(pathWithFile, dcc.getData(), StandardOpenOption.APPEND);
-			double lastVal = MonHelper.stop(monitor);
+			double lastVal = monitoringHelper.stop(monitor);
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_SAVER, lastVal));
 			LOG.debug("Chunk appended in {} ms", lastVal);
 		} catch (IOException e) {

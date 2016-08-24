@@ -14,6 +14,7 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.imap.ChunkLoader;
+import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.download.ChunkDecrypter;
 import pl.pamsoft.imapcloud.services.download.ChunkHashVerifier;
 import pl.pamsoft.imapcloud.services.download.DownloadChunkHasher;
@@ -54,6 +55,9 @@ public class DownloadService extends AbstractBackgroundService {
 	@Autowired
 	private PerformanceDataService performanceDataService;
 
+	@Autowired
+	private MonitoringHelper monitoringHelper;
+
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean download(UploadedFileDto fileToDownload, FileDto destDir) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
@@ -68,12 +72,12 @@ public class DownloadService extends AbstractBackgroundService {
 
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.containsKey(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, performanceDataService);
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), performanceDataService);
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, performanceDataService, monitoringHelper);
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), performanceDataService, monitoringHelper);
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(performanceDataService, monitoringHelper);
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
-				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver(performanceDataService);
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, performanceDataService);
+				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver(performanceDataService, monitoringHelper);
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, performanceDataService, monitoringHelper);
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
 
 				chunkToDownload.stream()
@@ -103,5 +107,10 @@ public class DownloadService extends AbstractBackgroundService {
 	@Override
 	String getNameFormat() {
 		return "DownloadTask-%d";
+	}
+
+	@Override
+	MonitoringHelper getMonitoringHelper() {
+		return monitoringHelper;
 	}
 }
