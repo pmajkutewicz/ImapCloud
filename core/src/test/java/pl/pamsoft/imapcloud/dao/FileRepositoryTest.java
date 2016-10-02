@@ -78,7 +78,7 @@ public class FileRepositoryTest {
 	@Test
 	public void shouldSaveFile() throws FileAlreadyExistsException {
 		//given
-		when(mockedIterator.hasNext()).thenReturn(false);
+		when(mockedIterator.hasNext()).thenReturn(Boolean.FALSE);
 
 		//when
 		File saved = fileRepository.save(exampleExistingFile);
@@ -90,7 +90,7 @@ public class FileRepositoryTest {
 	@Test(expectedExceptions = FileAlreadyExistsException.class)
 	public void shouldThrowExceptionWhenFileAlreadyExists() throws FileAlreadyExistsException {
 		//given
-		when(mockedIterator.hasNext()).thenReturn(true);
+		when(mockedIterator.hasNext()).thenReturn(Boolean.TRUE);
 
 		//when
 		fileRepository.save(exampleExistingFile);

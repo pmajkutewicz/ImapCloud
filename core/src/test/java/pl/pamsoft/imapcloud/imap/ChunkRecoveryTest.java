@@ -19,6 +19,7 @@ import javax.mail.Store;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +49,7 @@ public class ChunkRecoveryTest {
 	@Mock
 	private Folder mailICFolder;
 
-	private Random random = new Random();
+	private Random random = new SecureRandom();
 
 	@BeforeMethod
 	public void setup() throws Exception {

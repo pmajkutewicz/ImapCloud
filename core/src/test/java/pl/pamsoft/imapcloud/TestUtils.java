@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud;
 
 import pl.pamsoft.imapcloud.dto.FileDto;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import static org.mockito.Mockito.mock;
@@ -9,9 +10,11 @@ import static org.mockito.Mockito.when;
 
 public class TestUtils {
 
+	private static final Random RANDOM = new SecureRandom();
+
 	public static byte[] getRandomBytes(int size) {
 		byte[] in = new byte[size];
-		new Random().nextBytes(in);
+		RANDOM.nextBytes(in);
 		return in;
 	}
 

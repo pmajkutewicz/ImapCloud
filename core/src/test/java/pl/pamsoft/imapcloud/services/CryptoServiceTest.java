@@ -5,17 +5,19 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 
 public class CryptoServiceTest {
 
+	private Random random = new SecureRandom();
+
 	@Test
 	public void shouldEncryptDecryptDataUsingAES() throws IOException, InvalidCipherTextException {
 		byte[] key = new byte[256 / 8];
 		byte[] testData = new byte[50 * 1024 * 1024];
-		Random random = new Random();
 		random.nextBytes(key);
 		random.nextBytes(testData);
 
@@ -33,7 +35,6 @@ public class CryptoServiceTest {
 	public void shouldEncryptDecryptWithHex() throws IOException, InvalidCipherTextException {
 		byte[] key = new byte[256 / 8];
 		byte[] testData = new byte[50 * 1024 * 1024];
-		Random random = new Random();
 		random.nextBytes(key);
 		random.nextBytes(testData);
 

@@ -20,6 +20,7 @@ import org.testng.annotations.Test;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
@@ -35,7 +36,7 @@ public class JHMHashSpeedBenchmark {
 	private static final int SIZE_100MB = 100 * 1024 * 1024;
 	private MessageDigest md5;
 	private byte[] testData = new byte[SIZE_100MB];
-	private Random random = new Random();
+	private Random random = new SecureRandom();
 
 	@Setup(Level.Trial)
 	public void classSetup() throws NoSuchAlgorithmException {
