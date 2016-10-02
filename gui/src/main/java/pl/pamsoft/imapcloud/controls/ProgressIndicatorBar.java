@@ -35,7 +35,7 @@ public class ProgressIndicatorBar extends StackPane {
 	}
 
 	// synchronizes the progress indicated with the work done.
-	private final void syncProgress() {
+	private void syncProgress() {
 		text.setFill(Color.BLACK);
 		bar.setStyle("-fx-accent: lightblue;");
 		if (workDone == null || totalWork == 0) {
