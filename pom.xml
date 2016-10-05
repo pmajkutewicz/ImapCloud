@@ -65,6 +65,7 @@
 		<!-- 0.7.3, 0.7.4 and 0.7.5 don't works with sonar -->
 		<jacoco-maven-plugin.version>0.7.2.201409121644</jacoco-maven-plugin.version>
 		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+		<maven-pmd-plugin.version>3.6</maven-pmd-plugin.version>
 
 		<main.basedir>${project.basedir}</main.basedir>
 		<commons-pool2.version>2.4.2</commons-pool2.version>
@@ -439,6 +440,27 @@
 						</plugin>
 					</plugins>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>${maven-pmd-plugin.version}</version>
+				<configuration>
+					<failOnViolation>${maven-pmd-plugin.failOnViolation}</failOnViolation>
+					<failurePriority>3</failurePriority>
+					<printFailingErrors>true</printFailingErrors>
+					<rulesets>
+						<ruleset>${main.basedir}/other/pmd-lombok.xml</ruleset>
+					</rulesets>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+							<!--<goal>cpd-check</goal>-->
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
