@@ -6,12 +6,17 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
@@ -19,6 +24,8 @@ import java.util.Random;
 
 @Service
 public class CryptoService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(CryptoService.class);
 
 	private static final boolean ENCRYPT_MODE = true;
 	private static final boolean DECRYPT_MODE = false;
@@ -34,6 +41,11 @@ public class CryptoService {
 		random.nextBytes(key);
 		random.nextBytes(key);
 		return key;
+	}
+
+	public byte[] calcSha256(String passphrase) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		MessageDigest digest = MessageDigest.getInstance("SHA-256");
+		return digest.digest(passphrase.getBytes(StandardCharsets.UTF_8));
 	}
 
 	@SuppressFBWarnings("PREDICTABLE_RANDOM")
@@ -54,7 +66,12 @@ public class CryptoService {
 
 	private PaddedBufferedBlockCipher getCipher(byte[] key, boolean mode) {
 		PaddedBufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new AESEngine());
-		cipher.init(mode, new KeyParameter(key));
+		KeyParameter cipherParameters = new KeyParameter(key);
+		try {
+			cipher.init(mode, cipherParameters);
+		} catch (Exception e) {
+			LOG.error("Can't init cipher", e);
+		}
 		return cipher;
 	}
 

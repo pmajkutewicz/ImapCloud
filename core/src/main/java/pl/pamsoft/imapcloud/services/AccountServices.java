@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Collection;
@@ -25,11 +26,7 @@ import java.util.stream.Collectors;
 public class AccountServices {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccountServices.class);
-
-	@Autowired
 	private AccountRepository accountRepository;
-
-	@Autowired
 	private CryptoService cryptoService;
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
@@ -60,12 +57,18 @@ public class AccountServices {
 		}
 	}
 
-	private String getCryptoKey(CreateAccountRequest request) {
+	@VisibleForTesting
+	protected String getCryptoKey(CreateAccountRequest request) {
 		try {
 			if (Strings.isNullOrEmpty(request.getCryptoKey())) {
 				return ByteUtils.toHexString(cryptoService.generateKey());
 			} else {
-				return ByteUtils.toHexString(request.getCryptoKey().getBytes(StandardCharsets.UTF_8));
+				try {
+					return ByteUtils.toHexString(cryptoService.calcSha256(request.getCryptoKey()));
+				} catch (UnsupportedEncodingException e) {
+					LOG.error("Can't hash passphrase");
+					return ByteUtils.toHexString(cryptoService.generateKey());
+				}
 			}
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			LOG.error("Can't create encryption key.", e);
@@ -78,5 +81,15 @@ public class AccountServices {
 		return all.stream()
 			.map(toAccount)
 			.collect(Collectors.toList());
+	}
+
+	@Autowired
+	public void setAccountRepository(AccountRepository accountRepository) {
+		this.accountRepository = accountRepository;
+	}
+
+	@Autowired
+	public void setCryptoService(CryptoService cryptoService) {
+		this.cryptoService = cryptoService;
 	}
 }
