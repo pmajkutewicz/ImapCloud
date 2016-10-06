@@ -3,8 +3,11 @@ package pl.pamsoft.imapcloud.imap;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.json.JSONObject;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
@@ -25,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static java.util.stream.Collectors.toList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -123,6 +127,15 @@ public class ChunkRecoveryTest {
 
 			Message m = mock(Message.class);
 			when(m.getAllHeaders()).thenReturn(Collections.enumeration(headers));
+			ArgumentCaptor<String> headerCaptor = ArgumentCaptor.forClass(String.class);
+			when(m.getHeader(headerCaptor.capture())).thenAnswer(new Answer<String[]>() {
+				@Override
+				public String[] answer(InvocationOnMock invocationOnMock) throws Throwable {
+					return headers.stream()
+						.filter(h -> h.getName().equals(headerCaptor.getValue()))
+						.map(Header::getValue).collect(toList()).toArray(new String[1]);
+				}
+			});
 			when(m.getSize()).thenReturn(random.nextInt(MAX_CHUNK_SIZE));
 			messages.add(m);
 		}

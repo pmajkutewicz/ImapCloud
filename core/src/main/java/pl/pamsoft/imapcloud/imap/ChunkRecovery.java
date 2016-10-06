@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.imap;
 
 import com.jamonapi.Monitor;
 import com.sun.mail.imap.IMAPFolder.FetchProfileItem;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -17,17 +18,18 @@ import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
-import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryChunkContainer> {
 
@@ -35,6 +37,7 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 	private final GenericObjectPool<Store> connectionPool;
 	private final PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
+	private List<String> requiredHeaders;
 
 	private final Map<String, File> fileMap = new HashMap<>();
 	private final Map<String, List<FileChunk>> fileChunkMap = new HashMap<>();
@@ -43,6 +46,8 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 		this.connectionPool = connectionPool;
 		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
+		this.requiredHeaders = Stream.of(MessageHeaders.values()).map(MessageHeaders::toString).collect(toList());
+		this.requiredHeaders.add("Message-ID");
 	}
 
 	@Override
@@ -95,6 +100,9 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 		Message[] messages = folder.getMessages();
 		FetchProfile fetchProfile = new FetchProfile();
 		fetchProfile.add(FetchProfileItem.HEADERS);
+		fetchProfile.add(FetchProfileItem.ENVELOPE);
+		fetchProfile.add(FetchProfileItem.CONTENT_INFO);
+		requiredHeaders.forEach(fetchProfile::add);
 		folder.fetch(messages, fetchProfile);
 		processMessages(messages);
 		folder.close(IMAPUtils.NO_EXPUNGE);
@@ -123,13 +131,13 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 		}
 	}
 
+	@SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")
 	private Map<String, String> getHeaders(Message message) throws MessagingException {
 		Map<String, String> result = new HashMap<>();
-		Enumeration allHeaders = message.getAllHeaders();
-		while (allHeaders.hasMoreElements()) {
-			Header header = (Header) allHeaders.nextElement();
-			result.put(header.getName(), header.getValue());
-			LOG.trace("key: {}, value: {}", header.getName(), header.getValue());
+		for (String header: requiredHeaders) {
+			String value = message.getHeader(header)[0];
+			result.put(header, value);
+			LOG.trace("key: {}, value: {}", header, value);
 		}
 		return result;
 	}
