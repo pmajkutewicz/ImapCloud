@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.utils;
 
 import org.springframework.stereotype.Component;
+import pl.pamsoft.imapcloud.dto.GitRepositoryState;
 
 import java.io.IOException;
 import java.io.InputStream;

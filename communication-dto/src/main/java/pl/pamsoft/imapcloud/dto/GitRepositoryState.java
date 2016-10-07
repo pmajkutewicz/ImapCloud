@@ -1,10 +1,14 @@
-package pl.pamsoft.imapcloud.utils;
+package pl.pamsoft.imapcloud.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Map;
 
+@NoArgsConstructor
 @Getter
+@Setter
 public class GitRepositoryState {
 	private String tags;                    // =${git.tags} // comma separated tag names
 	private String branch;                  // =${git.branch}
@@ -52,5 +56,31 @@ public class GitRepositoryState {
 		this.buildTime = String.valueOf(properties.get("git.build.time"));
 		this.buildHost = String.valueOf(properties.get("git.build.host"));
 		this.buildVersion = String.valueOf(properties.get("git.build.version"));
+	}
+
+	public String prettyPrint() {
+		String newLine = System.getProperty("line.separator");
+		final StringBuilder sb = new StringBuilder();
+		sb.append("tags=").append(tags).append(newLine);
+		sb.append("branch=").append(branch).append(newLine);
+		sb.append("dirty=").append(dirty).append(newLine);
+		sb.append("remoteOriginUrl=").append(remoteOriginUrl).append(newLine);
+		sb.append("commitId=").append(commitId).append(newLine);
+		sb.append("commitIdAbbrev=").append(commitIdAbbrev).append(newLine);
+		sb.append("describe=").append(describe).append(newLine);
+		sb.append("describeShort=").append(describeShort).append(newLine);
+		sb.append("commitUserName=").append(commitUserName).append(newLine);
+		sb.append("commitUserEmail=").append(commitUserEmail).append(newLine);
+		sb.append("commitMessageFull=").append(commitMessageFull).append(newLine);
+		sb.append("commitMessageShort=").append(commitMessageShort).append(newLine);
+		sb.append("commitTime=").append(commitTime).append(newLine);
+		sb.append("closestTagName=").append(closestTagName).append(newLine);
+		sb.append("closestTagCommitCount=").append(closestTagCommitCount).append(newLine);
+		sb.append("buildUserName=").append(buildUserName).append(newLine);
+		sb.append("buildUserEmail=").append(buildUserEmail).append(newLine);
+		sb.append("buildTime=").append(buildTime).append(newLine);
+		sb.append("buildHost=").append(buildHost).append(newLine);
+		sb.append("buildVersion=").append(buildVersion).append(newLine);
+		return sb.toString();
 	}
 }
