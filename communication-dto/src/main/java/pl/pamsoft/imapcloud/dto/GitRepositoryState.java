@@ -13,7 +13,6 @@ public class GitRepositoryState {
 	private String tags;                    // =${git.tags} // comma separated tag names
 	private String branch;                  // =${git.branch}
 	private String dirty;                   // =${git.dirty}
-	private String remoteOriginUrl;         // =${git.remote.origin.url}
 
 	private String commitId;                // =${git.commit.id.full} OR ${git.commit.id}
 	private String commitIdAbbrev;          // =${git.commit.id.abbrev}
@@ -37,7 +36,6 @@ public class GitRepositoryState {
 		this.tags = String.valueOf(properties.get("git.tags"));
 		this.branch = String.valueOf(properties.get("git.branch"));
 		this.dirty = String.valueOf(properties.get("git.dirty"));
-		this.remoteOriginUrl = String.valueOf(properties.get("git.remote.origin.url"));
 
 		this.commitId = String.valueOf(properties.get("git.commit.id"));
 		this.commitIdAbbrev = String.valueOf(properties.get("git.commit.id.abbrev"));
@@ -64,7 +62,6 @@ public class GitRepositoryState {
 		sb.append("tags=").append(tags).append(newLine);
 		sb.append("branch=").append(branch).append(newLine);
 		sb.append("dirty=").append(dirty).append(newLine);
-		sb.append("remoteOriginUrl=").append(remoteOriginUrl).append(newLine);
 		sb.append("commitId=").append(commitId).append(newLine);
 		sb.append("commitIdAbbrev=").append(commitIdAbbrev).append(newLine);
 		sb.append("describe=").append(describe).append(newLine);
