@@ -49,7 +49,7 @@
 	<rule ref="rulesets/java/unnecessary.xml" />
 	<rule ref="rulesets/java/unusedcode.xml" />
 
-	<rule ref="rulesets/unusedcode.xml/Rule:UnusedPrivateField">
+	<rule ref="rulesets/java/unusedcode.xml/Rule:UnusedPrivateField">
 		<properties>
 			<property name="violationSuppressXPath"
 					  value="//MethodDeclaration[../Annotation/SingleMemberAnnotation[(Name/@Image='java.lang.SuppressWarnings') and (MemberValue/PrimaryExpression/PrimaryPrefix/Literal/@Image='all')]]" />
