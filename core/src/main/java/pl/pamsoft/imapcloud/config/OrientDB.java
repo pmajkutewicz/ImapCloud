@@ -113,11 +113,11 @@ public class OrientDB {
 		tx.shutdown();
 	}
 
-	private String createIndexName(Class cls, String field) {
+	private String createIndexName(Class<?> cls, String field) {
 		return String.format("%s_%s", cls.getSimpleName(), field);
 	}
 
-	private String createIndexName(Class cls, String... fields) {
+	private String createIndexName(Class<?> cls, String... fields) {
 		StringBuilder sb = new StringBuilder(cls.getSimpleName());
 		for (String field : fields) {
 			sb.append('_').append(field);

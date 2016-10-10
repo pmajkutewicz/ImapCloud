@@ -374,8 +374,19 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.5</version>
 				<configuration>
+					<fork>true</fork>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
+					<compilerArgs>
+						<arg>-Xlint:all</arg>
+						<arg>-Xlint:-processing</arg>
+						<arg>-Xlint:-serial</arg>
+						<arg>-Xlint:-unchecked</arg> <!-- TODO: remove and fix errors -->
+						<arg>-Xlint:-rawtypes</arg> <!-- TODO: remove and fix errors -->
+						<arg>-Werror</arg>
+					</compilerArgs>
 				</configuration>
 			</plugin>
 

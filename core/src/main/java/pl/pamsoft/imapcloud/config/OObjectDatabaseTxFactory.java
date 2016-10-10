@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.config;
 
 import com.orientechnologies.orient.core.entity.OEntityManager;
-import com.orientechnologies.orient.object.db.OObjectDatabasePool;
+import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,9 +22,12 @@ public class OObjectDatabaseTxFactory {
 	@Value("${spring.data.orient.password}")
 	private String password;
 
+	private OPartitionedDatabasePool pool;
+
 	@PostConstruct
 	public void config() {
-		OObjectDatabaseTx db = OObjectDatabasePool.global().acquire(url, username, password);
+		pool = new OPartitionedDatabasePool(url, username, password);
+		OObjectDatabaseTx db = new OObjectDatabaseTx(pool.acquire());
 		OEntityManager entityManager = db.getEntityManager();
 		entityManager.registerEntityClass(TaskProgress.class);
 		entityManager.registerEntityClass(FileProgress.class);
@@ -32,6 +35,6 @@ public class OObjectDatabaseTxFactory {
 
 
 	public OObjectDatabaseTx getObjectDB() {
-		return OObjectDatabasePool.global().acquire(url, username, password);
+		return new OObjectDatabaseTx(pool.acquire());
 	}
 }

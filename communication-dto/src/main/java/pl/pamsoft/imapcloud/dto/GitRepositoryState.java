@@ -32,7 +32,7 @@ public class GitRepositoryState {
 	private String buildHost;               // =${git.build.host}
 	private String buildVersion;             // =${git.build.version}
 
-	public GitRepositoryState(Map properties) {
+	public GitRepositoryState(Map<Object, Object> properties) {
 		this.tags = String.valueOf(properties.get("git.tags"));
 		this.branch = String.valueOf(properties.get("git.branch"));
 		this.dirty = String.valueOf(properties.get("git.dirty"));
