@@ -497,6 +497,7 @@
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<useFile>false</useFile>
 					<reportFormat>xml</reportFormat>
+					<parallel>classesAndMethods</parallel>
 				</configuration>
 				<executions>
 					<execution>
