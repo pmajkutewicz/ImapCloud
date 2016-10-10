@@ -1,6 +1,5 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.mockito.Mockito;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -90,11 +89,12 @@ public class FileChunkIteratorTest {
 		int fetchSize = 1024;
 		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), fetchSize, deviation, performanceDataService, monitoringHelper);
 		fileChunkIterator.process();
-		// last chunks can be shorter than deviation, so let say we have 20 tries
-		for (int i = 0; i < 20; i++) {
-			assertTrue(fileChunkIterator.hasNext());
-			int capacity = fileChunkIterator.next().getData().length;
-			assertTrue(capacity > fetchSize - deviation && capacity < fetchSize + deviation);
+		while (fileChunkIterator.hasNext()) {
+			UploadChunkContainer chunk = fileChunkIterator.next();
+			int capacity = chunk.getData().length;
+			if (!chunk.isLastChunk()) {
+				assertTrue(capacity >= fetchSize - deviation && capacity <= fetchSize + deviation);
+			}
 		}
 		deleteFile(filePath);
 	}
