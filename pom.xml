@@ -497,6 +497,7 @@
 					<useFile>false</useFile>
 					<reportFormat>xml</reportFormat>
 					<parallel>classesAndMethods</parallel>
+					<runOrder>random</runOrder>
 				</configuration>
 				<executions>
 					<execution>
