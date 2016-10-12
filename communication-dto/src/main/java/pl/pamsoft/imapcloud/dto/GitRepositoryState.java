@@ -1,14 +1,7 @@
 package pl.pamsoft.imapcloud.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.Map;
 
-@NoArgsConstructor
-@Getter
-@Setter
 public class GitRepositoryState {
 	private String tags;                    // =${git.tags} // comma separated tag names
 	private String branch;                  // =${git.branch}
@@ -56,6 +49,9 @@ public class GitRepositoryState {
 		this.buildVersion = String.valueOf(properties.get("git.build.version"));
 	}
 
+	public GitRepositoryState() {
+	}
+
 	public String prettyPrint() {
 		String newLine = System.getProperty("line.separator");
 		final StringBuilder sb = new StringBuilder();
@@ -79,5 +75,157 @@ public class GitRepositoryState {
 		sb.append("buildHost=").append(buildHost).append(newLine);
 		sb.append("buildVersion=").append(buildVersion).append(newLine);
 		return sb.toString();
+	}
+
+	public String getTags() {
+		return this.tags;
+	}
+
+	public String getBranch() {
+		return this.branch;
+	}
+
+	public String getDirty() {
+		return this.dirty;
+	}
+
+	public String getCommitId() {
+		return this.commitId;
+	}
+
+	public String getCommitIdAbbrev() {
+		return this.commitIdAbbrev;
+	}
+
+	public String getDescribe() {
+		return this.describe;
+	}
+
+	public String getDescribeShort() {
+		return this.describeShort;
+	}
+
+	public String getCommitUserName() {
+		return this.commitUserName;
+	}
+
+	public String getCommitUserEmail() {
+		return this.commitUserEmail;
+	}
+
+	public String getCommitMessageFull() {
+		return this.commitMessageFull;
+	}
+
+	public String getCommitMessageShort() {
+		return this.commitMessageShort;
+	}
+
+	public String getCommitTime() {
+		return this.commitTime;
+	}
+
+	public String getClosestTagName() {
+		return this.closestTagName;
+	}
+
+	public String getClosestTagCommitCount() {
+		return this.closestTagCommitCount;
+	}
+
+	public String getBuildUserName() {
+		return this.buildUserName;
+	}
+
+	public String getBuildUserEmail() {
+		return this.buildUserEmail;
+	}
+
+	public String getBuildTime() {
+		return this.buildTime;
+	}
+
+	public String getBuildHost() {
+		return this.buildHost;
+	}
+
+	public String getBuildVersion() {
+		return this.buildVersion;
+	}
+
+	public void setTags(String tags) {
+		this.tags = tags;
+	}
+
+	public void setBranch(String branch) {
+		this.branch = branch;
+	}
+
+	public void setDirty(String dirty) {
+		this.dirty = dirty;
+	}
+
+	public void setCommitId(String commitId) {
+		this.commitId = commitId;
+	}
+
+	public void setCommitIdAbbrev(String commitIdAbbrev) {
+		this.commitIdAbbrev = commitIdAbbrev;
+	}
+
+	public void setDescribe(String describe) {
+		this.describe = describe;
+	}
+
+	public void setDescribeShort(String describeShort) {
+		this.describeShort = describeShort;
+	}
+
+	public void setCommitUserName(String commitUserName) {
+		this.commitUserName = commitUserName;
+	}
+
+	public void setCommitUserEmail(String commitUserEmail) {
+		this.commitUserEmail = commitUserEmail;
+	}
+
+	public void setCommitMessageFull(String commitMessageFull) {
+		this.commitMessageFull = commitMessageFull;
+	}
+
+	public void setCommitMessageShort(String commitMessageShort) {
+		this.commitMessageShort = commitMessageShort;
+	}
+
+	public void setCommitTime(String commitTime) {
+		this.commitTime = commitTime;
+	}
+
+	public void setClosestTagName(String closestTagName) {
+		this.closestTagName = closestTagName;
+	}
+
+	public void setClosestTagCommitCount(String closestTagCommitCount) {
+		this.closestTagCommitCount = closestTagCommitCount;
+	}
+
+	public void setBuildUserName(String buildUserName) {
+		this.buildUserName = buildUserName;
+	}
+
+	public void setBuildUserEmail(String buildUserEmail) {
+		this.buildUserEmail = buildUserEmail;
+	}
+
+	public void setBuildTime(String buildTime) {
+		this.buildTime = buildTime;
+	}
+
+	public void setBuildHost(String buildHost) {
+		this.buildHost = buildHost;
+	}
+
+	public void setBuildVersion(String buildVersion) {
+		this.buildVersion = buildVersion;
 	}
 }

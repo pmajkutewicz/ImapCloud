@@ -25,6 +25,7 @@ import static pl.pamsoft.imapcloud.websocket.TaskType.RECOVERY;
 import static pl.pamsoft.imapcloud.websocket.TaskType.UPLOAD;
 import static pl.pamsoft.imapcloud.websocket.TaskType.VERIFY;
 
+@SuppressWarnings("PMD.TooManyStaticImports")
 @Component
 public class Keys {
 	public static final MonKey EXECUTOR_ACTIVE = new MonKeyImp("pl.pamsoft.imapcloud.services.AbstractBackgroundService.active", OTHER, "thread");

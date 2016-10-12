@@ -42,6 +42,7 @@ import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_NAME;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_SIZE;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_UNIQUE_ID;
 
+@SuppressWarnings("PMD.TooManyStaticImports")
 @Configuration
 public class OrientDB {
 

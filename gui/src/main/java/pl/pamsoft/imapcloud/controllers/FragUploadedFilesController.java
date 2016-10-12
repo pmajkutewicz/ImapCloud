@@ -7,8 +7,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 
@@ -19,8 +17,6 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 
 public class FragUploadedFilesController implements Initializable, Refreshable {
-
-	private static final Logger LOG = LoggerFactory.getLogger(FragUploadedFilesController.class);
 
 	@Inject
 	private UploadedFileRestClient uploadedFileRestClient;

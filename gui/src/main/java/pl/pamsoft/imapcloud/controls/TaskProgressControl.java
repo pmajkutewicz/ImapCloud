@@ -23,6 +23,7 @@ public class TaskProgressControl extends AbstractControl {
 	@FXML
 	private Label taskIdLabel;
 	@FXML
+	@SuppressWarnings("PMD.UnusedPrivateField")
 	private Label taskMessage;
 	@FXML
 	private ProgressIndicator overallProgress;

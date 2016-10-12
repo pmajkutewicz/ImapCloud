@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 
@@ -9,7 +8,6 @@ import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
 
 @Immutable
-@Getter
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class UploadChunkContainer {
 	public static final UploadChunkContainer EMPTY = new UploadChunkContainer(StringUtils.EMPTY, null);
@@ -94,5 +92,57 @@ public class UploadChunkContainer {
 
 	public String getFileChunkUniqueId() {
 		return String.format("%s.%04d", getFileUniqueId(), getChunkNumber());
+	}
+
+	public String getTaskId() {
+		return this.taskId;
+	}
+
+	public FileDto getFileDto() {
+		return this.fileDto;
+	}
+
+	public String getFileHash() {
+		return this.fileHash;
+	}
+
+	public String getSavedFileId() {
+		return this.savedFileId;
+	}
+
+	public String getFileUniqueId() {
+		return this.fileUniqueId;
+	}
+
+	public long getChunkSize() {
+		return this.chunkSize;
+	}
+
+	public long getCurrentFileChunkCumulativeSize() {
+		return this.currentFileChunkCumulativeSize;
+	}
+
+	public byte[] getData() {
+		return this.data;
+	}
+
+	public boolean isEncrypted() {
+		return this.encrypted;
+	}
+
+	public int getChunkNumber() {
+		return this.chunkNumber;
+	}
+
+	public boolean isLastChunk() {
+		return this.lastChunk;
+	}
+
+	public String getChunkHash() {
+		return this.chunkHash;
+	}
+
+	public String getMessageId() {
+		return this.messageId;
 	}
 }

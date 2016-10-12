@@ -7,6 +7,7 @@ public class ReadableSize {
 	private static final int KIB = 1024;
 	private static final String[] UNITS = new String[]{"B", "kiB", "MiB", "GiB", "TiB"};
 
+	@SuppressWarnings("Rule:OnlyOneReturn")
 	public static String getReadableFileSize(Long size) {
 		if (null == size || size <= 0) {
 			return "0";

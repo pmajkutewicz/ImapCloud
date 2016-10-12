@@ -35,6 +35,7 @@ public class UploadsController implements Initializable, Refreshable {
 	private FragFileListController embeddedFileListTableController;
 
 	@FXML
+	@SuppressWarnings("PMD.UnusedPrivateField")
 	private Parent embeddedFileListTable;
 
 	@FXML

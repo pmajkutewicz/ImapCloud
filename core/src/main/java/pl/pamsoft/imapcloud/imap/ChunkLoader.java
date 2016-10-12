@@ -75,6 +75,7 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 		return DownloadChunkContainer.EMPTY;
 	}
 
+	@SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop")
 	private byte[] getAttachment(Message message) throws IOException, MessagingException {
 		Multipart multipart = (Multipart) message.getContent();
 		for (int i = 0; i < multipart.getCount(); i++) {

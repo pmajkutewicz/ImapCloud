@@ -2,14 +2,8 @@ package pl.pamsoft.imapcloud.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import pl.pamsoft.imapcloud.utils.ReadableSize;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
 @JsonIgnoreProperties({"readableFileSize"})
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class AccountDto {
@@ -18,8 +12,50 @@ public class AccountDto {
 	private String cryptoKey;
 	private Long usedSpace;
 
+	public AccountDto(String id, String email, String cryptoKey, Long usedSpace) {
+		this.id = id;
+		this.email = email;
+		this.cryptoKey = cryptoKey;
+		this.usedSpace = usedSpace;
+	}
+
+	public AccountDto() {
+	}
+
 	// used as javafx property
 	public String getReadableFileSize() {
 		return ReadableSize.getReadableFileSize(usedSpace);
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getEmail() {
+		return this.email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getCryptoKey() {
+		return this.cryptoKey;
+	}
+
+	public void setCryptoKey(String cryptoKey) {
+		this.cryptoKey = cryptoKey;
+	}
+
+	public Long getUsedSpace() {
+		return this.usedSpace;
+	}
+
+	public void setUsedSpace(Long usedSpace) {
+		this.usedSpace = usedSpace;
 	}
 }

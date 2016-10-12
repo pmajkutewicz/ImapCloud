@@ -5,8 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
-import lombok.Getter;
-import lombok.Setter;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 
@@ -14,8 +12,6 @@ import javax.inject.Inject;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-@Getter
-@Setter
 public class FragAccountsTableController implements Initializable, Refreshable {
 
 	@Inject
@@ -43,5 +39,21 @@ public class FragAccountsTableController implements Initializable, Refreshable {
 	@Override
 	public Node getRoot() {
 		return accountsTable;
+	}
+
+	public AccountRestClient getAccountRestClient() {
+		return this.accountRestClient;
+	}
+
+	public void setAccountRestClient(AccountRestClient accountRestClient) {
+		this.accountRestClient = accountRestClient;
+	}
+
+	public TableView<AccountDto> getAccountsTable() {
+		return this.accountsTable;
+	}
+
+	public void setAccountsTable(TableView<AccountDto> accountsTable) {
+		this.accountsTable = accountsTable;
 	}
 }

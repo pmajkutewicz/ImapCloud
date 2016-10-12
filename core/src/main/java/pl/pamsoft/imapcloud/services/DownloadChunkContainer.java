@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -10,7 +9,6 @@ import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
 
 @Immutable
-@Getter
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class DownloadChunkContainer {
 	public static final DownloadChunkContainer EMPTY = new DownloadChunkContainer(StringUtils.EMPTY, null, null);
@@ -48,5 +46,29 @@ public class DownloadChunkContainer {
 
 	public static DownloadChunkContainer addFileHash(DownloadChunkContainer dcc, String fileHash) {
 		return new DownloadChunkContainer(dcc.getTaskId(), dcc.getChunkToDownload(), dcc.getDestinationDir(), dcc.getData(), dcc.getChunkHash(), fileHash);
+	}
+
+	public String getTaskId() {
+		return this.taskId;
+	}
+
+	public FileChunk getChunkToDownload() {
+		return this.chunkToDownload;
+	}
+
+	public FileDto getDestinationDir() {
+		return this.destinationDir;
+	}
+
+	public byte[] getData() {
+		return this.data;
+	}
+
+	public String getChunkHash() {
+		return this.chunkHash;
+	}
+
+	public String getFileHash() {
+		return this.fileHash;
 	}
 }

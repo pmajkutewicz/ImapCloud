@@ -2,8 +2,6 @@ package pl.pamsoft.imapcloud.services;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
@@ -22,8 +20,6 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressFBWarnings("PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS")
 abstract class AbstractBackgroundService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractBackgroundService.class);
 
 	static final int DEFAULT_MAX_TASKS = 10;
 	private static final int FIVETEEN = 15;

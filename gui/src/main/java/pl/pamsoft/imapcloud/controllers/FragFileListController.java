@@ -9,9 +9,6 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
@@ -25,8 +22,6 @@ import static javafx.scene.control.SelectionMode.MULTIPLE;
 
 public class FragFileListController implements Initializable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FragFileListController.class);
-
 	@Inject
 	private FilesRestClient filesRestClient;
 
@@ -36,7 +31,6 @@ public class FragFileListController implements Initializable {
 	@FXML
 	private TextField currentDir;
 
-	@Getter
 	@FXML
 	private TableView<FileDto> fileList;
 
@@ -83,5 +77,9 @@ public class FragFileListController implements Initializable {
 	private void updateUI(String directory) throws IOException {
 		currentDir.setText(directory);
 		filesRestClient.listDir(directory, data -> fileList.setItems(FXCollections.observableArrayList(data.getFiles())));
+	}
+
+	public TableView<FileDto> getFileList() {
+		return this.fileList;
 	}
 }

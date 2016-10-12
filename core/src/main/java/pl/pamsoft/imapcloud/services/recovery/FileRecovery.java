@@ -50,6 +50,7 @@ public class FileRecovery implements Function<RecoveryChunkContainer, RecoveryCh
 		return rcc;
 	}
 
+	@SuppressWarnings("PMD.EmptyCatchBlock")
 	private void recoverFile(String id, RecoveryChunkContainer rcc) throws IOException, InvalidCipherTextException {
 		PaddedBufferedBlockCipher key = cryptoService.getDecryptingCipher(fromHexString(rcc.getAccount().getCryptoKey()));
 		File file = decryptFile(key, rcc.getFileMap().get(id));

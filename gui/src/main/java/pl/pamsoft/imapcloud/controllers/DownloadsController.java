@@ -9,7 +9,6 @@ import javafx.scene.control.TreeTableView;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.rest.DownloadsRestClient;
-import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 
 import javax.inject.Inject;
 import java.net.URL;
@@ -21,9 +20,6 @@ public class DownloadsController implements Initializable, Refreshable {
 	@Inject
 	private DownloadsRestClient downloadsRestClient;
 
-	@Inject
-	private UploadedFileRestClient uploadedFileRestClient;
-
 	@FXML
 	private TreeTableView<UploadedFileDto> embeddedUploadedFilesTable;
 
@@ -31,6 +27,7 @@ public class DownloadsController implements Initializable, Refreshable {
 	private FragUploadedFilesController embeddedUploadedFilesTableController;
 
 	@FXML
+	@SuppressWarnings("PMD.UnusedPrivateField")
 	private Parent embeddedFileListTable;
 
 	@FXML

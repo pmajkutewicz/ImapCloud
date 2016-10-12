@@ -2,7 +2,6 @@ package pl.pamsoft.imapcloud.services;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 @Immutable
-@Getter
 public class RecoveryChunkContainer {
 	public static final RecoveryChunkContainer EMPTY = new RecoveryChunkContainer(null, null);
 
@@ -38,5 +36,21 @@ public class RecoveryChunkContainer {
 
 	public static RecoveryChunkContainer addRecoveredFilesData(RecoveryChunkContainer rcc, Map<String, File> fileMap, Map<String, List<FileChunk>> fileChunkMap) {
 		return new RecoveryChunkContainer(rcc.getTaskId(), rcc.getAccount(), fileMap, fileChunkMap);
+	}
+
+	public String getTaskId() {
+		return this.taskId;
+	}
+
+	public Account getAccount() {
+		return this.account;
+	}
+
+	public Map<String, File> getFileMap() {
+		return this.fileMap;
+	}
+
+	public Map<String, List<FileChunk>> getFileChunkMap() {
+		return this.fileChunkMap;
 	}
 }
