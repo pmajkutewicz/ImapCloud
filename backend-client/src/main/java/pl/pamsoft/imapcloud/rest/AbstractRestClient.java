@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Authenticator;
 import okhttp3.Callback;
+import okhttp3.ConnectionPool;
 import okhttp3.Credentials;
+import okhttp3.Dispatcher;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -18,10 +20,14 @@ abstract class AbstractRestClient {
 
 	private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json");
 	private static final int TIMEOUT = 5;
+	public static final int MAX_REQUESTS_DISPATCHER = 10;
+	public static final int MAX_IDLE_CONNECTIONS = 10;
+	public static final int KEEP_ALIVE_DURATION = 2;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final String host;
 	private final int port;
 	private final Authenticator authenticator;
+	private OkHttpClient client;
 
 	AbstractRestClient(String endpoint, String username, String pass) {
 		String[] end = endpoint.split(":");
@@ -75,11 +81,19 @@ abstract class AbstractRestClient {
 	}
 
 	private OkHttpClient getClient() {
-		return new OkHttpClient.Builder()
-			.authenticator(authenticator)
-			.connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-			.writeTimeout(TIMEOUT, TimeUnit.SECONDS)
-			.readTimeout(TIMEOUT, TimeUnit.SECONDS).build();
+		if (null == client) {
+			Dispatcher dispatcher = new Dispatcher();
+			ConnectionPool pool = new ConnectionPool(MAX_IDLE_CONNECTIONS, KEEP_ALIVE_DURATION, TimeUnit.MINUTES);
+			dispatcher.setMaxRequests(MAX_REQUESTS_DISPATCHER);
+			client = new OkHttpClient.Builder()
+				.authenticator(authenticator)
+				.connectionPool(pool)
+				.dispatcher(dispatcher)
+				.connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+				.writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+				.readTimeout(TIMEOUT, TimeUnit.SECONDS).build();
+		}
+		return client;
 	}
 
 	private Request.Builder getRequest() {
