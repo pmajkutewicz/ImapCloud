@@ -1,8 +1,11 @@
 package pl.pamsoft.imapcloud.monitoring;
 
+import com.google.common.collect.ImmutableList;
 import com.jamonapi.MonKey;
 import com.jamonapi.MonKeyImp;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static pl.pamsoft.imapcloud.common.StatisticType.CHUNK_DECRYPTER;
 import static pl.pamsoft.imapcloud.common.StatisticType.CHUNK_DOWNLOADER;
@@ -48,4 +51,10 @@ public class Keys {
 	public static final MonKey VR_CHUNK_VERIFIER = new MonKeyImp("pl.pamsoft.imapcloud.ChunkVerifier", desc(CHUNK_VERIFIER, VERIFY), MS);
 	public static final MonKey RE_CHUNK_RECOVERY = new MonKeyImp("pl.pamsoft.imapcloud.imap.ChunkRecovery", desc(CHUNK_RECOVERY, RECOVERY), MS);
 	public static final MonKey DE_FILE_DELETER = new MonKeyImp("pl.pamsoft.imapcloud.imap.FileDeleter", desc(FILE_DELETER, DELETE), MS);
+
+	public static List<MonKey> getAll() {
+		return ImmutableList.of(UL_DIRECTORY_SIZE_CALC, UL_DIRECTORY_PROCESSOR, UL_FILE_HASHER, UL_FILE_CHUNK_CREATOR,
+			UL_CHUNK_HASHER, UL_CHUNK_ENCRYPTER, UL_CHUNK_SAVER, DL_CHUNK_LOADER, DL_CHUNK_DECRYPTER, DL_CHUNK_HASHER,
+			DL_CHINK_APPENDER, DL_FILE_HASHER, VR_CHUNK_VERIFIER, RE_CHUNK_RECOVERY, DE_FILE_DELETER);
+	}
 }

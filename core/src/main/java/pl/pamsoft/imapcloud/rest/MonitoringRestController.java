@@ -10,9 +10,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.annotations.ApiOperation;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.dto.monitoring.EventData;
 import pl.pamsoft.imapcloud.dto.monitoring.MonitorData;
@@ -75,8 +75,8 @@ public class MonitoringRestController {
 	}
 
 	@ApiOperation("Returns all application monitors, with events after given date")
-	@RequestMapping(value = "filter/events/after/{eventsAfter}", method = RequestMethod.GET)
-	public MonitoringResponse getMonitorsAfter(@PathVariable("eventsAfter") long eventsAfter) throws JsonProcessingException {
+	@RequestMapping(value = "filter/events/after", method = RequestMethod.GET)
+	public MonitoringResponse getMonitorsAfter(@RequestParam("timestamp") long eventsAfter) throws JsonProcessingException {
 		long millis = new DateTime().getMillis();
 		List<MonitorData> data = monitoringService.getAllMonitors().stream().map(new Converter(eventsAfter)).collect(toList());
 		return new MonitoringResponse(millis, data);

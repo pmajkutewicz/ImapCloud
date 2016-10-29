@@ -28,4 +28,7 @@
 	<Tab id="statusTab" closable="false" text="%main.tab.status">
 		<fx:include fx:id="statusTabPage" source="tab_status.fxml"/>
 	</Tab>
+	<Tab id="statusTab" closable="false" text="%main.tab.monitoring">
+		<fx:include fx:id="monitoringTabPage" source="tab_monitors.fxml"/>
+	</Tab>
 </TabPane>

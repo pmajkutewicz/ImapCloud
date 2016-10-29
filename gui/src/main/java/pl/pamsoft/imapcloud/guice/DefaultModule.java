@@ -7,6 +7,7 @@ import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.DownloadsRestClient;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
 import pl.pamsoft.imapcloud.rest.GitStatusRestClient;
+import pl.pamsoft.imapcloud.rest.MonitoringRestClient;
 import pl.pamsoft.imapcloud.rest.RecoveryRestClient;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
@@ -83,6 +84,12 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	GitStatusRestClient getGitStatusRestClient() {
 		return new GitStatusRestClient(endpoint, username, password);
+	}
+
+	@Provides
+	@Singleton
+	MonitoringRestClient getMonitoringRestClient() {
+		return new MonitoringRestClient(endpoint, username, password);
 	}
 
 	@Provides

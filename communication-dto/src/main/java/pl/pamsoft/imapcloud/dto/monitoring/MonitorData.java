@@ -8,18 +8,18 @@ import java.util.List;
 public class MonitorData {
 	private double min, max, avg, total, hits;
 	private MonitorDescription monitorDescription;
-	private String monitorLabel;
+	private String monitorKey;
 	private String units;
 	private List<EventData> events;
 
-	public MonitorData(double min, double max, double avg, double total, double hits, MonitorDescription monitorDescription, String monitorLabel, String units, List<EventData> events) {
+	public MonitorData(double min, double max, double avg, double total, double hits, MonitorDescription monitorDescription, String monitorKey, String units, List<EventData> events) {
 		this.min = min;
 		this.max = max;
 		this.avg = avg;
 		this.total = total;
 		this.hits = hits;
 		this.monitorDescription = monitorDescription;
-		this.monitorLabel = monitorLabel;
+		this.monitorKey = monitorKey;
 		this.units = units;
 		this.events = events;
 	}
@@ -75,12 +75,12 @@ public class MonitorData {
 		this.monitorDescription = monitorDescription;
 	}
 
-	public String getMonitorLabel() {
-		return this.monitorLabel;
+	public String getMonitorKey() {
+		return this.monitorKey;
 	}
 
-	public void setMonitorLabel(String monitorLabel) {
-		this.monitorLabel = monitorLabel;
+	public void setMonitorKey(String monitorKey) {
+		this.monitorKey = monitorKey;
 	}
 
 	public String getUnits() {
@@ -97,5 +97,18 @@ public class MonitorData {
 
 	public void setEvents(List<EventData> events) {
 		this.events = events;
+	}
+
+	public double get(DataType type) {
+		switch (type) {
+			case MIN:
+				return getMin();
+			case MAX:
+				return getMax();
+			case AVG:
+				return getAvg();
+			default:
+				throw new RuntimeException("Argh!");
+		}
 	}
 }

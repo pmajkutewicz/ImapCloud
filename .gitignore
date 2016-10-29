@@ -1,6 +1,7 @@
 .imapcloud_db*
 */target
 *.log
+.nondex
 
 # Created by .ignore support plugin (hsz.mobi)
 ### JetBrains template

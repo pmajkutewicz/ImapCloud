@@ -1,8 +1,10 @@
 package pl.pamsoft.imapcloud.dto.monitoring;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
+@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class MonitorDescription {
 
 	public static final MonitorDescription OTHER = new MonitorDescription(null, null);
@@ -10,7 +12,10 @@ public class MonitorDescription {
 	private StatisticType statisticType;
 	private TaskType taskType;
 
-	private MonitorDescription(StatisticType statisticType, TaskType taskType) {
+	public MonitorDescription() {
+	}
+
+	public MonitorDescription(StatisticType statisticType, TaskType taskType) {
 		this.statisticType = statisticType;
 		this.taskType = taskType;
 	}
@@ -26,4 +31,5 @@ public class MonitorDescription {
 	public TaskType getTaskType() {
 		return taskType;
 	}
+
 }
