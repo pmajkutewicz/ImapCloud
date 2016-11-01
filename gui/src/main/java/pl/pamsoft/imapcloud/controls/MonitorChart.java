@@ -13,7 +13,6 @@ import pl.pamsoft.imapcloud.dto.monitoring.EventData;
 import pl.pamsoft.imapcloud.dto.monitoring.MonitorData;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.function.Function;
 public class MonitorChart extends AbstractControl {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MonitorChart.class);
-	private static final int MAX_DATA_POINTS = 10;
 
 	@FXML
 	private TitledPane titledPane;
