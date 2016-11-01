@@ -12,6 +12,9 @@ import pl.pamsoft.imapcloud.dto.monitoring.DataType;
 import pl.pamsoft.imapcloud.dto.monitoring.EventData;
 import pl.pamsoft.imapcloud.dto.monitoring.MonitorData;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +24,7 @@ import java.util.function.Function;
 public class MonitorChart extends AbstractControl {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MonitorChart.class);
-	//private static final int MAX_DATA_POINTS = 10;
+	private static final int MAX_DATA_POINTS = 10;
 
 	@FXML
 	private TitledPane titledPane;
@@ -46,10 +49,11 @@ public class MonitorChart extends AbstractControl {
 		titledPane.setText(id);
 	}
 
-	public void update(MonitorData monitorData, long monitoringTimestamp) {
+	public void update(MonitorData monitorData, long monitoringTimestamp, TemporalUnit cutOffUnit, int cutOffValue) {
 		String value = monitorData.getMonitorKey() + " " + counter.getAndIncrement();
 		titledPane.setText(value);
 
+		long limit = Instant.now().minus(cutOffValue, cutOffUnit).toEpochMilli();
 		for (DataType type : DataType.AGG_TYPES) {
 			XYChart.Series<Long, Number> series = seriesMap.computeIfAbsent(type, seriesGenerator);
 
@@ -57,12 +61,12 @@ public class MonitorChart extends AbstractControl {
 			LOG.debug("Added {} with X: {}, Y:{}", type, monitoringTimestamp, monitorData.get(type));
 			ObservableList<XYChart.Data<Long, Number>> data = series.getData();
 			data.add(entry);
-			//cleanUpDataSet(data);
+			cleanUpDataSet(data, limit);
 		}
-		addEvents(DataType.EVENT, monitorData.getEvents());
+		addEvents(DataType.EVENT, monitorData.getEvents(), limit);
 	}
 
-	private void addEvents(DataType type, List<EventData> eventDatas) {
+	private void addEvents(DataType type, List<EventData> eventDatas, long limit) {
 		XYChart.Series<Long, Number> series = seriesMap.computeIfAbsent(type, seriesGenerator);
 		for (EventData eventData : eventDatas) {
 			XYChart.Data<Long, Number> entry = new XYChart.Data<>(eventData.getTimestamp(), eventData.getValue());
@@ -70,13 +74,11 @@ public class MonitorChart extends AbstractControl {
 			data.add(entry);
 			LOG.debug("Added {} with X: {}, Y:{}", DataType.EVENT, eventData.getTimestamp(), eventData.getValue());
 		}
-		//cleanUpDataSet(series.getData());
+		cleanUpDataSet(series.getData(), limit);
 	}
 
-//	private void cleanUpDataSet(ObservableList<XYChart.Data<Long, Number>> data){
-//		if (data.size() > MAX_DATA_POINTS) {
-//			data.remove(0, data.size() - MAX_DATA_POINTS);
-//		}
-//	}
+	private void cleanUpDataSet(ObservableList<XYChart.Data<Long, Number>> data, long limit){
+		data.removeIf(i -> i.getXValue() < limit);
+	}
 
 }
