@@ -6,12 +6,11 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.72" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="pl.pamsoft.imapcloud.controllers.PerformanceController">
-	<HBox>
-		<ToggleButton fx:id="toggleButton" mnemonicParsing="false" onAction="#createToggleButton" text="%performance.button.connect"/>
+<VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.PerformanceController">
+	<HBox alignment="BASELINE_LEFT">
+		<ToggleButton fx:id="toggleButton" mnemonicParsing="false" onAction="#createToggleButton" text="%performance.button.connect" />
 	</HBox>
 	<ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
-		<VBox fx:id="graphsContainer" VBox.vgrow="ALWAYS"/>
+		<VBox fx:id="graphsContainer" VBox.vgrow="ALWAYS" />
 	</ScrollPane>
 </VBox>

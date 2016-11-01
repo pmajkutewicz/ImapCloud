@@ -10,20 +10,20 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
 <?import pl.pamsoft.imapcloud.formatters.CellTrueFalseImageFormatter?>
-<VBox fx:id="root" minWidth="600.0" prefHeight="400.0" xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.RecoveryController">
+
+<VBox fx:id="root" minWidth="600.0" prefHeight="400.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.RecoveryController">
 	<padding>
 		<Insets bottom="10" left="25" right="25" top="25" />
 	</padding>
-	<HBox prefWidth="600.0">
+	<HBox alignment="BASELINE_LEFT" prefWidth="600.0">
 		<ComboBox fx:id="accountsCombo" prefWidth="300.0" />
 		<Button mnemonicParsing="false" onAction="#startButtonClick" text="%recovery.button.start" />
       <padding>
          <Insets bottom="15.0" />
       </padding>
 	</HBox>
-	<HBox prefWidth="600.0">
+	<HBox alignment="BASELINE_LEFT" prefWidth="600.0">
 		<Label text="%recovery.label.available" />
 		<ComboBox fx:id="availableRecoveriesCombo" prefWidth="300.0" />
 	</HBox>
@@ -41,7 +41,7 @@
 			</TableColumn>
 			<TableColumn prefWidth="75.0" text="%recovery.table.column.file.completed">
 				<cellFactory>
-					<CellTrueFalseImageFormatter/>
+					<CellTrueFalseImageFormatter />
 				</cellFactory>
 				<cellValueFactory>
 					<PropertyValueFactory property="completed" />
@@ -54,7 +54,7 @@
 			</TableColumn>
 			<TableColumn prefWidth="75.0" text="%recovery.table.column.file.inDb">
 				<cellFactory>
-					<CellTrueFalseImageFormatter/>
+					<CellTrueFalseImageFormatter />
 				</cellFactory>
 				<cellValueFactory>
 					<PropertyValueFactory property="inDb" />
@@ -62,7 +62,7 @@
 			</TableColumn>
 			<TableColumn prefWidth="75.0" text="%recovery.table.column.file.completedInDb">
 				<cellFactory>
-					<CellTrueFalseImageFormatter/>
+					<CellTrueFalseImageFormatter />
 				</cellFactory>
 				<cellValueFactory>
 					<PropertyValueFactory property="completedInDb" />
