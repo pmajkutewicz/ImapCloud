@@ -15,6 +15,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 public class FragUploadedFilesController implements Initializable, Refreshable {
 
@@ -34,7 +35,7 @@ public class FragUploadedFilesController implements Initializable, Refreshable {
 
 	private TreeItem<UploadedFileDto> populate() {
 		Consumer<UploadedFileDto> builder = dto -> {
-			String[] pathSplitted = dto.getAbsolutePath().split(File.separator);
+			String[] pathSplitted = dto.getAbsolutePath().split(Pattern.quote(File.separator));
 			// +1 because returned value is already created... we need to create rest of them starting from next one
 			int deepestCreatedNode = findDeepestCreatedNode(pathSplitted)+1;
 			int pathSize = pathSplitted.length-1;
@@ -50,7 +51,7 @@ public class FragUploadedFilesController implements Initializable, Refreshable {
 
 		uploadedFileRestClient.getUploadedFiles(files -> {
 			cacheTable.clear();
-			files.getFiles().stream().forEach(builder);
+			files.getFiles().forEach(builder);
 		});
 		return cacheTable.get(0, "");
 	}

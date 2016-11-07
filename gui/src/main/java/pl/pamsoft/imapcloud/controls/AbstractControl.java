@@ -43,7 +43,7 @@ public abstract class AbstractControl extends Region {
 
 	@SuppressFBWarnings("UI_INHERITANCE_UNSAFE_GETRESOURCE")
 	private URL getViewURL() {
-		return this.getClass().getResource(this.getViewPath());
+		return AbstractControl.class.getResource(this.getViewPath());
 	}
 
 	@Override

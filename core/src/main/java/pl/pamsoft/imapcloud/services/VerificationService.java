@@ -33,7 +33,7 @@ public class VerificationService extends AbstractBackgroundService {
 		final String taskId = UUID.randomUUID().toString();
 		Future<?> task = getExecutor().submit(() -> {
 			Thread.currentThread().setName("VerificationTask-" + taskId);
-			fileChunks.stream()
+			fileChunks
 				.forEach(chunk -> {
 						GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());
 						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, performanceDataService, monitoringHelper);
