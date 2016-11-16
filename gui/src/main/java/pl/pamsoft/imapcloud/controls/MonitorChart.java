@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TitledPane;
 import org.slf4j.Logger;
@@ -60,6 +61,9 @@ public class MonitorChart extends AbstractControl {
 			ObservableList<XYChart.Data<Long, Number>> data = series.getData();
 			data.add(entry);
 			cleanUpDataSet(data, limit);
+			ValueAxis xAxis = (ValueAxis) chart.getXAxis();
+			xAxis.setLowerBound(data.get(0).getXValue());
+			xAxis.setUpperBound(data.get(data.size()-1).getXValue());
 		}
 		addEvents(DataType.EVENT, monitorData.getEvents(), limit);
 	}

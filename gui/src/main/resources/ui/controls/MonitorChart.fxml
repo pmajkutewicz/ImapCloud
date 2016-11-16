@@ -5,23 +5,24 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.VBox?>
 <?import pl.pamsoft.imapcloud.converters.DateConverter?>
-<TitledPane fx:id="titledPane" animated="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-			minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.101"
-			xmlns:fx="http://javafx.com/fxml/1">
+<TitledPane xmlns="http://javafx.com/javafx/8.0.101" xmlns:fx="http://javafx.com/fxml/1"
+			fx:id="titledPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+			minHeight="-Infinity" minWidth="-Infinity" expanded="false">
 
 	<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
 		  minWidth="-Infinity">
-		<LineChart fx:id="chart" createSymbols="false" maxHeight="450" prefHeight="450"
+		<LineChart fx:id="chart" createSymbols="false" maxHeight="450" prefHeight="450" animated="false"
 				   maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
 			<xAxis>
-				<NumberAxis minHeight="200.0" minWidth="200.0" side="BOTTOM" forceZeroInRange="false">
+				<NumberAxis minHeight="200.0" minWidth="200.0" side="BOTTOM" forceZeroInRange="false" tickUnit="2000"
+					autoRanging="false" tickLabelsVisible="true" tickMarkVisible="true" minorTickVisible="false">
 					<tickLabelFormatter>
 						<DateConverter />
 					</tickLabelFormatter>
 				</NumberAxis>
 			</xAxis>
 			<yAxis>
-				<NumberAxis side="LEFT"/>
+				<NumberAxis side="LEFT" forceZeroInRange="false"/>
 			</yAxis>
 		</LineChart>
 	</VBox>
