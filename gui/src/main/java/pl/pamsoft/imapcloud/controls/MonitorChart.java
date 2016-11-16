@@ -4,6 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ValueAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TitledPane;
@@ -24,6 +25,7 @@ import java.util.function.Function;
 public class MonitorChart extends AbstractControl {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MonitorChart.class);
+	private static final int NB_OF_TICKS = 10;
 
 	@FXML
 	private TitledPane titledPane;
@@ -34,6 +36,8 @@ public class MonitorChart extends AbstractControl {
 	private Map<DataType, XYChart.Series> seriesMap = new HashMap<>();
 
 	private AtomicInteger counter = new AtomicInteger(0);
+	private TemporalUnit cutOffUnitOld;
+	private int cutOffValueOld;
 
 	private Function<DataType, XYChart.Series<Long, Number>> seriesGenerator = seriesType -> {
 		XYChart.Series<Long, Number> series = new XYChart.Series<>();
@@ -61,11 +65,21 @@ public class MonitorChart extends AbstractControl {
 			ObservableList<XYChart.Data<Long, Number>> data = series.getData();
 			data.add(entry);
 			cleanUpDataSet(data, limit);
-			ValueAxis xAxis = (ValueAxis) chart.getXAxis();
+			NumberAxis xAxis = (NumberAxis) (ValueAxis) chart.getXAxis();
 			xAxis.setLowerBound(data.get(0).getXValue());
 			xAxis.setUpperBound(data.get(data.size()-1).getXValue());
+			updateTickUnitIfNeeded(cutOffUnit, cutOffValue, xAxis);
 		}
 		addEvents(DataType.EVENT, monitorData.getEvents(), limit);
+	}
+
+	private void updateTickUnitIfNeeded(TemporalUnit cutOffUnit, int cutOffValue, NumberAxis xAxis) {
+		if (!cutOffUnit.equals(cutOffUnitOld) || cutOffValue != cutOffValueOld) {
+			cutOffUnitOld = cutOffUnit;
+			cutOffValueOld =cutOffValue;
+			long newTickUnit = cutOffUnit.getDuration().multipliedBy(cutOffValue).dividedBy(NB_OF_TICKS).toMillis();
+			xAxis.setTickUnit(newTickUnit);
+		}
 	}
 
 	private void addEvents(DataType type, List<EventData> eventDatas, long limit) {
