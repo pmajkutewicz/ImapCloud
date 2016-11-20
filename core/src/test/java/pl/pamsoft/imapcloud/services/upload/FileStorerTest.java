@@ -1,7 +1,5 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.TestUtils;
@@ -10,12 +8,10 @@ import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.services.FileServices;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 
-import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -37,7 +33,7 @@ public class FileStorerTest {
 	private Consumer<UploadChunkContainer> broadcastTaskProgress = (Consumer<UploadChunkContainer>) mock(Consumer.class);
 
 	@BeforeClass
-	public void setup() {
+	public void init() {
 		fileStorer = new FileStorer(fileServices, account, updateProgress, broadcastTaskProgress);
 	}
 

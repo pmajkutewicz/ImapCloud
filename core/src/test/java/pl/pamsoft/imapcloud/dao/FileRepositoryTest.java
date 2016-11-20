@@ -5,11 +5,8 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.math.RandomUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.config.ODB;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
@@ -24,7 +21,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_ABSOLUTE_PATH;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_COMPLETED;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_HASH;
@@ -41,12 +37,10 @@ public class FileRepositoryTest {
 
 	private File exampleExistingFile;
 	private OrientVertex createdVertex = mock(OrientVertex.class);
-	private String[] keys;
-	private Object[] values;
 
 	@BeforeMethod
 	@SuppressWarnings("unchecked")
-	public void setup() {
+	public void init() {
 		String ownerId = randomAlphanumeric(2);
 		Account owner = new Account();
 		owner.setId(ownerId);
@@ -56,8 +50,8 @@ public class FileRepositoryTest {
 		exampleExistingFile.setOwnerAccount(owner);
 		exampleExistingFile.setCompleted(true);
 
-		keys = new String[] {FILE_ABSOLUTE_PATH, FILE_HASH};
-		values = new Object[] {exampleExistingFile.getAbsolutePath(), exampleExistingFile.getFileHash()};
+		String[] keys = new String[]{FILE_ABSOLUTE_PATH, FILE_HASH};
+		Object[] values = new Object[]{exampleExistingFile.getAbsolutePath(), exampleExistingFile.getFileHash()};
 
 		reset(db, graphNoTx, result, mockedIterator, createdVertex);
 		when(db.getGraphDB()).thenReturn(graphNoTx);

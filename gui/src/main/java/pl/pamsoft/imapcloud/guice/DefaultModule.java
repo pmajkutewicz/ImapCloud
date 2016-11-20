@@ -34,67 +34,67 @@ public class DefaultModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	PerformanceDataClient getPerformanceDataClient() {
+	protected PerformanceDataClient getPerformanceDataClient() {
 		return new PerformanceDataClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	TaskProgressClient getTaskProgressClient() {
+	protected TaskProgressClient getTaskProgressClient() {
 		return new TaskProgressClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	AccountRestClient getAccountRestClient() {
+	protected AccountRestClient getAccountRestClient() {
 		return new AccountRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	FilesRestClient getFilesRestClient() {
+	protected FilesRestClient getFilesRestClient() {
 		return new FilesRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	UploadsRestClient getUploadRestClient() {
+	protected UploadsRestClient getUploadRestClient() {
 		return new UploadsRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	UploadedFileRestClient getUploadedFileRestClient() {
+	protected UploadedFileRestClient getUploadedFileRestClient() {
 		return new UploadedFileRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	DownloadsRestClient getDownloadRestClient() {
+	protected DownloadsRestClient getDownloadRestClient() {
 		return new DownloadsRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	RecoveryRestClient getRecoveryRestClient() {
+	protected RecoveryRestClient getRecoveryRestClient() {
 		return new RecoveryRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	GitStatusRestClient getGitStatusRestClient() {
+	protected GitStatusRestClient getGitStatusRestClient() {
 		return new GitStatusRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	MonitoringRestClient getMonitoringRestClient() {
+	protected MonitoringRestClient getMonitoringRestClient() {
 		return new MonitoringRestClient(endpoint, username, password);
 	}
 
 	@Provides
 	@Singleton
-	Utils getUtils() {
+	protected Utils getUtils() {
 		return new Utils();
 	}
 }

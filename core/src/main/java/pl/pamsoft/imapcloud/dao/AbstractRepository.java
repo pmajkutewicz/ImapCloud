@@ -19,7 +19,7 @@ public abstract class AbstractRepository<T> implements DefaultRepository<T> {
 		return db;
 	}
 
-	Iterator<Vertex> findByFileUniqueId(String fileUniqueId) {
+	protected Iterator<Vertex> findByFileUniqueId(String fileUniqueId) {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
 		Iterable<Vertex> storedFiles = graphDB.getVertices(GraphProperties.FILE_UNIQUE_ID, fileUniqueId);
 		return storedFiles.iterator();

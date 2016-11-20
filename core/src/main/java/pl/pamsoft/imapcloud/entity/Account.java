@@ -17,9 +17,6 @@ public class Account {
 	private Integer attachmentSizeMB;
 	private String cryptoKey;
 
-	public Account() {
-	}
-
 	public String getId() {
 		return this.id;
 	}

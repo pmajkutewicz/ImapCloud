@@ -100,17 +100,17 @@ public class DownloadService extends AbstractBackgroundService {
 		return true;
 	}
 
-	int getMaxTasks() {
+	protected int getMaxTasks() {
 		return DEFAULT_MAX_TASKS;
 	}
 
 	@Override
-	String getNameFormat() {
+	protected String getNameFormat() {
 		return "DownloadTask-%d";
 	}
 
 	@Override
-	MonitoringHelper getMonitoringHelper() {
+	protected MonitoringHelper getMonitoringHelper() {
 		return monitoringHelper;
 	}
 }

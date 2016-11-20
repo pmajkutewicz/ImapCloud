@@ -27,7 +27,7 @@ public class DirectoryProcessorTest {
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
-	public void setup(){
+	public void init(){
 		directoryProcessor = new DirectoryProcessor(filesService, performanceDataService, monitoringHelper);
 	}
 

@@ -9,8 +9,6 @@ import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -24,7 +22,7 @@ public class RecoveredFileChunksFileReaderTest {
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 
 	@BeforeMethod
-	public void setup() throws FileSystemException {
+	public void init() throws FileSystemException {
 		reset(filesIOService);
 		recoveredFileChunksFileReader = new RecoveredFileChunksFileReader(filesIOService);
 	}

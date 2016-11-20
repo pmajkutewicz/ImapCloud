@@ -26,8 +26,6 @@ import static org.testng.Assert.assertEquals;
 
 public class FileRecoveryTest {
 
-	private RecoveredFileChunksFileReader recoveredFileChunksFileReader;
-
 	private CryptoService cryptoService = new CryptoService();
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private FileRepository fileRepository = mock(FileRepository.class);
@@ -37,7 +35,7 @@ public class FileRecoveryTest {
 	private RecoveryChunkContainer exampleData;
 
 	@BeforeMethod
-	public void setup() throws IOException {
+	public void init() throws IOException {
 		reset(fileRepository);
 		reset(fileChunkRepository);
 		reset(filesIOService);
@@ -57,8 +55,7 @@ public class FileRecoveryTest {
 		when(accountRepository.getById(any())).thenReturn(exampleData.getAccount());
 		String fileKey = "9c2e15e4-6b01-408c-a039-5681df67be84";
 
-		RecoveryChunkContainer result =
-			new FileRecovery(singleton(fileKey), fileRepository, fileChunkRepository, accountRepository, cryptoService)
+		new FileRecovery(singleton(fileKey), fileRepository, fileChunkRepository, accountRepository, cryptoService)
 				.apply(exampleData);
 
 		verify(fileChunkRepository, times(exampleData.getFileChunkMap().get(fileKey).size())).save(any());

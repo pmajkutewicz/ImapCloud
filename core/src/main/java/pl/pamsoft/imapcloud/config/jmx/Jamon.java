@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 public class Jamon {
 
 	@PostConstruct
-	public void setup() {
+	public void init() {
 		JmxUtils.registerMbeans();
 	}
 }

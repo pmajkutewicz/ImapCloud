@@ -12,12 +12,12 @@ public class ChunkHashVerifier extends AbstractHashVerifier implements Function<
 	}
 
 	@Override
-	String getCurrentHash(DownloadChunkContainer dcc) {
+	protected String getCurrentHash(DownloadChunkContainer dcc) {
 		return dcc.getChunkHash();
 	}
 
 	@Override
-	String getExpectedHash(DownloadChunkContainer dcc) {
+	protected String getExpectedHash(DownloadChunkContainer dcc) {
 		return dcc.getChunkToDownload().getChunkHash();
 	}
 }

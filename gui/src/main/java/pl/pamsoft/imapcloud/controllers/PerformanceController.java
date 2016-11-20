@@ -36,7 +36,7 @@ public class PerformanceController implements Initializable {
 	private static final int NB_OF_TICKS = 3;
 
 	@Inject
-	PerformanceDataClient performanceDataClient;
+	private PerformanceDataClient performanceDataClient;
 
 	@FXML
 	private ToggleButton toggleButton;

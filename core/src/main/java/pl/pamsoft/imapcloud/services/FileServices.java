@@ -37,7 +37,7 @@ public class FileServices {
 		FileDto fileDto = uploadChunkContainer.getFileDto();
 		String uniqueId = UUID.randomUUID().toString();
 
-		pl.pamsoft.imapcloud.entity.File file = new pl.pamsoft.imapcloud.entity.File();
+		File file = new File();
 		file.setAbsolutePath(fileDto.getAbsolutePath());
 		file.setName(fileDto.getName());
 		file.setOwnerAccount(account);

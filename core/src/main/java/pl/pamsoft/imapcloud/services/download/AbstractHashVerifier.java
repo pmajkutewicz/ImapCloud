@@ -29,7 +29,7 @@ abstract class AbstractHashVerifier implements Function<DownloadChunkContainer, 
 		}
 	}
 
-	abstract String getCurrentHash(DownloadChunkContainer dcc);
+	protected abstract String getCurrentHash(DownloadChunkContainer dcc);
 
-	abstract String getExpectedHash(DownloadChunkContainer dcc);
+	protected abstract String getExpectedHash(DownloadChunkContainer dcc);
 }

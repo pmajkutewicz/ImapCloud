@@ -44,7 +44,7 @@ public class JHMHashSpeedBenchmark {
 	}
 
 	@Setup(Level.Invocation)
-	public void setup() throws NoSuchAlgorithmException {
+	public void init() throws NoSuchAlgorithmException {
 		random.nextBytes(testData);
 	}
 

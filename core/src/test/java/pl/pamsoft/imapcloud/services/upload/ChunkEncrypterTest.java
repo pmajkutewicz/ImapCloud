@@ -30,7 +30,7 @@ public class ChunkEncrypterTest {
 	private FileDto fileDto = TestUtils.mockFileDto();
 
 	@BeforeClass
-	public void setup() {
+	public void init() {
 		chunkEncrypter = new ChunkEncrypter(cryptoService, "exampleKey", performanceDataService, monitoringHelper);
 	}
 

@@ -80,11 +80,11 @@ public abstract class AbstractWebsocketClient<T> extends Endpoint implements Mes
 		}
 	}
 
-	List<T> getListeners() {
+	protected List<T> getListeners() {
 		return listeners;
 	}
 
-	ObjectMapper getMapper() {
+	protected ObjectMapper getMapper() {
 		return mapper;
 	}
 }

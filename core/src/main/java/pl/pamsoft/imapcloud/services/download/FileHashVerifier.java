@@ -20,12 +20,12 @@ public class FileHashVerifier extends AbstractHashVerifier implements Function<D
 	}
 
 	@Override
-	String getCurrentHash(DownloadChunkContainer dcc) {
+	protected String getCurrentHash(DownloadChunkContainer dcc) {
 		return dcc.getFileHash();
 	}
 
 	@Override
-	String getExpectedHash(DownloadChunkContainer dcc) {
+	protected String getExpectedHash(DownloadChunkContainer dcc) {
 		return dcc.getChunkToDownload().getOwnerFile().getFileHash();
 	}
 }

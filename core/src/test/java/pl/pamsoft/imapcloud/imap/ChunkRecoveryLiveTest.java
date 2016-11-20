@@ -14,22 +14,21 @@ import static org.mockito.Mockito.mock;
 public class ChunkRecoveryLiveTest {
 
 	private ChunkRecovery chunkRecovery;
-	private GenericObjectPool<Store> pool;
 
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
-	public void setup() {
+	public void init() {
 		Account a = new Account();
 		a.setLogin("adam.b92");
 		a.setPassword("&*PJMsSyhshwfKmmEg*3xY$Vgca8z5#c");
 		a.setImapServerAddress("imap.mail.yahoo.com");
 		a.setMaxConcurrentConnections(5);
-		pool = new ConnectionPoolService().getOrCreatePoolForAccount(a);
+		GenericObjectPool<Store> pool = new ConnectionPoolService().getOrCreatePoolForAccount(a);
 		chunkRecovery = new ChunkRecovery(pool, performanceDataService, monitoringHelper);
 	}
 
 	public void testLive() {
-		RecoveryChunkContainer result = chunkRecovery.apply(RecoveryChunkContainer.EMPTY);
+		chunkRecovery.apply(RecoveryChunkContainer.EMPTY);
 	}
 }

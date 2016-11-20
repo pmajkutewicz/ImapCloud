@@ -18,9 +18,6 @@ public class File {
 	private boolean completed;
 	private Account ownerAccount;
 
-	public File() {
-	}
-
 	public String getId() {
 		return this.id;
 	}

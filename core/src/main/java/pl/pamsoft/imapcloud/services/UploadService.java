@@ -114,17 +114,17 @@ public class UploadService extends AbstractBackgroundService {
 		return true;
 	}
 
-	int getMaxTasks() {
+	protected int getMaxTasks() {
 		return DEFAULT_MAX_TASKS;
 	}
 
 	@Override
-	String getNameFormat() {
+	protected String getNameFormat() {
 		return "UploadTask-%d";
 	}
 
 	@Override
-	MonitoringHelper getMonitoringHelper() {
+	protected MonitoringHelper getMonitoringHelper() {
 		return monitoringHelper;
 	}
 }

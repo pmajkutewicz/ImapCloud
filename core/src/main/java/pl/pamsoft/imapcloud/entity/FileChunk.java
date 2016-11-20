@@ -20,9 +20,6 @@ public class FileChunk {
 	private Long lastVerifiedAt;
 	private Boolean chunkExists;
 
-	public FileChunk() {
-	}
-
 	public String getId() {
 		return this.id;
 	}

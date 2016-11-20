@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressFBWarnings("PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS")
 abstract class AbstractBackgroundService {
 
-	static final int DEFAULT_MAX_TASKS = 10;
+	protected static final int DEFAULT_MAX_TASKS = 10;
 	private static final int FIVETEEN = 15;
 
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(
@@ -44,33 +44,33 @@ abstract class AbstractBackgroundService {
 
 
 	@PostConstruct
-	void init() {
+	protected void init() {
 		scheduledExecutorService.schedule(cleanUpTask, FIVETEEN, TimeUnit.MINUTES);
 	}
 
 	@PreDestroy
-	void destroy() {
+	protected void destroy() {
 		executor.shutdown();
 		scheduledExecutorService.shutdown();
 	}
 
-	ExecutorService getExecutor() {
+	protected ExecutorService getExecutor() {
 		return executor;
 	}
 
-	Map<String, Future<?>> getTaskMap() {
+	protected Map<String, Future<?>> getTaskMap() {
 		getMonitoringHelper().add(Keys.EXECUTOR_ACTIVE, executor.getActiveCount());
 		getMonitoringHelper().add(Keys.EXECUTOR_QUEUE, executor.getQueue().size());
 		return taskMap;
 	}
 
-	Map<String, TaskProgress> getTaskProgressMap() {
+	protected Map<String, TaskProgress> getTaskProgressMap() {
 		return taskProgressMap;
 	}
 
-	abstract int getMaxTasks();
+	protected abstract int getMaxTasks();
 
-	abstract String getNameFormat();
+	protected abstract String getNameFormat();
 
-	abstract MonitoringHelper getMonitoringHelper();
+	protected abstract MonitoringHelper getMonitoringHelper();
 }

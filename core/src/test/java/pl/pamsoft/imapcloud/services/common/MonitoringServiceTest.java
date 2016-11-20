@@ -20,7 +20,7 @@ public class MonitoringServiceTest {
 	private MonitoringHelper monitoringHelper = new MonitoringHelper();
 
 	@BeforeClass
-	public void setup() {
+	public void init() {
 		monitoringHelper.initBuffers();
 		monitoringService.setMonitoringHelper(monitoringHelper);
 	}

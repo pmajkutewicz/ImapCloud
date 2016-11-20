@@ -19,9 +19,6 @@ public class TaskProgress {
 	private long bytesProcessed;
 	private Map<String, FileProgress> fileProgressDataMap;
 
-	public TaskProgress() {
-	}
-
 	public void addSelectedFiles(List<FileDto> selectedFiles) {
 		fileProgressDataMap = selectedFiles.stream()
 			.map(file -> new FileProgress(file.getAbsolutePath(), file.getSize()))

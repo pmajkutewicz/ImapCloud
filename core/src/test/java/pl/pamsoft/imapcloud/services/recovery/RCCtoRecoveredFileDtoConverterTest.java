@@ -21,17 +21,16 @@ public class RCCtoRecoveredFileDtoConverterTest {
 
 	private RCCtoRecoveredFileDtoConverter rcCtoFileDtoConverter;
 
-	private RecoveredFileChunksFileReader recoveredFileChunksFileReader;
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private CryptoService cryptoService = new CryptoService();
 	private RecoveryChunkContainer exampleData;
 
 	@BeforeMethod
-	public void setup() throws IOException {
+	public void init() throws IOException {
 		reset(filesIOService);
 		when(filesIOService.getInputStream(any())).thenCallRealMethod();
 		when(filesIOService.unPack(any())).thenCallRealMethod();
-		recoveredFileChunksFileReader = new RecoveredFileChunksFileReader(filesIOService);
+		RecoveredFileChunksFileReader recoveredFileChunksFileReader = new RecoveredFileChunksFileReader(filesIOService);
 		rcCtoFileDtoConverter = new RCCtoRecoveredFileDtoConverter(cryptoService);
 		exampleData = recoveredFileChunksFileReader.apply(
 			Paths.get("src", "test", "resources", "b6a87830-1e0d-486c-a2c8-97efe71f01a5.ic.zip")

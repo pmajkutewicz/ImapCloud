@@ -21,7 +21,7 @@ public class FileChunkStorerTest {
 	private FileServices fileServices = mock(FileServices.class);
 
 	@BeforeClass
-	public void setup() {
+	public void init() {
 		fileChunkStorer = new FileChunkStorer(fileServices);
 	}
 

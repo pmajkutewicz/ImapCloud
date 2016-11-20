@@ -56,7 +56,7 @@ public class ChunkRecoveryTest {
 	private Random random = new SecureRandom();
 
 	@BeforeMethod
-	public void setup() throws Exception {
+	public void init() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		JSONObject jsonObject = loadData();
 		Folder[] folderList = createFolderList(jsonObject);

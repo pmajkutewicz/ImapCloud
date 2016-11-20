@@ -36,19 +36,19 @@ abstract class AbstractRestClient {
 		this.authenticator = (route, response) -> response.request().newBuilder().header("Authorization", Credentials.basic(username, pass)).build();
 	}
 
-	<T> void sendGet(String url, Class<T> cls, RequestCallback<T> requestCallback) {
+	protected <T> void sendGet(String url, Class<T> cls, RequestCallback<T> requestCallback) {
 		sendGet(buildUrl(url), new OKDefaultCallback<T>(cls, requestCallback));
 	}
 
-	<T> void sendGet(String url, Class<T> cls, String paramName, String paramValue, RequestCallback<T> requestCallback) {
+	protected <T> void sendGet(String url, Class<T> cls, String paramName, String paramValue, RequestCallback<T> requestCallback) {
 		sendGet(buildUrl(url, paramName, paramValue), new OKDefaultCallback<T>(cls, requestCallback));
 	}
 
-	void sendGet(String url, String paramName, String paramValue, RequestCallback<Void> callback) {
+	protected void sendGet(String url, String paramName, String paramValue, RequestCallback<Void> callback) {
 		sendGet(buildUrl(url, paramName, paramValue), new OKVoidCallback(callback));
 	}
 
-	void sendPost(String url, Object pojo, RequestCallback<Void> callback) {
+	protected void sendPost(String url, Object pojo, RequestCallback<Void> callback) {
 		sendPost(buildUrl(url), pojo, new OKVoidCallback(callback));
 	}
 

@@ -38,7 +38,7 @@ public class UploadFileHasherTest {
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
-	public void setup() throws NoSuchAlgorithmException {
+	public void init() throws NoSuchAlgorithmException {
 		uploadFileHasher = new UploadFileHasher(filesIOService, performanceDataService, monitoringHelper);
 	}
 

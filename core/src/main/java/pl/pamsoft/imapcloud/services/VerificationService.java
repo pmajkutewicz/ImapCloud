@@ -47,17 +47,17 @@ public class VerificationService extends AbstractBackgroundService {
 	}
 
 	@Override
-	int getMaxTasks() {
+	protected int getMaxTasks() {
 		return DEFAULT_MAX_TASKS;
 	}
 
 	@Override
-	String getNameFormat() {
+	protected String getNameFormat() {
 		return "VerificationTask-%d";
 	}
 
 	@Override
-	MonitoringHelper getMonitoringHelper() {
+	protected MonitoringHelper getMonitoringHelper() {
 		return monitoringHelper;
 	}
 }

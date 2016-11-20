@@ -29,7 +29,7 @@ public class DirectorySizeCalculatorTest {
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
-	public void setup() {
+	public void init() {
 		reset(filesIOService);
 		directorySizeCalculator = new DirectorySizeCalculator(filesIOService, performanceDataService, monitoringHelper);
 		when(filesIOService.calculateDirSize(any(File.class))).thenCallRealMethod();

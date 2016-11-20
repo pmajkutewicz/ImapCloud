@@ -44,17 +44,17 @@ public class DeletionService extends AbstractBackgroundService {
 	}
 
 	@Override
-	int getMaxTasks() {
+	protected int getMaxTasks() {
 		return DEFAULT_MAX_TASKS;
 	}
 
 	@Override
-	String getNameFormat() {
+	protected String getNameFormat() {
 		return "DeletionTask-%d";
 	}
 
 	@Override
-	MonitoringHelper getMonitoringHelper() {
+	protected MonitoringHelper getMonitoringHelper() {
 		return null;
 	}
 }

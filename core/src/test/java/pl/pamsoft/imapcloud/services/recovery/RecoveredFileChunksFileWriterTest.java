@@ -1,6 +1,5 @@
 package pl.pamsoft.imapcloud.services.recovery;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
@@ -18,15 +17,16 @@ import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 public class RecoveredFileChunksFileWriterTest {
@@ -38,7 +38,7 @@ public class RecoveredFileChunksFileWriterTest {
 	private FileSystemManager fsManager;
 
 	@BeforeMethod
-	public void setup() throws FileSystemException {
+	public void init() throws FileSystemException {
 		recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, ".");
 		fsManager = VFS.getManager();
 		fsManager.createVirtualFileSystem(RAM_VIRTUAL);

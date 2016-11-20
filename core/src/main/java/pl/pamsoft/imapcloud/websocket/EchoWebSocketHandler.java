@@ -7,16 +7,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import pl.pamsoft.imapcloud.services.CryptoService;
 
 public class EchoWebSocketHandler extends TextWebSocketHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(EchoWebSocketHandler.class);
 
 	private final EchoService echoService;
-
-	@Autowired
-	CryptoService cryptoService;
 
 	@Autowired
 	public EchoWebSocketHandler(EchoService echoService) {
