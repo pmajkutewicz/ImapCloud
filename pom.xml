@@ -379,6 +379,7 @@
 						<arg>-Xlint:-serial</arg>
 						<arg>-Xlint:-unchecked</arg> <!-- TODO: remove and fix errors -->
 						<arg>-Xlint:-rawtypes</arg> <!-- TODO: remove and fix errors -->
+						<arg>-Xlint:-path</arg> <!-- jhm module with travis: warning: [path] bad path element "/home/travis/pmajkutewicz/ImapCloud/jmh/target/classes": no such file or directory -->
 						<arg>-Werror</arg>
 					</compilerArgs>
 				</configuration>
