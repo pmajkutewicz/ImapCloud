@@ -10,29 +10,21 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <SplitPane fx:id="root" dividerPositions="0.5" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="pl.pamsoft.imapcloud.controllers.DownloadsController">
-	<items>
-		<GridPane>
-			<columnConstraints>
-				<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0"/>
-			</columnConstraints>
-			<rowConstraints>
-				<RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="ALWAYS"/>
-				<RowConstraints vgrow="NEVER"/>
-			</rowConstraints>
-			<children>
-				<fx:include fx:id="embeddedUploadedFilesTable" source="frag_table_uploaded.fxml"/>
-			</children>
-		</GridPane>
-		<VBox>
-			<children>
-				<fx:include fx:id="embeddedFileListTable" minHeight="200" source="frag_table_filelist.fxml"/>
-				<HBox alignment="CENTER_RIGHT">
-					<children>
-						<Button onAction="#onDownloadClick" text="%downloads.button.upload"/>
-					</children>
-				</HBox>
-			</children>
-		</VBox>
-	</items>
+		   fx:controller="pl.pamsoft.imapcloud.controllers.DownloadsController">
+	<GridPane>
+		<columnConstraints>
+			<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0"/>
+		</columnConstraints>
+		<rowConstraints>
+			<RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" vgrow="ALWAYS"/>
+			<RowConstraints vgrow="NEVER"/>
+		</rowConstraints>
+		<fx:include fx:id="embeddedUploadedFilesTable" source="frag_table_uploaded.fxml"/>
+	</GridPane>
+	<VBox>
+		<fx:include fx:id="embeddedFileListTable" minHeight="200" source="frag_table_filelist.fxml"/>
+		<HBox alignment="CENTER_RIGHT">
+			<Button onAction="#onDownloadClick" text="%downloads.button.upload"/>
+		</HBox>
+	</VBox>
 </SplitPane>

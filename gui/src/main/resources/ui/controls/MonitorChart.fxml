@@ -15,7 +15,7 @@
 				   maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS">
 			<xAxis>
 				<NumberAxis minHeight="200.0" minWidth="200.0" side="BOTTOM" forceZeroInRange="false" tickUnit="2000"
-					autoRanging="false" tickLabelsVisible="true" tickMarkVisible="true" minorTickVisible="false">
+							autoRanging="false" minorTickVisible="false">
 					<tickLabelFormatter>
 						<DateConverter />
 					</tickLabelFormatter>

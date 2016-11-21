@@ -6,9 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
-import pl.pamsoft.imapcloud.dto.GitRepositoryState;
 import pl.pamsoft.imapcloud.rest.GitStatusRestClient;
-import pl.pamsoft.imapcloud.rest.RequestCallback;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,12 +30,7 @@ public class StatusController implements Initializable, Refreshable{
 
 	@Override
 	public void refresh() {
-		gitStatusRestClient.getAvailableEmailAccounts(new RequestCallback<GitRepositoryState>() {
-			@Override
-			public void onSuccess(GitRepositoryState data) {
-				statusText.setText(data.prettyPrint());
-			}
-		});
+		gitStatusRestClient.getAvailableEmailAccounts(data -> statusText.setText(data.prettyPrint()));
 	}
 
 	@Override

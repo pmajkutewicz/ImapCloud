@@ -27,7 +27,7 @@ public class ProgressIndicatorBar extends StackPane {
 		this.label = label;
 
 		syncProgress();
-		workDone.addListener((observableValue, number, number2) -> { syncProgress(); });
+		workDone.addListener((observableValue, number, number2) -> syncProgress());
 
 		bar.setMaxWidth(Double.MAX_VALUE); // allows the progress bar to expand to fill available horizontal space.
 
