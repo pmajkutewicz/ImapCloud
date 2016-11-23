@@ -4,7 +4,6 @@ package pl.pamsoft.imapcloud.services.download;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
@@ -23,7 +22,7 @@ public class DownloadChunkHasherTest {
 		//given
 		String test = "testData";
 		FileDto mockedFileDto = TestUtils.mockFileDto();
-		FileChunk fc = createFileChunk();
+		FileChunk fc = TestUtils.createFileChunk("irrelevant", false);
 
 		//when
 		DownloadChunkHasher downloadChunkHasher = new DownloadChunkHasher(performanceDataService, monitoringHelper);
@@ -33,14 +32,5 @@ public class DownloadChunkHasherTest {
 
 		//then
 		assertEquals(result.getChunkHash(), "9dd1b3f3b26ecb78");
-	}
-
-	private FileChunk createFileChunk() {
-		File file = new File();
-		file.setName("irrelevant");
-		FileChunk fc = new FileChunk();
-		fc.setChunkNumber(5);
-		fc.setOwnerFile(file);
-		return fc;
 	}
 }

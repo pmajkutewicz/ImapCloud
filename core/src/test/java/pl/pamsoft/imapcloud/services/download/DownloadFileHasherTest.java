@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.services.upload;
+package pl.pamsoft.imapcloud.services.download;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
@@ -8,10 +8,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
+import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.FilesIOService;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.download.DownloadFileHasherTest;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.ByteArrayInputStream;
@@ -22,15 +22,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class UploadFileHasherTest {
+public class DownloadFileHasherTest {
 
-	private UploadFileHasher uploadFileHasher;
+	private DownloadFileHasher downloadFileHasher;
 
 	private FileDto fileDto = TestUtils.mockFileDto();
 	private FilesIOService filesIOService = mock(FilesIOService.class);
@@ -39,12 +38,16 @@ public class UploadFileHasherTest {
 
 	@BeforeClass
 	public void init() throws NoSuchAlgorithmException {
-		uploadFileHasher = new UploadFileHasher(filesIOService, performanceDataService, monitoringHelper);
+		downloadFileHasher = new DownloadFileHasher(filesIOService, performanceDataService, monitoringHelper);
 	}
 
 	@Test
 	/**
-	 * @see DownloadFileHasherTest#shouldCalculateHash()
+	 * Always calculate same hash:
+	 * This is because DestFileUtils.generateFilePath(dcc).toFile() - it returns file from "ram" and file.length is 0 for that file.
+	 * I guess one way to fix it is to mock DestFileUtils (first convert to bean) and mock length value to valid one.
+	 * Data send to hash is valid (random bytes)
+	 * Similar situation is in {@link pl.pamsoft.imapcloud.services.upload.UploadFileHasherTest}
 	 */
 	public void shouldCalculateHash() throws IOException, NoSuchAlgorithmException {
 		byte[] randomBytes = TestUtils.getRandomBytes(1024);
@@ -53,23 +56,33 @@ public class UploadFileHasherTest {
 		fileObject.createFile();
 		IOUtils.copy(new ByteArrayInputStream(randomBytes), fileObject.getContent().getOutputStream());
 		fileObject.close();
-		File file = new File(fileObject.getName().getPath());
-		when(filesIOService.getFile(eq(fileDto))).thenReturn(file);
-		when(filesIOService.getInputStream(file)).thenReturn(fileObject.getContent().getInputStream());
-		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
+		FileChunk fc = TestUtils.createFileChunk("exmapleFile.txt", true);
+		when(filesIOService.getInputStream(any(File.class))).thenReturn(manager.resolveFile("ram:///exampleFile.txt").getContent().getInputStream());
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
 
-		UploadChunkContainer result = uploadFileHasher.apply(ucc);
+		DownloadChunkContainer result = downloadFileHasher.apply(dcc);
 
 		assertNotNull(result.getFileHash());
 	}
 
 	@Test
+	public void shouldSkipStemWhenNotLastChunk() throws IOException {
+		FileChunk fc = TestUtils.createFileChunk("exampleName", false);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
+
+		DownloadChunkContainer response = downloadFileHasher.apply(dcc);
+
+		assertEquals(response, response);
+	}
+
+	@Test
 	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
-		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
+		FileChunk fc = TestUtils.createFileChunk("exampleName", true);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
 		when(filesIOService.getInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
 
-		UploadChunkContainer response = uploadFileHasher.apply(ucc);
+		DownloadChunkContainer response = downloadFileHasher.apply(dcc);
 
-		assertEquals(response, UploadChunkContainer.EMPTY);
+		assertEquals(response, DownloadChunkContainer.EMPTY);
 	}
 }

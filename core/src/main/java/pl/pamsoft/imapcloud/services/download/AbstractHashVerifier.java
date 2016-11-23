@@ -4,15 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.function.Function;
 
 abstract class AbstractHashVerifier implements Function<DownloadChunkContainer, DownloadChunkContainer> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractHashVerifier.class);
-	private ConcurrentHashMap<String, String> invalidFileIds;
+	private List<String> invalidFileIds;
 
-	AbstractHashVerifier(ConcurrentHashMap<String, String> invalidFileIds) {
+	AbstractHashVerifier(List<String> invalidFileIds) {
 		this.invalidFileIds = invalidFileIds;
 	}
 
@@ -24,7 +24,7 @@ abstract class AbstractHashVerifier implements Function<DownloadChunkContainer, 
 		} else {
 			LOG.debug("Invalid hash for {}", dcc.getChunkToDownload().getOwnerFile().getName());
 			String fileUniqueId = dcc.getChunkToDownload().getOwnerFile().getFileUniqueId();
-			invalidFileIds.put(fileUniqueId, fileUniqueId);
+			invalidFileIds.add(fileUniqueId);
 			return DownloadChunkContainer.EMPTY;
 		}
 	}

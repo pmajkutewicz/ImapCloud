@@ -1,8 +1,8 @@
 package pl.pamsoft.imapcloud.services.download;
 
 import org.testng.annotations.Test;
+import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 
@@ -27,11 +27,8 @@ public class DestFileUtilsTest {
 
 	@Test
 	public void shouldGenerateFilePath() {
-		File ownerFile = new File();
-		ownerFile.setName(EXAMPLE_FILE_NAME);
 		FileDto fileDto = new FileDto("irrelevant", EXAMPLE_PATH, FileDto.FileType.FILE, 123L);
-		FileChunk fc = new FileChunk();
-		fc.setOwnerFile(ownerFile);
+		FileChunk fc = TestUtils.createFileChunk(EXAMPLE_FILE_NAME, false);
 		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", fc, fileDto);
 		Path path = DestFileUtils.generateFilePath(dcc);
 		assertEquals(path.toString(), EXAMPLE_PATH + separator + EXAMPLE_FILE_NAME);

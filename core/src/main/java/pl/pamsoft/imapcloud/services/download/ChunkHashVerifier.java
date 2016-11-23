@@ -2,12 +2,12 @@ package pl.pamsoft.imapcloud.services.download;
 
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.function.Function;
 
 public class ChunkHashVerifier extends AbstractHashVerifier implements Function<DownloadChunkContainer, DownloadChunkContainer> {
 
-	public ChunkHashVerifier(ConcurrentHashMap<String, String> invalidFileIds) {
+	public ChunkHashVerifier(List<String> invalidFileIds) {
 		super(invalidFileIds);
 	}
 

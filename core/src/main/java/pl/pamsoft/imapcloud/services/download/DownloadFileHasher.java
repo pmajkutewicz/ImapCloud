@@ -46,6 +46,7 @@ public class DownloadFileHasher implements Function<DownloadChunkContainer, Down
 				LOG.error(String.format("Can't calculate hash for file: %s", dcc.getChunkToDownload().getOwnerFile().getName()), ex);
 			}
 			LOG.warn("Returning EMPTY from DownloadFileHasher");
+			return DownloadChunkContainer.EMPTY;
 		}
 		return dcc;
 	}

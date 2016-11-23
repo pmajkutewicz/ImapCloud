@@ -26,7 +26,7 @@ import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import javax.mail.Store;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.function.Function;
@@ -64,14 +64,14 @@ public class DownloadService extends AbstractBackgroundService {
 		Future<?> task = getExecutor().submit(() -> {
 			try {
 				Thread.currentThread().setName("DownloadTask-" + taskId);
-				ConcurrentHashMap<String, String> invalidFileIds = new ConcurrentHashMap<>();
+				List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 				File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
 				Account account = file.getOwnerAccount();
 				List<FileChunk> chunkToDownload = fileChunkRepository.getFileChunks(fileToDownload.getFileUniqueId());
 				GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(account);
 
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
-				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.containsKey(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
+				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, performanceDataService, monitoringHelper);
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), performanceDataService, monitoringHelper);
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(performanceDataService, monitoringHelper);
