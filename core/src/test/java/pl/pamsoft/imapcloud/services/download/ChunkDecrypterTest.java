@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.services.upload;
+package pl.pamsoft.imapcloud.services.download;
 
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -6,9 +6,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.IOException;
@@ -20,9 +21,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
-public class ChunkEncrypterTest {
+public class ChunkDecrypterTest {
 
-	private ChunkEncrypter chunkEncrypter;
+	private ChunkDecrypter chunkDecrypter;
 
 	private CryptoService cryptoService = mock(CryptoService.class);
 	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
@@ -31,17 +32,17 @@ public class ChunkEncrypterTest {
 
 	@BeforeClass
 	public void init() {
-		chunkEncrypter = new ChunkEncrypter(cryptoService, "exampleKey", performanceDataService, monitoringHelper);
+		chunkDecrypter = new ChunkDecrypter(cryptoService, "exampleKey", performanceDataService, monitoringHelper);
 	}
 
 	@Test
 	public void shouldEncryptChunk() throws IOException, InvalidCipherTextException {
 		byte[] in = TestUtils.getRandomBytes(1024);
 		byte[] out = TestUtils.getRandomBytes(1024);
-		UploadChunkContainer ucc = createExampleUCC(in);
-		when(cryptoService.encrypt(any(PaddedBufferedBlockCipher.class), eq(in))).thenReturn(out);
+		DownloadChunkContainer ucc = createExampleDCC(in);
+		when(cryptoService.decrypt(any(PaddedBufferedBlockCipher.class), eq(in))).thenReturn(out);
 
-		UploadChunkContainer response = chunkEncrypter.apply(ucc);
+		DownloadChunkContainer response = chunkDecrypter.apply(ucc);
 
 		assertEquals(response.getData(), out);
 	}
@@ -49,18 +50,19 @@ public class ChunkEncrypterTest {
 	@Test
 	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException, InvalidCipherTextException {
 		byte[] in = TestUtils.getRandomBytes(1024);
-		UploadChunkContainer ucc = createExampleUCC(in);
-		when(cryptoService.encrypt(any(PaddedBufferedBlockCipher.class), eq(in))).thenThrow(new IOException("example"));
+		DownloadChunkContainer ucc = createExampleDCC(in);
+		when(cryptoService.decrypt(any(PaddedBufferedBlockCipher.class), eq(in))).thenThrow(new IOException("example"));
 
-		UploadChunkContainer response = chunkEncrypter.apply(ucc);
+		DownloadChunkContainer response = chunkDecrypter.apply(ucc);
 
-		assertEquals(response, UploadChunkContainer.EMPTY);
+		assertEquals(response, DownloadChunkContainer.EMPTY);
 	}
 
-	private UploadChunkContainer createExampleUCC(byte[] in) {
-		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
-		ucc = UploadChunkContainer.addChunk(ucc, in.length, in.length, in, 1, false);
-		return ucc;
+	private DownloadChunkContainer createExampleDCC(byte[] in) {
+		FileChunk fc= TestUtils.createFileChunk("example", false);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
+		dcc = DownloadChunkContainer.addData(dcc, in);
+		return dcc;
 	}
 
 }

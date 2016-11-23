@@ -42,6 +42,7 @@ public class FileSaver implements Function<DownloadChunkContainer, DownloadChunk
 			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_SAVER, lastVal));
 			LOG.debug("Chunk appended in {} ms", lastVal);
 		} catch (IOException e) {
+			//TODO: can't append chunk to file... what to do?
 			e.printStackTrace();
 		}
 		return dcc;
