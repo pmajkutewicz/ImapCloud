@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -12,19 +13,21 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
-import pl.pamsoft.imapcloud.websocket.FileProgressData;
-import pl.pamsoft.imapcloud.websocket.TaskProgressClient;
-import pl.pamsoft.imapcloud.websocket.TaskProgressEvent;
+import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
+import pl.pamsoft.imapcloud.responses.TaskProgressResponse;
+import pl.pamsoft.imapcloud.rest.RequestCallback;
+import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import javax.inject.Inject;
-import javax.websocket.DeploymentException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class TasksController implements Initializable {
 
@@ -34,48 +37,74 @@ public class TasksController implements Initializable {
 	private static final Background BACKGROUND_UPLOAD = new Background(new BackgroundFill(new Color(0, 1, 1, 0.1), CornerRadii.EMPTY, Insets.EMPTY));
 	private static final Background BACKGROUND_VERIFY = new Background(new BackgroundFill(new Color(0, 0, 1, 0.1), CornerRadii.EMPTY, Insets.EMPTY));
 	private static final Background BACKGROUND_RECOVERY = new Background(new BackgroundFill(new Color(1, 1, 0, 0.1), CornerRadii.EMPTY, Insets.EMPTY));
+	private static final int THOUSAND = 1000;
 
 	@FXML
 	private VBox tasksContainer;
 
-	@Inject
-	private TaskProgressClient taskProgressClient;
+	@FXML
+	private Slider updateIntervalSlider;
 
+	@Inject
+	private TaskProgressRestClient taskProgressRestClient;
+
+	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private ScheduledFuture<?> currentRunningTask;
 	private Map<String, TaskProgressControl> currentTasks = new HashMap<>();
 	private ResourceBundle resourceBundle;
+
+	private RequestCallback<TaskProgressResponse> getTaskCallback = result -> {
+		result.getTaskProgressList().forEach(event -> {
+			TaskProgressControl current;
+			String taskId = event.getTaskId();
+			if (!currentTasks.containsKey(taskId)) {
+				current = new TaskProgressControl(taskId, parseType(event.getType()), event.getFileProgressDataMap(),
+					determineBackground(event.getType()));
+				currentTasks.put(taskId, current);
+				Platform.runLater(() -> tasksContainer.getChildren().addAll(current));
+			} else {
+				current = currentTasks.get(taskId);
+			}
+			double overallProgress = event.getBytesProcessed() / (double) event.getBytesOverall();
+
+			Platform.runLater(() -> {
+					for (FileProgressDto entry : event.getFileProgressDataMap().values()) {
+						current.updateProgress(entry.getAbsolutePath(), entry.getProgress());
+					}
+					current.updateProgress(overallProgress);
+				}
+			);
+			System.out.println(overallProgress);
+		});
+	};
+
+	private Runnable updateTask = () -> {
+		taskProgressRestClient.getTasksProgress(getTaskCallback);
+	};
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
-		try {
-			taskProgressClient.addListener(this::onTaskProgressEventReceived);
-			taskProgressClient.connect();
-		} catch (IOException | URISyntaxException | DeploymentException | InterruptedException e) {
-			LOG.error("Can't connect to backend", e);
-		}
+		updateIntervalSlider.valueChangingProperty().addListener((observable, oldValue, newValue) ->
+			update(updateIntervalSlider.valueProperty().doubleValue()));
 	}
 
-	private void onTaskProgressEventReceived(TaskProgressEvent event) {
-		TaskProgressControl current;
-		String taskId = event.getTaskId();
-		if (!currentTasks.containsKey(taskId)) {
-			current = new TaskProgressControl(taskId, parseType(event.getType()), event.getFileProgressDataMap(),
-				determineBackground(event.getType()));
-			currentTasks.put(taskId, current);
-			Platform.runLater(() -> tasksContainer.getChildren().addAll(current));
-		} else {
-			current = currentTasks.get(taskId);
-		}
-		double overallProgress = event.getBytesProcessed() / (double) event.getBytesOverall();
-
+	private void update(double newValue) {
 		Platform.runLater(() -> {
-				for (FileProgressData entry : event.getFileProgressDataMap().values()) {
-					current.updateProgress(entry.getAbsolutePath(), entry.getProgress());
-				}
-				current.updateProgress(overallProgress);
+			cancelCurrentTask();
+			int schedule = (int) (newValue * THOUSAND);
+			if (schedule > 0) {
+				currentRunningTask = executor.scheduleWithFixedDelay(updateTask, 0, schedule, TimeUnit.MILLISECONDS);
 			}
-		);
-		System.out.println(overallProgress);
+		});
+	}
+
+	private void cancelCurrentTask() {
+		if (null != currentRunningTask) {
+			currentRunningTask.cancel(true);
+			currentRunningTask = null;
+		}
 	}
 
 	private Background determineBackground(TaskType taskType) {

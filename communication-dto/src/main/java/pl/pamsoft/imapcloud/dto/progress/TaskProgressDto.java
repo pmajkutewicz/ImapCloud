@@ -1,20 +1,21 @@
-package pl.pamsoft.imapcloud.websocket;
+package pl.pamsoft.imapcloud.dto.progress;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.Map;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-@SuppressWarnings("CPD-START")
-public class TaskProgressEvent {
+public class TaskProgressDto {
+
 	private String id;
 	private TaskType type;
 	private String taskId;
 	private long bytesOverall;
 	private long bytesProcessed;
-	private Map<String, FileProgressData> fileProgressDataMap;
+	private Map<String, FileProgressDto> fileProgressDataMap;
 
-	public TaskProgressEvent(String id, TaskType type, String taskId, long bytesOverall, long bytesProcessed, Map<String, FileProgressData> fileProgressDataMap) {
+	public TaskProgressDto(String id, TaskType type, String taskId, long bytesOverall, long bytesProcessed, Map<String, FileProgressDto> fileProgressDataMap) {
 		this.id = id;
 		this.type = type;
 		this.taskId = taskId;
@@ -23,7 +24,7 @@ public class TaskProgressEvent {
 		this.fileProgressDataMap = fileProgressDataMap;
 	}
 
-	public TaskProgressEvent() {
+	public TaskProgressDto() {
 	}
 
 	public String getId() {
@@ -66,11 +67,11 @@ public class TaskProgressEvent {
 		this.bytesProcessed = bytesProcessed;
 	}
 
-	public Map<String, FileProgressData> getFileProgressDataMap() {
+	public Map<String, FileProgressDto> getFileProgressDataMap() {
 		return this.fileProgressDataMap;
 	}
 
-	public void setFileProgressDataMap(Map<String, FileProgressData> fileProgressDataMap) {
+	public void setFileProgressDataMap(Map<String, FileProgressDto> fileProgressDataMap) {
 		this.fileProgressDataMap = fileProgressDataMap;
 	}
 }

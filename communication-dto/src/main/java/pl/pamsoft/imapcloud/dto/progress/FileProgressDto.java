@@ -1,23 +1,22 @@
-package pl.pamsoft.imapcloud.websocket;
+package pl.pamsoft.imapcloud.dto.progress;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-@SuppressWarnings("CPD-START")
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class FileProgressData {
+public class FileProgressDto {
 	private String id;
 	private String absolutePath;
 	private long size;
 	private long progress;
 
-	public FileProgressData(String id, String absolutePath, long size, long progress) {
+	public FileProgressDto(String id, String absolutePath, long size, long progress) {
 		this.id = id;
 		this.absolutePath = absolutePath;
 		this.size = size;
 		this.progress = progress;
 	}
 
-	public FileProgressData() {
+	public FileProgressDto() {
 	}
 
 	public String getId() {

@@ -9,6 +9,7 @@ import pl.pamsoft.imapcloud.rest.FilesRestClient;
 import pl.pamsoft.imapcloud.rest.GitStatusRestClient;
 import pl.pamsoft.imapcloud.rest.MonitoringRestClient;
 import pl.pamsoft.imapcloud.rest.RecoveryRestClient;
+import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataClient;
@@ -90,6 +91,12 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	protected MonitoringRestClient getMonitoringRestClient() {
 		return new MonitoringRestClient(endpoint, username, password);
+	}
+
+	@Provides
+	@Singleton
+	protected TaskProgressRestClient getTasksProgressRestClient() {
+		return new TaskProgressRestClient(endpoint, username, password);
 	}
 
 	@Provides

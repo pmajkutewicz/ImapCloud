@@ -12,7 +12,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
-import pl.pamsoft.imapcloud.websocket.FileProgressData;
+import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +35,7 @@ public class TaskProgressControl extends AbstractControl {
 	private Map<String, SimpleDoubleProperty> fileProgressMap;
 
 	@SuppressFBWarnings("UR_UNINIT_READ")
-	public TaskProgressControl(String id, String type, Map<String, FileProgressData> fileProgressDataMap,
+	public TaskProgressControl(String id, String type, Map<String, FileProgressDto> fileProgressDataMap,
 	                           Background background) {
 		this.setBackground(background);
 		this.taskIdLabel.setText(type + ' ' + id);
@@ -61,9 +61,9 @@ public class TaskProgressControl extends AbstractControl {
 		identicon.setImage(writableImage);
 	}
 
-	private Map<String, SimpleDoubleProperty> createFileMap(Map<String, FileProgressData> fileProgressDataMap) {
+	private Map<String, SimpleDoubleProperty> createFileMap(Map<String, FileProgressDto> fileProgressDataMap) {
 		Map<String, SimpleDoubleProperty> result = new ConcurrentHashMap<>(fileProgressDataMap.size());
-		for (FileProgressData fileEntry : fileProgressDataMap.values()) {
+		for (FileProgressDto fileEntry : fileProgressDataMap.values()) {
 			SimpleDoubleProperty simpleDoubleProperty = new SimpleDoubleProperty(0);
 			filesInfo.getChildren().add(new ProgressIndicatorBar(simpleDoubleProperty, fileEntry.getSize(), fileEntry.getAbsolutePath()));
 			result.put(fileEntry.getAbsolutePath(), simpleDoubleProperty);

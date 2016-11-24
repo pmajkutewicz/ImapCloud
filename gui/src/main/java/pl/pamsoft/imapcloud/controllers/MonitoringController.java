@@ -37,8 +37,8 @@ import static java.util.stream.Collectors.toList;
 public class MonitoringController implements Initializable, Refreshable {
 
 	private static final int THOUSAND = 1000;
-	public static final String DEFAULT_CUT_OFF_VALUE = "30";
-	public static final ChronoUnit DEFAULT_CUT_OFF_UNIT = ChronoUnit.SECONDS;
+	private static final String DEFAULT_CUT_OFF_VALUE = "30";
+	private static final ChronoUnit DEFAULT_CUT_OFF_UNIT = ChronoUnit.SECONDS;
 
 	@Inject
 	private MonitoringRestClient monitoringRestClient;
