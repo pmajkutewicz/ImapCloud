@@ -74,7 +74,7 @@ public class TasksController implements Initializable {
 					current.updateProgress(overallProgress);
 				}
 			);
-			System.out.println(overallProgress);
+			LOG.debug("Overall progress for task {} is {}", taskId, overallProgress);
 		});
 	};
 

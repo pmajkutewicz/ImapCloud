@@ -13,7 +13,6 @@ import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataClient;
-import pl.pamsoft.imapcloud.websocket.TaskProgressClient;
 
 import javax.inject.Singleton;
 
@@ -37,12 +36,6 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	protected PerformanceDataClient getPerformanceDataClient() {
 		return new PerformanceDataClient(endpoint, username, password);
-	}
-
-	@Provides
-	@Singleton
-	protected TaskProgressClient getTaskProgressClient() {
-		return new TaskProgressClient(endpoint, username, password);
 	}
 
 	@Provides

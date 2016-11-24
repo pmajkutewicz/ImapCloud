@@ -11,7 +11,6 @@ import pl.pamsoft.imapcloud.websocket.DefaultEchoService;
 import pl.pamsoft.imapcloud.websocket.EchoService;
 import pl.pamsoft.imapcloud.websocket.EchoWebSocketHandler;
 import pl.pamsoft.imapcloud.websocket.PerformanceDataSocketHandler;
-import pl.pamsoft.imapcloud.websocket.TasksProgressSocketHandler;
 
 @Configuration
 @EnableWebSocket
@@ -20,14 +19,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	@Autowired
 	private PerformanceDataSocketHandler performanceDataSocketHandler;
 
-	@Autowired
-	private TasksProgressSocketHandler tasksProgressSocketHandler;
-
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 		registry.addHandler(echoWebSocketHandler(), "/echo");
 		registry.addHandler(performanceDataSocketHandler, "/performance").setAllowedOrigins("*");
-		registry.addHandler(tasksProgressSocketHandler, "/tasks").setAllowedOrigins("*");
 	}
 
 	@Bean

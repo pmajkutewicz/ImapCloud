@@ -18,13 +18,11 @@ public class FileStorer implements Function<UploadChunkContainer, UploadChunkCon
 	private FileServices fileServices;
 	private Account account;
 	private final Consumer<UploadChunkContainer> updateProgress;
-	private final Consumer<UploadChunkContainer> broadcastTaskProgress;
 
-	public FileStorer(FileServices fileServices, Account account, Consumer<UploadChunkContainer> updateProgress, Consumer<UploadChunkContainer> broadcastTaskProgress) {
+	public FileStorer(FileServices fileServices, Account account, Consumer<UploadChunkContainer> updateProgress) {
 		this.fileServices = fileServices;
 		this.account = account;
 		this.updateProgress = updateProgress;
-		this.broadcastTaskProgress = broadcastTaskProgress;
 	}
 
 	@Override
@@ -37,7 +35,6 @@ public class FileStorer implements Function<UploadChunkContainer, UploadChunkCon
 			LOG.warn("{} removed from queue.", ucc.getFileDto().getAbsolutePath());
 
 			updateProgress.accept(ucc);
-			broadcastTaskProgress.accept(ucc);
 			return UploadChunkContainer.EMPTY;
 		}
 	}

@@ -21,20 +21,18 @@ import static org.testng.Assert.assertEquals;
 
 public class FileStorerTest {
 
-	public static final String EXAMPLE_ID = "someId";
-	public static final String EXAMPLE_UNIQUE_FILE_ID = "uniqueFileId";
+	private static final String EXAMPLE_ID = "someId";
+	private static final String EXAMPLE_UNIQUE_FILE_ID = "uniqueFileId";
 	private FileStorer fileStorer;
 
 	private FileServices fileServices = mock(FileServices.class);
 	private Account account = mock(Account.class);
 	@SuppressWarnings("unchecked")
 	private Consumer<UploadChunkContainer> updateProgress = (Consumer<UploadChunkContainer>) mock(Consumer.class);
-	@SuppressWarnings("unchecked")
-	private Consumer<UploadChunkContainer> broadcastTaskProgress = (Consumer<UploadChunkContainer>) mock(Consumer.class);
 
 	@BeforeClass
 	public void init() {
-		fileStorer = new FileStorer(fileServices, account, updateProgress, broadcastTaskProgress);
+		fileStorer = new FileStorer(fileServices, account, updateProgress);
 	}
 
 	@Test

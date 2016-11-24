@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.dto.progress.TaskProgressDto;
 import pl.pamsoft.imapcloud.responses.AbstractResponse;
 import pl.pamsoft.imapcloud.responses.TaskProgressResponse;
-import pl.pamsoft.imapcloud.services.websocket.TasksProgressService;
+import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 
 import java.util.List;
 
