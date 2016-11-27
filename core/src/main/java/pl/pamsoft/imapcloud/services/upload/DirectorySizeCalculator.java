@@ -3,13 +3,10 @@ package pl.pamsoft.imapcloud.services.upload;
 import com.jamonapi.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import java.util.List;
 import java.util.function.Function;
@@ -19,12 +16,10 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 	private static final Logger LOG = LoggerFactory.getLogger(DirectorySizeCalculator.class);
 
 	private FilesIOService filesIOService;
-	private PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
 
-	public DirectorySizeCalculator(FilesIOService filesIOService, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public DirectorySizeCalculator(FilesIOService filesIOService, MonitoringHelper monitoringHelper) {
 		this.filesIOService = filesIOService;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 	}
 
@@ -43,8 +38,7 @@ public class DirectorySizeCalculator implements Function<List<FileDto>, Long> {
 				result += fileSize;
 			}
 		}
-		double lastVal = monitoringHelper.stop(monitor);
-		performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.DIRECTORY_SIZE_CALCULATOR, lastVal));
+		monitoringHelper.stop(monitor);
 		return result;
 	}
 

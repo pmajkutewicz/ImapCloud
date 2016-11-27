@@ -7,7 +7,6 @@ import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.File;
 import java.util.Arrays;
@@ -25,13 +24,12 @@ public class DirectorySizeCalculatorTest {
 	private DirectorySizeCalculator directorySizeCalculator;
 
 	private FilesIOService filesIOService = mock(FilesIOService.class);
-	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
 	public void init() {
 		reset(filesIOService);
-		directorySizeCalculator = new DirectorySizeCalculator(filesIOService, performanceDataService, monitoringHelper);
+		directorySizeCalculator = new DirectorySizeCalculator(filesIOService, monitoringHelper);
 		when(filesIOService.calculateDirSize(any(File.class))).thenCallRealMethod();
 	}
 

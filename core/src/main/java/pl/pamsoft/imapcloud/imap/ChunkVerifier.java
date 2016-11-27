@@ -4,12 +4,9 @@ import com.jamonapi.Monitor;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -21,12 +18,10 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkVerifier.class);
 
 	private final GenericObjectPool<Store> connectionPool;
-	private final PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
 
-	public ChunkVerifier(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public ChunkVerifier(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 	}
 
@@ -46,7 +41,6 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_VERIFIER, lastVal));
 			LOG.debug("Chunk verified in {}", lastVal);
 			return chunkExists;
 		} catch (Exception e) {

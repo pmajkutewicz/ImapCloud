@@ -18,7 +18,6 @@ import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
 import pl.pamsoft.imapcloud.services.upload.UploadChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.UploadFileHasher;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
@@ -50,9 +49,6 @@ public class UploadService extends AbstractBackgroundService {
 	private CryptoService cryptoService;
 
 	@Autowired
-	private PerformanceDataService performanceDataService;
-
-	@Autowired
 	private TasksProgressService tasksProgressService;
 
 	@Autowired
@@ -67,7 +63,7 @@ public class UploadService extends AbstractBackgroundService {
 		Future<?> task = getExecutor().submit(() -> {
 			Thread.currentThread().setName("UploadTask-" + taskId);
 			final Account account = accountRepository.getById(selectedAccount.getId());
-			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, performanceDataService, monitoringHelper).apply(selectedFiles);
+			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, monitoringHelper).apply(selectedFiles);
 			getTaskProgressMap().put(taskId, tasksProgressService.create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
 
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
@@ -79,14 +75,14 @@ public class UploadService extends AbstractBackgroundService {
 			Consumer<UploadChunkContainer> persistTaskProgress = ucc -> tasksProgressService.update(getTaskProgressMap().get(ucc.getTaskId()));
 
 			Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, performanceDataService, monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, performanceDataService, monitoringHelper);
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, monitoringHelper);
+			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, monitoringHelper);
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileProcessed);
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, performanceDataService, monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(performanceDataService, monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), performanceDataService, monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), performanceDataService, gitStatsUtil, monitoringHelper);
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, monitoringHelper);
+			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(monitoringHelper);
+			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), monitoringHelper);
+			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), gitStatsUtil, monitoringHelper);
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 			selectedFiles.stream()

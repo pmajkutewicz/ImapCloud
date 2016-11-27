@@ -8,14 +8,11 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -47,17 +44,15 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 
 	private GenericObjectPool<Store> connectionPool;
 	private final CryptoService cs;
-	private PerformanceDataService performanceDataService;
 	private GitStatsUtil gitStatsUtil;
 	private MonitoringHelper monitoringHelper;
 	private PaddedBufferedBlockCipher encryptingCipher;
 	private AtomicInteger retryCounter = new AtomicInteger(0);
 
-	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, PerformanceDataService performanceDataService, GitStatsUtil gitStatsUtil, MonitoringHelper monitoringHelper) {
+	public ChunkSaver(GenericObjectPool<Store> connectionPool, CryptoService cryptoService, String cryptoKey, GitStatsUtil gitStatsUtil, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
 		this.cs = cryptoService;
 		encryptingCipher = cs.getEncryptingCipher(ByteUtils.fromHexString(cryptoKey));
-		this.performanceDataService = performanceDataService;
 		this.gitStatsUtil = gitStatsUtil;
 		this.monitoringHelper = monitoringHelper;
 	}
@@ -91,7 +86,6 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			String[] header = message.getHeader("Message-ID");
 			destFolder.close(IMAPUtils.NO_EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_SAVER, lastVal));
 			LOG.debug("Chunk saved in {}", lastVal);
 			monitor(lastVal, dataChunk.getChunkSize());
 			return UploadChunkContainer.addMessageId(dataChunk, header[0]);

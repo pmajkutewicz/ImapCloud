@@ -14,7 +14,6 @@ import pl.pamsoft.imapcloud.config.GraphProperties;
 import pl.pamsoft.imapcloud.config.ODB;
 import pl.pamsoft.imapcloud.config.OObjectDatabaseTxFactory;
 import pl.pamsoft.imapcloud.config.OrientDB;
-import pl.pamsoft.imapcloud.config.WebSocketConfig;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.websocket.TaskType;
@@ -27,8 +26,7 @@ import static org.testng.Assert.assertEquals;
 @ContextConfiguration(
 	initializers = ConfigFileApplicationContextInitializer.class,
 	classes = {PropertyPlaceholderAutoConfiguration.class, SpringTestConfig.class,
-		AccountsSettings.class, GraphProperties.class, ODB.class, OrientDB.class, OObjectDatabaseTxFactory.class,
-		WebSocketConfig.class},
+		AccountsSettings.class, GraphProperties.class, ODB.class, OrientDB.class, OObjectDatabaseTxFactory.class},
 	loader=AnnotationConfigContextLoader.class)
 public class TaskProgressEventRepositoryTest extends AbstractTestNGSpringContextTests {
 

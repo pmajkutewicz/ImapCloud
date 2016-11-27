@@ -4,12 +4,9 @@ import com.jamonapi.Monitor;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +18,9 @@ public class FileSaver implements Function<DownloadChunkContainer, DownloadChunk
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileSaver.class);
 
-	private PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
 
-	public FileSaver(PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
-		this.performanceDataService = performanceDataService;
+	public FileSaver(MonitoringHelper monitoringHelper) {
 		this.monitoringHelper = monitoringHelper;
 	}
 
@@ -39,7 +34,6 @@ public class FileSaver implements Function<DownloadChunkContainer, DownloadChunk
 			createIfNecessary(path, pathWithFile);
 			Files.write(pathWithFile, dcc.getData(), StandardOpenOption.APPEND);
 			double lastVal = monitoringHelper.stop(monitor);
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_SAVER, lastVal));
 			LOG.debug("Chunk appended in {} ms", lastVal);
 		} catch (IOException e) {
 			//TODO: can't append chunk to file... what to do?

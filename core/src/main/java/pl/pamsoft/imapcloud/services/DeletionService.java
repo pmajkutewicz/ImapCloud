@@ -7,7 +7,6 @@ import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.imap.FileDeleter;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
 import java.util.UUID;
@@ -23,9 +22,6 @@ public class DeletionService extends AbstractBackgroundService {
 	private FileChunkRepository fileChunkRepository;
 
 	@Autowired
-	private PerformanceDataService performanceDataService;
-
-	@Autowired
 	private MonitoringHelper monitoringHelper;
 
 	public boolean delete(File fileToDelete) {
@@ -33,7 +29,7 @@ public class DeletionService extends AbstractBackgroundService {
 		Future<?> task = getExecutor().submit(() -> {
 			Thread.currentThread().setName("DeletionTask-" + taskId);
 			GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(fileToDelete.getOwnerAccount());
-			FileDeleter fileDeleter = new FileDeleter(connectionPool, performanceDataService, monitoringHelper);
+			FileDeleter fileDeleter = new FileDeleter(connectionPool, monitoringHelper);
 			Boolean isDeletedSuccessfully = fileDeleter.apply(fileToDelete);
 			if (isDeletedSuccessfully) {
 				fileChunkRepository.deleteFileChunks(fileToDelete.getFileUniqueId());

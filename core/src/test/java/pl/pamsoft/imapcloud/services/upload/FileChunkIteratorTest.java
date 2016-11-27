@@ -6,7 +6,6 @@ import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -23,7 +22,6 @@ public class FileChunkIteratorTest {
 
 	private static final int MEBIBYTE = 1024 * 1024;
 
-	private PerformanceDataService performanceDataService = Mockito.mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper = Mockito.mock(MonitoringHelper.class);
 
 	@DataProvider
@@ -39,7 +37,7 @@ public class FileChunkIteratorTest {
 		String filePath = getTempDir() + "/last_chunk.txt";
 		FileDto mockedFileDto = createFile(filePath, fileSize);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), readSize, performanceDataService, monitoringHelper);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), readSize, monitoringHelper);
 		fileChunkIterator.process();
 
 		for (int i = 0; i < nbOfNonLastChunks; i++) {
@@ -53,7 +51,7 @@ public class FileChunkIteratorTest {
 		String filePath = getTempDir() + "/not_aligned.txt";
 		FileDto mockedFileDto = createFile(filePath, 10);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 3, performanceDataService, monitoringHelper);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 3, monitoringHelper);
 		fileChunkIterator.process();
 
 		assertEquals(3, fileChunkIterator.next().getData().length);
@@ -68,7 +66,7 @@ public class FileChunkIteratorTest {
 		String filePath = getTempDir() + "/constant_chunks.txt";
 		FileDto mockedFileDto = createFile(filePath, MEBIBYTE);
 
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 1024, performanceDataService, monitoringHelper);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 1024, monitoringHelper);
 		fileChunkIterator.process();
 		int counter = 0;
 		while (fileChunkIterator.hasNext()) {
@@ -87,7 +85,7 @@ public class FileChunkIteratorTest {
 
 		int deviation = 512;
 		int fetchSize = 1024;
-		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), fetchSize, deviation, performanceDataService, monitoringHelper);
+		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), fetchSize, deviation, monitoringHelper);
 		fileChunkIterator.process();
 		while (fileChunkIterator.hasNext()) {
 			UploadChunkContainer chunk = fileChunkIterator.next();

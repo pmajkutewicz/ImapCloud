@@ -4,12 +4,9 @@ import com.jamonapi.Monitor;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +24,6 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private long maxSize;
 	private long currentPosition = 0;
 	private UploadChunkContainer ucc;
-	private final PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
 	private int fetchSize;
 	private int currentChunkNumber = 1;
@@ -37,16 +33,14 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 	private int maxIncrease;
 	private int minFetchSize;
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, MonitoringHelper monitoringHelper) {
 		this.ucc = ucc;
 		this.fetchSize = fetchSize;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 	}
 
-	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, MonitoringHelper monitoringHelper) {
 		this.ucc = ucc;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 		this.minFetchSize = fetchSize - deviation;
 		this.maxIncrease = 2 * deviation;
@@ -92,7 +86,6 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 			chunkSizeCumulative += data.length;
 			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data.length, chunkSizeCumulative, data, currentChunkNumber++, !hasNext());
 			double lastVal = monitoringHelper.stop(monitor);
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_CHUNK_CREATOR, lastVal));
 			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), lastVal);
 			return uploadChunkContainer;
 		} catch (IOException e) {

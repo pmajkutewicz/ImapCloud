@@ -5,12 +5,9 @@ import com.jamonapi.Monitor;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -24,12 +21,10 @@ public class FileDeleter implements Function<File, Boolean> {
 	private static final Logger LOG = LoggerFactory.getLogger(FileDeleter.class);
 
 	private final GenericObjectPool<Store> connectionPool;
-	private final PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
 
-	public FileDeleter(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public FileDeleter(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 	}
 
@@ -50,7 +45,6 @@ public class FileDeleter implements Function<File, Boolean> {
 			}
 			folder.close(IMAPUtils.EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.FILE_DELETER, lastVal));
 			LOG.debug("File deleted in {}", lastVal);
 			return Boolean.TRUE;
 		} catch (Exception e) {

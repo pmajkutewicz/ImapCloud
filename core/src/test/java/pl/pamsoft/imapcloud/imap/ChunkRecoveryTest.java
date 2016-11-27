@@ -12,7 +12,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Folder;
 import javax.mail.Header;
@@ -44,8 +43,6 @@ public class ChunkRecoveryTest {
 	@Mock
 	private GenericObjectPool<Store> pool;
 	@Mock
-	private PerformanceDataService performanceDataService;
-	@Mock
 	private MonitoringHelper monitoringHelper;
 
 	@Mock
@@ -65,7 +62,7 @@ public class ChunkRecoveryTest {
 		when(mailICFolder.list()).thenReturn(folderList);
 		when(store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME)).thenReturn(mailICFolder);
 
-		this.chunkRecovery = new ChunkRecovery(pool, performanceDataService, monitoringHelper);
+		this.chunkRecovery = new ChunkRecovery(pool, monitoringHelper);
 	}
 
 	@Test

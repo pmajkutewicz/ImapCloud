@@ -10,9 +10,6 @@
 	<Tab id="uploadsTab" closable="false" text="%main.tab.uploads">
 		<fx:include fx:id="uploadsTabPage" source="tab_uploads.fxml"/>
 	</Tab>
-	<Tab id="performanceTab" closable="false" text="%main.tab.performance">
-		<fx:include fx:id="performanceTabPage" source="tab_performance.fxml"/>
-	</Tab>
 	<Tab id="tasksTab" closable="false" text="%main.tab.tasks">
 		<fx:include fx:id="tasksTabPage" source="tab_tasks.fxml"/>
 	</Tab>

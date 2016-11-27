@@ -12,7 +12,6 @@ import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.download.DownloadFileHasherTest;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -34,12 +33,11 @@ public class UploadFileHasherTest {
 
 	private FileDto fileDto = TestUtils.mockFileDto();
 	private FilesIOService filesIOService = mock(FilesIOService.class);
-	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
 	public void init() throws NoSuchAlgorithmException {
-		uploadFileHasher = new UploadFileHasher(filesIOService, performanceDataService, monitoringHelper);
+		uploadFileHasher = new UploadFileHasher(filesIOService, monitoringHelper);
 	}
 
 	@Test

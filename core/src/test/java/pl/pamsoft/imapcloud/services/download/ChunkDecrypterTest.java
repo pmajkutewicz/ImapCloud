@@ -10,7 +10,6 @@ import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -26,13 +25,12 @@ public class ChunkDecrypterTest {
 	private ChunkDecrypter chunkDecrypter;
 
 	private CryptoService cryptoService = mock(CryptoService.class);
-	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 	private FileDto fileDto = TestUtils.mockFileDto();
 
 	@BeforeClass
 	public void init() {
-		chunkDecrypter = new ChunkDecrypter(cryptoService, "exampleKey", performanceDataService, monitoringHelper);
+		chunkDecrypter = new ChunkDecrypter(cryptoService, "exampleKey", monitoringHelper);
 	}
 
 	@Test

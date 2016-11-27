@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.IOException;
 import java.util.Spliterator;
@@ -18,25 +17,21 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 
 	private static final Logger LOG = LoggerFactory.getLogger(FileSplitter.class);
 
-	private final PerformanceDataService performanceDataService;
 	private final MonitoringHelper monitoringHelper;
 	private int maxChunkSizeInMB;
 	private int deviationInPercent;
 	private boolean variableSize;
 
-	public FileSplitter(int maxChunkSizeMB, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public FileSplitter(int maxChunkSizeMB, MonitoringHelper monitoringHelper) {
 		this.maxChunkSizeInMB = maxChunkSizeMB;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 	}
 
-	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, MonitoringHelper monitoringHelper) {
 		this.maxChunkSizeInMB = maxChunkSizeMB;
 		this.deviationInPercent = deviationInPercent;
 		this.monitoringHelper = monitoringHelper;
 		this.variableSize = true;
-
-		this.performanceDataService = performanceDataService;
 	}
 
 	@Override
@@ -46,8 +41,8 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
 		FileChunkIterator fileChunkIterator = variableSize
-			? new FileChunkIterator(ucc, maxSize, xPercent(maxSize), performanceDataService, monitoringHelper)
-			: new FileChunkIterator(ucc, maxSize, performanceDataService, monitoringHelper);
+			? new FileChunkIterator(ucc, maxSize, xPercent(maxSize), monitoringHelper)
+			: new FileChunkIterator(ucc, maxSize, monitoringHelper);
 		try {
 			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);

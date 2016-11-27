@@ -7,14 +7,11 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
@@ -35,16 +32,14 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkRecovery.class);
 	private final GenericObjectPool<Store> connectionPool;
-	private final PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
 	private List<String> requiredHeaders;
 
 	private final Map<String, File> fileMap = new HashMap<>();
 	private final Map<String, List<FileChunk>> fileChunkMap = new HashMap<>();
 
-	public ChunkRecovery(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public ChunkRecovery(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 		this.requiredHeaders = Stream.of(MessageHeaders.values()).map(MessageHeaders::toString).collect(toList());
 		this.requiredHeaders.add("Message-ID");
@@ -64,7 +59,6 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 			}
 			determineSizeAndCompleteness();
 			double lastVal = monitoringHelper.stop(monitor);
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_RECOVERY, lastVal));
 			LOG.debug("Recovered chunks in {}", lastVal);
 			return RecoveryChunkContainer.addRecoveredFilesData(rcc, fileMap, fileChunkMap);
 		} catch (Exception e) {

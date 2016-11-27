@@ -7,13 +7,11 @@ import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import static org.testng.Assert.assertEquals;
 
 public class UploadChunkHasherTest {
 
-	private PerformanceDataService performanceDataService = Mockito.mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper= Mockito.mock(MonitoringHelper.class);
 
 	@Test
@@ -23,7 +21,7 @@ public class UploadChunkHasherTest {
 		FileDto mockedFileDto = TestUtils.mockFileDto();
 
 		//when
-		UploadChunkHasher uploadChunkHasher = new UploadChunkHasher(performanceDataService, monitoringHelper);
+		UploadChunkHasher uploadChunkHasher = new UploadChunkHasher(monitoringHelper);
 		UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(new UploadChunkContainer("testId", mockedFileDto), test.getBytes().length, 0, test.getBytes(), 1, false);
 		UploadChunkContainer result = uploadChunkHasher.apply(uploadChunkContainer);
 

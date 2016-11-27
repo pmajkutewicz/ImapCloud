@@ -6,7 +6,6 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.UploadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.File;
 import java.util.Arrays;
@@ -23,12 +22,11 @@ public class DirectoryProcessorTest {
 	private DirectoryProcessor directoryProcessor;
 
 	private FilesIOService filesService = mock(FilesIOService.class);
-	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
 	public void init(){
-		directoryProcessor = new DirectoryProcessor(filesService, performanceDataService, monitoringHelper);
+		directoryProcessor = new DirectoryProcessor(filesService, monitoringHelper);
 	}
 
 	@Test

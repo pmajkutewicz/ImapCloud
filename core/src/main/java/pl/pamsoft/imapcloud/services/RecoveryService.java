@@ -18,7 +18,6 @@ import pl.pamsoft.imapcloud.services.recovery.FileRecovery;
 import pl.pamsoft.imapcloud.services.recovery.RCCtoRecoveredFileDtoConverter;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileReader;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileWriter;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import javax.mail.Store;
 import java.io.IOException;
@@ -62,9 +61,6 @@ public class RecoveryService extends AbstractBackgroundService {
 	private AccountRepository accountRepository;
 
 	@Autowired
-	private PerformanceDataService performanceDataService;
-
-	@Autowired
 	private MonitoringHelper monitoringHelper;
 
 	private String recoveriesFolder;
@@ -77,7 +73,7 @@ public class RecoveryService extends AbstractBackgroundService {
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);
 
-			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, performanceDataService, monitoringHelper);
+			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, monitoringHelper);
 			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, recoveriesFolder);
 
 			Stream.of(new RecoveryChunkContainer(taskId, account))

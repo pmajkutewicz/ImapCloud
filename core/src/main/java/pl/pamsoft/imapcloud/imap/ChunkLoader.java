@@ -6,13 +6,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.common.StatisticType;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
-import pl.pamsoft.imapcloud.websocket.PerformanceDataEvent;
 
 import javax.mail.BodyPart;
 import javax.mail.Folder;
@@ -31,12 +28,10 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkLoader.class);
 	private static final int FIRST_MESSAGE = 0;
 	private final GenericObjectPool<Store> connectionPool;
-	private final PerformanceDataService performanceDataService;
 	private MonitoringHelper monitoringHelper;
 
-	public ChunkLoader(GenericObjectPool<Store> connectionPool, PerformanceDataService performanceDataService, MonitoringHelper monitoringHelper) {
+	public ChunkLoader(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper) {
 		this.connectionPool = connectionPool;
-		this.performanceDataService = performanceDataService;
 		this.monitoringHelper = monitoringHelper;
 	}
 
@@ -57,7 +52,6 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			performanceDataService.broadcast(new PerformanceDataEvent(StatisticType.CHUNK_DOWNLOADER, lastVal));
 			LOG.debug("Chunk downloaded in {}", lastVal);
 			return DownloadChunkContainer.addData(dcc, attachment);
 		} catch (Exception e) {

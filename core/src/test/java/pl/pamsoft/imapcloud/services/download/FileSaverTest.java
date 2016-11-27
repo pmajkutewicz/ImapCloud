@@ -7,7 +7,6 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
-import pl.pamsoft.imapcloud.services.websocket.PerformanceDataService;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +27,11 @@ public class FileSaverTest {
 	private FileSaver fileSaver;
 	private String tempPath;
 
-	private PerformanceDataService performanceDataService = mock(PerformanceDataService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeClass
 	public void init() throws NoSuchAlgorithmException {
-		fileSaver = new FileSaver(performanceDataService, monitoringHelper);
+		fileSaver = new FileSaver(monitoringHelper);
 		tempPath = System.getProperty("java.io.tmpdir") + File.separator + "ic";
 	}
 
