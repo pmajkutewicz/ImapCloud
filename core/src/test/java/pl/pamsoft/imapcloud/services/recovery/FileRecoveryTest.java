@@ -60,9 +60,7 @@ public class FileRecoveryTest {
 
 		verify(fileChunkRepository, times(exampleData.getFileChunkMap().get(fileKey).size())).save(any());
 		verify(fileRepository, times(1)).save(any());
-		fileChunkCaptor.getAllValues().forEach(fc -> {
-			assertEquals(fc.getOwnerFile().getFileUniqueId(), fileKey);
-		});
+		fileChunkCaptor.getAllValues().forEach(fc -> assertEquals(fc.getOwnerFile().getFileUniqueId(), fileKey));
 	}
 
 }

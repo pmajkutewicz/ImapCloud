@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.mail.Store;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 	private void determineSizeAndCompleteness() {
 		Collection<List<FileChunk>> values = fileChunkMap.values();
 		for (List<FileChunk> fileChunks : values) {
-			fileChunks.sort((o1, o2) -> Integer.compare(o1.getChunkNumber(), o2.getChunkNumber()));
+			fileChunks.sort(Comparator.comparingInt(FileChunk::getChunkNumber));
 			int nbOfChunks = fileChunks.size();
 			FileChunk lastChunk = fileChunks.get(nbOfChunks - 1);
 			File file = lastChunk.getOwnerFile();

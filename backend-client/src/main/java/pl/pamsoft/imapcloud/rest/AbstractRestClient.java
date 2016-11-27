@@ -37,11 +37,11 @@ abstract class AbstractRestClient {
 	}
 
 	protected <T> void sendGet(String url, Class<T> cls, RequestCallback<T> requestCallback) {
-		sendGet(buildUrl(url), new OKDefaultCallback<T>(cls, requestCallback));
+		sendGet(buildUrl(url), new OKDefaultCallback<>(cls, requestCallback));
 	}
 
 	protected <T> void sendGet(String url, Class<T> cls, String paramName, String paramValue, RequestCallback<T> requestCallback) {
-		sendGet(buildUrl(url, paramName, paramValue), new OKDefaultCallback<T>(cls, requestCallback));
+		sendGet(buildUrl(url, paramName, paramValue), new OKDefaultCallback<>(cls, requestCallback));
 	}
 
 	protected void sendGet(String url, String paramName, String paramValue, RequestCallback<Void> callback) {

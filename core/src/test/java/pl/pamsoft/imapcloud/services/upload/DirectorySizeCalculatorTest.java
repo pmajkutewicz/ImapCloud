@@ -1,7 +1,5 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
@@ -36,16 +34,13 @@ public class DirectorySizeCalculatorTest {
 	@Test
 	public void shouldCalculateFilesSize() {
 		List<FileDto> files = Arrays.asList(create("a", FILE, 1024L), create("b", FILE, 2048L));
-		when(filesIOService.getFile(any(FileDto.class))).thenAnswer(new Answer<File>() {
-			@Override
-			public File answer(InvocationOnMock invocation) throws Throwable {
-				Object[] arguments = invocation.getArguments();
-				FileDto argument = (FileDto) arguments[0];
-				File f = mock(File.class);
-				when(f.length()).thenReturn(argument.getSize());
-				return f;
-			}
-		});
+		when(filesIOService.getFile(any(FileDto.class))).thenAnswer(invocation -> {
+            Object[] arguments = invocation.getArguments();
+            FileDto argument = (FileDto) arguments[0];
+            File f = mock(File.class);
+            when(f.length()).thenReturn(argument.getSize());
+            return f;
+        });
 
 		long size = directorySizeCalculator.apply(files);
 

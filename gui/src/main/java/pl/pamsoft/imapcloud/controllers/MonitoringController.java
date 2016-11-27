@@ -90,9 +90,7 @@ public class MonitoringController implements Initializable, Refreshable {
 		});
 	};
 
-	private Runnable updateTask = () -> {
-		monitoringRestClient.getMonitorsAfter(lastUpdateTimestamp, getMonitorsAfterCallback);
-	};
+	private Runnable updateTask = () -> monitoringRestClient.getMonitorsAfter(lastUpdateTimestamp, getMonitorsAfterCallback);
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {

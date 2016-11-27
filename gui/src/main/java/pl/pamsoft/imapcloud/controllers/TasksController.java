@@ -78,9 +78,7 @@ public class TasksController implements Initializable {
 		});
 	};
 
-	private Runnable updateTask = () -> {
-		taskProgressRestClient.getTasksProgress(getTaskCallback);
-	};
+	private Runnable updateTask = () -> taskProgressRestClient.getTasksProgress(getTaskCallback);
 
 
 	@Override

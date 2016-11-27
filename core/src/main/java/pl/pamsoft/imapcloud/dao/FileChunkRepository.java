@@ -17,6 +17,7 @@ import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -84,7 +85,7 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 			return StreamSupport.stream(spliterator, false)
 				.map(r -> r.getVertex(Direction.OUT))
 				.map(converter)
-				.sorted((o1, o2) -> Integer.compare(o1.getChunkNumber(), o2.getChunkNumber()))
+				.sorted(Comparator.comparingInt(FileChunk::getChunkNumber))
 				.collect(Collectors.toList());
 		}
 	}

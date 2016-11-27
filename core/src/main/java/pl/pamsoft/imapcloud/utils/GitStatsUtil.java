@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Properties;
 
 @Component
@@ -19,12 +18,12 @@ public class GitStatsUtil {
 		if (gitRepositoryState == null) {
 			try (
 				InputStream is = getClass().getClassLoader().getResourceAsStream("git.properties");
-				InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8);
+				InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)
 			) {
 				Properties properties = new Properties();
 				properties.load(reader);
 
-				gitRepositoryState = new GitRepositoryState((Map<Object, Object>)properties);
+				gitRepositoryState = new GitRepositoryState(properties);
 			}
 		}
 		return gitRepositoryState;

@@ -9,7 +9,6 @@ import pl.pamsoft.imapcloud.config.ODB;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
@@ -29,9 +28,7 @@ public interface DefaultRepository<T> {
 		Iterable<Vertex> verticesOfClass = getDb().getGraphDB().getVerticesOfClass(tClass.getSimpleName());
 
 		List<T> result = new LinkedList<>();
-		Iterator<Vertex> iterator = verticesOfClass.iterator();
-		while (iterator.hasNext()) {
-			Vertex v = iterator.next();
+		for (Vertex v : verticesOfClass) {
 			T pojo = getConverter().apply(v);
 			result.add(pojo);
 		}
