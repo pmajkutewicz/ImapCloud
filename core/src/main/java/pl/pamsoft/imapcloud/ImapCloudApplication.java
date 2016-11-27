@@ -8,12 +8,10 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
 
 @SpringBootApplication
 @ComponentScan
 @EnableAutoConfiguration
-@EnableWebSocket
 @EnableScheduling
 @EnableGlobalMethodSecurity
 public class ImapCloudApplication extends SpringBootServletInitializer {
