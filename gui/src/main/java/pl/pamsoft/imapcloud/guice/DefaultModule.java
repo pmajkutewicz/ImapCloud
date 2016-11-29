@@ -12,6 +12,7 @@ import pl.pamsoft.imapcloud.rest.RecoveryRestClient;
 import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
+import pl.pamsoft.imapcloud.tools.PlatformTools;
 
 import javax.inject.Singleton;
 
@@ -89,5 +90,11 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	protected Utils getUtils() {
 		return new Utils();
+	}
+
+	@Provides
+	@Singleton
+	protected PlatformTools getPlatformTools() {
+		return new PlatformTools();
 	}
 }

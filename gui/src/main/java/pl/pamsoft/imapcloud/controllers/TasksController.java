@@ -1,6 +1,5 @@
 package pl.pamsoft.imapcloud.controllers;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -17,6 +16,7 @@ import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
 import pl.pamsoft.imapcloud.responses.TaskProgressResponse;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
+import pl.pamsoft.imapcloud.tools.PlatformTools;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import javax.inject.Inject;
@@ -45,7 +45,8 @@ public class TasksController implements Initializable {
 	@FXML
 	private Slider updateIntervalSlider;
 
-	@Inject
+	//setter injection
+	private PlatformTools platformTools;
 	private TaskProgressRestClient taskProgressRestClient;
 
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -61,13 +62,13 @@ public class TasksController implements Initializable {
 				current = new TaskProgressControl(taskId, parseType(event.getType()), event.getFileProgressDataMap(),
 					determineBackground(event.getType()));
 				currentTasks.put(taskId, current);
-				Platform.runLater(() -> tasksContainer.getChildren().addAll(current));
+				platformTools.runLater(() -> tasksContainer.getChildren().addAll(current));
 			} else {
 				current = currentTasks.get(taskId);
 			}
 			double overallProgress = event.getBytesProcessed() / (double) event.getBytesOverall();
 
-			Platform.runLater(() -> {
+			platformTools.runLater(() -> {
 					for (FileProgressDto entry : event.getFileProgressDataMap().values()) {
 						current.updateProgress(entry.getAbsolutePath(), entry.getProgress());
 					}
@@ -80,7 +81,6 @@ public class TasksController implements Initializable {
 
 	private Runnable updateTask = () -> taskProgressRestClient.getTasksProgress(getTaskCallback);
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		this.resourceBundle = resources;
@@ -89,7 +89,7 @@ public class TasksController implements Initializable {
 	}
 
 	private void update(double newValue) {
-		Platform.runLater(() -> {
+		platformTools.runLater(() -> {
 			cancelCurrentTask();
 			int schedule = (int) (newValue * THOUSAND);
 			if (schedule > 0) {
@@ -124,4 +124,13 @@ public class TasksController implements Initializable {
 		return resourceBundle.getString("task.type." + taskType.toString().toLowerCase());
 	}
 
+	@Inject
+	public void setPlatformTools(PlatformTools platformTools) {
+		this.platformTools = platformTools;
+	}
+
+	@Inject
+	public void setTaskProgressRestClient(TaskProgressRestClient taskProgressRestClient) {
+		this.taskProgressRestClient = taskProgressRestClient;
+	}
 }

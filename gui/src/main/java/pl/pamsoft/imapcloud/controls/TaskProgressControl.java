@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.controls;
 import com.davidhampgonsalves.identicon.HashGeneratorInterface;
 import com.davidhampgonsalves.identicon.IdenticonGenerator;
 import com.davidhampgonsalves.identicon.MessageDigestHashGenerator;
+import com.google.common.annotations.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
@@ -69,5 +70,15 @@ public class TaskProgressControl extends AbstractControl {
 			result.put(fileEntry.getAbsolutePath(), simpleDoubleProperty);
 		}
 		return result;
+	}
+
+	@VisibleForTesting
+	public ProgressIndicator getOverallProgress() {
+		return overallProgress;
+	}
+
+	@VisibleForTesting
+	public Map<String, SimpleDoubleProperty> getFileProgressMap() {
+		return fileProgressMap;
 	}
 }
