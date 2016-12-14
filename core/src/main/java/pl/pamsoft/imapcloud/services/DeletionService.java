@@ -26,7 +26,7 @@ public class DeletionService extends AbstractBackgroundService {
 
 	public boolean delete(File fileToDelete) {
 		final String taskId = UUID.randomUUID().toString();
-		Future<?> task = getExecutor().submit(() -> {
+		Future<Void> task = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("DeletionTask-" + taskId);
 			GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(fileToDelete.getOwnerAccount());
 			FileDeleter fileDeleter = new FileDeleter(connectionPool, monitoringHelper);

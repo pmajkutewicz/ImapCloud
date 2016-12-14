@@ -27,7 +27,7 @@ public class VerificationService extends AbstractBackgroundService {
 
 	public boolean validate(List<FileChunk> fileChunks) {
 		final String taskId = UUID.randomUUID().toString();
-		Future<?> task = getExecutor().submit(() -> {
+		Future<Void> task = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("VerificationTask-" + taskId);
 			fileChunks
 				.forEach(chunk -> {

@@ -57,7 +57,7 @@ public class DownloadService extends AbstractBackgroundService {
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean download(UploadedFileDto fileToDownload, FileDto destDir) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
-		Future<?> task = getExecutor().submit(() -> {
+		Future<Void> task = runAsyncOnExecutor(() -> {
 			try {
 				Thread.currentThread().setName("DownloadTask-" + taskId);
 				List<String> invalidFileIds = new CopyOnWriteArrayList<>();

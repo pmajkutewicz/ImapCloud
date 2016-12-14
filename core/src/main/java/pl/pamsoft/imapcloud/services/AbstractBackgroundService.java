@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.services;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
+import pl.pamsoft.imapcloud.exceptions.IMAPCloudUncaughtExceptionHandler;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 
@@ -10,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +27,7 @@ abstract class AbstractBackgroundService {
 	private static final int FIVETEEN = 15;
 
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(
-		getMaxTasks(), new ThreadFactoryBuilder().setNameFormat(getNameFormat()).setDaemon(false).build());
+		getMaxTasks(), new ThreadFactoryBuilder().setNameFormat(getNameFormat()).setDaemon(false).setUncaughtExceptionHandler(new IMAPCloudUncaughtExceptionHandler()).build());
 	private ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 	private Map<String, Future<?>> taskMap = new ConcurrentHashMap<>();
 	private Map<String, TaskProgress> taskProgressMap = new ConcurrentHashMap<>();
@@ -42,7 +44,6 @@ abstract class AbstractBackgroundService {
 		return null;
 	};
 
-
 	@PostConstruct
 	protected void init() {
 		scheduledExecutorService.schedule(cleanUpTask, FIVETEEN, TimeUnit.MINUTES);
@@ -52,6 +53,10 @@ abstract class AbstractBackgroundService {
 	protected void destroy() {
 		executor.shutdown();
 		scheduledExecutorService.shutdown();
+	}
+
+	protected Future<Void> runAsyncOnExecutor(Runnable runnable) {
+		return CompletableFuture.runAsync(runnable, getExecutor()).exceptionally(new IMAPCloudUncaughtExceptionHandler());
 	}
 
 	protected ExecutorService getExecutor() {

@@ -60,7 +60,7 @@ public class UploadService extends AbstractBackgroundService {
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
-		Future<?> task = getExecutor().submit(() -> {
+		Future<Void> future = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("UploadTask-" + taskId);
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, monitoringHelper).apply(selectedFiles);
@@ -104,7 +104,7 @@ public class UploadService extends AbstractBackgroundService {
 				.peek(persistTaskProgress)
 				.forEach(System.out::println);
 		});
-		getTaskMap().put(taskId, task);
+		getTaskMap().put(taskId, future);
 		return true;
 	}
 

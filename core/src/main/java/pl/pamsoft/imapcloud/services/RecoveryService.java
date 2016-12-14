@@ -67,7 +67,7 @@ public class RecoveryService extends AbstractBackgroundService {
 
 	public boolean recover(AccountDto selectedAccount) {
 		final String taskId = UUID.randomUUID().toString();
-		Future<?> task = getExecutor().submit(() -> {
+		Future<Void> task = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("RecoveryTask-" + taskId);
 
 			final Account account = accountRepository.getById(selectedAccount.getId());
