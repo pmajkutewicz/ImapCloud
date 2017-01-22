@@ -13,7 +13,9 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 abstract class AbstractRestClient {
@@ -47,6 +49,32 @@ abstract class AbstractRestClient {
 	protected void sendGet(String url, String paramName, String paramValue, RequestCallback<Void> callback) {
 		sendGet(buildUrl(url, paramName, paramValue), new OKVoidCallback(callback));
 	}
+
+	//region Synchronous get
+	<T> T sendGet(String url, Class<T> cls) throws IOException {
+		return objectMapper.readValue(sendGet(buildUrl(url)).body().string(), cls);
+	}
+
+	Response sendGet(String url, String paramName, String paramValue) throws IOException {
+		return sendGet(buildUrl(url, paramName, paramValue));
+	}
+
+	private Response sendGet(HttpUrl httpUrl) throws IOException {
+		return send(getRequest().url(httpUrl.url()).build());
+	}
+
+	private Response send(Request req) throws IOException {
+		Response response = getClient().newCall(req).execute();
+		throwExceptionIfNotValidResponse(response);
+		return response;
+	}
+
+	private void throwExceptionIfNotValidResponse(Response response) throws IOException {
+		if (!response.isSuccessful()) {
+			throw new IOException(response.body().string());
+		}
+	}
+	//endregion
 
 	protected void sendPost(String url, Object pojo, RequestCallback<Void> callback) {
 		sendPost(buildUrl(url), pojo, new OKVoidCallback(callback));

@@ -18,7 +18,7 @@ public interface RequestCallback<T> {
 
 	Logger LOG = LoggerFactory.getLogger(RequestCallback.class);
 
-	void onSuccess(T data);
+	void onSuccess(T data) throws IOException;
 
 	default void onFailure(IOException e) {
 		LOG.error("Unhandled error", e);

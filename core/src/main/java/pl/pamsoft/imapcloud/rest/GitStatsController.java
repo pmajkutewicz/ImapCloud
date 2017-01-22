@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import pl.pamsoft.imapcloud.dto.GitRepositoryState;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 
@@ -24,6 +23,5 @@ public class GitStatsController {
 	@RequestMapping(value = "/status", method = RequestMethod.GET)
 	public ResponseEntity<GitRepositoryState> checkGitRevision() throws IOException {
 		return new ResponseEntity<>(gitStatsUtil.getGitRepositoryState(), HttpStatus.OK);
-
-}
+	}
 }

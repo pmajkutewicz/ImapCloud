@@ -16,6 +16,7 @@ import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
 import pl.pamsoft.imapcloud.tools.TestPlatformTools;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -70,7 +71,7 @@ public class TasksControllerTest {
 	}
 
 	@Test
-	public void testFlow() throws InterruptedException {
+	public void testFlow() throws InterruptedException, IOException {
 		Map<String, TaskProgressControl> currentTasks = (Map<String, TaskProgressControl>) Whitebox.getInternalState(tasksController, "currentTasks");
 		RequestCallback<TaskProgressResponse> lambdaToTest = captureLambda();
 		TaskProgressResponse taskProgressResponse = new TaskProgressResponse();

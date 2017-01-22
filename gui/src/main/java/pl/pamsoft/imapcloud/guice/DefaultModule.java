@@ -7,6 +7,7 @@ import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.DownloadsRestClient;
 import pl.pamsoft.imapcloud.rest.FilesRestClient;
 import pl.pamsoft.imapcloud.rest.GitStatusRestClient;
+import pl.pamsoft.imapcloud.rest.IMAPCloudFeaturesClient;
 import pl.pamsoft.imapcloud.rest.MonitoringRestClient;
 import pl.pamsoft.imapcloud.rest.RecoveryRestClient;
 import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
@@ -84,6 +85,12 @@ public class DefaultModule extends AbstractModule {
 	@Singleton
 	protected TaskProgressRestClient getTasksProgressRestClient() {
 		return new TaskProgressRestClient(endpoint, username, password);
+	}
+
+	@Provides
+	@Singleton
+	public IMAPCloudFeaturesClient getIMAPCloudFeaturesClient() {
+		return new IMAPCloudFeaturesClient(endpoint, username, password);
 	}
 
 	@Provides
