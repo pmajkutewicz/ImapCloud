@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.config.ff4j;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.ff4j.FF4j;
 import org.ff4j.web.FF4jDispatcherServlet;
 import org.ff4j.web.embedded.ConsoleServlet;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @AutoConfigureAfter(FF4JConfiguration.class)
 public class FF4JWebConfiguration extends SpringBootServletInitializer {
 
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	@Bean
 	public ServletRegistrationBean servletRegistrationBean(ConsoleServlet ff4jConsoleServlet) {
 		return new ServletRegistrationBean(ff4jConsoleServlet, "/ff4j-console");
@@ -29,6 +31,7 @@ public class FF4JWebConfiguration extends SpringBootServletInitializer {
 		return ff4jConsoleServlet;
 	}
 
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	@Bean
 	public ServletRegistrationBean ff4jDispatcherServletRegistrationBean(FF4jDispatcherServlet ff4jDispatcherServlet) {
 		return new ServletRegistrationBean(ff4jDispatcherServlet, "/ff4j-web-console/*");
