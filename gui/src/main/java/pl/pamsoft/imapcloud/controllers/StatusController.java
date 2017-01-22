@@ -30,7 +30,7 @@ public class StatusController implements Initializable, Refreshable{
 
 	@Override
 	public void refresh() {
-		gitStatusRestClient.getAvailableEmailAccounts(data -> statusText.setText(data.prettyPrint()));
+		gitStatusRestClient.getGitStatus(data -> statusText.setText(data.prettyPrint()));
 	}
 
 	@Override

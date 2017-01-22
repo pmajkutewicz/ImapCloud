@@ -10,7 +10,7 @@ public class GitStatusRestClient extends AbstractRestClient {
 		super(endpoint, username, pass);
 	}
 
-	public void getAvailableEmailAccounts(RequestCallback<GitRepositoryState> callback) {
+	public void getGitStatus(RequestCallback<GitRepositoryState> callback) {
 		sendGet(GIT_STATUS, GitRepositoryState.class, callback);
 	}
 
