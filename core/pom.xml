@@ -17,7 +17,6 @@
 		<main.basedir>${project.parent.basedir}</main.basedir>
 		<!-- The main class to start by executing java -jar -->
 		<start-class>pl.pamsoft.imapcloud.ImapCloudApplication</start-class>
-		<ff4j-core.version>1.6.1</ff4j-core.version>
 	</properties>
 
 	<repositories>
@@ -156,7 +155,14 @@
 		<dependency>
 			<groupId>org.ff4j</groupId>
 			<artifactId>ff4j-core</artifactId>
-			<version>${ff4j-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.ff4j</groupId>
+			<artifactId>ff4j-spring-boot-autoconfigure</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ff4j</groupId>
+			<artifactId>ff4j-web</artifactId>
 		</dependency>
 
 		<!-- test -->
