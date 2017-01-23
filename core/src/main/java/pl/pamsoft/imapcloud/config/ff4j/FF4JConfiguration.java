@@ -13,6 +13,6 @@ public class FF4JConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public FF4j getFF4j() {
-		return new FF4j();
+		return new FF4j("ff4j.xml");
 	}
 }
