@@ -10,7 +10,7 @@ import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;

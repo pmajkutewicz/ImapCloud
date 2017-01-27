@@ -73,10 +73,10 @@
 		<commons-io.version>2.5</commons-io.version>
 		<commons-vfs2.version>2.1</commons-vfs2.version>
 		<bouncycastle.version>1.56</bouncycastle.version>
-		<testng.version>6.9.10</testng.version>
+		<testng.version>6.10</testng.version>
 		<springfox-swagger2.version>2.6.1</springfox-swagger2.version>
 		<jamon.version>2.81</jamon.version>
-		<mockito-core.version>1.10.19</mockito-core.version>
+		<mockito-core.version>2.6.8</mockito-core.version>
 	</properties>
 
 	<modules>

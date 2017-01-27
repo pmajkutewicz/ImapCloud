@@ -4,7 +4,6 @@ import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 import org.mockito.ArgumentCaptor;
-import org.mockito.internal.util.reflection.Whitebox;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
@@ -17,6 +16,7 @@ import pl.pamsoft.imapcloud.tools.TestPlatformTools;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -65,14 +65,14 @@ public class TasksControllerTest {
 		tasksController.setPlatformTools(new TestPlatformTools());
 		tasksController.setTaskProgressRestClient(taskProgressRestClient);
 		slider = new Slider();
-		Whitebox.setInternalState(tasksController, "updateIntervalSlider", slider);
-		Whitebox.setInternalState(tasksController, "tasksContainer", new VBox());
+		setInternalState(tasksController, "updateIntervalSlider", slider);
+		setInternalState(tasksController, "tasksContainer", new VBox());
 		tasksController.initialize(new URL("http://example.com"), resourceBundle);
 	}
 
 	@Test
 	public void testFlow() throws InterruptedException, IOException {
-		Map<String, TaskProgressControl> currentTasks = (Map<String, TaskProgressControl>) Whitebox.getInternalState(tasksController, "currentTasks");
+		Map<String, TaskProgressControl> currentTasks = (Map<String, TaskProgressControl>) getInternalState(tasksController, "currentTasks");
 		RequestCallback<TaskProgressResponse> lambdaToTest = captureLambda();
 		TaskProgressResponse taskProgressResponse = new TaskProgressResponse();
 
@@ -118,5 +118,27 @@ public class TasksControllerTest {
 		Thread.sleep(3000);
 		verify(taskProgressRestClient, atLeastOnce()).getTasksProgress(requestCallbackArgumentCaptor.capture());
 		return requestCallbackArgumentCaptor.getValue();
+	}
+
+	private static Object getInternalState(Object target, String field) {
+		Class<?> c = target.getClass();
+		try {
+			Field f = c.getDeclaredField(field);
+			f.setAccessible(true);
+			return f.get(target);
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to get internal state on a private field.", e);
+		}
+	}
+
+	private  static void setInternalState(Object target, String field, Object value) {
+		Class<?> c = target.getClass();
+		try {
+			Field f = c.getDeclaredField(field);
+			f.setAccessible(true);
+			f.set(target, value);
+		} catch (Exception e) {
+			throw new RuntimeException("Unable to set internal state on a private field.", e);
+		}
 	}
 }

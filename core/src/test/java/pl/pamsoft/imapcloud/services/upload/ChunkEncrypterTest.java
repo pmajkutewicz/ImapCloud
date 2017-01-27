@@ -13,8 +13,8 @@ import pl.pamsoft.imapcloud.services.UploadChunkContainer;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -29,6 +29,8 @@ public class ChunkEncrypterTest {
 
 	@BeforeClass
 	public void init() {
+		PaddedBufferedBlockCipher cipher = mock(PaddedBufferedBlockCipher.class);
+		when(cryptoService.getEncryptingCipher(any())).thenReturn(cipher);
 		chunkEncrypter = new ChunkEncrypter(cryptoService, "exampleKey", monitoringHelper);
 	}
 
@@ -37,6 +39,7 @@ public class ChunkEncrypterTest {
 		byte[] in = TestUtils.getRandomBytes(1024);
 		byte[] out = TestUtils.getRandomBytes(1024);
 		UploadChunkContainer ucc = createExampleUCC(in);
+
 		when(cryptoService.encrypt(any(PaddedBufferedBlockCipher.class), eq(in))).thenReturn(out);
 
 		UploadChunkContainer response = chunkEncrypter.apply(ucc);
