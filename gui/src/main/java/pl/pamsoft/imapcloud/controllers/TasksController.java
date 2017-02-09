@@ -70,7 +70,7 @@ public class TasksController implements Initializable {
 
 			platformTools.runLater(() -> {
 					for (FileProgressDto entry : event.getFileProgressDataMap().values()) {
-						current.updateProgress(entry.getAbsolutePath(), entry.getProgress());
+						current.updateProgress(entry.getAbsolutePath(), entry.getProgress(), entry.getStatus());
 					}
 					current.updateProgress(overallProgress);
 				}

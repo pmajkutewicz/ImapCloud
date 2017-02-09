@@ -6,6 +6,7 @@ import com.davidhampgonsalves.identicon.MessageDigestHashGenerator;
 import com.google.common.annotations.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -14,6 +15,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
+import pl.pamsoft.imapcloud.dto.progress.FileProgressStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,18 +36,22 @@ public class TaskProgressControl extends AbstractControl {
 	private VBox filesInfo;
 
 	private Map<String, SimpleDoubleProperty> fileProgressMap;
+	private Map<String, SimpleObjectProperty<FileProgressStatus>> fileProgressStatusMap;
 
 	@SuppressFBWarnings("UR_UNINIT_READ")
 	public TaskProgressControl(String id, String type, Map<String, FileProgressDto> fileProgressDataMap,
 	                           Background background) {
 		this.setBackground(background);
 		this.taskIdLabel.setText(type + ' ' + id);
-		fileProgressMap = createFileMap(fileProgressDataMap);
+		createFileMap(fileProgressDataMap);
 		generateIdenticon(id);
 	}
 
-	public void updateProgress(String fileAbsolutePath, double fileProgress) {
+	public void updateProgress(String fileAbsolutePath, double fileProgress, FileProgressStatus status) {
 		fileProgressMap.get(fileAbsolutePath).set(fileProgress);
+		if (FileProgressStatus.ALREADY_UPLOADED.equals(status)) {
+			fileProgressStatusMap.get(fileAbsolutePath).setValue(FileProgressStatus.ALREADY_UPLOADED);
+		}
 	}
 
 	public void updateProgress(double overallProgressValue) {
@@ -62,14 +68,18 @@ public class TaskProgressControl extends AbstractControl {
 		identicon.setImage(writableImage);
 	}
 
-	private Map<String, SimpleDoubleProperty> createFileMap(Map<String, FileProgressDto> fileProgressDataMap) {
-		Map<String, SimpleDoubleProperty> result = new ConcurrentHashMap<>(fileProgressDataMap.size());
+	private void createFileMap(Map<String, FileProgressDto> fileProgressDataMap) {
+		fileProgressMap = new ConcurrentHashMap<>(fileProgressDataMap.size());
+		fileProgressStatusMap = new ConcurrentHashMap<>(fileProgressDataMap.size());
+
 		for (FileProgressDto fileEntry : fileProgressDataMap.values()) {
 			SimpleDoubleProperty simpleDoubleProperty = new SimpleDoubleProperty(0);
-			filesInfo.getChildren().add(new ProgressIndicatorBar(simpleDoubleProperty, fileEntry.getSize(), fileEntry.getAbsolutePath()));
-			result.put(fileEntry.getAbsolutePath(), simpleDoubleProperty);
+			SimpleObjectProperty<FileProgressStatus> statusProperty = new SimpleObjectProperty<FileProgressStatus>(fileEntry.getStatus());
+			ProgressIndicatorBar indicatorBar = new ProgressIndicatorBar(simpleDoubleProperty, fileEntry.getSize(), fileEntry.getAbsolutePath(), statusProperty);
+			filesInfo.getChildren().add(indicatorBar);
+			fileProgressMap.put(fileEntry.getAbsolutePath(), simpleDoubleProperty);
+			fileProgressStatusMap.put(fileEntry.getAbsolutePath(), statusProperty);
 		}
-		return result;
 	}
 
 	@VisibleForTesting

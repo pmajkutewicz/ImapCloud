@@ -28,7 +28,7 @@ public class TasksProgressService {
 	@Autowired
 	private TaskProgressRepository taskProgressRepository;
 
-	private Function<FileProgress, FileProgressDto> fileProgressToDto = fp -> new FileProgressDto(fp.getId(), fp.getAbsolutePath(), fp.getSize(), fp.getProgress());
+	private Function<FileProgress, FileProgressDto> fileProgressToDto = fp -> new FileProgressDto(fp.getId(), fp.getAbsolutePath(), fp.getSize(), fp.getProgress(), fp.getStatus());
 
 	private Function<TaskProgress, TaskProgressDto> taskProgressToDto = tp -> {
 		Map<String, FileProgressDto> fileProgressDataMap = tp.getFileProgressDataMap().entrySet().stream()

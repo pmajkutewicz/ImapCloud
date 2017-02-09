@@ -8,12 +8,14 @@ public class FileProgressDto {
 	private String absolutePath;
 	private long size;
 	private long progress;
+	private FileProgressStatus status;
 
-	public FileProgressDto(String id, String absolutePath, long size, long progress) {
+	public FileProgressDto(String id, String absolutePath, long size, long progress, FileProgressStatus status) {
 		this.id = id;
 		this.absolutePath = absolutePath;
 		this.size = size;
 		this.progress = progress;
+		this.status = status;
 	}
 
 	public FileProgressDto() {
@@ -49,5 +51,13 @@ public class FileProgressDto {
 
 	public void setProgress(long progress) {
 		this.progress = progress;
+	}
+
+	public FileProgressStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(FileProgressStatus status) {
+		this.status = status;
 	}
 }

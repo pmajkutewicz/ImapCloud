@@ -1,10 +1,12 @@
 package pl.pamsoft.imapcloud.controls;
 
 import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import pl.pamsoft.imapcloud.dto.progress.FileProgressStatus;
 
 import java.text.DecimalFormat;
 
@@ -14,6 +16,7 @@ public class ProgressIndicatorBar extends StackPane {
 
 	private final ReadOnlyDoubleProperty workDone;
 	private final double totalWork;
+	private final SimpleObjectProperty<FileProgressStatus> status;
 
 	private final ProgressBar bar = new ProgressBar();
 	private final Text text = new Text();
@@ -21,10 +24,11 @@ public class ProgressIndicatorBar extends StackPane {
 
 	private static final int DEFAULT_LABEL_PADDING = 5;
 
-	ProgressIndicatorBar(final ReadOnlyDoubleProperty workDone, final double totalWork, final String label) {
+	ProgressIndicatorBar(final ReadOnlyDoubleProperty workDone, final double totalWork, final String label, final SimpleObjectProperty<FileProgressStatus> status) {
 		this.workDone = workDone;
 		this.totalWork = totalWork;
 		this.label = label;
+		this.status = status;
 
 		syncProgress();
 		workDone.addListener((observableValue, number, number2) -> syncProgress());
@@ -42,7 +46,11 @@ public class ProgressIndicatorBar extends StackPane {
 			text.setText("");
 			bar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 		} else {
-			text.setText(String.format("%s (%s of %s)", label, getReadableFileSize(workDone.get()), getReadableFileSize(totalWork)));
+			if (FileProgressStatus.ALREADY_UPLOADED.equals(status.getValue())) {
+				text.setText(String.format("%s (%s)", label, status.getValue().toString()));
+			} else {
+				text.setText(String.format("%s (%s of %s)", label, getReadableFileSize(workDone.get()), getReadableFileSize(totalWork)));
+			}
 			bar.setProgress(workDone.get() / totalWork);
 		}
 

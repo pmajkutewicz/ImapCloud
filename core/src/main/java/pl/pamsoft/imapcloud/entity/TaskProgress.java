@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.entity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import pl.pamsoft.imapcloud.dto.progress.FileProgressStatus;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import javax.persistence.FetchType;
@@ -19,11 +20,19 @@ public class TaskProgress {
 	private Map<String, FileProgress> fileProgressDataMap;
 
 	public void process(String currentFileAbsolutePath, long cumulativeFileProgress) {
-		fileProgressDataMap.get(currentFileAbsolutePath).setProgress(cumulativeFileProgress);
+		FileProgress fileProgress = fileProgressDataMap.get(currentFileAbsolutePath);
+		fileProgress.setProgress(cumulativeFileProgress);
+		if (cumulativeFileProgress == fileProgress.getSize()){
+			fileProgress.setStatus(FileProgressStatus.UPLOADED);
+		} else {
+			fileProgress.setStatus(FileProgressStatus.UPLOADING);
+		}
 	}
 
-	public void markFileProcessed(String currentFileAbsolutePath, long fileSize) {
-		fileProgressDataMap.get(currentFileAbsolutePath).setProgress(fileSize);
+	public void markFileAlreadyUploaded(String currentFileAbsolutePath, long fileSize) {
+		FileProgress fileProgress = fileProgressDataMap.get(currentFileAbsolutePath);
+		fileProgress.setProgress(fileSize);
+		fileProgress.setStatus(FileProgressStatus.ALREADY_UPLOADED);
 	}
 
 	public String getId() {

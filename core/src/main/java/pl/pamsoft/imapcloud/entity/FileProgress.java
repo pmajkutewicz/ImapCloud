@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.entity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import pl.pamsoft.imapcloud.dto.progress.FileProgressStatus;
 
 import javax.persistence.Id;
 
@@ -11,10 +12,12 @@ public class FileProgress {
 	private String absolutePath;
 	private long size;
 	private long progress;
+	private FileProgressStatus status;
 
 	public FileProgress(String absolutePath, long size) {
 		this.absolutePath = absolutePath;
 		this.size = size;
+		status = FileProgressStatus.WAITING;
 	}
 
 	public FileProgress() {
@@ -50,5 +53,13 @@ public class FileProgress {
 
 	public void setProgress(long progress) {
 		this.progress = progress;
+	}
+
+	public FileProgressStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(FileProgressStatus status) {
+		this.status = status;
 	}
 }

@@ -17,12 +17,12 @@ public class FileStorer implements Function<UploadChunkContainer, UploadChunkCon
 
 	private FileServices fileServices;
 	private Account account;
-	private final Consumer<UploadChunkContainer> updateProgress;
+	private final Consumer<UploadChunkContainer> alreadyUploaded;
 
-	public FileStorer(FileServices fileServices, Account account, Consumer<UploadChunkContainer> updateProgress) {
+	public FileStorer(FileServices fileServices, Account account, Consumer<UploadChunkContainer> alreadyUploaded) {
 		this.fileServices = fileServices;
 		this.account = account;
-		this.updateProgress = updateProgress;
+		this.alreadyUploaded = alreadyUploaded;
 	}
 
 	@Override
@@ -34,7 +34,7 @@ public class FileStorer implements Function<UploadChunkContainer, UploadChunkCon
 		} catch (FileAlreadyExistsException e) {
 			LOG.warn("{} removed from queue.", ucc.getFileDto().getAbsolutePath());
 
-			updateProgress.accept(ucc);
+			alreadyUploaded.accept(ucc);
 			return UploadChunkContainer.EMPTY;
 		}
 	}
