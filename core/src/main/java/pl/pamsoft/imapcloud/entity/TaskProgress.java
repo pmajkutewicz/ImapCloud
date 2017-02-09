@@ -1,13 +1,12 @@
 package pl.pamsoft.imapcloud.entity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import java.util.List;
+import javax.persistence.OneToMany;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class TaskProgress {
@@ -16,22 +15,14 @@ public class TaskProgress {
 	private TaskType type;
 	private String taskId;
 	private long bytesOverall;
-	private long bytesProcessed;
+	@OneToMany(fetch = FetchType.EAGER)
 	private Map<String, FileProgress> fileProgressDataMap;
 
-	public void addSelectedFiles(List<FileDto> selectedFiles) {
-		fileProgressDataMap = selectedFiles.stream()
-			.map(file -> new FileProgress(file.getAbsolutePath(), file.getSize()))
-			.collect(Collectors.toMap(FileProgress::getAbsolutePath, c -> c));
-	}
-
-	public void process(long processedBytes, String currentFileAbsolutePath, long cumulativeFileProgress) {
-		this.bytesProcessed += processedBytes;
+	public void process(String currentFileAbsolutePath, long cumulativeFileProgress) {
 		fileProgressDataMap.get(currentFileAbsolutePath).setProgress(cumulativeFileProgress);
 	}
 
 	public void markFileProcessed(String currentFileAbsolutePath, long fileSize) {
-		this.bytesProcessed = fileSize;
 		fileProgressDataMap.get(currentFileAbsolutePath).setProgress(fileSize);
 	}
 
@@ -68,11 +59,7 @@ public class TaskProgress {
 	}
 
 	public long getBytesProcessed() {
-		return this.bytesProcessed;
-	}
-
-	public void setBytesProcessed(long bytesProcessed) {
-		this.bytesProcessed = bytesProcessed;
+		return fileProgressDataMap.values().stream().mapToLong(FileProgress::getProgress).sum();
 	}
 
 	public Map<String, FileProgress> getFileProgressDataMap() {

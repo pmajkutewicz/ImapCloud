@@ -68,7 +68,7 @@ public class UploadService extends AbstractBackgroundService {
 
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
-				.process(ucc.getChunkSize(), ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize());
+				.process(ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize());
 			Consumer<UploadChunkContainer> markFileProcessed = ucc -> getTaskProgressMap().get(ucc.getTaskId())
 				.markFileProcessed(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
 
@@ -78,7 +78,7 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, monitoringHelper);
 			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, monitoringHelper);
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
-			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileProcessed);
+			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileProcessed.andThen(persistTaskProgress));
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, monitoringHelper);
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(monitoringHelper);
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), monitoringHelper);

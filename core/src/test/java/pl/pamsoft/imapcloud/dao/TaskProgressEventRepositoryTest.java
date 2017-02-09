@@ -40,11 +40,9 @@ public class TaskProgressEventRepositoryTest extends AbstractTestNGSpringContext
 		TaskProgress event = eventRepository.create(TaskType.VERIFY, "test", 1000, of(f));
 		assertEquals(eventRepository.findAll().size(), startSize + 1);
 
-		event.setBytesProcessed(500L);
 		eventRepository.save(event);
 		assertEquals(eventRepository.findAll().size(), startSize + 1); // no new entries
 
-		event.setBytesProcessed(800L);
 		eventRepository.save(event);
 		assertEquals(eventRepository.findAll().size(), startSize + 1); // no new entries
 	}
