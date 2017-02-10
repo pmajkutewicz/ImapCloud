@@ -46,7 +46,7 @@ public class ProgressIndicatorBar extends StackPane {
 			text.setText("");
 			bar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 		} else {
-			if (FileProgressStatus.ALREADY_UPLOADED.equals(status.getValue())) {
+			if (FileProgressStatus.ALREADY_UPLOADED == status.getValue()) {
 				text.setText(String.format("%s (%s)", label, status.getValue().toString()));
 			} else {
 				text.setText(String.format("%s (%s of %s)", label, getReadableFileSize(workDone.get()), getReadableFileSize(totalWork)));

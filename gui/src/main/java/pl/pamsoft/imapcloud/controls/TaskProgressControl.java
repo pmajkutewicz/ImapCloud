@@ -49,7 +49,7 @@ public class TaskProgressControl extends AbstractControl {
 
 	public void updateProgress(String fileAbsolutePath, double fileProgress, FileProgressStatus status) {
 		fileProgressMap.get(fileAbsolutePath).set(fileProgress);
-		if (FileProgressStatus.ALREADY_UPLOADED.equals(status)) {
+		if (FileProgressStatus.ALREADY_UPLOADED == status) {
 			fileProgressStatusMap.get(fileAbsolutePath).setValue(FileProgressStatus.ALREADY_UPLOADED);
 		}
 	}
