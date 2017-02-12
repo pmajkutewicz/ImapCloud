@@ -7,6 +7,7 @@ import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
+import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.common.TasksProgressService;
@@ -72,7 +73,10 @@ public class UploadService extends AbstractBackgroundService {
 			Consumer<UploadChunkContainer> markFileAlreadyUploaded = ucc -> getTaskProgressMap().get(ucc.getTaskId())
 				.markFileAlreadyUploaded(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
 
-			Consumer<UploadChunkContainer> persistTaskProgress = ucc -> tasksProgressService.update(getTaskProgressMap().get(ucc.getTaskId()));
+			Consumer<UploadChunkContainer> persistTaskProgress = ucc -> {
+				TaskProgress updated = tasksProgressService.update(getTaskProgressMap().get(ucc.getTaskId()));
+				getTaskProgressMap().put(ucc.getTaskId(), updated);
+			};
 
 			Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, monitoringHelper);

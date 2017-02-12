@@ -4,7 +4,6 @@ import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import com.orientechnologies.orient.object.iterator.OObjectIteratorClass;
 import com.tinkerpop.blueprints.Vertex;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileProgress;
@@ -15,14 +14,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Repository
 public class TaskProgressRepository extends AbstractRepository<TaskProgress> {
-
-	@Autowired
-	private FileProgressRepository fileProgressRepository;
 
 	public TaskProgress create(TaskType type, String taskId, long bytesOverall, List<FileDto> selectedFiles) {
 		OObjectDatabaseTx objectDB = getDb().getObjectDB();
@@ -30,11 +26,12 @@ public class TaskProgressRepository extends AbstractRepository<TaskProgress> {
 		taskProgressEvent.setType(type);
 		taskProgressEvent.setTaskId(taskId);
 		taskProgressEvent.setBytesOverall(bytesOverall);
-		Map<String, FileProgress> fileProgressMap = selectedFiles.stream()
-			.map(file -> new FileProgress(file.getAbsolutePath(), file.getSize()))
-			.peek(fileProgressRepository::save)
-			.collect(Collectors.toMap(FileProgress::getAbsolutePath, c -> c));
-		taskProgressEvent.setFileProgressDataMap(fileProgressMap);
+		Map<String, FileProgress> result = new ConcurrentHashMap<>();
+		for (FileDto file : selectedFiles) {
+			FileProgress fp = objectDB.newInstance(FileProgress.class, file.getAbsolutePath(), file.getSize());
+			result.put(fp.getAbsolutePath(), fp);
+		}
+		taskProgressEvent.setFileProgressDataMap(result);
 		objectDB.save(taskProgressEvent);
 		objectDB.commit(true);
 		objectDB.close();
@@ -64,11 +61,16 @@ public class TaskProgressRepository extends AbstractRepository<TaskProgress> {
 	@SuppressWarnings("unchecked")
 	@SuppressFBWarnings("SGSU_SUSPICIOUS_GETTER_SETTER_USE")
 	public List<TaskProgress> findAll() {
-		OObjectIteratorClass<TaskProgress> events = getDb().getObjectDB().browseClass(TaskProgress.class).setFetchPlan("*:-1");
+		OObjectDatabaseTx objectDB = getDb().getObjectDB();
+		OObjectIteratorClass<TaskProgress> events = objectDB.browseClass(TaskProgress.class).setFetchPlan("*:-1");
 		ArrayList<TaskProgress> result = new ArrayList<>();
 		for (TaskProgress event : events) {
-			//FIXME: ugly hack to load lazy values
-			event.setFileProgressDataMap(event.getFileProgressDataMap());
+			objectDB.reload(event);
+			objectDB.detach(event);
+			for (FileProgress fp : event.getFileProgressDataMap().values()) {
+				objectDB.reload(fp);
+				objectDB.detach(fp);
+			}
 			result.add(event);
 		}
 		return result;

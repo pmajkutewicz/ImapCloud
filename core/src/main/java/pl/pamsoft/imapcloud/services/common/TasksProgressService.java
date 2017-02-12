@@ -40,12 +40,13 @@ public class TasksProgressService {
 		return taskProgressRepository.create(type, taskId, bytesOverall, selectedFiles);
 	}
 
-	public void update(TaskProgress event) {
+	public TaskProgress update(TaskProgress event) {
 		try {
-			taskProgressRepository.save(event);
+			return taskProgressRepository.save(event);
 		} catch (IOException e) {
 			LOG.error("Error storing progress event", e);
 		}
+		return null;
 	}
 
 	public List<TaskProgressDto> findAllTasks() {
