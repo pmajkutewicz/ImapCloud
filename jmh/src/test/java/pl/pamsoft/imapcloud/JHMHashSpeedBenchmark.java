@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud;
 
 import net.openhft.hashing.LongHashFunction;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
@@ -21,6 +22,7 @@ import org.testng.annotations.Test;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
@@ -35,12 +37,20 @@ public class JHMHashSpeedBenchmark {
 
 	private static final int SIZE_100MB = 100 * 1024 * 1024;
 	private MessageDigest md5;
+	private MessageDigest keccak512;
+	private MessageDigest sha3512;
+	private MessageDigest blake2b512;
+
 	private byte[] testData = new byte[SIZE_100MB];
 	private Random random = new SecureRandom();
 
 	@Setup(Level.Trial)
 	public void classSetup() throws NoSuchAlgorithmException {
+		Security.addProvider(new BouncyCastleProvider());
 		md5 = MessageDigest.getInstance("MD5");
+		keccak512 = MessageDigest.getInstance("KECCAK-512");
+		sha3512 = MessageDigest.getInstance("SHA3-512");
+		blake2b512 = MessageDigest.getInstance("BLAKE2B-512");
 	}
 
 	@Setup(Level.Invocation)
@@ -53,6 +63,27 @@ public class JHMHashSpeedBenchmark {
 	@OutputTimeUnit(TimeUnit.MILLISECONDS)
 	public void xx64HashTimeOf100MiB(Blackhole blackhole) {
 		blackhole.consume(LongHashFunction.xx_r39().hashBytes(testData));
+	}
+
+	@Benchmark
+	@BenchmarkMode(Mode.AverageTime)
+	@OutputTimeUnit(TimeUnit.MILLISECONDS)
+	public void keccak512HashTimeOf100MiB(Blackhole blackhole) {
+		blackhole.consume(keccak512.digest(testData));
+	}
+
+	@Benchmark
+	@BenchmarkMode(Mode.AverageTime)
+	@OutputTimeUnit(TimeUnit.MILLISECONDS)
+	public void blake2b512HashTimeOf100MiB(Blackhole blackhole) {
+		blackhole.consume(blake2b512.digest(testData));
+	}
+
+	@Benchmark
+	@BenchmarkMode(Mode.AverageTime)
+	@OutputTimeUnit(TimeUnit.MILLISECONDS)
+	public void sha3512HashTimeOf100MiB(Blackhole blackhole) {
+		blackhole.consume(sha3512.digest(testData));
 	}
 
 	@Benchmark
@@ -76,7 +107,7 @@ public class JHMHashSpeedBenchmark {
 			.map(RunResult::getPrimaryResult)
 			.collect(toMap(Result::getLabel, Result::getScore));
 
-		assertEquals(results.size(), 2);
+		assertEquals(results.size(), 5);
 		assertTrue(resultMap.get("md5HashTimeOf100MiB") > resultMap.get("xx64HashTimeOf100MiB"));
 	}
 }
