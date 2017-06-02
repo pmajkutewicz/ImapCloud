@@ -3,11 +3,14 @@
 <configuration debug="true">
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
 
-	<!--<appender name="JAMONAPPENDER" class="com.jamonapi.log4j.JAMonAppender">-->
-		<!--<param name="EnableListeners" value="DEBUG"/>-->
-		<!--<param name="EnableListeners" value="ERROR"/>-->
-		<!--<param name="EnableListeners" value="FATAL"/>-->
-		<!--<param name="EnableListeners" value="WARN"/>-->
-	<!--</appender>-->
+	<appender name="JAMONAPPENDER" class="pl.pamsoft.imapcloud.config.jamon.JAMonLogbackAppender">
+		<param name="EnableListeners" value="DEBUG"/>
+		<param name="EnableListeners" value="ERROR"/>
+		<param name="EnableListeners" value="FATAL"/>
+		<param name="EnableListeners" value="WARN"/>
+	</appender>
 
+	<root>
+		<appender-ref ref="JAMONAPPENDER" />
+	</root>
 </configuration>
