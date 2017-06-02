@@ -68,7 +68,7 @@ public class RecoveryService extends AbstractBackgroundService {
 	public boolean recover(AccountDto selectedAccount) {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
-			Thread.currentThread().setName("RecoveryTask-" + taskId);
+			Thread.currentThread().setName("RT-" + taskId.substring(0,8));
 
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);

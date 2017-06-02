@@ -28,7 +28,7 @@ public class VerificationService extends AbstractBackgroundService {
 	public boolean validate(List<FileChunk> fileChunks) {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
-			Thread.currentThread().setName("VerificationTask-" + taskId);
+			Thread.currentThread().setName("VT-" + taskId.substring(0,8));
 			fileChunks
 				.forEach(chunk -> {
 						GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());

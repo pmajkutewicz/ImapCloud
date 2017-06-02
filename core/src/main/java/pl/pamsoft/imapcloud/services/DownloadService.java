@@ -59,7 +59,7 @@ public class DownloadService extends AbstractBackgroundService {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
 			try {
-				Thread.currentThread().setName("DownloadTask-" + taskId);
+				Thread.currentThread().setName("DT-" + taskId.substring(0,8));
 				List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 				File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
 				Account account = file.getOwnerAccount();

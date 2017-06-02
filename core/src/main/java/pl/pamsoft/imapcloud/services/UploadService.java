@@ -62,7 +62,7 @@ public class UploadService extends AbstractBackgroundService {
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> future = runAsyncOnExecutor(() -> {
-			Thread.currentThread().setName("UploadTask-" + taskId);
+			Thread.currentThread().setName("UT-" + taskId.substring(0,8));
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, monitoringHelper).apply(selectedFiles);
 			getTaskProgressMap().put(taskId, tasksProgressService.create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
