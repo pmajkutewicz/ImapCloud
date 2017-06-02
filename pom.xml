@@ -31,52 +31,81 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<jetty.version>9.4.0.M1</jetty.version>
-		<spring-boot.version>1.5.3.RELEASE</spring-boot.version>
-		<tomcat.version>8.0.30</tomcat.version>
-		<guice.version>4.1.0</guice.version>
-		<guava.version>21.0</guava.version>
-		<gson.version>2.8.0</gson.version>
-		<okhttp.version>3.4.1</okhttp.version>
-		<ignite-guice.version>1.0.1</ignite-guice.version>
-		<logback-classic.version>1.1.9</logback-classic.version>
-		<javax.mail-api.version>1.5.6</javax.mail-api.version>
-		<snakeyaml.version>1.17</snakeyaml.version>
-		<orientdb.version>2.2.15</orientdb.version>
-		<joda-time.version>2.9.7</joda-time.version>
-		<jackson-datatype-jdk8.version>2.8.6</jackson-datatype-jdk8.version>
-		<jackson.version>2.8.6</jackson.version>
-		<controlsfx.version>8.40.12</controlsfx.version>
-		<jmh-core.version>1.17.4</jmh-core.version>
-		<zero-allocation-hashing.version>0.6</zero-allocation-hashing.version>
-		<ff4j-core.version>1.6.1</ff4j-core.version>
-		<httpclient.version>4.5.1</httpclient.version>
 
 		<skip.findbugs>false</skip.findbugs>
 		<skip.checkstyle>false</skip.checkstyle>
+		<main.basedir>${project.basedir}</main.basedir>
+
+		<!-- region backend client-->
+		<okhttp.version>3.4.1</okhttp.version>
+		<!-- endregion -->
+
+		<!-- region common -->
+		<bouncycastle.version>1.57</bouncycastle.version>
+		<guava.version>21.0</guava.version>
+		<jackson.version>2.8.6</jackson.version>
+		<jackson-datatype-jdk8.version>2.8.6</jackson-datatype-jdk8.version>
+		<logback-classic.version>1.1.9</logback-classic.version>
+		<!-- endregion -->
+
+		<!-- region core -->
+		<jetty.version>9.4.0.M1</jetty.version>
+		<tomcat.version>8.0.30</tomcat.version>
+
+		<commons-pool2.version>2.4.2</commons-pool2.version>
+		<spring-boot.version>1.5.3.RELEASE</spring-boot.version>
+		<snakeyaml.version>1.17</snakeyaml.version>
+		<orientdb.version>2.2.15</orientdb.version>
+		<javax.mail-api.version>1.5.6</javax.mail-api.version>
+		<joda-time.version>2.9.7</joda-time.version>
+		<zero-allocation-hashing.version>0.6</zero-allocation-hashing.version>
+		<springfox-swagger2.version>2.6.1</springfox-swagger2.version>
+		<jamon.version>2.81</jamon.version>
+		<ff4j-core.version>1.6.1</ff4j-core.version>
+		<commons-vfs2.version>2.1</commons-vfs2.version>
+		<httpclient.version>4.5.1</httpclient.version>
+		<!-- endregion -->
+
+		<!-- region gui -->
+		<guice.version>4.1.0</guice.version>
+		<ignite-guice.version>1.0.1</ignite-guice.version>
+		<controlsfx.version>8.40.12</controlsfx.version>
+		<commons-math3.version>3.6.1</commons-math3.version>
+		<commons-io.version>2.5</commons-io.version>
+		<!-- endregion -->
+
+		<!-- region jmh -->
+		<jmh-core.version>1.17.4</jmh-core.version>
+		<!-- endregion -->
+
+		<!-- region maven plugins -->
+		<maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
+		<maven-site-plugin.version>3.6</maven-site-plugin.version>
+		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+		<maven-shade-plugin.version>3.0.0</maven-shade-plugin.version>
+		<maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
+		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
+		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
+		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
+		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+		<maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
 		<maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
-		<checkstyle.version>6.15</checkstyle.version>
-		<!-- findbugs -->
 		<maven-findbugs-plugin.version>3.0.4</maven-findbugs-plugin.version>
+		<git-commit-id-plugin.version>2.2.2</git-commit-id-plugin.version>
+		<!-- endregion -->
+
+		<!-- region QA -->
+		<checkstyle.version>6.15</checkstyle.version>
 		<findbugs-maven-plugin.failOnError>true</findbugs-maven-plugin.failOnError>
 		<findsecbugs-plugin.version>1.4.5</findsecbugs-plugin.version>
 		<fb-contrib.version>6.6.0</fb-contrib.version>
 		<findbugs-annotation.version>3.0.1u2</findbugs-annotation.version>
 		<!-- 0.7.3, 0.7.4 and 0.7.5 don't works with sonar -->
 		<jacoco-maven-plugin.version>0.7.2.201409121644</jacoco-maven-plugin.version>
-		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
-		<maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
-
-		<main.basedir>${project.basedir}</main.basedir>
-		<commons-pool2.version>2.4.2</commons-pool2.version>
-		<commons-math3.version>3.6.1</commons-math3.version>
-		<commons-io.version>2.5</commons-io.version>
-		<commons-vfs2.version>2.1</commons-vfs2.version>
-		<bouncycastle.version>1.56</bouncycastle.version>
 		<testng.version>6.10</testng.version>
-		<springfox-swagger2.version>2.6.1</springfox-swagger2.version>
-		<jamon.version>2.81</jamon.version>
 		<mockito-core.version>2.6.8</mockito-core.version>
+		<!-- endregion -->
 	</properties>
 
 	<modules>
@@ -111,14 +140,15 @@
 				<version>${project.version}</version>
 			</dependency>
 
-			<!-- backend client deps -->
+			<!-- region backend client deps -->
 			<dependency>
 				<groupId>com.squareup.okhttp3</groupId>
 				<artifactId>okhttp</artifactId>
 				<version>${okhttp.version}</version>
 			</dependency>
+			<!-- endregion -->
 
-			<!-- core -->
+			<!-- region core -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
@@ -253,8 +283,9 @@
 				<artifactId>httpclient</artifactId>
 				<version>${httpclient.version}</version>
 			</dependency>
+			<!-- endregion -->
 
-			<!-- GUI -->
+			<!-- region GUI -->
 			<dependency>
 				<groupId>com.gluonhq</groupId>
 				<artifactId>ignite-guice</artifactId>
@@ -271,8 +302,9 @@
 				<artifactId>commons-math3</artifactId>
 				<version>${commons-math3.version}</version>
 			</dependency>
+			<!-- endregion -->
 
-			<!-- common -->
+			<!-- region common -->
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
@@ -282,11 +314,6 @@
 				<groupId>com.google.inject</groupId>
 				<artifactId>guice</artifactId>
 				<version>${guice.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-				<version>${gson.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
@@ -313,8 +340,32 @@
 				<artifactId>commons-io</artifactId>
 				<version>${commons-io.version}</version>
 			</dependency>
+			<!-- endregion -->
 
-			<!-- test -->
+			<!-- region jmh -->
+			<dependency>
+				<groupId>org.openjdk.jmh</groupId>
+				<artifactId>jmh-core</artifactId>
+				<version>${jmh-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.openjdk.jmh</groupId>
+				<artifactId>jmh-generator-annprocess</artifactId>
+				<version>${jmh-core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcpkix-jdk15on</artifactId>
+				<version>${bouncycastle.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-ext-jdk15on</artifactId>
+				<version>${bouncycastle.version}</version>
+			</dependency>
+			<!-- endregion -->
+
+			<!-- region test -->
 			<dependency>
 				<groupId>org.testng</groupId>
 				<artifactId>testng</artifactId>
@@ -328,16 +379,6 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.openjdk.jmh</groupId>
-				<artifactId>jmh-core</artifactId>
-				<version>${jmh-core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.openjdk.jmh</groupId>
-				<artifactId>jmh-generator-annprocess</artifactId>
-				<version>${jmh-core.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.mockito</groupId>
 				<artifactId>mockito-core</artifactId>
 				<version>${mockito-core.version}</version>
@@ -347,6 +388,7 @@
 				<artifactId>awaitility</artifactId>
 				<version>1.7.0</version>
 			</dependency>
+			<!-- endregion -->
 		</dependencies>
 	</dependencyManagement>
 
@@ -673,39 +715,48 @@
 			<plugins>
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>${maven-clean-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.6.1</version>
+					<version>${maven-compiler-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.2</version>
+					<version>${maven-deploy-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5.2</version>
+					<version>${maven-install-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>${maven-jar-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>${maven-resources-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-shade-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>${maven-shade-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.6</version>
+					<version>${maven-site-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.20</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${maven-assembly-plugin.version}</version>
+				</plugin>
+				<plugin>
+					<groupId>pl.project13.maven</groupId>
+					<artifactId>git-commit-id-plugin</artifactId>
+					<version>${git-commit-id-plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

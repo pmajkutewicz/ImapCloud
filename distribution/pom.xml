@@ -28,7 +28,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.6</version>
+				<version>${maven-assembly-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>server</id>
@@ -39,7 +39,7 @@
 						<configuration>
 							<descriptor>src/assembly/server.xml</descriptor>
 							<appendAssemblyId>true</appendAssemblyId>
-							<finalName>IMAPCloud-${pom.version}</finalName>
+							<finalName>IMAPCloud-${project.version}</finalName>
 						</configuration>
 					</execution>
 					<execution>
@@ -51,7 +51,7 @@
 						<configuration>
 							<descriptor>src/assembly/client.xml</descriptor>
 							<appendAssemblyId>true</appendAssemblyId>
-							<finalName>IMAPCloud-${pom.version}</finalName>
+							<finalName>IMAPCloud-${project.version}</finalName>
 						</configuration>
 					</execution>
 				</executions>
