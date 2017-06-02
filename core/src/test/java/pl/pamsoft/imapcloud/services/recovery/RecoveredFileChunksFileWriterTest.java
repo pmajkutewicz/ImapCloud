@@ -1,11 +1,11 @@
 package pl.pamsoft.imapcloud.services.recovery;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
-import org.json.JSONObject;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.entity.Account;
@@ -60,9 +60,9 @@ public class RecoveredFileChunksFileWriterTest {
 		InputStream is = fsManager.resolveFile(file).getContent().getInputStream();
 		String jsonAsString = filesIOService.unPack(is);
 
-		JSONObject jsonObject = new JSONObject(jsonAsString);
+		RecoveryChunkContainer recoveryChunkContainer = new ObjectMapper().readValue(jsonAsString, RecoveryChunkContainer.class);
 		assertEquals(result, dummyData);
-		assertEquals(jsonObject.get("taskId"), dummyData.getTaskId());
+		assertEquals(recoveryChunkContainer.getTaskId(), dummyData.getTaskId());
 	}
 
 	@Test

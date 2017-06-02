@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.services.recovery;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 
@@ -11,21 +11,21 @@ import java.util.function.Function;
 
 public class RecoveredFileChunksFileWriter implements Function<RecoveryChunkContainer, RecoveryChunkContainer> {
 
-	private static final int INDENT_FACTOR = 2;
+	private final ObjectMapper objectMapper;
 	private final String recoveries;
 	private final FilesIOService filesIOService;
 
 	public RecoveredFileChunksFileWriter(FilesIOService filesIOService, String recoveries) {
 		this.filesIOService = filesIOService;
 		this.recoveries = recoveries;
+		this.objectMapper = new ObjectMapper();
 	}
 
 	@Override
 	public RecoveryChunkContainer apply(RecoveryChunkContainer rcc) {
 		try {
-			JSONObject jsonObject = new JSONObject(rcc);
 			String fileName = String.format("%s.%s", rcc.getTaskId(), "ic");
-			String data = jsonObject.toString(INDENT_FACTOR);
+			String data = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rcc);
 			OutputStream os = filesIOService.getOutputStream(Paths.get(recoveries, fileName + ".zip"));
 			filesIOService.packToFile(os, fileName, data);
 			return rcc;

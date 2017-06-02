@@ -1,8 +1,9 @@
 package pl.pamsoft.imapcloud.imap;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.json.JSONObject;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -24,7 +25,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static java.util.stream.Collectors.toList;
@@ -55,7 +58,7 @@ public class ChunkRecoveryTest {
 	@BeforeMethod
 	public void init() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		JSONObject jsonObject = loadData();
+		JsonNode jsonObject = loadData();
 		Folder[] folderList = createFolderList(jsonObject);
 
 		when(pool.borrowObject()).thenReturn(store);
@@ -98,16 +101,19 @@ public class ChunkRecoveryTest {
 		verify(pool).invalidateObject(store);
 	}
 
-	private Folder[] createFolderList(JSONObject jsonObject) throws MessagingException {
+	private Folder[] createFolderList(JsonNode node) throws MessagingException {
 		List<Folder> folders = new ArrayList<>();
-		for (Object item : jsonObject.keySet()) {
-			String key = (String) item;
-			JSONObject o = (JSONObject) jsonObject.get(key);
+
+		Iterator<Map.Entry<String, JsonNode>> iter = node.fields();
+		while (iter.hasNext()) {
+			Map.Entry<String, JsonNode> next = iter.next();
+			String key = next.getKey();
+			JsonNode o = next.getValue();
 			Message[] messages = createMessages(o);
 
 			Folder f = mock(Folder.class);
 			when(f.getFullName()).thenReturn(key);
-			when(f.getMessageCount()).thenReturn(o.length());
+			when(f.getMessageCount()).thenReturn(o.size());
 			when(f.getMessages()).thenReturn(messages);
 			folders.add(f);
 		}
@@ -115,11 +121,13 @@ public class ChunkRecoveryTest {
 		return folders.toArray(new Folder[folders.size()]);
 	}
 
-	private Message[] createMessages(JSONObject jsonObject) throws MessagingException {
+	private Message[] createMessages(JsonNode node) throws MessagingException {
 		List<Message> messages = new ArrayList<>();
-		for (Object item : jsonObject.keySet()) {
-			String key = (String) item;
-			JSONObject o = (JSONObject) jsonObject.get(key);
+		Iterator<Map.Entry<String, JsonNode>> iter = node.fields();
+		while (iter.hasNext()) {
+			Map.Entry<String, JsonNode> next = iter.next();
+			String key = next.getKey();
+			JsonNode o = next.getValue();
 			List<Header> headers = createHeadersMap(o);
 
 			Message m = mock(Message.class);
@@ -139,20 +147,24 @@ public class ChunkRecoveryTest {
 		return messages.toArray(new Message[messages.size()]);
 	}
 
-	private List<Header> createHeadersMap(JSONObject jsonObject) {
+	private List<Header> createHeadersMap(JsonNode node) {
 		List<Header> result = new ArrayList<>();
-		for (Object item : jsonObject.keySet()) {
-			String key = (String) item;
-			String value = (String) jsonObject.get(key);
+
+		Iterator<Map.Entry<String, JsonNode>> iter = node.fields();
+		while (iter.hasNext()) {
+			Map.Entry<String, JsonNode> next = iter.next();
+			String key = next.getKey();
+			String value = next.getValue().asText();
 			result.add(new Header(key, value));
 		}
+
 		result.add(new Header("size", String.valueOf(random.nextInt(1024))));
 		return result;
 	}
 
-	private JSONObject loadData() throws IOException {
+	private JsonNode loadData() throws IOException {
 		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("messages.json");
 		String jsonTxt = IOUtils.toString(is, StandardCharsets.UTF_8);
-		return new JSONObject(jsonTxt);
+		return new ObjectMapper().readTree(jsonTxt);
 	}
 }
