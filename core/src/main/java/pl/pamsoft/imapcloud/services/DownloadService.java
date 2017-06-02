@@ -14,7 +14,6 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.imap.ChunkLoader;
-import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.download.ChunkDecrypter;
 import pl.pamsoft.imapcloud.services.download.ChunkHashVerifier;
 import pl.pamsoft.imapcloud.services.download.DownloadChunkHasher;
@@ -51,15 +50,12 @@ public class DownloadService extends AbstractBackgroundService {
 	@Autowired
 	private CryptoService cryptoService;
 
-	@Autowired
-	private MonitoringHelper monitoringHelper;
-
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean download(UploadedFileDto fileToDownload, FileDto destDir) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
 			try {
-				Thread.currentThread().setName("DT-" + taskId.substring(0,8));
+				Thread.currentThread().setName("DT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 				List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 				File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
 				Account account = file.getOwnerAccount();
@@ -68,12 +64,12 @@ public class DownloadService extends AbstractBackgroundService {
 
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, monitoringHelper);
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), monitoringHelper);
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(monitoringHelper);
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, getMonitoringHelper());
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
-				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver(monitoringHelper);
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, monitoringHelper);
+				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver(getMonitoringHelper());
+				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
 
 				chunkToDownload.stream()
@@ -105,8 +101,4 @@ public class DownloadService extends AbstractBackgroundService {
 		return "DownloadTask-%d";
 	}
 
-	@Override
-	protected MonitoringHelper getMonitoringHelper() {
-		return monitoringHelper;
-	}
 }

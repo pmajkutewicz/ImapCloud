@@ -41,7 +41,7 @@ public class ChunkVerifier implements Function<FileChunk, Boolean> {
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			LOG.debug("Chunk verified in {}", lastVal);
+			LOG.info("Chunk verified in {} ms", lastVal);
 			return chunkExists;
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);

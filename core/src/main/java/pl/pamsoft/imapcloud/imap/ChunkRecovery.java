@@ -60,7 +60,7 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 			}
 			determineSizeAndCompleteness();
 			double lastVal = monitoringHelper.stop(monitor);
-			LOG.debug("Recovered chunks in {}", lastVal);
+			LOG.info("Recovered chunks in {} ms", lastVal);
 			return RecoveryChunkContainer.addRecoveredFilesData(rcc, fileMap, fileChunkMap);
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);

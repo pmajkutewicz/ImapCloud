@@ -9,7 +9,6 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.imap.ChunkSaver;
-import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncrypter;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
@@ -53,18 +52,15 @@ public class UploadService extends AbstractBackgroundService {
 	private TasksProgressService tasksProgressService;
 
 	@Autowired
-	private MonitoringHelper monitoringHelper;
-
-	@Autowired
 	private GitStatsUtil gitStatsUtil;
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> future = runAsyncOnExecutor(() -> {
-			Thread.currentThread().setName("UT-" + taskId.substring(0,8));
+			Thread.currentThread().setName("UT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			final Account account = accountRepository.getById(selectedAccount.getId());
-			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, monitoringHelper).apply(selectedFiles);
+			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, getMonitoringHelper()).apply(selectedFiles);
 			getTaskProgressMap().put(taskId, tasksProgressService.create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
 
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
@@ -79,14 +75,14 @@ public class UploadService extends AbstractBackgroundService {
 			};
 
 			Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, monitoringHelper);
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, getMonitoringHelper());
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileAlreadyUploaded.andThen(persistTaskProgress));
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), monitoringHelper);
-			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), gitStatsUtil, monitoringHelper);
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 			selectedFiles.stream()
@@ -121,8 +117,4 @@ public class UploadService extends AbstractBackgroundService {
 		return "UploadTask-%d";
 	}
 
-	@Override
-	protected MonitoringHelper getMonitoringHelper() {
-		return monitoringHelper;
-	}
 }

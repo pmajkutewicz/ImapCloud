@@ -45,7 +45,7 @@ public class FileDeleter implements Function<File, Boolean> {
 			}
 			folder.close(IMAPUtils.EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			LOG.debug("File deleted in {}", lastVal);
+			LOG.info("File deleted in {} ms", lastVal);
 			return Boolean.TRUE;
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);

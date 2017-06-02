@@ -86,7 +86,7 @@ public class ChunkSaver implements Function<UploadChunkContainer, UploadChunkCon
 			String[] header = message.getHeader("Message-ID");
 			destFolder.close(IMAPUtils.NO_EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			LOG.debug("Chunk saved in {}", lastVal);
+			LOG.info("Chunk saved in {} ms", lastVal);
 			monitor(lastVal, dataChunk.getChunkSize());
 			return UploadChunkContainer.addMessageId(dataChunk, header[0]);
 		} catch (Exception e) {

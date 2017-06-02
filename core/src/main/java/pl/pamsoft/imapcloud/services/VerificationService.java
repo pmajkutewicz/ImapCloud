@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.imap.ChunkVerifier;
-import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 
 import javax.mail.Store;
 import java.util.List;
@@ -22,17 +21,14 @@ public class VerificationService extends AbstractBackgroundService {
 	@Autowired
 	private FileChunkRepository fileChunkRepository;
 
-	@Autowired
-	private MonitoringHelper monitoringHelper;
-
 	public boolean validate(List<FileChunk> fileChunks) {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
-			Thread.currentThread().setName("VT-" + taskId.substring(0,8));
+			Thread.currentThread().setName("VT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			fileChunks
 				.forEach(chunk -> {
 						GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(chunk.getOwnerFile().getOwnerAccount());
-						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, monitoringHelper);
+						ChunkVerifier chunkVerifier = new ChunkVerifier(connectionPool, getMonitoringHelper());
 						Boolean chunkExists = chunkVerifier.apply(chunk);
 						fileChunkRepository.markChunkVerified(chunk.getId(), chunkExists);
 					}
@@ -52,8 +48,4 @@ public class VerificationService extends AbstractBackgroundService {
 		return "VerificationTask-%d";
 	}
 
-	@Override
-	protected MonitoringHelper getMonitoringHelper() {
-		return monitoringHelper;
-	}
 }

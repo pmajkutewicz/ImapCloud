@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.services;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.exceptions.IMAPCloudUncaughtExceptionHandler;
 import pl.pamsoft.imapcloud.monitoring.Keys;
@@ -21,6 +22,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 abstract class AbstractBackgroundService {
 
 	protected static final int DEFAULT_MAX_TASKS = 10;
+	protected static final int NB_OF_TASK_ID_CHARS = 8;
+
+	@Autowired
+	private MonitoringHelper monitoringHelper;
 
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(
 		getMaxTasks(), new ThreadFactoryBuilder().setNameFormat(getNameFormat()).setDaemon(false).setUncaughtExceptionHandler(new IMAPCloudUncaughtExceptionHandler()).build());
@@ -56,5 +61,8 @@ abstract class AbstractBackgroundService {
 
 	protected abstract String getNameFormat();
 
-	protected abstract MonitoringHelper getMonitoringHelper();
+	protected MonitoringHelper getMonitoringHelper() {
+		return monitoringHelper;
+	}
+
 }

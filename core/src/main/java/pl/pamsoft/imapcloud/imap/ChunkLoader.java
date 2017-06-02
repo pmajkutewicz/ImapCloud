@@ -52,7 +52,7 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
 			double lastVal = monitoringHelper.stop(monitor);
-			LOG.debug("Chunk downloaded in {}", lastVal);
+			LOG.info("Chunk downloaded in {} ms", lastVal);
 			return DownloadChunkContainer.addData(dcc, attachment);
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);

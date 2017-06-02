@@ -13,7 +13,6 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkRecovery;
-import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.recovery.FileRecovery;
 import pl.pamsoft.imapcloud.services.recovery.RCCtoRecoveredFileDtoConverter;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileReader;
@@ -60,20 +59,17 @@ public class RecoveryService extends AbstractBackgroundService {
 	@Autowired
 	private AccountRepository accountRepository;
 
-	@Autowired
-	private MonitoringHelper monitoringHelper;
-
 	private String recoveriesFolder;
 
 	public boolean recover(AccountDto selectedAccount) {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
-			Thread.currentThread().setName("RT-" + taskId.substring(0,8));
+			Thread.currentThread().setName("RT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);
 
-			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, monitoringHelper);
+			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, getMonitoringHelper());
 			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, recoveriesFolder);
 
 			Stream.of(new RecoveryChunkContainer(taskId, account))
@@ -96,7 +92,7 @@ public class RecoveryService extends AbstractBackgroundService {
 				StreamSupport.stream(dirStream.spliterator(), false)
 					.map(reader)
 					.map(i -> new SimpleEntry<String, List<RecoveredFileDto>>(i.getTaskId(), converter.apply(i)))
-					.forEach(i-> results.put(i.getKey(), i.getValue()));
+					.forEach(i -> results.put(i.getKey(), i.getValue()));
 				return results;
 			}
 		} catch (IOException e) {
@@ -131,13 +127,9 @@ public class RecoveryService extends AbstractBackgroundService {
 		return "RecoveryTask-%d";
 	}
 
-	@Override
-	protected MonitoringHelper getMonitoringHelper() {
-		return monitoringHelper;
-	}
-
 	@Value("${ic.recoveries.folder}")
 	public void setRecoveriesFolder(String recoveriesFolder) {
 		this.recoveriesFolder = recoveriesFolder;
 	}
+
 }
