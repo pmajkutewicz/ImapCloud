@@ -11,7 +11,7 @@ public interface FileHasher {
 
 	default String hash(File file) throws IOException {
 		try (DataInputStream inputStream = new DataInputStream(getFilesIOService().getInputStream(file))) {
-			long hash = LongHashFunction.xx_r39().hash(inputStream, new DataInputStreamAccess(), 0, file.length());
+			long hash = LongHashFunction.xx().hash(inputStream, new DataInputStreamAccess(), 0, file.length());
 			return Long.toHexString(hash);
 		}
 	}

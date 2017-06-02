@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE logback>
-<configuration debug="true">
+<configuration>
 	<include resource="org/springframework/boot/logging/logback/base.xml" />
 
 	<appender name="JAMONAPPENDER" class="pl.pamsoft.imapcloud.config.jamon.JAMonLogbackAppender">
