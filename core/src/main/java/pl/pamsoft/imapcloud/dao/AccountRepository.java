@@ -25,7 +25,7 @@ import java.util.function.Function;
 public class AccountRepository extends AbstractRepository<Account> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccountRepository.class);
-	private static final OSQLSynchQuery<ODocument> USED_SPACE_QUERY = new OSQLSynchQuery<>("select sum(size) as sum from FileChunk where OUT('is_part_of').OUT('is_owned_by')['login'] = :login");
+	private static final OSQLSynchQuery<ODocument> USED_SPACE_QUERY = new OSQLSynchQuery<>("select sum(size).asLong() as sum from FileChunk where OUT('is_part_of').OUT('is_owned_by')['login'] = :login");
 
 	@Autowired
 	private Function<Vertex, Account> converter;
