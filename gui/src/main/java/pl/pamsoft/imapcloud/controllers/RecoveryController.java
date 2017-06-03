@@ -69,7 +69,7 @@ public class RecoveryController implements Initializable, Refreshable {
 	};
 
 	private ChangeListener<String> availableRecoveriesComboChangeListener = (observable, oldValue, newValue) -> {
-		if (null != newValue && newValue.equals(oldValue)) {
+		if (null != newValue && !newValue.equals(oldValue)) {
 			System.out.println("Changed to: " + newValue);
 			List<RecoveredFileDto> data = recoveriesData.get(newValue);
 			fileList.setItems(FXCollections.observableArrayList(data));
