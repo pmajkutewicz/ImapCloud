@@ -19,14 +19,6 @@
 		<start-class>pl.pamsoft.imapcloud.ImapCloudApplication</start-class>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>clamshellcli.repo</id>
-			<name>Clamshell-Cli Repository</name>
-			<url>http://s3.amazonaws.com/repo.clamshellcli.org/release</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>pl.pamsoft.imapcloud</groupId>
@@ -34,7 +26,7 @@
 		</dependency>
 
 		<dependency>
-			<!-- Import dependency management fromFileDto Spring Boot -->
+			<!-- Import dependency management from Spring Boot -->
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-dependencies</artifactId>
 			<type>pom</type>
