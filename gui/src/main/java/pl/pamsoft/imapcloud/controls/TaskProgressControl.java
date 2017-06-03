@@ -74,7 +74,7 @@ public class TaskProgressControl extends AbstractControl {
 
 		for (FileProgressDto fileEntry : fileProgressDataMap.values()) {
 			SimpleDoubleProperty simpleDoubleProperty = new SimpleDoubleProperty(0);
-			SimpleObjectProperty<FileProgressStatus> statusProperty = new SimpleObjectProperty<FileProgressStatus>(fileEntry.getStatus());
+			SimpleObjectProperty<FileProgressStatus> statusProperty = new SimpleObjectProperty<>(fileEntry.getStatus());
 			ProgressIndicatorBar indicatorBar = new ProgressIndicatorBar(simpleDoubleProperty, fileEntry.getSize(), fileEntry.getAbsolutePath(), statusProperty);
 			filesInfo.getChildren().add(indicatorBar);
 			fileProgressMap.put(fileEntry.getAbsolutePath(), simpleDoubleProperty);

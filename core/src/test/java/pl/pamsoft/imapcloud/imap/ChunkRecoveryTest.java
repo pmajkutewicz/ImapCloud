@@ -126,7 +126,6 @@ public class ChunkRecoveryTest {
 		Iterator<Map.Entry<String, JsonNode>> iter = node.fields();
 		while (iter.hasNext()) {
 			Map.Entry<String, JsonNode> next = iter.next();
-			String key = next.getKey();
 			JsonNode o = next.getValue();
 			List<Header> headers = createHeadersMap(o);
 

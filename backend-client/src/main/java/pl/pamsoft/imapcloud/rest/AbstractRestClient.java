@@ -84,7 +84,7 @@ abstract class AbstractRestClient {
 		send(getRequest().url(httpUrl.url()).build(), callback);
 	}
 
-	@SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE")
+	@SuppressFBWarnings({"RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE", "NP_NONNULL_PARAM_VIOLATION"})
 	private void sendPost(HttpUrl httpUrl, Object pojo, Callback callback) {
 		Request req = null;
 		try {

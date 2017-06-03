@@ -62,7 +62,7 @@ public class JHMHashSpeedBenchmark {
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MILLISECONDS)
 	public void xx64HashTimeOf100MiB(Blackhole blackhole) {
-		blackhole.consume(LongHashFunction.xx_r39().hashBytes(testData));
+		blackhole.consume(LongHashFunction.xx().hashBytes(testData));
 	}
 
 	@Benchmark
