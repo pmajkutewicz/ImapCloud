@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.TaskProgressRepository;
 import pl.pamsoft.imapcloud.dto.FileDto;
-import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
+import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
 import pl.pamsoft.imapcloud.dto.progress.TaskProgressDto;
-import pl.pamsoft.imapcloud.entity.FileProgress;
+import pl.pamsoft.imapcloud.entity.EntryProgress;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
@@ -28,19 +28,23 @@ public class TasksProgressService {
 	@Autowired
 	private TaskProgressRepository taskProgressRepository;
 
-	private Function<FileProgress, FileProgressDto> fileProgressToDto = fp -> new FileProgressDto(fp.getId(), fp.getAbsolutePath(), fp.getSize(), fp.getProgress(), fp.getStatus());
+	private Function<EntryProgress, EntryProgressDto> progressToDto = fp -> new EntryProgressDto(fp.getId(), fp.getAbsolutePath(), fp.getSize(), fp.getProgress(), fp.getStatus(), fp.getType());
 
 	private Function<TaskProgress, TaskProgressDto> taskProgressToDto = tp -> {
-		Map<String, FileProgressDto> fileProgressDataMap = tp.getFileProgressDataMap().entrySet().stream()
-			.collect(Collectors.toMap(Map.Entry::getKey, entry -> fileProgressToDto.apply(entry.getValue())));
-		return new TaskProgressDto(tp.getId(), tp.getType(), tp.getTaskId(), tp.getBytesOverall(), tp.getBytesProcessed(), fileProgressDataMap);
+		Map<String, EntryProgressDto> progressMap = tp.getProgressMap().entrySet().stream()
+			.collect(Collectors.toMap(Map.Entry::getKey, entry -> progressToDto.apply(entry.getValue())));
+		return new TaskProgressDto(tp.getId(), tp.getType(), tp.getTaskId(), tp.getBytesOverall(), tp.getBytesProcessed(), progressMap);
 	};
 
 	public TaskProgress create(TaskType type, String taskId, long bytesOverall, List<FileDto> selectedFiles) {
 		return taskProgressRepository.create(type, taskId, bytesOverall, selectedFiles);
 	}
 
-	public TaskProgress update(TaskProgress event) {
+	public TaskProgress create(TaskType type, String taskId, long overall, Map<String, Integer> folderMap) {
+		return taskProgressRepository.create(type, taskId, overall, folderMap);
+	}
+
+	public TaskProgress persist(TaskProgress event) {
 		try {
 			return taskProgressRepository.save(event);
 		} catch (IOException e) {

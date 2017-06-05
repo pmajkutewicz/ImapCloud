@@ -7,6 +7,7 @@ import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.exceptions.IMAPCloudUncaughtExceptionHandler;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
+import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 
 import javax.annotation.PreDestroy;
 import java.util.Map;
@@ -26,6 +27,9 @@ abstract class AbstractBackgroundService {
 
 	@Autowired
 	private MonitoringHelper monitoringHelper;
+
+	@Autowired
+	private TasksProgressService tasksProgressService;
 
 	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(
 		getMaxTasks(), new ThreadFactoryBuilder().setNameFormat(getNameFormat()).setDaemon(false).setUncaughtExceptionHandler(new IMAPCloudUncaughtExceptionHandler()).build());
@@ -65,4 +69,7 @@ abstract class AbstractBackgroundService {
 		return monitoringHelper;
 	}
 
+	protected TasksProgressService getTasksProgressService() {
+		return tasksProgressService;
+	}
 }

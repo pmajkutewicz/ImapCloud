@@ -5,37 +5,37 @@ import com.orientechnologies.orient.object.iterator.OObjectIteratorClass;
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.collections.IteratorUtils;
 import org.springframework.stereotype.Repository;
-import pl.pamsoft.imapcloud.entity.FileProgress;
+import pl.pamsoft.imapcloud.entity.EntryProgress;
 
 import java.util.List;
 import java.util.function.Function;
 
 @Repository
-public class FileProgressRepository extends AbstractRepository<FileProgress> {
+public class FileProgressRepository extends AbstractRepository<EntryProgress> {
 
 	@Override
-	public FileProgress save(FileProgress fileProgress) {
+	public EntryProgress save(EntryProgress entryProgress) {
 		OObjectDatabaseTx objectDB = getDb().getObjectDB();
-		objectDB.save(fileProgress);
+		objectDB.save(entryProgress);
 		objectDB.commit(true);
 		objectDB.close();
-		return fileProgress;
+		return entryProgress;
 	}
 
 	@Override
-	public Function<Vertex, FileProgress> getConverter() {
+	public Function<Vertex, EntryProgress> getConverter() {
 		throw new RuntimeException("No way!");
 	}
 
 	@Override
-	public FileProgress getById(String id) {
+	public EntryProgress getById(String id) {
 		return null;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<FileProgress> findAll() {
-		OObjectIteratorClass<FileProgress> events = getDb().getObjectDB().browseClass(FileProgress.class);
+	public List<EntryProgress> findAll() {
+		OObjectIteratorClass<EntryProgress> events = getDb().getObjectDB().browseClass(EntryProgress.class);
 		return IteratorUtils.toList(events.iterator());
 	}
 }

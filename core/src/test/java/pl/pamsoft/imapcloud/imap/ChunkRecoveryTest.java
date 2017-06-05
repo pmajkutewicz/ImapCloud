@@ -6,13 +6,16 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 
 import javax.mail.Folder;
 import javax.mail.Header;
@@ -31,6 +34,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static java.util.stream.Collectors.toList;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -65,7 +69,10 @@ public class ChunkRecoveryTest {
 		when(mailICFolder.list()).thenReturn(folderList);
 		when(store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME)).thenReturn(mailICFolder);
 
-		this.chunkRecovery = new ChunkRecovery(pool, monitoringHelper);
+		TasksProgressService tasksProgressService = Mockito.mock(TasksProgressService.class);
+		Map<String, TaskProgress> taskProgressMap = Mockito.mock(Map.class);
+		when(taskProgressMap.get(any())).thenReturn(mock(TaskProgress.class));
+		chunkRecovery = new ChunkRecovery(pool, monitoringHelper, tasksProgressService, taskProgressMap);
 	}
 
 	@Test

@@ -9,7 +9,6 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.imap.ChunkSaver;
-import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncrypter;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
 import pl.pamsoft.imapcloud.services.upload.DirectorySizeCalculator;
@@ -49,9 +48,6 @@ public class UploadService extends AbstractBackgroundService {
 	private CryptoService cryptoService;
 
 	@Autowired
-	private TasksProgressService tasksProgressService;
-
-	@Autowired
 	private GitStatsUtil gitStatsUtil;
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
@@ -61,7 +57,7 @@ public class UploadService extends AbstractBackgroundService {
 			Thread.currentThread().setName("UT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, getMonitoringHelper()).apply(selectedFiles);
-			getTaskProgressMap().put(taskId, tasksProgressService.create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
+			getTaskProgressMap().put(taskId, getTasksProgressService().create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
 
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
@@ -70,7 +66,7 @@ public class UploadService extends AbstractBackgroundService {
 				.markFileAlreadyUploaded(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
 
 			Consumer<UploadChunkContainer> persistTaskProgress = ucc -> {
-				TaskProgress updated = tasksProgressService.update(getTaskProgressMap().get(ucc.getTaskId()));
+				TaskProgress updated = getTasksProgressService().persist(getTaskProgressMap().get(ucc.getTaskId()));
 				getTaskProgressMap().put(ucc.getTaskId(), updated);
 			};
 

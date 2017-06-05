@@ -3,22 +3,24 @@ package pl.pamsoft.imapcloud.dto.progress;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class FileProgressDto {
+public class EntryProgressDto {
 	private String id;
 	private String absolutePath;
 	private long size;
 	private long progress;
-	private FileProgressStatus status;
+	private ProgressStatus status;
+	private ProgressEntryType type;
 
-	public FileProgressDto(String id, String absolutePath, long size, long progress, FileProgressStatus status) {
+	public EntryProgressDto(String id, String absolutePath, long size, long progress, ProgressStatus status, ProgressEntryType type) {
 		this.id = id;
 		this.absolutePath = absolutePath;
 		this.size = size;
 		this.progress = progress;
 		this.status = status;
+		this.type = type;
 	}
 
-	public FileProgressDto() {
+	public EntryProgressDto() {
 	}
 
 	public String getId() {
@@ -53,11 +55,32 @@ public class FileProgressDto {
 		this.progress = progress;
 	}
 
-	public FileProgressStatus getStatus() {
+	public ProgressStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(FileProgressStatus status) {
+	public void setStatus(ProgressStatus status) {
 		this.status = status;
+	}
+
+	public ProgressEntryType getType() {
+		return type;
+	}
+
+	public void setType(ProgressEntryType type) {
+		this.type = type;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("EntryProgressDto{");
+		sb.append("id='").append(id).append('\'');
+		sb.append(", absolutePath='").append(absolutePath).append('\'');
+		sb.append(", size=").append(size);
+		sb.append(", progress=").append(progress);
+		sb.append(", status=").append(status);
+		sb.append(", type=").append(type);
+		sb.append('}');
+		return sb.toString();
 	}
 }

@@ -69,7 +69,7 @@ public class RecoveryService extends AbstractBackgroundService {
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			final GenericObjectPool<Store> poll = connectionPoolService.getOrCreatePoolForAccount(account);
 
-			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, getMonitoringHelper());
+			ChunkRecovery chunkRecovery = new ChunkRecovery(poll, getMonitoringHelper(), getTasksProgressService(), getTaskProgressMap());
 			RecoveredFileChunksFileWriter recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, recoveriesFolder);
 
 			Stream.of(new RecoveryChunkContainer(taskId, account))

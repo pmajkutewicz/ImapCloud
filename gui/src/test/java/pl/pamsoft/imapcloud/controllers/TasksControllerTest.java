@@ -7,7 +7,8 @@ import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
-import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
+import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
+import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
 import pl.pamsoft.imapcloud.dto.progress.TaskProgressDto;
 import pl.pamsoft.imapcloud.responses.TaskProgressResponse;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
@@ -77,37 +78,38 @@ public class TasksControllerTest {
 		TaskProgressResponse taskProgressResponse = new TaskProgressResponse();
 
 		String FILE_1 = "f1";
-		FileProgressDto f1 = fpd(FILE_1, 10, 100);
+		EntryProgressDto f1 = fpd(FILE_1, 10, 100);
 		taskProgressResponse.setTaskProgressList(Collections.singletonList(create("1", 10, 100, of(FILE_1, f1))));
 		lambdaToTest.onSuccess(taskProgressResponse);
 		TaskProgressControl taskProgressControl = currentTasks.get("1");
 		assertEquals(taskProgressControl.getOverallProgress().getProgress(), 0.1);
-		assertEquals(taskProgressControl.getFileProgressMap().get(FILE_1).longValue(), 10);
+		assertEquals(taskProgressControl.getProgressMap().get(FILE_1).longValue(), 10);
 
 		f1.setProgress(20);
 		taskProgressResponse.setTaskProgressList(Collections.singletonList(create("1", 20, 100, of(FILE_1, f1))));
 		lambdaToTest.onSuccess(taskProgressResponse);
 		taskProgressControl = currentTasks.get("1");
 		assertEquals(taskProgressControl.getOverallProgress().getProgress(), 0.2);
-		assertEquals(taskProgressControl.getFileProgressMap().get(FILE_1).longValue(), 20);
+		assertEquals(taskProgressControl.getProgressMap().get(FILE_1).longValue(), 20);
 	}
 
-	private TaskProgressDto create(String taskId, long processed, long overall, Map<String, FileProgressDto> fileProgressDtoList) {
+	private TaskProgressDto create(String taskId, long processed, long overall, Map<String, EntryProgressDto> progressDtoList) {
 		TaskProgressDto taskProgressDto = new TaskProgressDto();
 		taskProgressDto.setTaskId(taskId);
 		taskProgressDto.setType(TaskType.UPLOAD);
 		taskProgressDto.setBytesOverall(overall);
 		taskProgressDto.setBytesProcessed(processed);
-		taskProgressDto.setFileProgressDataMap(fileProgressDtoList);
+		taskProgressDto.setProgressMap(progressDtoList);
 		return taskProgressDto;
 	}
 
-	private FileProgressDto fpd(String path, long progress, long size) {
-		FileProgressDto fileProgressDto = new FileProgressDto();
-		fileProgressDto.setAbsolutePath(path);
-		fileProgressDto.setProgress(progress);
-		fileProgressDto.setSize(size);
-		return fileProgressDto;
+	private EntryProgressDto fpd(String path, long progress, long size) {
+		EntryProgressDto progressDto = new EntryProgressDto();
+		progressDto.setAbsolutePath(path);
+		progressDto.setProgress(progress);
+		progressDto.setSize(size);
+		progressDto.setStatus(ProgressStatus.UPLOADED);
+		return progressDto;
 	}
 
 	private RequestCallback<TaskProgressResponse> captureLambda() throws InterruptedException {

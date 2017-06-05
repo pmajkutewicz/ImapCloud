@@ -66,7 +66,7 @@ public class RecoveryRestController {
 			.filter(i -> recoveredFilesIds.contains(i.getFileUniqueId()))
 			.collect(toMap(File::getFileUniqueId, Function.identity()));
 
-		// update RecoveredFileDto with above data
+		// persist RecoveredFileDto with above data
 		results.values().stream().flatMap(Collection::stream)
 			.forEach(recoveredFileDto -> {
 				if (filesInDb.containsKey(recoveredFileDto.getFileUniqueId())) {

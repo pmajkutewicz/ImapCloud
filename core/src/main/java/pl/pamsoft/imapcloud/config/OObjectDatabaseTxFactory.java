@@ -1,11 +1,11 @@
 package pl.pamsoft.imapcloud.config;
 
-import com.orientechnologies.orient.core.entity.OEntityManager;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
+import com.orientechnologies.orient.core.entity.OEntityManager;
 import com.orientechnologies.orient.object.db.OObjectDatabaseTx;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import pl.pamsoft.imapcloud.entity.FileProgress;
+import pl.pamsoft.imapcloud.entity.EntryProgress;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 
 import javax.annotation.PostConstruct;
@@ -30,7 +30,7 @@ public class OObjectDatabaseTxFactory {
 		OObjectDatabaseTx db = new OObjectDatabaseTx(pool.acquire());
 		OEntityManager entityManager = db.getEntityManager();
 		entityManager.registerEntityClass(TaskProgress.class);
-		entityManager.registerEntityClass(FileProgress.class);
+		entityManager.registerEntityClass(EntryProgress.class);
 	}
 
 

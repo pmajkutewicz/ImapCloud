@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.entity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import pl.pamsoft.imapcloud.dto.progress.FileProgressStatus;
+import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import javax.persistence.FetchType;
@@ -17,22 +17,29 @@ public class TaskProgress {
 	private String taskId;
 	private long bytesOverall;
 	@OneToMany(fetch = FetchType.EAGER)
-	private Map<String, FileProgress> fileProgressDataMap;
+	private Map<String, EntryProgress> progressMap;
 
 	public void process(String currentFileAbsolutePath, long cumulativeFileProgress) {
-		FileProgress fileProgress = fileProgressDataMap.get(currentFileAbsolutePath);
-		fileProgress.setProgress(cumulativeFileProgress);
-		if (cumulativeFileProgress == fileProgress.getSize()){
-			fileProgress.setStatus(FileProgressStatus.UPLOADED);
+		EntryProgress entryProgress = progressMap.get(currentFileAbsolutePath);
+		entryProgress.setProgress(cumulativeFileProgress);
+		if (cumulativeFileProgress == entryProgress.getSize()){
+			entryProgress.setStatus(ProgressStatus.UPLOADED);
 		} else {
-			fileProgress.setStatus(FileProgressStatus.UPLOADING);
+			entryProgress.setStatus(ProgressStatus.UPLOADING);
 		}
 	}
 
+	public void processFolder(String folder) {
+		bytesOverall++;
+		EntryProgress entryProgress = progressMap.get(folder);
+		entryProgress.setProgress(entryProgress.getSize());
+		entryProgress.setStatus(ProgressStatus.RECOVERY_SCANNED);
+	}
+
 	public void markFileAlreadyUploaded(String currentFileAbsolutePath, long fileSize) {
-		FileProgress fileProgress = fileProgressDataMap.get(currentFileAbsolutePath);
-		fileProgress.setProgress(fileSize);
-		fileProgress.setStatus(FileProgressStatus.ALREADY_UPLOADED);
+		EntryProgress entryProgress = progressMap.get(currentFileAbsolutePath);
+		entryProgress.setProgress(fileSize);
+		entryProgress.setStatus(ProgressStatus.ALREADY_UPLOADED);
 	}
 
 	public String getId() {
@@ -67,15 +74,26 @@ public class TaskProgress {
 		this.bytesOverall = bytesOverall;
 	}
 
+	/**
+	 * For recovery task:
+	 * - return nb. of completed folders (scanned)
+	 * For other tasks:
+	 * - returns sum of processed bytes
+	 * @return
+	 */
 	public long getBytesProcessed() {
-		return fileProgressDataMap.values().stream().mapToLong(FileProgress::getProgress).sum();
+		if (TaskType.RECOVERY == type) {
+			return progressMap.values().stream().mapToLong(e -> e.getStatus().isTaskCompleted() ? 1 : 0).sum();
+		} else {
+			return progressMap.values().stream().mapToLong(EntryProgress::getProgress).sum();
+		}
 	}
 
-	public Map<String, FileProgress> getFileProgressDataMap() {
-		return this.fileProgressDataMap;
+	public Map<String, EntryProgress> getProgressMap() {
+		return this.progressMap;
 	}
 
-	public void setFileProgressDataMap(Map<String, FileProgress> fileProgressDataMap) {
-		this.fileProgressDataMap = fileProgressDataMap;
+	public void setProgressMap(Map<String, EntryProgress> progressMap) {
+		this.progressMap = progressMap;
 	}
 }

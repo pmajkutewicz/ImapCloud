@@ -14,8 +14,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
-import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
-import pl.pamsoft.imapcloud.dto.progress.FileProgressStatus;
+import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
+import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,22 +35,22 @@ public class TaskProgressControl extends AbstractControl {
 	@FXML
 	private VBox filesInfo;
 
-	private Map<String, SimpleDoubleProperty> fileProgressMap;
-	private Map<String, SimpleObjectProperty<FileProgressStatus>> fileProgressStatusMap;
+	private Map<String, SimpleDoubleProperty> progressMap;
+	private Map<String, SimpleObjectProperty<ProgressStatus>> progressStatusMap;
 
 	@SuppressFBWarnings("UR_UNINIT_READ")
-	public TaskProgressControl(String id, String type, Map<String, FileProgressDto> fileProgressDataMap,
+	public TaskProgressControl(String id, String type, Map<String, EntryProgressDto> progressDtoMap,
 	                           Background background) {
 		this.setBackground(background);
 		this.taskIdLabel.setText(type + ' ' + id);
-		createFileMap(fileProgressDataMap);
+		createFileMap(progressDtoMap);
 		generateIdenticon(id);
 	}
 
-	public void updateProgress(String fileAbsolutePath, double fileProgress, FileProgressStatus status) {
-		fileProgressMap.get(fileAbsolutePath).set(fileProgress);
-		if (FileProgressStatus.ALREADY_UPLOADED == status) {
-			fileProgressStatusMap.get(fileAbsolutePath).setValue(FileProgressStatus.ALREADY_UPLOADED);
+	public void updateProgress(String fileAbsolutePath, double progress, ProgressStatus status) {
+		progressMap.get(fileAbsolutePath).set(progress);
+		if (status.isTaskCompleted()) {
+			progressStatusMap.get(fileAbsolutePath).setValue(status);
 		}
 	}
 
@@ -68,17 +68,17 @@ public class TaskProgressControl extends AbstractControl {
 		identicon.setImage(writableImage);
 	}
 
-	private void createFileMap(Map<String, FileProgressDto> fileProgressDataMap) {
-		fileProgressMap = new ConcurrentHashMap<>(fileProgressDataMap.size());
-		fileProgressStatusMap = new ConcurrentHashMap<>(fileProgressDataMap.size());
+	private void createFileMap(Map<String, EntryProgressDto> progressDtoMap) {
+		progressMap = new ConcurrentHashMap<>(progressDtoMap.size());
+		progressStatusMap = new ConcurrentHashMap<>(progressDtoMap.size());
 
-		for (FileProgressDto fileEntry : fileProgressDataMap.values()) {
+		for (EntryProgressDto entry : progressDtoMap.values()) {
 			SimpleDoubleProperty simpleDoubleProperty = new SimpleDoubleProperty(0);
-			SimpleObjectProperty<FileProgressStatus> statusProperty = new SimpleObjectProperty<>(fileEntry.getStatus());
-			ProgressIndicatorBar indicatorBar = new ProgressIndicatorBar(simpleDoubleProperty, fileEntry.getSize(), fileEntry.getAbsolutePath(), statusProperty);
+			SimpleObjectProperty<ProgressStatus> statusProperty = new SimpleObjectProperty<>(entry.getStatus());
+			ProgressIndicatorBar indicatorBar = new ProgressIndicatorBar(simpleDoubleProperty, statusProperty, entry);
 			filesInfo.getChildren().add(indicatorBar);
-			fileProgressMap.put(fileEntry.getAbsolutePath(), simpleDoubleProperty);
-			fileProgressStatusMap.put(fileEntry.getAbsolutePath(), statusProperty);
+			progressMap.put(entry.getAbsolutePath(), simpleDoubleProperty);
+			progressStatusMap.put(entry.getAbsolutePath(), statusProperty);
 		}
 	}
 
@@ -88,7 +88,7 @@ public class TaskProgressControl extends AbstractControl {
 	}
 
 	@VisibleForTesting
-	public Map<String, SimpleDoubleProperty> getFileProgressMap() {
-		return fileProgressMap;
+	public Map<String, SimpleDoubleProperty> getProgressMap() {
+		return progressMap;
 	}
 }

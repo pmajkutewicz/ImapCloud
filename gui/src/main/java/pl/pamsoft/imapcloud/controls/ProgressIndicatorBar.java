@@ -6,9 +6,12 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import pl.pamsoft.imapcloud.dto.progress.FileProgressStatus;
+import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
+import pl.pamsoft.imapcloud.dto.progress.ProgressEntryType;
+import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
 
 import java.text.DecimalFormat;
+import java.util.ResourceBundle;
 
 public class ProgressIndicatorBar extends StackPane {
 	private static final int KIB = 1024;
@@ -16,19 +19,23 @@ public class ProgressIndicatorBar extends StackPane {
 
 	private final ReadOnlyDoubleProperty workDone;
 	private final double totalWork;
-	private final SimpleObjectProperty<FileProgressStatus> status;
+	private final SimpleObjectProperty<ProgressStatus> status;
+	private final ProgressEntryType type;
 
 	private final ProgressBar bar = new ProgressBar();
 	private final Text text = new Text();
 	private final String label;
+	private final String messageLabel;
 
 	private static final int DEFAULT_LABEL_PADDING = 5;
 
-	ProgressIndicatorBar(final ReadOnlyDoubleProperty workDone, final double totalWork, final String label, final SimpleObjectProperty<FileProgressStatus> status) {
+	ProgressIndicatorBar(final ReadOnlyDoubleProperty workDone, final SimpleObjectProperty<ProgressStatus> status, final EntryProgressDto entry) {
 		this.workDone = workDone;
-		this.totalWork = totalWork;
-		this.label = label;
+		this.totalWork = entry.getSize();
+		this.label = entry.getAbsolutePath();
 		this.status = status;
+		this.type = entry.getType();
+		this.messageLabel = ResourceBundle.getBundle("i18n").getString("tasks.label.messages");
 
 		syncProgress();
 		workDone.addListener((observableValue, number, number2) -> syncProgress());
@@ -42,16 +49,26 @@ public class ProgressIndicatorBar extends StackPane {
 	private void syncProgress() {
 		text.setFill(Color.BLACK);
 		bar.setStyle("-fx-accent: lightblue;");
-		if (workDone == null || totalWork == 0) {
-			text.setText("");
-			bar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
-		} else {
-			if (FileProgressStatus.ALREADY_UPLOADED == status.getValue()) {
-				text.setText(String.format("%s (%s)", label, status.getValue().toString()));
+
+		if (ProgressEntryType.FILE == type) {
+			if (workDone == null || totalWork == 0) {
+				text.setText("");
+				bar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
 			} else {
-				text.setText(String.format("%s (%s of %s)", label, getReadableFileSize(workDone.get()), getReadableFileSize(totalWork)));
+				if (ProgressStatus.ALREADY_UPLOADED == status.getValue()) {
+					text.setText(String.format("%s (%s)", label, status.getValue().toString()));
+				} else {
+					text.setText(String.format("%s (%s of %s)", label, getReadableFileSize(workDone.get()), getReadableFileSize(totalWork)));
+				}
+				bar.setProgress(workDone.get() / totalWork);
 			}
-			bar.setProgress(workDone.get() / totalWork);
+		} else {
+			text.setText(String.format("%s (%d of %d %s)", label, (int) workDone.get(), (int) totalWork, messageLabel));
+			if (status.getValue().isTaskCompleted()) {
+				bar.setProgress(1);
+			} else {
+				bar.setProgress(workDone.get() / totalWork);
+			}
 		}
 
 		bar.setMinHeight(text.getBoundsInLocal().getHeight() + DEFAULT_LABEL_PADDING * 2);

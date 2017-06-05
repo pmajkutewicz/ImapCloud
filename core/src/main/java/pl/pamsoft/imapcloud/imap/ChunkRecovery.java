@@ -9,9 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
+import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.services.common.TasksProgressService;
+import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import javax.mail.FetchProfile;
 import javax.mail.Folder;
@@ -34,14 +37,18 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 	private static final Logger LOG = LoggerFactory.getLogger(ChunkRecovery.class);
 	private final GenericObjectPool<Store> connectionPool;
 	private MonitoringHelper monitoringHelper;
+	private final TasksProgressService tasksProgressService;
+	private final Map<String, TaskProgress> taskProgressMap;
 	private List<String> requiredHeaders;
 
 	private final Map<String, File> fileMap = new HashMap<>();
 	private final Map<String, List<FileChunk>> fileChunkMap = new HashMap<>();
 
-	public ChunkRecovery(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper) {
+	public ChunkRecovery(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper, TasksProgressService tasksProgressService, Map<String, TaskProgress> taskProgressMap) {
 		this.connectionPool = connectionPool;
 		this.monitoringHelper = monitoringHelper;
+		this.tasksProgressService = tasksProgressService;
+		this.taskProgressMap = taskProgressMap;
 		this.requiredHeaders = Stream.of(MessageHeaders.values()).map(MessageHeaders::toString).collect(toList());
 		this.requiredHeaders.add("Message-ID");
 	}
@@ -55,8 +62,11 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 			store = connectionPool.borrowObject();
 			Folder mainFolder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME);
 			Folder[] list = mainFolder.list();
+			createTaskProgress(rcc.getTaskId(), list);
 			for (Folder folder : list) {
+				LOG.debug("Processing {}", folder.getFullName());
 				processFolder(folder);
+				updateProgress(rcc.getTaskId(), folder);
 			}
 			determineSizeAndCompleteness();
 			double lastVal = monitoringHelper.stop(monitor);
@@ -75,6 +85,28 @@ public class ChunkRecovery implements Function<RecoveryChunkContainer, RecoveryC
 			}
 		}
 		return RecoveryChunkContainer.EMPTY;
+	}
+
+	private void updateProgress(String taskId, Folder folder) {
+		LOG.debug("Progress of {}", folder.getFullName());
+		TaskProgress taskProgress = taskProgressMap.get(taskId);
+		taskProgress.processFolder(folder.getFullName());
+		tasksProgressService.persist(taskProgress);
+	}
+
+	private void createTaskProgress(String taskId, Folder[] list) {
+		Map<String, Integer> folderMap = new HashMap<>(list.length);
+		for (Folder folder : list) {
+			try {
+				folderMap.put(folder.getFullName(), folder.getMessageCount());
+			} catch (MessagingException e) {
+				LOG.warn("Can't determinate message count in {}", folder.getFullName());
+				folderMap.put(folder.getFullName(), Integer.MIN_VALUE);
+			}
+		}
+
+		TaskProgress progress = tasksProgressService.create(TaskType.RECOVERY, taskId, list.length, folderMap);
+		taskProgressMap.put(taskId, progress);
 	}
 
 	private void determineSizeAndCompleteness() {

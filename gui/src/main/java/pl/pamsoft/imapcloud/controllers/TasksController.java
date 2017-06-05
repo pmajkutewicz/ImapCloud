@@ -12,7 +12,7 @@ import javafx.scene.paint.Color;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
-import pl.pamsoft.imapcloud.dto.progress.FileProgressDto;
+import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
 import pl.pamsoft.imapcloud.responses.TaskProgressResponse;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
@@ -55,11 +55,12 @@ public class TasksController implements Initializable {
 	private ResourceBundle resourceBundle;
 
 	private RequestCallback<TaskProgressResponse> getTaskCallback = result -> {
+		LOG.debug("Task progress results start");
 		result.getTaskProgressList().forEach(event -> {
 			TaskProgressControl current;
 			String taskId = event.getTaskId();
 			if (!currentTasks.containsKey(taskId)) {
-				current = new TaskProgressControl(taskId, parseType(event.getType()), event.getFileProgressDataMap(),
+				current = new TaskProgressControl(taskId, parseType(event.getType()), event.getProgressMap(),
 					determineBackground(event.getType()));
 				currentTasks.put(taskId, current);
 				platformTools.runLater(() -> tasksContainer.getChildren().addAll(current));
@@ -69,14 +70,15 @@ public class TasksController implements Initializable {
 			double overallProgress = event.getBytesProcessed() / (double) event.getBytesOverall();
 
 			platformTools.runLater(() -> {
-					for (FileProgressDto entry : event.getFileProgressDataMap().values()) {
+					for (EntryProgressDto entry : event.getProgressMap().values()) {
 						current.updateProgress(entry.getAbsolutePath(), entry.getProgress(), entry.getStatus());
 					}
 					current.updateProgress(overallProgress);
 				}
 			);
-			LOG.debug("Overall progress for task {} is {}", taskId, overallProgress);
+			LOG.debug(event.toString());
 		});
+		LOG.debug("Task progress results end");
 	};
 
 	private Runnable updateTask = () -> taskProgressRestClient.getTasksProgress(getTaskCallback);

@@ -13,15 +13,15 @@ public class TaskProgressDto {
 	private String taskId;
 	private long bytesOverall;
 	private long bytesProcessed;
-	private Map<String, FileProgressDto> fileProgressDataMap;
+	private Map<String, EntryProgressDto> progressMap;
 
-	public TaskProgressDto(String id, TaskType type, String taskId, long bytesOverall, long bytesProcessed, Map<String, FileProgressDto> fileProgressDataMap) {
+	public TaskProgressDto(String id, TaskType type, String taskId, long bytesOverall, long bytesProcessed, Map<String, EntryProgressDto> progressMap) {
 		this.id = id;
 		this.type = type;
 		this.taskId = taskId;
 		this.bytesOverall = bytesOverall;
 		this.bytesProcessed = bytesProcessed;
-		this.fileProgressDataMap = fileProgressDataMap;
+		this.progressMap = progressMap;
 	}
 
 	public TaskProgressDto() {
@@ -67,11 +67,24 @@ public class TaskProgressDto {
 		this.bytesProcessed = bytesProcessed;
 	}
 
-	public Map<String, FileProgressDto> getFileProgressDataMap() {
-		return this.fileProgressDataMap;
+	public Map<String, EntryProgressDto> getProgressMap() {
+		return this.progressMap;
 	}
 
-	public void setFileProgressDataMap(Map<String, FileProgressDto> fileProgressDataMap) {
-		this.fileProgressDataMap = fileProgressDataMap;
+	public void setProgressMap(Map<String, EntryProgressDto> progressMap) {
+		this.progressMap = progressMap;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder("TaskProgressDto{");
+		sb.append("id='").append(id).append('\'');
+		sb.append(", type=").append(type);
+		sb.append(", taskId='").append(taskId).append('\'');
+		sb.append(", bytesOverall=").append(bytesOverall);
+		sb.append(", bytesProcessed=").append(bytesProcessed);
+		sb.append(", progressMap=").append(progressMap);
+		sb.append('}');
+		return sb.toString();
 	}
 }
