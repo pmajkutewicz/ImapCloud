@@ -3,24 +3,24 @@ package pl.pamsoft.imapcloud.dto;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class EmailProviderInfo {
+public class AccountInfo {
 	private String domain;
-	private String imapHost;
+	private String host;
 	private LoginType loginType;
 	private Integer maxConcurrentConnections;
 	private Integer sizeMB;
 	private Integer attachmentSizeMB;
 
-	public EmailProviderInfo(String domain, String imapHost, LoginType loginType, Integer maxConcurrentConnections, Integer sizeMB, Integer attachmentSizeMB) {
+	public AccountInfo(String domain, String host, LoginType loginType, Integer maxConcurrentConnections, Integer sizeMB, Integer attachmentSizeMB) {
 		this.domain = domain;
-		this.imapHost = imapHost;
+		this.host = host;
 		this.loginType = loginType;
 		this.maxConcurrentConnections = maxConcurrentConnections;
 		this.sizeMB = sizeMB;
 		this.attachmentSizeMB = attachmentSizeMB;
 	}
 
-	public EmailProviderInfo() {
+	public AccountInfo() {
 	}
 
 	public String getDomain() {
@@ -31,12 +31,12 @@ public class EmailProviderInfo {
 		this.domain = domain;
 	}
 
-	public String getImapHost() {
-		return this.imapHost;
+	public String getHost() {
+		return this.host;
 	}
 
-	public void setImapHost(String imapHost) {
-		this.imapHost = imapHost;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	public LoginType getLoginType() {

@@ -31,7 +31,7 @@ public class AccountServices {
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
 		long usedSpace = accountRepository.getUsedSpace(a.getLogin());
-		return new AccountDto(a.getId(), String.format("%s@%s", a.getEmail(), a.getImapServerAddress()), a.getCryptoKey(), usedSpace);
+		return new AccountDto(a.getId(), String.format("%s@%s", a.getEmail(), a.getHost()), a.getCryptoKey(), usedSpace);
 	};
 
 	public void addAccount(CreateAccountRequest request) {
@@ -44,7 +44,7 @@ public class AccountServices {
 			account.setLogin(email);
 		}
 		account.setPassword(request.getPassword());
-		account.setImapServerAddress(request.getSelectedEmailProvider().getImapHost());
+		account.setHost(request.getSelectedEmailProvider().getHost());
 		account.setSizeMB(request.getSelectedEmailProvider().getSizeMB());
 		account.setAttachmentSizeMB(request.getSelectedEmailProvider().getAttachmentSizeMB());
 		account.setMaxConcurrentConnections(request.getSelectedEmailProvider().getMaxConcurrentConnections());

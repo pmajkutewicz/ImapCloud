@@ -10,7 +10,7 @@ public class Account {
 	private String id;
 	private String login;
 	private String email;
-	private String imapServerAddress;
+	private String host;
 	private String password;
 	private Integer maxConcurrentConnections;
 	private Integer sizeMB;
@@ -41,12 +41,12 @@ public class Account {
 		this.email = email;
 	}
 
-	public String getImapServerAddress() {
-		return this.imapServerAddress;
+	public String getHost() {
+		return this.host;
 	}
 
-	public void setImapServerAddress(String imapServerAddress) {
-		this.imapServerAddress = imapServerAddress;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	public String getPassword() {

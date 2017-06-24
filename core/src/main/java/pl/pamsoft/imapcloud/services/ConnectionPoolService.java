@@ -16,11 +16,11 @@ public class ConnectionPoolService {
 	private Map<String, GenericObjectPool<Store>> accountPoolMap = new ConcurrentHashMap<>();
 
 	public GenericObjectPool<Store> getOrCreatePoolForAccount(Account account) {
-		String key = String.format("%s[at]%s", account.getLogin(), account.getImapServerAddress());
+		String key = String.format("%s[at]%s", account.getLogin(), account.getHost());
 		if (accountPoolMap.containsKey(key)) {
 			return accountPoolMap.get(key);
 		} else {
-			IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), account.getImapServerAddress());
+			IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), account.getHost());
 			GenericObjectPoolConfig config = new GenericObjectPoolConfig();
 			config.setMaxTotal(account.getMaxConcurrentConnections());
 			config.setTestOnBorrow(true);

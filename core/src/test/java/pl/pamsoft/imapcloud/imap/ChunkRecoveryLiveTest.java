@@ -25,7 +25,7 @@ public class ChunkRecoveryLiveTest {
 		Account a = new Account();
 		a.setLogin("adam.b92");
 		a.setPassword("&*PJMsSyhshwfKmmEg*3xY$Vgca8z5#c");
-		a.setImapServerAddress("imap.mail.yahoo.com");
+		a.setHost("imap.mail.yahoo.com");
 		a.setMaxConcurrentConnections(5);
 		GenericObjectPool<Store> pool = new ConnectionPoolService().getOrCreatePoolForAccount(a);
 		TasksProgressService tasksProgressService = Mockito.mock(TasksProgressService.class);

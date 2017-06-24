@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.dto.AccountDto;
-import pl.pamsoft.imapcloud.dto.EmailProviderInfoList;
+import pl.pamsoft.imapcloud.dto.AccountProviderInfoList;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
-import pl.pamsoft.imapcloud.responses.EmailProviderInfoResponse;
+import pl.pamsoft.imapcloud.responses.AccountProviderInfoResponse;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
 import pl.pamsoft.imapcloud.services.AccountServices;
 
@@ -20,15 +20,15 @@ import java.util.List;
 public class AccountRestController {
 
 	@Autowired
-	private EmailProviderInfoList supportedEmailProviders;
+	private AccountProviderInfoList supportedAccountProviders;
 
 	@Autowired
 	private AccountServices accountServices;
 
-	@ApiOperation("List supported email providers")
-	@RequestMapping(value = "emailProviders", method = RequestMethod.GET)
-	public EmailProviderInfoResponse listSupportedEmailProviders() {
-		return new EmailProviderInfoResponse(supportedEmailProviders.getEmailProviders());
+	@ApiOperation("List supported account providers")
+	@RequestMapping(value = "accountProviders", method = RequestMethod.GET)
+	public AccountProviderInfoResponse listSupportedEmailProviders() {
+		return new AccountProviderInfoResponse(supportedAccountProviders.getAccountProviders());
 	}
 
 	@ApiOperation("Creates new account")

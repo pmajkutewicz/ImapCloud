@@ -1,40 +1,40 @@
 mail_ru: {
   domain: mail.ru,
-  imapHost: imap.mail.ru,
+  host: imap.mail.ru,
   loginType: WITH_DOMAIN,
   maxConcurrentConnections: 8,
   sizeMB: 9999999,
-  attachmentSizeMB: 25
+  maxFileSizeMB: 25
   }
 mail_com: {
   domain: mail.com,
-  imapHost: unknown,
+  host: unknown,
   loginType: WITH_DOMAIN,
   maxConcurrentConnections: 8,
   sizeMB: 9999999,
-  attachmentSizeMB: 50
+  maxFileSizeMB: 50
   }
 yandex_com: {
   domain: yandex.com,
-  imapHost: imap.yandex.com,
+  host: imap.yandex.com,
   loginType: USERNAME_ONLY,
   maxConcurrentConnections: 4,
   sizeMB: 9999999,
-  attachmentSizeMB: 30
+  maxFileSizeMB: 30
   }
 yahoo_com: {
   domain: yahoo.com,
-  imapHost: imap.mail.yahoo.com,
+  host: imap.mail.yahoo.com,
   loginType: WITH_DOMAIN,
   maxConcurrentConnections: 4,
   sizeMB: 9999999,
-  attachmentSizeMB: 25
+  maxFileSizeMB: 25
   }
 mail_ru_test: {
   domain: mail.ru,
-  imapHost: imap.mail.ru,
+  host: imap.mail.ru,
   loginType: WITH_DOMAIN,
   maxConcurrentConnections: 8,
   sizeMB: 9999999,
-  attachmentSizeMB: 1
+  maxFileSizeMB: 1
   }
