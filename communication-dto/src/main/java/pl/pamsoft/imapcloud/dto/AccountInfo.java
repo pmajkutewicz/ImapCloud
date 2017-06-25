@@ -1,34 +1,34 @@
 package pl.pamsoft.imapcloud.dto;
 
+import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.util.Map;
+import java.util.Set;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class AccountInfo {
-	private String domain;
-	private String host;
-	private LoginType loginType;
-	private Integer maxConcurrentConnections;
-	private Integer sizeMB;
-	private Integer attachmentSizeMB;
 
-	public AccountInfo(String domain, String host, LoginType loginType, Integer maxConcurrentConnections, Integer sizeMB, Integer attachmentSizeMB) {
-		this.domain = domain;
+	private static Set<String> standardFields = ImmutableSet.of("host", "accountSizeMB", "maxFileSizeMB", "maxConcurrentConnections");
+	private String host;
+	private Integer accountSizeMB;
+	private Integer maxFileSizeMB;
+	private Integer maxConcurrentConnections;
+	private Map<String, String> additionalProperties;
+
+	public AccountInfo(String host, Integer maxConcurrentConnections, Integer accountSizeMB, Integer maxFileSizeMB, Map<String, String> additionalProperties) {
 		this.host = host;
-		this.loginType = loginType;
 		this.maxConcurrentConnections = maxConcurrentConnections;
-		this.sizeMB = sizeMB;
-		this.attachmentSizeMB = attachmentSizeMB;
+		this.accountSizeMB = accountSizeMB;
+		this.maxFileSizeMB = maxFileSizeMB;
+		this.additionalProperties = additionalProperties;
 	}
 
 	public AccountInfo() {
 	}
 
-	public String getDomain() {
-		return this.domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
+	public static Set<String> getStandardFields() {
+		return standardFields;
 	}
 
 	public String getHost() {
@@ -39,14 +39,6 @@ public class AccountInfo {
 		this.host = host;
 	}
 
-	public LoginType getLoginType() {
-		return this.loginType;
-	}
-
-	public void setLoginType(LoginType loginType) {
-		this.loginType = loginType;
-	}
-
 	public Integer getMaxConcurrentConnections() {
 		return this.maxConcurrentConnections;
 	}
@@ -55,20 +47,32 @@ public class AccountInfo {
 		this.maxConcurrentConnections = maxConcurrentConnections;
 	}
 
-	public Integer getSizeMB() {
-		return this.sizeMB;
+	public Integer getAccountSizeMB() {
+		return accountSizeMB;
 	}
 
-	public void setSizeMB(Integer sizeMB) {
-		this.sizeMB = sizeMB;
+	public void setAccountSizeMB(Integer accountSizeMB) {
+		this.accountSizeMB = accountSizeMB;
 	}
 
-	public Integer getAttachmentSizeMB() {
-		return this.attachmentSizeMB;
+	public Integer getMaxFileSizeMB() {
+		return this.maxFileSizeMB;
 	}
 
-	public void setAttachmentSizeMB(Integer attachmentSizeMB) {
-		this.attachmentSizeMB = attachmentSizeMB;
+	public void setMaxFileSizeMB(Integer maxFileSizeMB) {
+		this.maxFileSizeMB = maxFileSizeMB;
+	}
+
+	public Map<String, String> getAdditionalProperties() {
+		return additionalProperties;
+	}
+
+	public void setAdditionalProperties(Map<String, String> additionalProperties) {
+		this.additionalProperties = additionalProperties;
+	}
+
+	public String getProperty(String name) {
+		return additionalProperties.get(name);
 	}
 }
 

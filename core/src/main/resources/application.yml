@@ -18,6 +18,9 @@ logging:
     ROOT: ERROR
     org.springframework.web: ERROR
     org.springframework.boot.autoconfigure.security: INFO
+    org.apache.catalina.filters: TRACE
+    org.apache.http: DEBUG
+    org.apache.http.wire: DEBUG
     pl.pamsoft: DEBUG
   file: imapcloud.log
 

@@ -8,13 +8,13 @@ public class CreateAccountRequest {
 	private String username;
 	private String password;
 	private String cryptoKey;
-	private AccountInfo selectedEmailProvider;
+	private AccountInfo selectedAccountProvider;
 
-	public CreateAccountRequest(String username, String password, String cryptoKey, AccountInfo selectedEmailProvider) {
+	public CreateAccountRequest(String username, String password, String cryptoKey, AccountInfo selectedAccountProvider) {
 		this.username = username;
 		this.password = password;
 		this.cryptoKey = cryptoKey;
-		this.selectedEmailProvider = selectedEmailProvider;
+		this.selectedAccountProvider = selectedAccountProvider;
 	}
 
 	public CreateAccountRequest() {
@@ -44,11 +44,11 @@ public class CreateAccountRequest {
 		this.cryptoKey = cryptoKey;
 	}
 
-	public AccountInfo getSelectedEmailProvider() {
-		return this.selectedEmailProvider;
+	public AccountInfo getSelectedAccountProvider() {
+		return this.selectedAccountProvider;
 	}
 
-	public void setSelectedEmailProvider(AccountInfo selectedEmailProvider) {
-		this.selectedEmailProvider = selectedEmailProvider;
+	public void setSelectedAccountProvider(AccountInfo selectedAccountProvider) {
+		this.selectedAccountProvider = selectedAccountProvider;
 	}
 }

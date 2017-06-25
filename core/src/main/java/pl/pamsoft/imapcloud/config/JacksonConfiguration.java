@@ -12,8 +12,7 @@ public class JacksonConfiguration {
 	@Bean
 	public ObjectMapper objectMapper() {
 		return new ObjectMapper()
-		.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-		.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
-
 }

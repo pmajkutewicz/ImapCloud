@@ -27,7 +27,7 @@ public class AccountRestController {
 
 	@ApiOperation("List supported account providers")
 	@RequestMapping(value = "accountProviders", method = RequestMethod.GET)
-	public AccountProviderInfoResponse listSupportedEmailProviders() {
+	public AccountProviderInfoResponse listSupportedAccountProviders() {
 		return new AccountProviderInfoResponse(supportedAccountProviders.getAccountProviders());
 	}
 

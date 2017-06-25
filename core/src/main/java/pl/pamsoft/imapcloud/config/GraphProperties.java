@@ -7,7 +7,7 @@ public class GraphProperties {
 	public static final String ACCOUNT_PASSWORD = "password";
 	public static final String ACCOUNT_HOST = "host";
 	public static final String ACCOUNT_MAX_CONCURRENT_CONNECTIONS = "maxConcurrentConnections";
-	public static final String ACCOUNT_SIZE_MB = "accountSizeMB";
+	public static final String ACCOUNT_ACCOUNT_SIZE_MB = "accountSizeMB";
 	public static final String ACCOUNT_ATTACHMENT_SIZE_MB = "maxFileAccountSizeMB";
 	public static final String ACCOUNT_CRYPTO_KEY = "cryptoKey";
 

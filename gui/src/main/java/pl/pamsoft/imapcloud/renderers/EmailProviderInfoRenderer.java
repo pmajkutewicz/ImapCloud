@@ -8,7 +8,7 @@ public class EmailProviderInfoRenderer extends ListCell<AccountInfo> {
 	protected void updateItem(AccountInfo item, boolean empty) {
 		super.updateItem(item, empty);
 		if (item != null) {
-			setText('@' + item.getDomain());
+			setText(item.getHost());
 		}
 	}
 }
