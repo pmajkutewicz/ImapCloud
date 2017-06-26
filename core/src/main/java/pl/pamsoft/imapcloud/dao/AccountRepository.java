@@ -68,6 +68,7 @@ public class AccountRepository extends AbstractRepository<Account> {
 
 	private void fillProperties(Element accountVertex, Account account) {
 		accountVertex.setProperty(GraphProperties.ACCOUNT_LOGIN, account.getLogin());
+		accountVertex.setProperty(GraphProperties.ACCOUNT_TYPE, account.getType());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_HOST, account.getHost());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_PASSWORD, account.getPassword());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_MAX_CONCURRENT_CONNECTIONS, account.getMaxConcurrentConnections());

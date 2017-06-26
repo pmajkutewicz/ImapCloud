@@ -10,6 +10,7 @@ public class Account {
 	@Id
 	private String id;
 	private String login;
+	private String type;
 	private String host;
 	private String password;
 	private Integer maxConcurrentConnections;
@@ -32,6 +33,14 @@ public class Account {
 
 	public void setLogin(String login) {
 		this.login = login;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getHost() {

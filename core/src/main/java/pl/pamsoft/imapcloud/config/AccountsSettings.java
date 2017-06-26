@@ -44,6 +44,7 @@ public class AccountsSettings {
 	}
 
 	private AccountInfo createAccountProvider(Map<String, Object> values) {
+		String type = (String) values.get("type");
 		String host = (String) values.get("host");
 		Integer sizeMB = (Integer) values.get("accountSizeMB");
 		Integer attachmentSizeMB = (Integer) values.get("maxFileSizeMB");
@@ -52,7 +53,7 @@ public class AccountsSettings {
 		Map<String, String> props = values.entrySet().stream().filter(i -> !AccountInfo.getStandardFields().contains(i.getKey()))
 			.collect(Collectors.toMap(Map.Entry::getKey, i -> String.valueOf(i.getValue())));
 
-		return new AccountInfo(host, maxConcurrentConnections, sizeMB, attachmentSizeMB, props);
+		return new AccountInfo(type, host, maxConcurrentConnections, sizeMB, attachmentSizeMB, props);
 	}
 
 }

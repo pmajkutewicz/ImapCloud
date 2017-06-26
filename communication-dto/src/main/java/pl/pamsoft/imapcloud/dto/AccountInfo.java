@@ -9,14 +9,16 @@ import java.util.Set;
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class AccountInfo {
 
-	private static Set<String> standardFields = ImmutableSet.of("host", "accountSizeMB", "maxFileSizeMB", "maxConcurrentConnections");
+	private static Set<String> standardFields = ImmutableSet.of("type", "host", "accountSizeMB", "maxFileSizeMB", "maxConcurrentConnections");
+	private String type;
 	private String host;
 	private Integer accountSizeMB;
 	private Integer maxFileSizeMB;
 	private Integer maxConcurrentConnections;
 	private Map<String, String> additionalProperties;
 
-	public AccountInfo(String host, Integer maxConcurrentConnections, Integer accountSizeMB, Integer maxFileSizeMB, Map<String, String> additionalProperties) {
+	public AccountInfo(String type, String host, Integer maxConcurrentConnections, Integer accountSizeMB, Integer maxFileSizeMB, Map<String, String> additionalProperties) {
+		this.type = type;
 		this.host = host;
 		this.maxConcurrentConnections = maxConcurrentConnections;
 		this.accountSizeMB = accountSizeMB;
@@ -29,6 +31,14 @@ public class AccountInfo {
 
 	public static Set<String> getStandardFields() {
 		return standardFields;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	public String getHost() {

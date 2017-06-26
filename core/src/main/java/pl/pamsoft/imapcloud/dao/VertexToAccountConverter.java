@@ -17,6 +17,7 @@ public class VertexToAccountConverter extends AbstractVertexConverter implements
 		Account a = new Account();
 		a.setId(v.getId().toString());
 		a.setLogin(v.getProperty(GraphProperties.ACCOUNT_LOGIN));
+		a.setType(v.getProperty(GraphProperties.ACCOUNT_TYPE));
 		a.setHost(v.getProperty(GraphProperties.ACCOUNT_HOST));
 		a.setPassword(v.getProperty(GraphProperties.ACCOUNT_PASSWORD));
 		a.setMaxConcurrentConnections(v.getProperty(GraphProperties.ACCOUNT_MAX_CONCURRENT_CONNECTIONS));

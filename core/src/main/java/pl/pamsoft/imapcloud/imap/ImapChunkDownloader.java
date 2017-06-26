@@ -1,14 +1,12 @@
 package pl.pamsoft.imapcloud.imap;
 
-import com.jamonapi.Monitor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.pamsoft.imapcloud.api.accounts.ChunkDownloader;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.monitoring.Keys;
-import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 
 import javax.mail.BodyPart;
@@ -21,27 +19,22 @@ import javax.mail.Store;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Function;
 
-public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChunkContainer> {
+public class ImapChunkDownloader implements ChunkDownloader {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ChunkLoader.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ImapChunkDownloader.class);
 	private static final int FIRST_MESSAGE = 0;
 	private final GenericObjectPool<Store> connectionPool;
-	private MonitoringHelper monitoringHelper;
 
-	public ChunkLoader(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper) {
+	public ImapChunkDownloader(GenericObjectPool<Store> connectionPool) {
 		this.connectionPool = connectionPool;
-		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
-	public DownloadChunkContainer apply(DownloadChunkContainer dcc) {
+	public byte[] download(DownloadChunkContainer dcc) throws IOException{
 		Store store = null;
 		try {
 			FileChunk fileChunk = dcc.getChunkToDownload();
-			LOG.info("Downloading chunk {} of {}", fileChunk.getChunkNumber(), fileChunk.getOwnerFile().getName());
-			Monitor monitor = monitoringHelper.start(Keys.DL_CHUNK_LOADER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(fileChunk);
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
@@ -51,22 +44,19 @@ public class ChunkLoader implements Function<DownloadChunkContainer, DownloadChu
 			byte[] attachment = getAttachment(search[FIRST_MESSAGE]);
 
 			folder.close(IMAPUtils.NO_EXPUNGE);
-			double lastVal = monitoringHelper.stop(monitor);
-			LOG.info("Chunk downloaded in {} ms", lastVal);
-			return DownloadChunkContainer.addData(dcc, attachment);
+			return attachment;
 		} catch (Exception e) {
-			LOG.error("Error in stream", e);
 			try {
 				connectionPool.invalidateObject(store);
 			} catch (Exception e1) {
 				LOG.error("Error invalidating", e1);
 			}
+			throw new IOException(e);
 		} finally {
 			if (null != store) {
 				connectionPool.returnObject(store);
 			}
 		}
-		return DownloadChunkContainer.EMPTY;
 	}
 
 	@SuppressWarnings("PMD.AvoidBranchingStatementAsLastInLoop")

@@ -5,6 +5,7 @@ public class GraphProperties {
 	public static final String ACCOUNT_EMAIL = "email";
 	public static final String ACCOUNT_LOGIN = "login";
 	public static final String ACCOUNT_PASSWORD = "password";
+	public static final String ACCOUNT_TYPE = "type";
 	public static final String ACCOUNT_HOST = "host";
 	public static final String ACCOUNT_MAX_CONCURRENT_CONNECTIONS = "maxConcurrentConnections";
 	public static final String ACCOUNT_ACCOUNT_SIZE_MB = "accountSizeMB";

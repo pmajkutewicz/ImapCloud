@@ -38,6 +38,7 @@ public class AccountServices {
 
 		account.setLogin(request.getUsername());
 		account.setPassword(request.getPassword());
+		account.setType(request.getSelectedAccountProvider().getType());
 		account.setHost(request.getSelectedAccountProvider().getHost());
 		account.setAccountSizeMB(request.getSelectedAccountProvider().getAccountSizeMB());
 		account.setAttachmentSizeMB(request.getSelectedAccountProvider().getMaxFileSizeMB());

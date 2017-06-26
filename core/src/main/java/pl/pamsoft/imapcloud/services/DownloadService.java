@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.FileDto;
@@ -13,8 +14,8 @@ import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.imap.ChunkLoader;
 import pl.pamsoft.imapcloud.services.download.ChunkDecrypter;
+import pl.pamsoft.imapcloud.services.download.ChunkDownloadFacade;
 import pl.pamsoft.imapcloud.services.download.ChunkHashVerifier;
 import pl.pamsoft.imapcloud.services.download.DownloadChunkHasher;
 import pl.pamsoft.imapcloud.services.download.DownloadFileHasher;
@@ -34,6 +35,9 @@ import java.util.function.Predicate;
 public class DownloadService extends AbstractBackgroundService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadService.class);
+
+	@Autowired
+	private AccountServicesHolder accountServicesHolder;
 
 	@Autowired
 	private FileChunkRepository fileChunkRepository;
@@ -64,7 +68,8 @@ public class DownloadService extends AbstractBackgroundService {
 
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, getMonitoringHelper());
+				AccountService accountService = accountServicesHolder.getAccountService(account.getType());
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkDownloadFacade(accountService.getChunkDownloader(account), getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);

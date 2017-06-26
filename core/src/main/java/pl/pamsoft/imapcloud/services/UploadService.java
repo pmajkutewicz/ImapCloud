@@ -3,13 +3,14 @@ package pl.pamsoft.imapcloud.services;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
-import pl.pamsoft.imapcloud.imap.ChunkSaver;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncrypter;
+import pl.pamsoft.imapcloud.services.upload.ChunkUploaderFacade;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
 import pl.pamsoft.imapcloud.services.upload.DirectorySizeCalculator;
 import pl.pamsoft.imapcloud.services.upload.FileChunkStorer;
@@ -33,7 +34,7 @@ import java.util.stream.Stream;
 public class UploadService extends AbstractBackgroundService {
 
 	@Autowired
-	private ConnectionPoolService connectionPoolService;
+	private AccountServicesHolder accountServicesHolder;
 
 	@Autowired
 	private AccountRepository accountRepository;
@@ -78,7 +79,8 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
-			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkSaver(connectionPoolService.getOrCreatePoolForAccount(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
+			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
+			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 			selectedFiles.stream()
