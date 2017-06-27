@@ -11,7 +11,7 @@ import pl.pamsoft.imapcloud.imap.MessageHeaders;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 
 import java.io.IOException;

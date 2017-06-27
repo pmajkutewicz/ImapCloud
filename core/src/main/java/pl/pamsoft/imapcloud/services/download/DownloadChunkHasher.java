@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.common.ChunkHasher;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.util.function.Function;
 

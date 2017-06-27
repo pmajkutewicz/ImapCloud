@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkDownloader;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import javax.mail.BodyPart;
 import javax.mail.Folder;

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
 import java.io.IOException;
 import java.util.Spliterator;

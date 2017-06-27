@@ -9,6 +9,7 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
 import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;

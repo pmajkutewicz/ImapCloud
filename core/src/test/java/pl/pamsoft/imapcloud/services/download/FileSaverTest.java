@@ -6,7 +6,7 @@ import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.io.File;
 import java.io.IOException;

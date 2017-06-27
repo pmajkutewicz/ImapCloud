@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
 import java.io.File;
 import java.util.Arrays;

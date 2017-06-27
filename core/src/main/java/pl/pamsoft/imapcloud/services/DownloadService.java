@@ -14,6 +14,7 @@ import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.download.ChunkDecrypter;
 import pl.pamsoft.imapcloud.services.download.ChunkDownloadFacade;
 import pl.pamsoft.imapcloud.services.download.ChunkHashVerifier;

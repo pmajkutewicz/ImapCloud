@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
 import java.io.File;
 import java.io.IOException;

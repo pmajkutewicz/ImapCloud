@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.containers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

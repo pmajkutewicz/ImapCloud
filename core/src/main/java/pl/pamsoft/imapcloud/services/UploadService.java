@@ -9,6 +9,7 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncrypter;
 import pl.pamsoft.imapcloud.services.upload.ChunkUploaderFacade;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;

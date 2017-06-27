@@ -9,7 +9,7 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.io.IOException;
 import java.util.UUID;

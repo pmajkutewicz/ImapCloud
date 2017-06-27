@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.services.download;
 
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.util.List;
 import java.util.function.Function;

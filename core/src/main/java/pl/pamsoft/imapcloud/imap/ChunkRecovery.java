@@ -12,8 +12,8 @@ import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.common.TasksProgressService;
+import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import javax.mail.FetchProfile;

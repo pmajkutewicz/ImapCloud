@@ -13,6 +13,7 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.imap.ChunkRecovery;
+import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.recovery.FileRecovery;
 import pl.pamsoft.imapcloud.services.recovery.RCCtoRecoveredFileDtoConverter;
 import pl.pamsoft.imapcloud.services.recovery.RecoveredFileChunksFileReader;

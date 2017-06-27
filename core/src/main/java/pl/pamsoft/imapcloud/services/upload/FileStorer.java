@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.services.FileServices;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
 import java.nio.file.FileAlreadyExistsException;
 import java.util.function.Consumer;

@@ -2,7 +2,7 @@ package pl.pamsoft.imapcloud.services.recovery;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
-import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
 import java.io.IOException;
 import java.io.OutputStream;

@@ -14,8 +14,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.common.TasksProgressService;
+import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
 import javax.mail.Folder;
 import javax.mail.Header;
