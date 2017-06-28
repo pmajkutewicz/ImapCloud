@@ -24,5 +24,13 @@ public interface AccountService {
 	 * @return Chunk downloader.
 	 */
 	ChunkDownloader getChunkDownloader(Account account);
+
+	/**
+	 * Returns Chunk deleter.
+	 *
+	 * @param account Account associated with deleter.
+	 * @return Chunk deleter.
+	 */
+	ChunkDeleter getChunkDeleter(Account account);
 }
 

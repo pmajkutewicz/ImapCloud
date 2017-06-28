@@ -9,8 +9,8 @@ public class DeleteChunkContainer {
 	private final String taskId;
 	private final String fileUniqueId;
 	private final String fileHash;
-	private Boolean isDeleted;
-	private Boolean isDeletedFromDb;
+	private final Boolean isDeleted;
+	private final Boolean isDeletedFromDb;
 
 	public DeleteChunkContainer(String taskId, String fileUniqueId, String fileHash) {
 		this(taskId, fileUniqueId, fileHash, null, null);
@@ -38,6 +38,11 @@ public class DeleteChunkContainer {
 
 	public static DeleteChunkContainer markAsNotDeletedFromDB(DeleteChunkContainer dcc) {
 		return new DeleteChunkContainer(dcc.getTaskId(), dcc.getFileUniqueId(), dcc.getFileHash(), dcc.isDeleted, Boolean.FALSE);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("File: %s, isDeleted: %s, isDeletedInDb: %s", getFileUniqueId(), isDeleted, isDeletedFromDb);
 	}
 
 	public String getTaskId() {

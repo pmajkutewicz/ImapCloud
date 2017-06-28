@@ -1,12 +1,9 @@
-
 package pl.pamsoft.imapcloud.imap;
 
-import com.jamonapi.Monitor;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.pamsoft.imapcloud.monitoring.Keys;
-import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
+import pl.pamsoft.imapcloud.api.accounts.ChunkDeleter;
 import pl.pamsoft.imapcloud.services.containers.DeleteChunkContainer;
 
 import javax.mail.Flags;
@@ -14,26 +11,22 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.search.HeaderTerm;
-import java.util.function.Function;
+import java.io.IOException;
 
-public class FileDeleter implements Function<DeleteChunkContainer, DeleteChunkContainer> {
+public class ImapChunkDeleter implements ChunkDeleter {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileDeleter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ImapChunkDeleter.class);
 
 	private final GenericObjectPool<Store> connectionPool;
-	private MonitoringHelper monitoringHelper;
 
-	public FileDeleter(GenericObjectPool<Store> connectionPool, MonitoringHelper monitoringHelper) {
+	public ImapChunkDeleter(GenericObjectPool<Store> connectionPool) {
 		this.connectionPool = connectionPool;
-		this.monitoringHelper = monitoringHelper;
 	}
 
 	@Override
-	public DeleteChunkContainer apply(DeleteChunkContainer dcc) {
+	public boolean delete(DeleteChunkContainer dcc) throws IOException {
 		Store store = null;
 		try {
-			LOG.info("Deleting file {}", dcc.getFileUniqueId());
-			Monitor monitor = monitoringHelper.start(Keys.DE_FILE_DELETER);
 			store = connectionPool.borrowObject();
 			String folderName = IMAPUtils.createFolderName(dcc.getFileHash());
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
@@ -44,9 +37,7 @@ public class FileDeleter implements Function<DeleteChunkContainer, DeleteChunkCo
 				message.setFlag(Flags.Flag.DELETED, true);
 			}
 			folder.close(IMAPUtils.EXPUNGE);
-			double lastVal = monitoringHelper.stop(monitor);
-			LOG.info("File deleted in {} ms", lastVal);
-			return DeleteChunkContainer.markAsDeleted(dcc);
+			return true;
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);
 			try {
@@ -59,7 +50,6 @@ public class FileDeleter implements Function<DeleteChunkContainer, DeleteChunkCo
 				connectionPool.returnObject(store);
 			}
 		}
-		return DeleteChunkContainer.markAsNotDeleted(dcc);
+		return false;
 	}
-
 }
