@@ -55,7 +55,7 @@ public class ChunkUploaderFacade implements Function<UploadChunkContainer, Uploa
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);
 		}
-		LOG.warn("Returning EMPTY from ChunkSaver");
+		LOG.warn("Returning EMPTY from ChunkUploaderFacade");
 		return UploadChunkContainer.EMPTY;
 	}
 

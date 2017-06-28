@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.services;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import pl.pamsoft.imapcloud.services.download.DownloadFileHasher;
 import pl.pamsoft.imapcloud.services.download.FileHashVerifier;
 import pl.pamsoft.imapcloud.services.download.FileSaver;
 
-import javax.mail.Store;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -50,9 +48,6 @@ public class DownloadService extends AbstractBackgroundService {
 	private FilesIOService filesIOService;
 
 	@Autowired
-	private ConnectionPoolService connectionPoolService;
-
-	@Autowired
 	private CryptoService cryptoService;
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
@@ -65,7 +60,6 @@ public class DownloadService extends AbstractBackgroundService {
 				File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
 				Account account = file.getOwnerAccount();
 				List<FileChunk> chunkToDownload = fileChunkRepository.getFileChunks(fileToDownload.getFileUniqueId());
-				GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(account);
 
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());

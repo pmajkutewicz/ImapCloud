@@ -37,6 +37,8 @@ public class ChunkDownloadFacade implements Function<DownloadChunkContainer, Dow
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);
 		}
+
+		LOG.warn("Returning EMPTY from ChunkDownloadFacade");
 		return DownloadChunkContainer.EMPTY;
 	}
 
