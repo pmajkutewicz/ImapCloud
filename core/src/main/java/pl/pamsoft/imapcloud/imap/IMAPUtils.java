@@ -20,6 +20,10 @@ class IMAPUtils {
 		return generateFolderName(file.getFileHash());
 	}
 
+	protected static String createFolderName(String fileHash) {
+		return generateFolderName(fileHash);
+	}
+
 	protected static String createFolderName(FileChunk fileChunk) {
 		return createFolderName(fileChunk.getOwnerFile());
 	}

@@ -6,10 +6,14 @@ import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.imap.FileDeleter;
+import pl.pamsoft.imapcloud.services.containers.DeleteChunkContainer;
+import pl.pamsoft.imapcloud.services.delete.DeleteFileChunkFromDb;
 
 import javax.mail.Store;
 import java.util.UUID;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Service
 public class DeletionService extends AbstractBackgroundService {
@@ -25,11 +29,17 @@ public class DeletionService extends AbstractBackgroundService {
 		Future<Void> task = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("DelT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(fileToDelete.getOwnerAccount());
+
+			Function<File, DeleteChunkContainer> packItInContainer = file -> new DeleteChunkContainer(taskId, file.getFileUniqueId(), file.getFileHash());
 			FileDeleter fileDeleter = new FileDeleter(connectionPool, getMonitoringHelper());
-			Boolean isDeletedSuccessfully = fileDeleter.apply(fileToDelete);
-			if (isDeletedSuccessfully) {
-				fileChunkRepository.deleteFileChunks(fileToDelete.getFileUniqueId());
-			}
+			DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository);
+
+			Stream.of(fileToDelete)
+				.map(packItInContainer)
+				.map(fileDeleter)
+				.map(deleteFileChunkFromDb)
+				.forEach(System.out::println);
+
 		});
 		getTaskMap().put(taskId, task);
 		return true;
