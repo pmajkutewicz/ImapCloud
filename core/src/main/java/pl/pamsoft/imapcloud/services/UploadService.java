@@ -81,7 +81,7 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
 			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
-			Function<UploadChunkContainer, UploadChunkContainer> saveOnIMAPServer = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> chunkUploader = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 			selectedFiles.stream()
@@ -96,7 +96,7 @@ public class UploadService extends AbstractBackgroundService {
 				.map(generateChunkHash)
 				.map(ucc -> chunkEncryptionEnabled ? chunkEncrypter.apply(ucc) : ucc)
 				.filter(filterEmptyUcc)
-				.map(saveOnIMAPServer)
+				.map(chunkUploader)
 				.filter(filterEmptyUcc)
 				.map(storeFileChunk)
 				.peek(updateProgress)

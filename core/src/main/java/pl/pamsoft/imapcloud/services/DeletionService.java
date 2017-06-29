@@ -28,6 +28,7 @@ public class DeletionService extends AbstractBackgroundService {
 	@Autowired
 	private FileChunkRepository fileChunkRepository;
 
+	//FIXME: Delete by chunks not by whole file
 	public boolean delete(File fileToDelete) {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
@@ -36,12 +37,12 @@ public class DeletionService extends AbstractBackgroundService {
 
 			Function<File, DeleteChunkContainer> packItInContainer = file -> new DeleteChunkContainer(taskId, file.getFileUniqueId(), file.getFileHash());
 			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
-			ChunkDeleterFacade imapChunkDeleter = new ChunkDeleterFacade(accountService.getChunkDeleter(account), getMonitoringHelper());
+			ChunkDeleterFacade chunkDeleter = new ChunkDeleterFacade(accountService.getChunkDeleter(account), getMonitoringHelper());
 			DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository);
 
 			Stream.of(fileToDelete)
 				.map(packItInContainer)
-				.map(imapChunkDeleter)
+				.map(chunkDeleter)
 				.map(deleteFileChunkFromDb)
 				.forEach(System.out::println);
 

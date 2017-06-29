@@ -64,7 +64,7 @@ public class DownloadService extends AbstractBackgroundService {
 				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
 				AccountService accountService = accountServicesHolder.getAccountService(account.getType());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkDownloadFacade(accountService.getChunkDownloader(account), getMonitoringHelper());
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDownloader = new ChunkDownloadFacade(accountService.getChunkDownloader(account), getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
@@ -76,7 +76,7 @@ public class DownloadService extends AbstractBackgroundService {
 					.peek(c -> LOG.info("Processing {}", c.getChunkNumber()))
 					.map(packInContainer)
 					.filter(filterOutInvalidFiles)
-					.map(chunkLoader)
+					.map(chunkDownloader)
 					.map(chunkDecoder)
 					.map(downloadChunkHasher)
 					.map(chunkHashVerifier)

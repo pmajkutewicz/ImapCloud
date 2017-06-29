@@ -39,7 +39,6 @@ public class ImapChunkDeleter implements ChunkDeleter {
 			folder.close(IMAPUtils.EXPUNGE);
 			return true;
 		} catch (Exception e) {
-			LOG.error("Error in stream", e);
 			try {
 				connectionPool.invalidateObject(store);
 			} catch (Exception e1) {
