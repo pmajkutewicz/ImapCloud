@@ -6,6 +6,7 @@ import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.api.accounts.ChunkDeleter;
 import pl.pamsoft.imapcloud.api.accounts.ChunkDownloader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
+import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.services.ConnectionPoolService;
 
@@ -33,5 +34,10 @@ public class ImapAccountService implements AccountService {
 	@Override
 	public ChunkDeleter getChunkDeleter(Account account) {
 		return new ImapChunkDeleter(connectionPoolService.getOrCreatePoolForAccount(account));
+	}
+
+	@Override
+	public ChunkVerifier getChunkVerifier(Account account) {
+		return new ImapChunkVerifier(connectionPoolService.getOrCreatePoolForAccount(account));
 	}
 }

@@ -32,5 +32,13 @@ public interface AccountService {
 	 * @return Chunk deleter.
 	 */
 	ChunkDeleter getChunkDeleter(Account account);
+
+	/**
+	 * Returns Chunk verifier.
+	 *
+	 * @param account Account associated with verifier.
+	 * @return Chunk verifier.
+	 */
+	ChunkVerifier getChunkVerifier(Account account);
 }
 
