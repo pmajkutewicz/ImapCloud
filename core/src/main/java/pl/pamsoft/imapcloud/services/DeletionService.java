@@ -34,9 +34,9 @@ public class DeletionService extends AbstractBackgroundService {
 		Future<Void> task = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("DelT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			final Account account = accountRepository.getById(fileToDelete.getOwnerAccount().getId());
+			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 
 			Function<File, DeleteChunkContainer> packItInContainer = file -> new DeleteChunkContainer(taskId, file.getFileUniqueId(), file.getFileHash());
-			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 			ChunkDeleterFacade chunkDeleter = new ChunkDeleterFacade(accountService.getChunkDeleter(account), getMonitoringHelper());
 			DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository);
 

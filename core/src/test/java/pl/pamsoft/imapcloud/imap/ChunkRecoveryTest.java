@@ -12,10 +12,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import pl.pamsoft.imapcloud.api.accounts.ChunkRecoverer;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.services.recovery.ChunkRecovererFacade;
 
 import javax.mail.Folder;
 import javax.mail.Header;
@@ -45,7 +47,7 @@ import static org.testng.Assert.assertEquals;
 public class ChunkRecoveryTest {
 
 	private static final int MAX_CHUNK_SIZE = 1024 * 1024 * 10; // 10MB
-	private ChunkRecovery chunkRecovery;
+	private ChunkRecovererFacade chunkRecovererFacade;
 
 	@Mock
 	private GenericObjectPool<Store> pool;
@@ -72,12 +74,13 @@ public class ChunkRecoveryTest {
 		TasksProgressService tasksProgressService = Mockito.mock(TasksProgressService.class);
 		Map<String, TaskProgress> taskProgressMap = Mockito.mock(Map.class);
 		when(taskProgressMap.get(any())).thenReturn(mock(TaskProgress.class));
-		chunkRecovery = new ChunkRecovery(pool, monitoringHelper, tasksProgressService, taskProgressMap);
+		ChunkRecoverer chunkRecoverer = new ImapChunkRecoverer(pool);
+		chunkRecovererFacade = new ChunkRecovererFacade(chunkRecoverer, monitoringHelper);
 	}
 
 	@Test
-	public void shouldRecoverMailbox() {
-		RecoveryChunkContainer result = chunkRecovery.apply(RecoveryChunkContainer.EMPTY);
+	public void shouldRecoverMailbox() throws IOException {
+		RecoveryChunkContainer result = chunkRecovererFacade.apply(RecoveryChunkContainer.EMPTY);
 		assertEquals(result.getFileMap().size(), 4);
 		assertEquals(result.getFileChunkMap().get("9be83237-0d72-43e2-944b-de81715c93f2").size(), 830);
 		assertEquals(result.getFileChunkMap().get("d1f93ec9-2067-4c98-a4e0-2aeb6535fa81").size(), 830);
@@ -90,7 +93,7 @@ public class ChunkRecoveryTest {
 		reset(store);
 		when(store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME)).thenThrow(new MessagingException("success"));
 
-		RecoveryChunkContainer result = chunkRecovery.apply(RecoveryChunkContainer.EMPTY);
+		RecoveryChunkContainer result = chunkRecovererFacade.apply(RecoveryChunkContainer.EMPTY);
 
 		assertEquals(RecoveryChunkContainer.EMPTY, result);
 		verify(pool).invalidateObject(store);
@@ -102,7 +105,7 @@ public class ChunkRecoveryTest {
 		when(store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME)).thenThrow(new MessagingException("success"));
 		doThrow(new MessagingException("success")).when(pool).invalidateObject(store);
 
-		RecoveryChunkContainer result = chunkRecovery.apply(RecoveryChunkContainer.EMPTY);
+		RecoveryChunkContainer result = chunkRecovererFacade.apply(RecoveryChunkContainer.EMPTY);
 
 		assertEquals(RecoveryChunkContainer.EMPTY, result);
 		verify(pool).invalidateObject(store);

@@ -58,6 +58,7 @@ public class UploadService extends AbstractBackgroundService {
 		Future<Void> future = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("UT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			final Account account = accountRepository.getById(selectedAccount.getId());
+			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, getMonitoringHelper()).apply(selectedFiles);
 			getTaskProgressMap().put(taskId, getTasksProgressService().create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
 
@@ -80,7 +81,6 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
-			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkUploader = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 

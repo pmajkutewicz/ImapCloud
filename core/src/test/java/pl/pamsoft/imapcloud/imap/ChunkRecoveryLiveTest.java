@@ -10,13 +10,14 @@ import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
 import javax.mail.Store;
+import java.io.IOException;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
 public class ChunkRecoveryLiveTest {
 
-	private ChunkRecovery chunkRecovery;
+	private ImapChunkRecoverer chunkRecovery;
 
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
@@ -30,10 +31,14 @@ public class ChunkRecoveryLiveTest {
 		GenericObjectPool<Store> pool = new ConnectionPoolService().getOrCreatePoolForAccount(a);
 		TasksProgressService tasksProgressService = Mockito.mock(TasksProgressService.class);
 		Map<String, TaskProgress> taskProgressMap = Mockito.mock(Map.class);
-		chunkRecovery = new ChunkRecovery(pool, monitoringHelper, tasksProgressService, taskProgressMap);
+		chunkRecovery = new ImapChunkRecoverer(pool);
 	}
 
 	public void testLive() {
-		chunkRecovery.apply(RecoveryChunkContainer.EMPTY);
+		try {
+			chunkRecovery.recover(RecoveryChunkContainer.EMPTY);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

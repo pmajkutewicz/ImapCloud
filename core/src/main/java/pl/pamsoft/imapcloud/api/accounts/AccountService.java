@@ -40,5 +40,13 @@ public interface AccountService {
 	 * @return Chunk verifier.
 	 */
 	ChunkVerifier getChunkVerifier(Account account);
+
+	/**
+	 * Returns Chunk recoverer.
+	 *
+	 * @param account Account associated with recoverer.
+	 * @return Chunk recoverer.
+	 */
+	ChunkRecoverer getChunkRecoverer(Account account);
 }
 
