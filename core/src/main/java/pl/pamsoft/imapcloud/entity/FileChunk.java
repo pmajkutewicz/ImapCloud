@@ -15,7 +15,7 @@ public class FileChunk {
 	private String chunkHash;
 	private Long size;
 	private File ownerFile;
-	private String messageId;
+	private String messageId; //TODO: rename to getStoredChunkId ?
 	private boolean lastChunk;
 	private Long lastVerifiedAt;
 	private Boolean chunkExists;

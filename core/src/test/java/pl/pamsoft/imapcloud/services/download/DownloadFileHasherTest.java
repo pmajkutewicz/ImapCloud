@@ -10,8 +10,8 @@ import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.FilesIOService;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -56,7 +56,7 @@ public class DownloadFileHasherTest {
 		fileObject.close();
 		FileChunk fc = TestUtils.createFileChunk("exmapleFile.txt", true);
 		when(filesIOService.getInputStream(any(File.class))).thenReturn(manager.resolveFile("ram:///exampleFile.txt").getContent().getInputStream());
-		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 
 		DownloadChunkContainer result = downloadFileHasher.apply(dcc);
 
@@ -66,7 +66,7 @@ public class DownloadFileHasherTest {
 	@Test
 	public void shouldSkipStemWhenNotLastChunk() throws IOException {
 		FileChunk fc = TestUtils.createFileChunk("exampleName", false);
-		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 
 		DownloadChunkContainer response = downloadFileHasher.apply(dcc);
 
@@ -76,7 +76,7 @@ public class DownloadFileHasherTest {
 	@Test
 	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
 		FileChunk fc = TestUtils.createFileChunk("exampleName", true);
-		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 		when(filesIOService.getInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
 
 		DownloadChunkContainer response = downloadFileHasher.apply(dcc);

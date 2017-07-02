@@ -6,7 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
+import pl.pamsoft.imapcloud.dto.AccountInfo;
 import pl.pamsoft.imapcloud.renderers.EmailProviderInfoRenderer;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 
@@ -20,7 +20,7 @@ public class AccountController implements Initializable, Refreshable {
 	private AccountRestClient accountRestClient;
 
 	@FXML
-	private ComboBox<EmailProviderInfo> emailProvidersComboBox;
+	private ComboBox<AccountInfo> emailProvidersComboBox;
 
 	@FXML
 	private TextField passwordTextField;
@@ -38,7 +38,7 @@ public class AccountController implements Initializable, Refreshable {
 	private Node root;
 
 	public void createButtonClick(ActionEvent event) {
-		EmailProviderInfo selectedItem = emailProvidersComboBox.getSelectionModel().getSelectedItem();
+		AccountInfo selectedItem = emailProvidersComboBox.getSelectionModel().getSelectedItem();
 		String username = usernameTextField.getText();
 		String password = passwordTextField.getText();
 		String cryptoKey = secretKey.getText();
@@ -49,8 +49,8 @@ public class AccountController implements Initializable, Refreshable {
 	public void initialize(URL location, ResourceBundle resources) {
 		emailProvidersComboBox.setButtonCell(new EmailProviderInfoRenderer());
 		emailProvidersComboBox.setCellFactory(p -> new EmailProviderInfoRenderer());
-		accountRestClient.getAvailableEmailAccounts(data -> {
-            emailProvidersComboBox.getItems().addAll(data.getEmailProviders());
+		accountRestClient.getAvailableAccounts(data -> {
+            emailProvidersComboBox.getItems().addAll(data.getAccountProviders());
             emailProvidersComboBox.getSelectionModel().selectFirst();
         });
 		initRefreshable();

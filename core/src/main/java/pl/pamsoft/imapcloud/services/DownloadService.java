@@ -1,11 +1,11 @@
 package pl.pamsoft.imapcloud.services;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.FileDto;
@@ -13,15 +13,15 @@ import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.imap.ChunkLoader;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 import pl.pamsoft.imapcloud.services.download.ChunkDecrypter;
+import pl.pamsoft.imapcloud.services.download.ChunkDownloadFacade;
 import pl.pamsoft.imapcloud.services.download.ChunkHashVerifier;
 import pl.pamsoft.imapcloud.services.download.DownloadChunkHasher;
 import pl.pamsoft.imapcloud.services.download.DownloadFileHasher;
 import pl.pamsoft.imapcloud.services.download.FileHashVerifier;
 import pl.pamsoft.imapcloud.services.download.FileSaver;
 
-import javax.mail.Store;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -36,6 +36,9 @@ public class DownloadService extends AbstractBackgroundService {
 	private static final Logger LOG = LoggerFactory.getLogger(DownloadService.class);
 
 	@Autowired
+	private AccountServicesHolder accountServicesHolder;
+
+	@Autowired
 	private FileChunkRepository fileChunkRepository;
 
 	@Autowired
@@ -43,9 +46,6 @@ public class DownloadService extends AbstractBackgroundService {
 
 	@Autowired
 	private FilesIOService filesIOService;
-
-	@Autowired
-	private ConnectionPoolService connectionPoolService;
 
 	@Autowired
 	private CryptoService cryptoService;
@@ -59,12 +59,12 @@ public class DownloadService extends AbstractBackgroundService {
 				List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 				File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
 				Account account = file.getOwnerAccount();
+				AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 				List<FileChunk> chunkToDownload = fileChunkRepository.getFileChunks(fileToDownload.getFileUniqueId());
-				GenericObjectPool<Store> connectionPool = connectionPoolService.getOrCreatePoolForAccount(account);
 
-				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
+				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir, fileChunk.getChunkHash(), fileChunk.getOwnerFile().getFileHash());
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkLoader = new ChunkLoader(connectionPool, getMonitoringHelper());
+				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDownloader = new ChunkDownloadFacade(accountService.getChunkDownloader(account), getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
@@ -76,7 +76,7 @@ public class DownloadService extends AbstractBackgroundService {
 					.peek(c -> LOG.info("Processing {}", c.getChunkNumber()))
 					.map(packInContainer)
 					.filter(filterOutInvalidFiles)
-					.map(chunkLoader)
+					.map(chunkDownloader)
 					.map(chunkDecoder)
 					.map(downloadChunkHasher)
 					.map(chunkHashVerifier)

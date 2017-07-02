@@ -6,7 +6,7 @@ import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class DownloadChunkHasherTest {
 
 		//when
 		DownloadChunkHasher downloadChunkHasher = new DownloadChunkHasher(monitoringHelper);
-		DownloadChunkContainer dcc = new DownloadChunkContainer("id", fc, mockedFileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer("id", fc, mockedFileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 		DownloadChunkContainer downloadChunkContainer = DownloadChunkContainer.addData(dcc, test.getBytes());
 		DownloadChunkContainer result = downloadChunkHasher.apply(downloadChunkContainer);
 

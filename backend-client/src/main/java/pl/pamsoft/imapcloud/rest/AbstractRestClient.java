@@ -1,7 +1,6 @@
 package pl.pamsoft.imapcloud.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import okhttp3.Authenticator;
 import okhttp3.Callback;
@@ -14,6 +13,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import pl.pamsoft.imapcloud.rest.json.MapperHolder;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +25,6 @@ abstract class AbstractRestClient {
 	public static final int MAX_REQUESTS_DISPATCHER = 10;
 	public static final int MAX_IDLE_CONNECTIONS = 10;
 	public static final int KEEP_ALIVE_DURATION = 2;
-	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final String host;
 	private final int port;
 	private final Authenticator authenticator;
@@ -52,7 +51,7 @@ abstract class AbstractRestClient {
 
 	//region Synchronous get
 	<T> T sendGet(String url, Class<T> cls) throws IOException {
-		return objectMapper.readValue(sendGet(buildUrl(url)).body().string(), cls);
+		return MapperHolder.OBJECT_MAPPER.readValue(sendGet(buildUrl(url)).body().string(), cls);
 	}
 
 	Response sendGet(String url, String paramName, String paramValue) throws IOException {
@@ -88,7 +87,7 @@ abstract class AbstractRestClient {
 	private void sendPost(HttpUrl httpUrl, Object pojo, Callback callback) {
 		Request req = null;
 		try {
-			RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, objectMapper.writeValueAsString(pojo));
+			RequestBody requestBody = RequestBody.create(MEDIA_TYPE_JSON, MapperHolder.OBJECT_MAPPER.writeValueAsString(pojo));
 			req = getRequest().url(httpUrl.url()).post(requestBody).build();
 			send(req, callback);
 		} catch (JsonProcessingException e) {
@@ -117,6 +116,18 @@ abstract class AbstractRestClient {
 				.authenticator(authenticator)
 				.connectionPool(pool)
 				.dispatcher(dispatcher)
+//				.addInterceptor(new Interceptor() {
+//					@Override
+//					public Response intercept(Chain chain) throws IOException {
+//						final Request copy = chain.request().newBuilder().build();
+//						final Buffer buffer = new Buffer();
+//						if (null != copy && null != copy.body()) {
+//							copy.body().writeTo(buffer);
+//							System.out.println(buffer.readUtf8());
+//						}
+//						return chain.proceed(chain.request());
+//					}
+//				})
 				.connectTimeout(TIMEOUT, TimeUnit.SECONDS)
 				.writeTimeout(TIMEOUT, TimeUnit.SECONDS)
 				.readTimeout(TIMEOUT, TimeUnit.SECONDS).build();

@@ -10,7 +10,7 @@ import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 import pl.pamsoft.imapcloud.services.download.DownloadFileHasherTest;
 
 import java.io.ByteArrayInputStream;

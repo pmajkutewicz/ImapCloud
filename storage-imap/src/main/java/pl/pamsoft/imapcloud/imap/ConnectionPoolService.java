@@ -1,10 +1,9 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.imap;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.stereotype.Service;
-import pl.pamsoft.imapcloud.entity.Account;
-import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
+import pl.pamsoft.imapcloud.api.accounts.Account;
 
 import javax.mail.Store;
 import java.util.Map;
@@ -16,11 +15,11 @@ public class ConnectionPoolService {
 	private Map<String, GenericObjectPool<Store>> accountPoolMap = new ConcurrentHashMap<>();
 
 	public GenericObjectPool<Store> getOrCreatePoolForAccount(Account account) {
-		String key = String.format("%s[at]%s", account.getLogin(), account.getImapServerAddress());
+		String key = String.format("%s[at]%s", account.getLogin(), account.getHost());
 		if (accountPoolMap.containsKey(key)) {
 			return accountPoolMap.get(key);
 		} else {
-			IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), account.getImapServerAddress());
+			IMAPConnectionFactory connectionFactory = new IMAPConnectionFactory(account.getLogin(), account.getPassword(), account.getHost());
 			GenericObjectPoolConfig config = new GenericObjectPoolConfig();
 			config.setMaxTotal(account.getMaxConcurrentConnections());
 			config.setTestOnBorrow(true);

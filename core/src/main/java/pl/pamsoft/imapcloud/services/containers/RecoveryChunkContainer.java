@@ -1,7 +1,8 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.services.containers;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -11,7 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 @Immutable
-public class RecoveryChunkContainer {
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
+public class RecoveryChunkContainer implements pl.pamsoft.imapcloud.api.containers.RecoveryChunkContainer {
 	public static final RecoveryChunkContainer EMPTY = new RecoveryChunkContainer(null, null);
 
 	private final String taskId;
@@ -38,10 +40,12 @@ public class RecoveryChunkContainer {
 		return new RecoveryChunkContainer(rcc.getTaskId(), rcc.getAccount(), fileMap, fileChunkMap);
 	}
 
+	@Override
 	public String getTaskId() {
 		return this.taskId;
 	}
 
+	@Override
 	public Account getAccount() {
 		return this.account;
 	}
@@ -53,4 +57,10 @@ public class RecoveryChunkContainer {
 	public Map<String, List<FileChunk>> getFileChunkMap() {
 		return this.fileChunkMap;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Recovery for account: %s, nb of recovered files: %s", account, fileMap.size());
+	}
+
 }

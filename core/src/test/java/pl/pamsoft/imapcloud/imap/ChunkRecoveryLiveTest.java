@@ -5,18 +5,18 @@ import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.ConnectionPoolService;
-import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
 import pl.pamsoft.imapcloud.services.common.TasksProgressService;
+import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
 import javax.mail.Store;
+import java.io.IOException;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
 public class ChunkRecoveryLiveTest {
 
-	private ChunkRecovery chunkRecovery;
+	private ImapChunkRecoverer chunkRecovery;
 
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
@@ -25,15 +25,19 @@ public class ChunkRecoveryLiveTest {
 		Account a = new Account();
 		a.setLogin("adam.b92");
 		a.setPassword("&*PJMsSyhshwfKmmEg*3xY$Vgca8z5#c");
-		a.setImapServerAddress("imap.mail.yahoo.com");
+		a.setHost("imap.mail.yahoo.com");
 		a.setMaxConcurrentConnections(5);
 		GenericObjectPool<Store> pool = new ConnectionPoolService().getOrCreatePoolForAccount(a);
 		TasksProgressService tasksProgressService = Mockito.mock(TasksProgressService.class);
 		Map<String, TaskProgress> taskProgressMap = Mockito.mock(Map.class);
-		chunkRecovery = new ChunkRecovery(pool, monitoringHelper, tasksProgressService, taskProgressMap);
+		chunkRecovery = new ImapChunkRecoverer(pool);
 	}
 
 	public void testLive() {
-		chunkRecovery.apply(RecoveryChunkContainer.EMPTY);
+		try {
+			chunkRecovery.recover(RecoveryChunkContainer.EMPTY);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

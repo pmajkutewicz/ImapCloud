@@ -1,15 +1,14 @@
 package pl.pamsoft.imapcloud.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import pl.pamsoft.imapcloud.rest.json.MapperHolder;
 
 import java.io.IOException;
 
 public class OKDefaultCallback<T> implements Callback {
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
 	private Class<T> cls;
 	private RequestCallback<T> requestCallback;
 
@@ -25,7 +24,7 @@ public class OKDefaultCallback<T> implements Callback {
 
 	@Override
 	public void onResponse(Call call, Response response) throws IOException {
-		T responseData = objectMapper.readValue(response.body().string(), cls);
+		T responseData = MapperHolder.OBJECT_MAPPER.readValue(response.body().string(), cls);
 		throwExceptionIfNotValidResponse(response);
 		requestCallback.onSuccess(responseData);
 	}

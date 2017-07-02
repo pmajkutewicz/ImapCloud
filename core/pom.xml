@@ -22,7 +22,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>pl.pamsoft.imapcloud</groupId>
+			<artifactId>api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>pl.pamsoft.imapcloud</groupId>
 			<artifactId>communication-dto</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>pl.pamsoft.imapcloud</groupId>
+			<artifactId>storage-imap</artifactId>
 		</dependency>
 
 		<dependency>
@@ -75,18 +83,6 @@
 			<artifactId>orientdb-object</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>javax.mail</groupId>
-			<artifactId>javax.mail-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.mail</groupId>
-			<artifactId>javax.mail</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 		</dependency>
@@ -98,12 +94,6 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jdk8</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-pool2</artifactId>
-			<version>${commons-pool2.version}</version>
 		</dependency>
 
 		<dependency>

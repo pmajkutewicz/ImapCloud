@@ -1,20 +1,20 @@
 package pl.pamsoft.imapcloud.requests;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import pl.pamsoft.imapcloud.dto.EmailProviderInfo;
+import pl.pamsoft.imapcloud.dto.AccountInfo;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class CreateAccountRequest {
 	private String username;
 	private String password;
 	private String cryptoKey;
-	private EmailProviderInfo selectedEmailProvider;
+	private AccountInfo selectedAccountProvider;
 
-	public CreateAccountRequest(String username, String password, String cryptoKey, EmailProviderInfo selectedEmailProvider) {
+	public CreateAccountRequest(String username, String password, String cryptoKey, AccountInfo selectedAccountProvider) {
 		this.username = username;
 		this.password = password;
 		this.cryptoKey = cryptoKey;
-		this.selectedEmailProvider = selectedEmailProvider;
+		this.selectedAccountProvider = selectedAccountProvider;
 	}
 
 	public CreateAccountRequest() {
@@ -44,11 +44,11 @@ public class CreateAccountRequest {
 		this.cryptoKey = cryptoKey;
 	}
 
-	public EmailProviderInfo getSelectedEmailProvider() {
-		return this.selectedEmailProvider;
+	public AccountInfo getSelectedAccountProvider() {
+		return this.selectedAccountProvider;
 	}
 
-	public void setSelectedEmailProvider(EmailProviderInfo selectedEmailProvider) {
-		this.selectedEmailProvider = selectedEmailProvider;
+	public void setSelectedAccountProvider(AccountInfo selectedAccountProvider) {
+		this.selectedAccountProvider = selectedAccountProvider;
 	}
 }

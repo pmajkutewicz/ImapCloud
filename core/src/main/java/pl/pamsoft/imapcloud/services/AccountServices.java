@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
-import pl.pamsoft.imapcloud.dto.LoginType;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
@@ -31,24 +30,21 @@ public class AccountServices {
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
 		long usedSpace = accountRepository.getUsedSpace(a.getLogin());
-		return new AccountDto(a.getId(), String.format("%s@%s", a.getEmail(), a.getImapServerAddress()), a.getCryptoKey(), usedSpace);
+		return new AccountDto(a.getId(), String.format("%s@%s", a.getLogin(), a.getHost()), a.getCryptoKey(), usedSpace);
 	};
 
 	public void addAccount(CreateAccountRequest request) {
 		Account account = new Account();
-		String email = request.getUsername() + '@' + request.getSelectedEmailProvider().getDomain();
-		account.setEmail(request.getUsername());
-		if (LoginType.USERNAME_ONLY == request.getSelectedEmailProvider().getLoginType()) {
-			account.setLogin(request.getUsername());
-		} else {
-			account.setLogin(email);
-		}
+
+		account.setLogin(request.getUsername());
 		account.setPassword(request.getPassword());
-		account.setImapServerAddress(request.getSelectedEmailProvider().getImapHost());
-		account.setSizeMB(request.getSelectedEmailProvider().getSizeMB());
-		account.setAttachmentSizeMB(request.getSelectedEmailProvider().getAttachmentSizeMB());
-		account.setMaxConcurrentConnections(request.getSelectedEmailProvider().getMaxConcurrentConnections());
+		account.setType(request.getSelectedAccountProvider().getType());
+		account.setHost(request.getSelectedAccountProvider().getHost());
+		account.setAccountSizeMB(request.getSelectedAccountProvider().getAccountSizeMB());
+		account.setAttachmentSizeMB(request.getSelectedAccountProvider().getMaxFileSizeMB());
+		account.setMaxConcurrentConnections(request.getSelectedAccountProvider().getMaxConcurrentConnections());
 		account.setCryptoKey(getCryptoKey(request));
+		account.setAdditionalProperties(request.getSelectedAccountProvider().getAdditionalProperties());
 
 		try {
 			accountRepository.save(account);

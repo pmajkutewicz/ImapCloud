@@ -9,6 +9,7 @@ import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
 import java.io.FileNotFoundException;
 import java.nio.file.FileAlreadyExistsException;
@@ -55,7 +56,7 @@ public class FileServices {
 		chunk.setSize((long) uploadChunkContainer.getData().length);
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
 		chunk.setChunkHash(uploadChunkContainer.getChunkHash());
-		chunk.setMessageId(uploadChunkContainer.getMessageId());
+		chunk.setMessageId(uploadChunkContainer.getStorageChunkId());
 		chunk.setLastChunk(uploadChunkContainer.isLastChunk());
 		FileChunk fileChunk = fileChunkRepository.save(chunk);
 		if (uploadChunkContainer.isLastChunk()) {

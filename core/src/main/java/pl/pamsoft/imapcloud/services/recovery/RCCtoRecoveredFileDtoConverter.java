@@ -5,7 +5,7 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import pl.pamsoft.imapcloud.dto.RecoveredFileDto;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.services.CryptoService;
-import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
 import java.io.IOException;
 import java.util.ArrayList;

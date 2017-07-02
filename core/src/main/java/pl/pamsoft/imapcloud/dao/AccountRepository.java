@@ -34,18 +34,18 @@ public class AccountRepository extends AbstractRepository<Account> {
 	@SuppressFBWarnings("CFS_CONFUSING_FUNCTION_SEMANTICS")
 	public Account save(Account account) throws AccountAlreadyExistException {
 		OrientGraphNoTx graphDB = getDb().getGraphDB();
-		Iterable<Vertex> storedFiles = graphDB.getVertices("Account.email", account.getEmail());
+		Iterable<Vertex> storedFiles = graphDB.getVertices("Account.email", account.getLogin()); // TODO: key should be login + host
 		Iterator<Vertex> iterator = storedFiles.iterator();
 		if (!iterator.hasNext()) {
 			OrientVertex orientVertex = graphDB.addVertex(
 				"class:" + Account.class.getSimpleName(),
-				GraphProperties.ACCOUNT_EMAIL, account.getEmail());
+				GraphProperties.ACCOUNT_EMAIL, account.getLogin());
 			fillProperties(orientVertex, account);
 			updateIdAndVersionFields(account, orientVertex);
 			graphDB.shutdown();
 		} else {
-			LOG.warn("Duplicate account: {}", account.getEmail());
-			throw new AccountAlreadyExistException(account.getEmail());
+			LOG.warn("Duplicate account: {}", account.getLogin());
+			throw new AccountAlreadyExistException(account.getLogin());
 		}
 		return account;
 	}
@@ -66,14 +66,18 @@ public class AccountRepository extends AbstractRepository<Account> {
 		account.setId(id.toString());
 	}
 
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	private void fillProperties(Element accountVertex, Account account) {
 		accountVertex.setProperty(GraphProperties.ACCOUNT_LOGIN, account.getLogin());
-		accountVertex.setProperty(GraphProperties.ACCOUNT_IMAP_SERVER, account.getImapServerAddress());
+		accountVertex.setProperty(GraphProperties.ACCOUNT_TYPE, account.getType());
+		accountVertex.setProperty(GraphProperties.ACCOUNT_HOST, account.getHost());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_PASSWORD, account.getPassword());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_MAX_CONCURRENT_CONNECTIONS, account.getMaxConcurrentConnections());
-		accountVertex.setProperty(GraphProperties.ACCOUNT_SIZE_MB, account.getSizeMB());
+		accountVertex.setProperty(GraphProperties.ACCOUNT_ACCOUNT_SIZE_MB, account.getAccountSizeMB());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_ATTACHMENT_SIZE_MB, account.getAttachmentSizeMB());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_CRYPTO_KEY, account.getCryptoKey());
+
+		account.getAdditionalProperties().entrySet().forEach(p -> accountVertex.setProperty(p.getKey(), p.getValue()));
 	}
 
 	@Override

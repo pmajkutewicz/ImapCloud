@@ -20,14 +20,14 @@ import pl.pamsoft.imapcloud.entity.FileChunk;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_ACCOUNT_SIZE_MB;
 import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_ATTACHMENT_SIZE_MB;
 import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_CRYPTO_KEY;
 import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_EMAIL;
-import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_IMAP_SERVER;
+import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_HOST;
 import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_LOGIN;
 import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_MAX_CONCURRENT_CONNECTIONS;
 import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_PASSWORD;
-import static pl.pamsoft.imapcloud.config.GraphProperties.ACCOUNT_SIZE_MB;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_ABSOLUTE_PATH;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_EXISTS;
 import static pl.pamsoft.imapcloud.config.GraphProperties.FILE_CHUNK_HASH;
@@ -78,9 +78,9 @@ public class OrientDB {
 			vertexType.createProperty(ACCOUNT_EMAIL, OType.STRING);
 			vertexType.createProperty(ACCOUNT_LOGIN, OType.STRING);
 			vertexType.createProperty(ACCOUNT_PASSWORD, OType.STRING);
-			vertexType.createProperty(ACCOUNT_IMAP_SERVER, OType.STRING);
+			vertexType.createProperty(ACCOUNT_HOST, OType.STRING);
 			vertexType.createProperty(ACCOUNT_MAX_CONCURRENT_CONNECTIONS, OType.INTEGER);
-			vertexType.createProperty(ACCOUNT_SIZE_MB, OType.INTEGER);
+			vertexType.createProperty(ACCOUNT_ACCOUNT_SIZE_MB, OType.INTEGER);
 			vertexType.createProperty(ACCOUNT_ATTACHMENT_SIZE_MB, OType.INTEGER);
 			vertexType.createProperty(ACCOUNT_CRYPTO_KEY, OType.STRING);
 			vertexType.createIndex(createIndexName(Account.class, ACCOUNT_EMAIL),

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.io.IOException;
 import java.util.function.Function;
@@ -34,9 +34,9 @@ public class ChunkDecrypter implements Function<DownloadChunkContainer, Download
 		try {
 			Monitor monitor = monitoringHelper.start(Keys.DL_CHUNK_DECRYPTER);
 			byte[] decrypted = cs.decrypt(decryptingCipher, dcc.getData());
-			monitoringHelper.stop(monitor);
-			LOG.debug("{} chunk decrypting in {} (size: {} -> {}",
-				fileName, monitor, decrypted.length, dcc.getData().length);
+			double lastVal = monitoringHelper.stop(monitor);
+			LOG.debug("{} chunk decrypted in {} (size: {} -> {}",
+				fileName, lastVal, decrypted.length, dcc.getData().length);
 			return DownloadChunkContainer.addData(dcc, decrypted);
 		} catch (InvalidCipherTextException | IOException e) {
 			LOG.error("Error decrypting chunk", e);

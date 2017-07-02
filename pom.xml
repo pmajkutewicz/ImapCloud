@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pl.pamsoft.imapcloud</groupId>
 	<artifactId>parent</artifactId>
@@ -25,8 +26,8 @@
 
 	<scm>
 		<developerConnection>scm:git:git@pamsoft.pl:ACE/ImapCloud.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -66,6 +67,12 @@
 		<httpclient.version>4.5.3</httpclient.version>
 		<!-- endregion -->
 
+		<!-- region storage-imap -->
+		<commons-lang.version>2.6</commons-lang.version>
+		<!-- check what spring boot version uses and update -->
+		<spring-context.version>4.3.8.RELEASE</spring-context.version>
+		<!-- endregion -->
+
 		<!-- region gui -->
 		<guice.version>4.1.0</guice.version>
 		<ignite-guice.version>1.0.2</ignite-guice.version>
@@ -79,7 +86,7 @@
 		<!-- endregion -->
 
 		<!-- region maven plugins -->
-		<maven-assembly-plugin.version>2.6</maven-assembly-plugin.version>
+		<maven-assembly-plugin.version>${commons-lang.version}</maven-assembly-plugin.version>
 		<maven-site-plugin.version>3.6</maven-site-plugin.version>
 		<maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
 		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
@@ -106,6 +113,7 @@
 		<testng.version>6.11</testng.version>
 		<mockito-core.version>2.8.9</mockito-core.version>
 		<!-- endregion -->
+
 	</properties>
 
 	<modules>
@@ -115,13 +123,25 @@
 		<module>backend-client</module>
 		<module>distribution</module>
 		<module>jmh</module>
+		<module>api</module>
+		<module>storage-imap</module>
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>communication-dto</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>storage-imap</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -176,17 +196,6 @@
 				<artifactId>spring-boot-starter-test</artifactId>
 				<version>${spring-boot.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>javax.mail</groupId>
-				<artifactId>javax.mail-api</artifactId>
-				<version>${javax.mail-api.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.mail</groupId>
-				<artifactId>javax.mail</artifactId>
-				<version>${javax.mail-api.version}</version>
-			</dependency>
-
 
 			<dependency>
 				<groupId>org.yaml</groupId>
@@ -217,11 +226,6 @@
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-pool2</artifactId>
-				<version>${commons-pool2.version}</version>
 			</dependency>
 
 			<dependency>
@@ -342,6 +346,40 @@
 			</dependency>
 			<!-- endregion -->
 
+			<!-- region storage-imap -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring-context.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>javax.mail-api</artifactId>
+				<version>${javax.mail-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>javax.mail</artifactId>
+				<version>${javax.mail-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-pool2</artifactId>
+				<version>${commons-pool2.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>${commons-lang.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.25</version>
+			</dependency>
+			<!-- endregion -->
+
 			<!-- region jmh -->
 			<dependency>
 				<groupId>org.openjdk.jmh</groupId>
@@ -427,6 +465,23 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>.nondex</directory>
+						</fileset>
+						<fileset>
+							<directory>.</directory>
+							<includes>
+								<inclide>imapcloud.log</inclide>
+							</includes>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<tagNameFormat>@{project.version}</tagNameFormat>
@@ -472,7 +527,8 @@
 								<arg>-Xlint:-serial</arg>
 								<arg>-Xlint:-unchecked</arg> <!-- TODO: remove and fix errors -->
 								<arg>-Xlint:-rawtypes</arg> <!-- TODO: remove and fix errors -->
-								<arg>-Xlint:-path</arg> <!-- jhm module with travis: warning: [path] bad path element "/home/travis/pmajkutewicz/ImapCloud/jmh/target/classes": no such file or directory -->
+								<arg>-Xlint:-path
+								</arg> <!-- jhm module with travis: warning: [path] bad path element "/home/travis/pmajkutewicz/ImapCloud/jmh/target/classes": no such file or directory -->
 								<arg>-Werror</arg>
 							</compilerArgs>
 						</configuration>

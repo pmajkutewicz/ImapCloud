@@ -6,7 +6,7 @@ import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class FileSaverTest {
 		FileChunk fileChunk = TestUtils.createFileChunk(outputFileName, false);
 		FileDto fileDto = new FileDto(outputFileName, tempPath, FILE, (long) FILE_SIZE);
 
-		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", fileChunk, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", fileChunk, fileDto, fileChunk.getChunkHash(), fileChunk.getOwnerFile().getFileHash());
 		dcc = DownloadChunkContainer.addData(dcc, data);
 
 		DownloadChunkContainer result = fileSaver.apply(dcc);
@@ -63,7 +63,7 @@ public class FileSaverTest {
 		FileChunk fileChunk = TestUtils.createFileChunk(outputFileName, false);
 		FileDto fileDto = new FileDto(outputFileName, tempPath, FILE, (long) FILE_SIZE);
 
-		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", fileChunk, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", fileChunk, fileDto, fileChunk.getChunkHash(), fileChunk.getOwnerFile().getFileHash());
 		dcc = DownloadChunkContainer.addData(dcc, data);
 
 		fileSaver.apply(dcc);

@@ -9,7 +9,7 @@ import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -60,7 +60,7 @@ public class ChunkDecrypterTest {
 
 	private DownloadChunkContainer createExampleDCC(byte[] in) {
 		FileChunk fc= TestUtils.createFileChunk("example", false);
-		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 		dcc = DownloadChunkContainer.addData(dcc, in);
 		return dcc;
 	}

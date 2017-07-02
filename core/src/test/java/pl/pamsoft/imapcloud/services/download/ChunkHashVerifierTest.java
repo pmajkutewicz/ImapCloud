@@ -4,7 +4,7 @@ import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,7 +24,7 @@ public class ChunkHashVerifierTest {
 		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 		FileChunk fc = createFileChunk();
 		DownloadChunkContainer dcc = DownloadChunkContainer.addChunkHash(
-			new DownloadChunkContainer("id", fc, mock(FileDto.class)), EXPECTED_HASH);
+			new DownloadChunkContainer("id", fc, mock(FileDto.class), fc.getChunkHash(), fc.getOwnerFile().getFileHash()), EXPECTED_HASH);
 
 		DownloadChunkContainer result = new ChunkHashVerifier(invalidFileIds).apply(dcc);
 
@@ -37,7 +37,7 @@ public class ChunkHashVerifierTest {
 		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 		FileChunk fc = createFileChunk();
 		DownloadChunkContainer dcc = DownloadChunkContainer.addFileHash(
-			new DownloadChunkContainer("id", fc, mock(FileDto.class)), "invalidHash");
+			new DownloadChunkContainer("id", fc, mock(FileDto.class), fc.getChunkHash(), fc.getOwnerFile().getFileHash()), "invalidHash");
 
 		DownloadChunkContainer result = new ChunkHashVerifier(invalidFileIds).apply(dcc);
 

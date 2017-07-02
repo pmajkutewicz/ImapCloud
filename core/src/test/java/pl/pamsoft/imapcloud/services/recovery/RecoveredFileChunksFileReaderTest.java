@@ -5,7 +5,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.services.FilesIOService;
-import pl.pamsoft.imapcloud.services.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

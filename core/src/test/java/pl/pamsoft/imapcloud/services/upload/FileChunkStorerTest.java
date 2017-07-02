@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 import pl.pamsoft.imapcloud.services.FileServices;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
 import java.util.UUID;
 

@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.services.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -24,7 +24,7 @@ public class FileHashVerifierTest {
 		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 		FileChunk fc = TestUtils.createFileChunk("irrelevant", false);
 		FileChunk spy = Mockito.spy(fc);
-		DownloadChunkContainer dcc = new DownloadChunkContainer("id", fc, mock(FileDto.class));
+		DownloadChunkContainer dcc = new DownloadChunkContainer("id", fc, mock(FileDto.class), fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 
 		DownloadChunkContainer result = new FileHashVerifier(invalidFileIds).apply(dcc);
 
@@ -39,7 +39,7 @@ public class FileHashVerifierTest {
 		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 		FileChunk fc = TestUtils.createFileChunk("irrelevant", true);
 		DownloadChunkContainer dcc = DownloadChunkContainer.addFileHash(
-			new DownloadChunkContainer("id", fc, mock(FileDto.class)), TestUtils.EXAMPLE_FILE_HASH);
+			new DownloadChunkContainer("id", fc, mock(FileDto.class), fc.getChunkHash(), fc.getOwnerFile().getFileHash()), TestUtils.EXAMPLE_FILE_HASH);
 
 		DownloadChunkContainer result = new FileHashVerifier(invalidFileIds).apply(dcc);
 
@@ -52,7 +52,7 @@ public class FileHashVerifierTest {
 		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 		FileChunk fc = TestUtils.createFileChunk("irrelevant", true);
 		DownloadChunkContainer dcc = DownloadChunkContainer.addFileHash(
-			new DownloadChunkContainer("id", fc, mock(FileDto.class)), "invalidHash");
+			new DownloadChunkContainer("id", fc, mock(FileDto.class), fc.getChunkHash(), fc.getOwnerFile().getFileHash()), "invalidHash");
 
 		DownloadChunkContainer result = new FileHashVerifier(invalidFileIds).apply(dcc);
 

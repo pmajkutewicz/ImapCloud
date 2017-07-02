@@ -1,8 +1,6 @@
 package pl.pamsoft.imapcloud.imap;
 
-import pl.pamsoft.imapcloud.entity.File;
-import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.services.UploadChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.UploadChunkContainer;
 
 class IMAPUtils {
 
@@ -16,12 +14,8 @@ class IMAPUtils {
 		return generateFolderName(ucc.getFileHash());
 	}
 
-	protected static String createFolderName(File file) {
-		return generateFolderName(file.getFileHash());
-	}
-
-	protected static String createFolderName(FileChunk fileChunk) {
-		return createFolderName(fileChunk.getOwnerFile());
+	protected static String createFolderName(String fileHash) {
+		return generateFolderName(fileHash);
 	}
 
 	private static String generateFolderName(String hash) {
