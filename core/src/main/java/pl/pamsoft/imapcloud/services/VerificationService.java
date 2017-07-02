@@ -36,7 +36,7 @@ public class VerificationService extends AbstractBackgroundService {
 			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 
 			Function<FileChunk, VerifyChunkContainer> packItInContainer = chunk ->
-				new VerifyChunkContainer(taskId, chunk.getFileChunkUniqueId(), chunk.getOwnerFile().getFileHash(), chunk.getMessageId());
+				new VerifyChunkContainer(taskId, chunk.getFileChunkUniqueId(), chunk.getOwnerFile().getFileHash(), chunk.getId(), chunk.getMessageId());
 			ChunkVerifierFacade chunkVerifier = new ChunkVerifierFacade(accountService.getChunkVerifier(account), getMonitoringHelper());
 			Function<VerifyChunkContainer, VerifyChunkContainer> chunkInfoUpdater = new UpdateVerifyInfoInDb(fileChunkRepository);
 

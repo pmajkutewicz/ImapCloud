@@ -7,7 +7,7 @@ public interface VerifyChunkContainer {
 
 	String getFileHash();
 
-	String getStoredChunkId();
+	String getStorageChunkId();
 
 	Boolean getChunkExist();
 

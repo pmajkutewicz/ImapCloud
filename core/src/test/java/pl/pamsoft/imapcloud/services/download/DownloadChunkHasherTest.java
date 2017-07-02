@@ -24,7 +24,7 @@ public class DownloadChunkHasherTest {
 
 		//when
 		DownloadChunkHasher downloadChunkHasher = new DownloadChunkHasher(monitoringHelper);
-		DownloadChunkContainer dcc = new DownloadChunkContainer("id", fc, mockedFileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer("id", fc, mockedFileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 		DownloadChunkContainer downloadChunkContainer = DownloadChunkContainer.addData(dcc, test.getBytes());
 		DownloadChunkContainer result = downloadChunkHasher.apply(downloadChunkContainer);
 

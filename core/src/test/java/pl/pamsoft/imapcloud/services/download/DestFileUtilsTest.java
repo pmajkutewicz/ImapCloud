@@ -20,7 +20,7 @@ public class DestFileUtilsTest {
 	@Test
 	public void shouldGenerateDirPath() {
 		FileDto fileDto = new FileDto("irrelevant", EXAMPLE_PATH, FileDto.FileType.FILE, 123L);
-		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", mock(FileChunk.class), fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", mock(FileChunk.class), fileDto, "irrelevant", "irrelevant");
 		Path path = DestFileUtils.generateDirPath(dcc);
 		assertEquals(path.toString(), EXAMPLE_PATH);
 	}
@@ -29,7 +29,7 @@ public class DestFileUtilsTest {
 	public void shouldGenerateFilePath() {
 		FileDto fileDto = new FileDto("irrelevant", EXAMPLE_PATH, FileDto.FileType.FILE, 123L);
 		FileChunk fc = TestUtils.createFileChunk(EXAMPLE_FILE_NAME, false);
-		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", fc, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer("irrelevant", fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 		Path path = DestFileUtils.generateFilePath(dcc);
 		assertEquals(path.toString(), EXAMPLE_PATH + separator + EXAMPLE_FILE_NAME);
 	}

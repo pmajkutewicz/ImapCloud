@@ -60,7 +60,7 @@ public class ChunkDecrypterTest {
 
 	private DownloadChunkContainer createExampleDCC(byte[] in) {
 		FileChunk fc= TestUtils.createFileChunk("example", false);
-		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto);
+		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 		dcc = DownloadChunkContainer.addData(dcc, in);
 		return dcc;
 	}

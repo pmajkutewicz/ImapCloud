@@ -3,9 +3,13 @@ package pl.pamsoft.imapcloud.api.containers;
 public interface DownloadChunkContainer {
 	String getTaskId();
 
+	String getExpectedChunkHash();
+
+	String getExpectedFileHash();
+
 	byte[] getData();
 
-	String getMessageId();
+	String getStorageChunkId();
 
 	String getChunkHash();
 

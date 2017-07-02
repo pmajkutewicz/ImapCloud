@@ -62,7 +62,7 @@ public class DownloadService extends AbstractBackgroundService {
 				AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 				List<FileChunk> chunkToDownload = fileChunkRepository.getFileChunks(fileToDownload.getFileUniqueId());
 
-				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir);
+				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir, fileChunk.getChunkHash(), fileChunk.getOwnerFile().getFileHash());
 				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDownloader = new ChunkDownloadFacade(accountService.getChunkDownloader(account), getMonitoringHelper());
 				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());

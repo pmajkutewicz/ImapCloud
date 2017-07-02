@@ -15,7 +15,7 @@ public class UpdateVerifyInfoInDb implements Function<VerifyChunkContainer, Veri
 
 	@Override
 	public VerifyChunkContainer apply(VerifyChunkContainer vcc) {
-		fileChunkRepository.markChunkVerified(vcc.getFileChunkUniqueId(), vcc.getChunkExist());
+		fileChunkRepository.markChunkVerified(vcc.getDbChunkId(), vcc.getChunkExist());
 		return VerifyChunkContainer.markAsUpdatedInDb(vcc);
 	}
 }

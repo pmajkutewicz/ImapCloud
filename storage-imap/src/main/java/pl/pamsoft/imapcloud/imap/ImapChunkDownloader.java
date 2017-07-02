@@ -34,11 +34,11 @@ public class ImapChunkDownloader implements ChunkDownloader {
 		Store store = null;
 		try {
 			store = connectionPool.borrowObject();
-			String folderName = IMAPUtils.createFolderName(dcc.getFileHash());
+			String folderName = IMAPUtils.createFolderName(dcc.getExpectedFileHash());
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
 			folder.open(Folder.READ_ONLY);
 
-			Message[] search = folder.search(new MessageIdSearchTerm(dcc.getMessageId()));
+			Message[] search = folder.search(new MessageIdSearchTerm(dcc.getStorageChunkId()));
 			byte[] attachment = getAttachment(search[FIRST_MESSAGE]);
 
 			folder.close(IMAPUtils.NO_EXPUNGE);

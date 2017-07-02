@@ -25,5 +25,5 @@ public interface UploadChunkContainer {
 
 	String getChunkHash();
 
-	String getMessageId();
+	String getStorageChunkId();
 }

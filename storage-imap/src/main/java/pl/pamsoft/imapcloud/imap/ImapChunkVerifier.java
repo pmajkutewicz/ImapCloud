@@ -30,7 +30,7 @@ public class ImapChunkVerifier implements ChunkVerifier {
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
 			folder.open(Folder.READ_ONLY);
 
-			Message[] search = folder.search(new MessageIdSearchTerm(vcc.getStoredChunkId()));
+			Message[] search = folder.search(new MessageIdSearchTerm(vcc.getStorageChunkId()));
 			boolean chunkExists = search.length == 1;
 
 			folder.close(IMAPUtils.NO_EXPUNGE);

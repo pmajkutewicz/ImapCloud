@@ -57,4 +57,10 @@ public class RecoveryChunkContainer implements pl.pamsoft.imapcloud.api.containe
 	public Map<String, List<FileChunk>> getFileChunkMap() {
 		return this.fileChunkMap;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("Recovery for account: %s, nb of recovered files: %s", account, fileMap.size());
+	}
+
 }
