@@ -8,7 +8,7 @@ import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
 
 @Immutable
-@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
+@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN", "NM_SAME_SIMPLE_NAME_AS_INTERFACE"})
 public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers.UploadChunkContainer {
 	public static final UploadChunkContainer EMPTY = new UploadChunkContainer(StringUtils.EMPTY, null);
 
@@ -50,6 +50,7 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 	}
 	//CSON
 
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	public static UploadChunkContainer addFileDto(UploadChunkContainer ucc, FileDto file) {
 		return new UploadChunkContainer(ucc.getTaskId(), file, ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getMessageId());
@@ -100,7 +101,6 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 		return this.taskId;
 	}
 
-	@Override
 	public FileDto getFileDto() {
 		return this.fileDto;
 	}

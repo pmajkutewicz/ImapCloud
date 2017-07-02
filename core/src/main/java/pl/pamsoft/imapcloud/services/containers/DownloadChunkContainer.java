@@ -9,7 +9,7 @@ import javax.annotation.concurrent.Immutable;
 import java.util.Arrays;
 
 @Immutable
-@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
+@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN", "NM_SAME_SIMPLE_NAME_AS_INTERFACE"})
 public class DownloadChunkContainer implements pl.pamsoft.imapcloud.api.containers.DownloadChunkContainer {
 	public static final DownloadChunkContainer EMPTY = new DownloadChunkContainer(StringUtils.EMPTY, null, null);
 
@@ -53,14 +53,17 @@ public class DownloadChunkContainer implements pl.pamsoft.imapcloud.api.containe
 		return this.taskId;
 	}
 
-	@Override
 	public FileChunk getChunkToDownload() {
 		return this.chunkToDownload;
 	}
 
-	@Override
 	public FileDto getDestinationDir() {
 		return this.destinationDir;
+	}
+
+	@Override
+	public String getMessageId() {
+		return chunkToDownload.getMessageId();
 	}
 
 	@Override

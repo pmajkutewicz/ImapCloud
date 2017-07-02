@@ -4,7 +4,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
-import pl.pamsoft.imapcloud.services.containers.VerifyChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.VerifyChunkContainer;
 
 import javax.mail.Folder;
 import javax.mail.Message;

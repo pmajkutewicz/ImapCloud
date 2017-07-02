@@ -5,7 +5,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.persistence.Id;
 import java.util.Map;
 
-@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
+@SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN", "NM_SAME_SIMPLE_NAME_AS_INTERFACE"})
 public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	@Id
 	private String id;
@@ -19,7 +19,6 @@ public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	private String cryptoKey;
 	private Map<String, String> additionalProperties;
 
-	@Override
 	public String getId() {
 		return this.id;
 	}

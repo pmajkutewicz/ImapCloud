@@ -6,7 +6,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
-import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.UploadChunkContainer;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;

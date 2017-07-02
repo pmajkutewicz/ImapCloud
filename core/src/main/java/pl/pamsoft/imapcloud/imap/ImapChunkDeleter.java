@@ -4,7 +4,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkDeleter;
-import pl.pamsoft.imapcloud.services.containers.DeleteChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.DeleteChunkContainer;
 
 import javax.mail.Flags;
 import javax.mail.Folder;

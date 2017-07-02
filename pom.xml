@@ -115,10 +115,16 @@
 		<module>backend-client</module>
 		<module>distribution</module>
 		<module>jmh</module>
+		<module>api</module>
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>communication-dto</artifactId>

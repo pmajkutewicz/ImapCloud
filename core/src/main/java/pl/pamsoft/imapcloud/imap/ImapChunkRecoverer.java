@@ -6,7 +6,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkRecoverer;
-import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.RecoveryChunkContainer;
 
 import javax.mail.FetchProfile;
 import javax.mail.Folder;

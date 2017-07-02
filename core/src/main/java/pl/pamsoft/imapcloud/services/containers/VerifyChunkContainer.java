@@ -1,8 +1,11 @@
 package pl.pamsoft.imapcloud.services.containers;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public class VerifyChunkContainer implements pl.pamsoft.imapcloud.api.containers.VerifyChunkContainer {
 	public static final VerifyChunkContainer EMPTY = new VerifyChunkContainer(null, null, null, null, null, null);
 
@@ -26,15 +29,17 @@ public class VerifyChunkContainer implements pl.pamsoft.imapcloud.api.containers
 		this.chunkInfoUpdatedInDb = chunkInfoUpdatedInDb;
 	}
 
-
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	public static VerifyChunkContainer markAsExist(VerifyChunkContainer vcc) {
 		return new VerifyChunkContainer(vcc.getTaskId(), vcc.getFileChunkUniqueId(), vcc.getFileHash(), vcc.getStoredChunkId(), Boolean.TRUE, vcc.getChunkInfoUpdatedInDb());
 	}
 
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	public static VerifyChunkContainer markAsNotExist(VerifyChunkContainer vcc) {
 		return new VerifyChunkContainer(vcc.getTaskId(), vcc.getFileChunkUniqueId(), vcc.getFileHash(), vcc.getStoredChunkId(), Boolean.FALSE, vcc.getChunkInfoUpdatedInDb());
 	}
 
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	public static VerifyChunkContainer markAsUpdatedInDb(VerifyChunkContainer vcc) {
 		return new VerifyChunkContainer(vcc.getTaskId(), vcc.getFileChunkUniqueId(), vcc.getFileHash(), vcc.getStoredChunkId(), vcc.getChunkExist(), Boolean.TRUE);
 	}

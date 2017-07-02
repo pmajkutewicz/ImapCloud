@@ -6,8 +6,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkDownloader;
-import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.DownloadChunkContainer;
 
 import javax.mail.BodyPart;
 import javax.mail.Folder;
@@ -34,13 +33,12 @@ public class ImapChunkDownloader implements ChunkDownloader {
 	public byte[] download(DownloadChunkContainer dcc) throws IOException{
 		Store store = null;
 		try {
-			FileChunk fileChunk = dcc.getChunkToDownload();
 			store = connectionPool.borrowObject();
-			String folderName = IMAPUtils.createFolderName(fileChunk);
+			String folderName = IMAPUtils.createFolderName(dcc.getFileHash());
 			Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(folderName);
 			folder.open(Folder.READ_ONLY);
 
-			Message[] search = folder.search(new MessageIdSearchTerm(fileChunk.getMessageId()));
+			Message[] search = folder.search(new MessageIdSearchTerm(dcc.getMessageId()));
 			byte[] attachment = getAttachment(search[FIRST_MESSAGE]);
 
 			folder.close(IMAPUtils.NO_EXPUNGE);

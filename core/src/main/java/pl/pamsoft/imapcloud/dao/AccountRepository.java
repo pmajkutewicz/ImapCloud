@@ -66,6 +66,7 @@ public class AccountRepository extends AbstractRepository<Account> {
 		account.setId(id.toString());
 	}
 
+	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	private void fillProperties(Element accountVertex, Account account) {
 		accountVertex.setProperty(GraphProperties.ACCOUNT_LOGIN, account.getLogin());
 		accountVertex.setProperty(GraphProperties.ACCOUNT_TYPE, account.getType());

@@ -22,6 +22,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>pl.pamsoft.imapcloud</groupId>
+			<artifactId>api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>pl.pamsoft.imapcloud</groupId>
 			<artifactId>communication-dto</artifactId>
 		</dependency>
 

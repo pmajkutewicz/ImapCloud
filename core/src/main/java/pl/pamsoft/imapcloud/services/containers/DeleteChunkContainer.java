@@ -1,8 +1,11 @@
 package pl.pamsoft.imapcloud.services.containers;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
+@SuppressFBWarnings("NM_SAME_SIMPLE_NAME_AS_INTERFACE")
 public class DeleteChunkContainer implements pl.pamsoft.imapcloud.api.containers.DeleteChunkContainer {
 	public static final DeleteChunkContainer EMPTY = new DeleteChunkContainer(null, null, null, null, null);
 

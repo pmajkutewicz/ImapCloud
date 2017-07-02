@@ -3,13 +3,13 @@ package pl.pamsoft.imapcloud.imap;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.pamsoft.imapcloud.api.accounts.Account;
 import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.api.accounts.ChunkDeleter;
 import pl.pamsoft.imapcloud.api.accounts.ChunkDownloader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkRecoverer;
 import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
-import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.services.ConnectionPoolService;
 
 import javax.mail.Store;
