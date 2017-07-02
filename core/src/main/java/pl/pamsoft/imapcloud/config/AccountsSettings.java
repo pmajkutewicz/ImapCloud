@@ -2,10 +2,14 @@ package pl.pamsoft.imapcloud.config;
 
 import com.google.common.annotations.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.yaml.snakeyaml.Yaml;
+import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.dto.AccountInfo;
 import pl.pamsoft.imapcloud.dto.AccountProviderInfoList;
 
@@ -15,22 +19,34 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Configuration
 public class AccountsSettings {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AccountsSettings.class);
+
 	@Bean
 	@SuppressFBWarnings("EXS_EXCEPTION_SOFTENING_NO_CONSTRAINTS")
 	@SuppressWarnings("unchecked")
-	public AccountProviderInfoList createAccountProviders() {
+	public AccountProviderInfoList createAccountProviders(@Autowired List<AccountService> services) {
+		Map<String, AccountService> serviceMap =
+			services.stream()
+				.collect(Collectors.toMap(AccountService::getType, Function.identity()));
 		List<AccountInfo> result = new ArrayList<>();
 		Yaml yaml = new Yaml();
 		try {
 			Map<String, Map<String, Object>> load = (Map<String, Map<String, Object>>) yaml.load(getData());
 			for (Map.Entry<String, Map<String, Object>> mapEntry : load.entrySet()) {
 				Map<String, Object> value = mapEntry.getValue();
-				result.add(createAccountProvider(value));
+				AccountInfo accountProvider = createAccountProvider(value);
+				if (serviceMap.containsKey(accountProvider.getType())) {
+					LOG.info("{} will manage {} accounts", serviceMap.get(accountProvider.getType()).getClass().getName(), accountProvider.getHost());
+					result.add(accountProvider);
+				} else {
+					LOG.warn("Manager for {} is missing. {} won't be supported.", accountProvider.getType(), accountProvider.getHost());
+				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
