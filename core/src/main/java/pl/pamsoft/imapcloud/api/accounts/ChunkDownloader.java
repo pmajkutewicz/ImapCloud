@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.api.accounts;
 
-import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.DownloadChunkContainer;
 
 import java.io.IOException;
 

@@ -3,7 +3,7 @@ package pl.pamsoft.imapcloud.services.containers;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class VerifyChunkContainer {
+public class VerifyChunkContainer implements pl.pamsoft.imapcloud.api.containers.VerifyChunkContainer {
 	public static final VerifyChunkContainer EMPTY = new VerifyChunkContainer(null, null, null, null, null, null);
 
 	private final String taskId;
@@ -39,6 +39,7 @@ public class VerifyChunkContainer {
 		return new VerifyChunkContainer(vcc.getTaskId(), vcc.getFileChunkUniqueId(), vcc.getFileHash(), vcc.getStoredChunkId(), vcc.getChunkExist(), Boolean.TRUE);
 	}
 
+	@Override
 	public String getTaskId() {
 		return taskId;
 	}
@@ -46,10 +47,12 @@ public class VerifyChunkContainer {
 	/**
 	 * Unique chunk id in db.
 	 */
+	@Override
 	public String getFileChunkUniqueId() {
 		return fileChunkUniqueId;
 	}
 
+	@Override
 	public String getFileHash() {
 		return fileHash;
 	}
@@ -57,14 +60,17 @@ public class VerifyChunkContainer {
 	/**
 	 * Unique chunk id returned by underlying storage engine (imap, ftp etc.).
 	 */
+	@Override
 	public String getStoredChunkId() {
 		return storedChunkId;
 	}
 
+	@Override
 	public Boolean getChunkExist() {
 		return chunkExist;
 	}
 
+	@Override
 	public Boolean getChunkInfoUpdatedInDb() {
 		return chunkInfoUpdatedInDb;
 	}

@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 @Immutable
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class DownloadChunkContainer {
+public class DownloadChunkContainer implements pl.pamsoft.imapcloud.api.containers.DownloadChunkContainer {
 	public static final DownloadChunkContainer EMPTY = new DownloadChunkContainer(StringUtils.EMPTY, null, null);
 
 	private final String taskId;
@@ -48,26 +48,32 @@ public class DownloadChunkContainer {
 		return new DownloadChunkContainer(dcc.getTaskId(), dcc.getChunkToDownload(), dcc.getDestinationDir(), dcc.getData(), dcc.getChunkHash(), fileHash);
 	}
 
+	@Override
 	public String getTaskId() {
 		return this.taskId;
 	}
 
+	@Override
 	public FileChunk getChunkToDownload() {
 		return this.chunkToDownload;
 	}
 
+	@Override
 	public FileDto getDestinationDir() {
 		return this.destinationDir;
 	}
 
+	@Override
 	public byte[] getData() {
 		return this.data;
 	}
 
+	@Override
 	public String getChunkHash() {
 		return this.chunkHash;
 	}
 
+	@Override
 	public String getFileHash() {
 		return this.fileHash;
 	}

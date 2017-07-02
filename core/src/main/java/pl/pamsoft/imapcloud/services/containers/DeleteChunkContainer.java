@@ -3,7 +3,7 @@ package pl.pamsoft.imapcloud.services.containers;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-public class DeleteChunkContainer {
+public class DeleteChunkContainer implements pl.pamsoft.imapcloud.api.containers.DeleteChunkContainer {
 	public static final DeleteChunkContainer EMPTY = new DeleteChunkContainer(null, null, null, null, null);
 
 	private final String taskId;
@@ -45,18 +45,22 @@ public class DeleteChunkContainer {
 		return String.format("File: %s, isDeleted: %s, isDeletedInDb: %s", getFileUniqueId(), isDeleted, isDeletedFromDb);
 	}
 
+	@Override
 	public String getTaskId() {
 		return this.taskId;
 	}
 
+	@Override
 	public String getFileUniqueId() {
 		return fileUniqueId;
 	}
 
+	@Override
 	public String getFileHash() {
 		return fileHash;
 	}
 
+	@Override
 	public Boolean getDeleted() {
 		return isDeleted;
 	}

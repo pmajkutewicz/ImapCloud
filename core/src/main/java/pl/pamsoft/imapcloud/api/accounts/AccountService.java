@@ -1,7 +1,5 @@
 package pl.pamsoft.imapcloud.api.accounts;
 
-import pl.pamsoft.imapcloud.entity.Account;
-
 public interface AccountService {
 
 	/**

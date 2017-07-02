@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.api.accounts;
 
-import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.RecoveryChunkContainer;
 
 import java.io.IOException;
 import java.util.List;

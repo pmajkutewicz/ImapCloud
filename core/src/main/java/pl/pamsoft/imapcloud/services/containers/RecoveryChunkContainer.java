@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Immutable
-public class RecoveryChunkContainer {
+public class RecoveryChunkContainer implements pl.pamsoft.imapcloud.api.containers.RecoveryChunkContainer {
 	public static final RecoveryChunkContainer EMPTY = new RecoveryChunkContainer(null, null);
 
 	private final String taskId;
@@ -38,18 +38,22 @@ public class RecoveryChunkContainer {
 		return new RecoveryChunkContainer(rcc.getTaskId(), rcc.getAccount(), fileMap, fileChunkMap);
 	}
 
+	@Override
 	public String getTaskId() {
 		return this.taskId;
 	}
 
+	@Override
 	public Account getAccount() {
 		return this.account;
 	}
 
+	@Override
 	public Map<String, File> getFileMap() {
 		return this.fileMap;
 	}
 
+	@Override
 	public Map<String, List<FileChunk>> getFileChunkMap() {
 		return this.fileChunkMap;
 	}

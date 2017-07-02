@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.api.accounts;
 
-import pl.pamsoft.imapcloud.services.containers.DeleteChunkContainer;
+import pl.pamsoft.imapcloud.api.containers.DeleteChunkContainer;
 
 import java.io.IOException;
 

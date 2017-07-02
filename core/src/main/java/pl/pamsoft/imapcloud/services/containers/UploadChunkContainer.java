@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 @Immutable
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class UploadChunkContainer {
+public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers.UploadChunkContainer {
 	public static final UploadChunkContainer EMPTY = new UploadChunkContainer(StringUtils.EMPTY, null);
 
 	private final String taskId;
@@ -90,58 +90,72 @@ public class UploadChunkContainer {
 		return String.format("Chunk %s for file %s (%s bytes)", chunkNumber, fileDto.getAbsolutePath(), data.length);
 	}
 
+	@Override
 	public String getFileChunkUniqueId() {
 		return String.format("%s.%04d", getFileUniqueId(), getChunkNumber());
 	}
 
+	@Override
 	public String getTaskId() {
 		return this.taskId;
 	}
 
+	@Override
 	public FileDto getFileDto() {
 		return this.fileDto;
 	}
 
+	@Override
 	public String getFileHash() {
 		return this.fileHash;
 	}
 
+	@Override
 	public String getSavedFileId() {
 		return this.savedFileId;
 	}
 
+	@Override
 	public String getFileUniqueId() {
 		return this.fileUniqueId;
 	}
 
+	@Override
 	public long getChunkSize() {
 		return this.chunkSize;
 	}
 
+	@Override
 	public long getCurrentFileChunkCumulativeSize() {
 		return this.currentFileChunkCumulativeSize;
 	}
 
+	@Override
 	public byte[] getData() {
 		return this.data;
 	}
 
+	@Override
 	public boolean isEncrypted() {
 		return this.encrypted;
 	}
 
+	@Override
 	public int getChunkNumber() {
 		return this.chunkNumber;
 	}
 
+	@Override
 	public boolean isLastChunk() {
 		return this.lastChunk;
 	}
 
+	@Override
 	public String getChunkHash() {
 		return this.chunkHash;
 	}
 
+	@Override
 	public String getMessageId() {
 		return this.messageId;
 	}

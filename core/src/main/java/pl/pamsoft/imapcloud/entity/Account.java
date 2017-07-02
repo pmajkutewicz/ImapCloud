@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import java.util.Map;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
-public class Account {
+public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	@Id
 	private String id;
 	private String login;
@@ -19,6 +19,7 @@ public class Account {
 	private String cryptoKey;
 	private Map<String, String> additionalProperties;
 
+	@Override
 	public String getId() {
 		return this.id;
 	}
@@ -27,6 +28,7 @@ public class Account {
 		this.id = id;
 	}
 
+	@Override
 	public String getLogin() {
 		return this.login;
 	}
@@ -35,6 +37,7 @@ public class Account {
 		this.login = login;
 	}
 
+	@Override
 	public String getType() {
 		return type;
 	}
@@ -43,6 +46,7 @@ public class Account {
 		this.type = type;
 	}
 
+	@Override
 	public String getHost() {
 		return this.host;
 	}
@@ -51,6 +55,7 @@ public class Account {
 		this.host = host;
 	}
 
+	@Override
 	public String getPassword() {
 		return this.password;
 	}
@@ -59,6 +64,7 @@ public class Account {
 		this.password = password;
 	}
 
+	@Override
 	public Integer getMaxConcurrentConnections() {
 		return this.maxConcurrentConnections;
 	}
@@ -67,6 +73,7 @@ public class Account {
 		this.maxConcurrentConnections = maxConcurrentConnections;
 	}
 
+	@Override
 	public Integer getAccountSizeMB() {
 		return accountSizeMB;
 	}
@@ -75,6 +82,7 @@ public class Account {
 		this.accountSizeMB = accountSizeMB;
 	}
 
+	@Override
 	public Integer getAttachmentSizeMB() {
 		return this.attachmentSizeMB;
 	}
@@ -83,6 +91,7 @@ public class Account {
 		this.attachmentSizeMB = attachmentSizeMB;
 	}
 
+	@Override
 	public String getCryptoKey() {
 		return this.cryptoKey;
 	}
@@ -91,6 +100,7 @@ public class Account {
 		this.cryptoKey = cryptoKey;
 	}
 
+	@Override
 	public Map<String, String> getAdditionalProperties() {
 		return additionalProperties;
 	}
@@ -99,6 +109,7 @@ public class Account {
 		this.additionalProperties = additionalProperties;
 	}
 
+	@Override
 	public String getProperty(String name) {
 		return additionalProperties.get(name);
 	}
