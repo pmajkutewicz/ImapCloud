@@ -1,10 +1,9 @@
-package pl.pamsoft.imapcloud.services;
+package pl.pamsoft.imapcloud.imap;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.api.accounts.Account;
-import pl.pamsoft.imapcloud.imap.IMAPConnectionFactory;
 
 import javax.mail.Store;
 import java.util.Map;

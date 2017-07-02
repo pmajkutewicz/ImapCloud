@@ -10,7 +10,6 @@ import pl.pamsoft.imapcloud.api.accounts.ChunkDownloader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkRecoverer;
 import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
-import pl.pamsoft.imapcloud.services.ConnectionPoolService;
 
 import javax.mail.Store;
 

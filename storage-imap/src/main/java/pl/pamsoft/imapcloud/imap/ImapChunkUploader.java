@@ -25,10 +25,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static javax.mail.Folder.HOLDS_MESSAGES;
-import static javax.mail.Folder.READ_ONLY;
-import static javax.mail.Folder.READ_WRITE;
-
 public class ImapChunkUploader implements ChunkUploader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImapChunkUploader.class);
@@ -61,7 +57,7 @@ public class ImapChunkUploader implements ChunkUploader {
 			store = connectionPool.borrowObject();
 			printPoolStats(connectionPool);
 			Folder destFolder = getFolder(store, dataChunk);
-			destFolder.open(READ_WRITE);
+			destFolder.open(Folder.READ_WRITE);
 			Message message = createMessage(dataChunk, metadata);
 			Message[] msg = {message};
 			destFolder.appendMessages(msg);
@@ -95,8 +91,8 @@ public class ImapChunkUploader implements ChunkUploader {
 	private Folder createFolderIfDoesntExist(Store store, String path) throws MessagingException {
 		Folder folder = store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME).getFolder(path);
 		if (!folder.exists()) {
-			boolean result = folder.create(HOLDS_MESSAGES);
-			folder.open(READ_ONLY);
+			boolean result = folder.create(Folder.HOLDS_MESSAGES);
+			folder.open(Folder.READ_ONLY);
 			folder.close(IMAPUtils.NO_EXPUNGE);
 			LOG.debug("Folder {} crated?: {}", path, result);
 		}

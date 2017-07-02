@@ -5,7 +5,6 @@ import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
-import pl.pamsoft.imapcloud.services.ConnectionPoolService;
 import pl.pamsoft.imapcloud.services.common.TasksProgressService;
 import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
