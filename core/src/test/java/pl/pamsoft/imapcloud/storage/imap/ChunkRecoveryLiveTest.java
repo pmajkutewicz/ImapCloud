@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.imap;
+package pl.pamsoft.imapcloud.storage.imap;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.mockito.Mockito;

@@ -1,7 +1,8 @@
-package pl.pamsoft.imapcloud.imap;
+package pl.pamsoft.imapcloud.storage.ram;
 
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.api.accounts.Account;
 import pl.pamsoft.imapcloud.api.accounts.AccountService;
@@ -11,45 +12,45 @@ import pl.pamsoft.imapcloud.api.accounts.ChunkRecoverer;
 import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
 
-import javax.mail.Store;
+import javax.annotation.PostConstruct;
 
 @Service
-public class ImapAccountService implements AccountService {
+public class RamAccountService implements AccountService {
 
-	@Autowired
-	private ConnectionPoolService connectionPoolService;
+	private FileSystemManager fsManager;
+
+	@PostConstruct
+	public void init() throws FileSystemException {
+		fsManager = VFS.getManager();
+	}
 
 	@Override
 	public String getType() {
-		return "imap";
+		return "ram";
 	}
 
 	@Override
 	public ChunkUploader getChunkUploader(Account account) {
-		return new ImapChunkUploader(getPoolForAccount(account));
+		return new RamChunkUploader(fsManager);
 	}
 
 	@Override
 	public ChunkDownloader getChunkDownloader(Account account) {
-		return new ImapChunkDownloader(getPoolForAccount(account));
+		return new RamChunkDownloader(fsManager);
 	}
 
 	@Override
 	public ChunkDeleter getChunkDeleter(Account account) {
-		return new ImapChunkDeleter(getPoolForAccount(account));
+		return null;
 	}
 
 	@Override
 	public ChunkVerifier getChunkVerifier(Account account) {
-		return new ImapChunkVerifier(getPoolForAccount(account));
+		return null;
 	}
 
 	@Override
 	public ChunkRecoverer getChunkRecoverer(Account account) {
-		return new ImapChunkRecoverer(getPoolForAccount(account));
-	}
-
-	private GenericObjectPool<Store> getPoolForAccount(Account account) {
-		return connectionPoolService.getOrCreatePoolForAccount(account);
+		return null;
 	}
 }

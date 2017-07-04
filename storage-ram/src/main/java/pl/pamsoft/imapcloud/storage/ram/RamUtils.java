@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.ram;
+package pl.pamsoft.imapcloud.storage.ram;
 
 public class RamUtils {
 	private static final int BEGIN_INDEX = 0;

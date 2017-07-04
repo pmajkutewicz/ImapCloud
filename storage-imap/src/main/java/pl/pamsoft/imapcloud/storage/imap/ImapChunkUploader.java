@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.imap;
+package pl.pamsoft.imapcloud.storage.imap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;

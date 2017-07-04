@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.imap;
+package pl.pamsoft.imapcloud.storage.imap;
 
 import pl.pamsoft.imapcloud.api.containers.UploadChunkContainer;
 

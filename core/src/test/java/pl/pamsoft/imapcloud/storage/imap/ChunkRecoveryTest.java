@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.imap;
+package pl.pamsoft.imapcloud.storage.imap;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

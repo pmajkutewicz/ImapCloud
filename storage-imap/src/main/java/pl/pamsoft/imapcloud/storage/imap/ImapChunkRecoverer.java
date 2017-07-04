@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.imap;
+package pl.pamsoft.imapcloud.storage.imap;
 
 import com.sun.mail.imap.IMAPFolder.FetchProfileItem;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

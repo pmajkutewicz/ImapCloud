@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.ram;
+package pl.pamsoft.imapcloud.storage.ram;
 
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;

@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkRecoverer;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.imap.MessageHeaders;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
+import pl.pamsoft.imapcloud.storage.imap.MessageHeaders;
 
 import javax.mail.MessagingException;
 import java.util.ArrayList;

@@ -7,11 +7,11 @@ import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
-import pl.pamsoft.imapcloud.imap.MessageHeaders;
 import pl.pamsoft.imapcloud.monitoring.Keys;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
+import pl.pamsoft.imapcloud.storage.imap.MessageHeaders;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 
 import java.io.IOException;

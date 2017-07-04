@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.imap;
+package pl.pamsoft.imapcloud.storage.imap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
