@@ -17,7 +17,7 @@ import static org.testng.Assert.assertEquals;
 public class AccountsSettingsTest {
 
 	private String basicImapExample = "mail_ru: {\n" +
-		"  type: imap,\n  domain: mail.ru,\n" +
+		"  type: imap,\n" +
 		"  host: imap.mail.ru,\n" +
 		"  loginType: WITH_DOMAIN,\n" +
 		"  maxConcurrentConnections: 8,\n" +
@@ -26,7 +26,7 @@ public class AccountsSettingsTest {
 		"  }";
 
 	private String additionalPropertiesExample = "mail_ru: {\n" +
-		"  type: imap,\n  domain: mail.ru,\n" +
+		"  type: imap,\n" +
 		"  host: imap.mail.ru,\n" +
 		"  test: test,\n" +
 		"  maxConcurrentConnections: 8,\n" +

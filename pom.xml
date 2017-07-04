@@ -125,6 +125,7 @@
 		<module>jmh</module>
 		<module>api</module>
 		<module>storage-imap</module>
+		<module>storage-ram</module>
 	</modules>
 
 	<dependencyManagement>
@@ -142,6 +143,11 @@
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>storage-imap</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>storage-ram</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -414,7 +420,6 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-vfs2</artifactId>
 				<version>${commons-vfs2.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.mockito</groupId>

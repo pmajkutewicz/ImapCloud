@@ -32,6 +32,10 @@
 			<groupId>pl.pamsoft.imapcloud</groupId>
 			<artifactId>storage-imap</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>pl.pamsoft.imapcloud</groupId>
+			<artifactId>storage-ram</artifactId>
+		</dependency>
 
 		<dependency>
 			<!-- Import dependency management from Spring Boot -->
@@ -149,7 +153,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-vfs2</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
