@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.storage.ram;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
 import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
@@ -7,11 +8,16 @@ import pl.pamsoft.imapcloud.api.containers.UploadChunkContainer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 public class RamChunkUploader implements ChunkUploader {
 
 	private static final boolean NO_APPEND = false;
+	private static final String TMP_IC = "/tmp/ic/";
 	private FileSystemManager fsManager;
 
 	public RamChunkUploader(FileSystemManager fsManager) {
@@ -21,8 +27,8 @@ public class RamChunkUploader implements ChunkUploader {
 	@Override
 	public String upload(UploadChunkContainer ucc, Map<String, String> metadata) throws IOException {
 		String folderName = RamUtils.createFolderName(ucc.getFileHash());
-		String fileName = createFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
-		String filePath = String.format("ram:///%s/%s", folderName, fileName);
+		String fileName = RamUtils.createFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
+		String filePath = String.format("ram:///%s/%s/%s", TMP_IC, folderName, fileName);
 
 		FileObject file = fsManager.resolveFile(filePath);
 
@@ -31,11 +37,28 @@ public class RamChunkUploader implements ChunkUploader {
 		outputStream.write(ucc.getData());
 		outputStream.close();
 
+		writeMetadata(ucc, metadata);
+
 		return filePath;
 	}
 
 
-	private String createFileName(String fileName, int partNumber) {
-		return String.format("%s.%05d", fileName, partNumber);
+	private void writeMetadata(UploadChunkContainer ucc, Map<String, String> metadata) throws IOException {
+		String folderName = RamUtils.createFolderName(ucc.getFileHash());
+		String fileName = createMetaFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
+		String filePath = String.format("ram:///%s/%s/%s", TMP_IC, folderName, fileName);
+
+		FileObject file = fsManager.resolveFile(filePath);
+
+		OutputStream outputStream = file.getContent().getOutputStream(NO_APPEND);
+
+		List<String> lines = metadata.entrySet().stream().map(entry -> String.format("%s=%s", entry.getKey(), entry.getValue())).collect(toList());
+		IOUtils.writeLines(lines, "\r\n", outputStream, StandardCharsets.UTF_8);
+
+		outputStream.close();
+	}
+
+	private String createMetaFileName(String fileName, int partNumber) {
+		return String.format("%s.txt", RamUtils.createFileName(fileName, partNumber));
 	}
 }

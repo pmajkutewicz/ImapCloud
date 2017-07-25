@@ -8,7 +8,12 @@ public class RamUtils {
 		return generateFolderName(fileHash);
 	}
 
+	protected static String createFileName(String fileName, int partNumber) {
+		return String.format("%s.%05d", fileName, partNumber);
+	}
+
 	private static String generateFolderName(String hash) {
 		return hash.substring(BEGIN_INDEX, END_INDEX);
 	}
+
 }

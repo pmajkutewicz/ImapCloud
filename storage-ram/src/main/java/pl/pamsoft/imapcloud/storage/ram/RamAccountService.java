@@ -41,16 +41,16 @@ public class RamAccountService implements AccountService {
 
 	@Override
 	public ChunkDeleter getChunkDeleter(Account account) {
-		return null;
+		return new RamChunkDeleter(fsManager);
 	}
 
 	@Override
 	public ChunkVerifier getChunkVerifier(Account account) {
-		return null;
+		return new RamChunkVerifier(fsManager);
 	}
 
 	@Override
 	public ChunkRecoverer getChunkRecoverer(Account account) {
-		return null;
+		return new RamChunkRecoverer(fsManager);
 	}
 }
