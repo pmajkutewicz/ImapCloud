@@ -1,11 +1,19 @@
 package pl.pamsoft.imapcloud.api.accounts;
 
+import java.util.Collection;
+
 public interface AccountService {
 
 	/**
 	 * Unique ID of destination type. Must be set as parameter in accounts.yml
 	 */
 	String getType();
+
+	/**
+	 * Returns list of additional property names required by this Service.
+	 * @return property names list or empty.
+	 */
+	Collection<String> getRequiredPropertiesNames();
 
 	/**
 	 * Returns Chunk uploader.

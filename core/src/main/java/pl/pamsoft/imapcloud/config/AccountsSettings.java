@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.config;
 
 import com.google.common.annotations.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import pl.pamsoft.imapcloud.dto.AccountProviderInfoList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +44,15 @@ public class AccountsSettings {
 				Map<String, Object> value = mapEntry.getValue();
 				AccountInfo accountProvider = createAccountProvider(value);
 				if (serviceMap.containsKey(accountProvider.getType())) {
-					LOG.info("{} will manage {} accounts", serviceMap.get(accountProvider.getType()).getClass().getName(), accountProvider.getHost());
-					result.add(accountProvider);
+					Collection<String> missingProperties = allRequiredPropertiesPresent(accountProvider.getAdditionalProperties(), serviceMap.get(accountProvider.getType()));
+					if (missingProperties.isEmpty()) {
+						LOG.info("{} ({}) accounts will be managed by {}, all required properties are provided",
+							accountProvider.getHost(), accountProvider.getType(), serviceMap.get(accountProvider.getType()).getClass().getName());
+						result.add(accountProvider);
+					} else {
+						LOG.warn("{} ({}) accounts won't be managed by {}, properties missing: {}",
+							accountProvider.getHost(), accountProvider.getType(), serviceMap.get(accountProvider.getType()).getClass().getName(), StringUtils.join(missingProperties, ","));
+					}
 				} else {
 					LOG.warn("Manager for {} is missing. {} won't be supported.", accountProvider.getType(), accountProvider.getHost());
 				}
@@ -52,6 +61,10 @@ public class AccountsSettings {
 			throw new RuntimeException(e);
 		}
 		return new AccountProviderInfoList(Collections.unmodifiableList(result));
+	}
+
+	private Collection<String> allRequiredPropertiesPresent(Map<String, String> additionalProperties, AccountService accountService) {
+		return accountService.getRequiredPropertiesNames().stream().filter(key -> !additionalProperties.containsKey(key)).collect(Collectors.toSet());
 	}
 
 	@VisibleForTesting

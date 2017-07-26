@@ -12,6 +12,8 @@ import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
 
 import javax.mail.Store;
+import java.util.Collection;
+import java.util.Collections;
 
 @Service
 public class ImapAccountService implements AccountService {
@@ -22,6 +24,11 @@ public class ImapAccountService implements AccountService {
 	@Override
 	public String getType() {
 		return "imap";
+	}
+
+	@Override
+	public Collection<String> getRequiredPropertiesNames() {
+		return Collections.emptyList();
 	}
 
 	@Override

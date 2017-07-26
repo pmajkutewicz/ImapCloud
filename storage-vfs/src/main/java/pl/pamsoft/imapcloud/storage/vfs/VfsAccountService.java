@@ -13,6 +13,8 @@ import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
 import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.Collection;
 
 @Service
 public class VfsAccountService implements AccountService {
@@ -27,6 +29,11 @@ public class VfsAccountService implements AccountService {
 	@Override
 	public String getType() {
 		return "vfs";
+	}
+
+	@Override
+	public Collection<String> getRequiredPropertiesNames() {
+		return Arrays.asList("fs", "location");
 	}
 
 	@Override

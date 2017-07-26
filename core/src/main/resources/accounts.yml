@@ -30,10 +30,11 @@ yahoo_com: {
   accountSizeMB: 9999999,
   maxFileSizeMB: 25
   }
-vfs_test: {
+vfs_tmp: {
   type: vfs,
   host: localhost,
   maxConcurrentConnections: 8,
   accountSizeMB: 100,
-  maxFileSizeMB: 100
+  maxFileSizeMB: 100,
+  location: /tmp
   }
