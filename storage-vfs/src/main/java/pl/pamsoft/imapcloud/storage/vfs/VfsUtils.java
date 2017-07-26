@@ -1,6 +1,6 @@
-package pl.pamsoft.imapcloud.storage.ram;
+package pl.pamsoft.imapcloud.storage.vfs;
 
-public class RamUtils {
+public class VfsUtils {
 	private static final int BEGIN_INDEX = 0;
 	private static final int END_INDEX = 2;
 

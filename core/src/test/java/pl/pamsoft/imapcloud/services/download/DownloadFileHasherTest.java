@@ -42,7 +42,7 @@ public class DownloadFileHasherTest {
 	@Test
 	/**
 	 * Always calculate same hash:
-	 * This is because DestFileUtils.generateFilePath(dcc).toFile() - it returns file from "ram" and file.length is 0 for that file.
+	 * This is because DestFileUtils.generateFilePath(dcc).toFile() - it returns file from "vfs" and file.length is 0 for that file.
 	 * I guess one way to fix it is to mock DestFileUtils (first convert to bean) and mock length value to valid one.
 	 * Data send to hash is valid (random bytes)
 	 * Similar situation is in {@link pl.pamsoft.imapcloud.services.upload.UploadFileHasherTest}

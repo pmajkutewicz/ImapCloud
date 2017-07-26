@@ -9,8 +9,8 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>storage-ram</artifactId>
-	<name>IMAP Cloud storage-ram</name>
+	<artifactId>storage-vfs</artifactId>
+	<name>IMAP Cloud storage-vfs</name>
 	<version>0.1.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 

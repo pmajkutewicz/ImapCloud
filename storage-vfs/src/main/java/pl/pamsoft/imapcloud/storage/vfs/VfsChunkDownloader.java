@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.storage.ram;
+package pl.pamsoft.imapcloud.storage.vfs;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
@@ -9,11 +9,11 @@ import pl.pamsoft.imapcloud.api.containers.DownloadChunkContainer;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class RamChunkDownloader implements ChunkDownloader {
+public class VfsChunkDownloader implements ChunkDownloader {
 
 	private FileSystemManager fsManager;
 
-	public RamChunkDownloader(FileSystemManager fsManager) {
+	public VfsChunkDownloader(FileSystemManager fsManager) {
 		this.fsManager = fsManager;
 	}
 

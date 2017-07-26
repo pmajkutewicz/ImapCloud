@@ -125,7 +125,7 @@
 		<module>jmh</module>
 		<module>api</module>
 		<module>storage-imap</module>
-		<module>storage-ram</module>
+		<module>storage-vfs</module>
 	</modules>
 
 	<dependencyManagement>
@@ -147,7 +147,7 @@
 			</dependency>
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
-				<artifactId>storage-ram</artifactId>
+				<artifactId>storage-vfs</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

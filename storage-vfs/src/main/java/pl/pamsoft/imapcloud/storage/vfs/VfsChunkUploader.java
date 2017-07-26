@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.storage.ram;
+package pl.pamsoft.imapcloud.storage.vfs;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
@@ -14,21 +14,21 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
-public class RamChunkUploader implements ChunkUploader {
+public class VfsChunkUploader implements ChunkUploader {
 
 	private static final boolean NO_APPEND = false;
 	private static final String TMP_IC = "/tmp/ic/";
 	private FileSystemManager fsManager;
 
-	public RamChunkUploader(FileSystemManager fsManager) {
+	public VfsChunkUploader(FileSystemManager fsManager) {
 		this.fsManager = fsManager;
 	}
 
 	@Override
 	public String upload(UploadChunkContainer ucc, Map<String, String> metadata) throws IOException {
-		String folderName = RamUtils.createFolderName(ucc.getFileHash());
-		String fileName = RamUtils.createFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
-		String filePath = String.format("ram:///%s/%s/%s", TMP_IC, folderName, fileName);
+		String folderName = VfsUtils.createFolderName(ucc.getFileHash());
+		String fileName = VfsUtils.createFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
+		String filePath = String.format("vfs:///%s/%s/%s", TMP_IC, folderName, fileName);
 
 		FileObject file = fsManager.resolveFile(filePath);
 
@@ -44,9 +44,9 @@ public class RamChunkUploader implements ChunkUploader {
 
 
 	private void writeMetadata(UploadChunkContainer ucc, Map<String, String> metadata) throws IOException {
-		String folderName = RamUtils.createFolderName(ucc.getFileHash());
+		String folderName = VfsUtils.createFolderName(ucc.getFileHash());
 		String fileName = createMetaFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
-		String filePath = String.format("ram:///%s/%s/%s", TMP_IC, folderName, fileName);
+		String filePath = String.format("vfs:///%s/%s/%s", TMP_IC, folderName, fileName);
 
 		FileObject file = fsManager.resolveFile(filePath);
 
@@ -59,6 +59,6 @@ public class RamChunkUploader implements ChunkUploader {
 	}
 
 	private String createMetaFileName(String fileName, int partNumber) {
-		return String.format("%s.txt", RamUtils.createFileName(fileName, partNumber));
+		return String.format("%s.txt", VfsUtils.createFileName(fileName, partNumber));
 	}
 }

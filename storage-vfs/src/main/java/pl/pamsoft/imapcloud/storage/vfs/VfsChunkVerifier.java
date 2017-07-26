@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.storage.ram;
+package pl.pamsoft.imapcloud.storage.vfs;
 
 import org.apache.commons.vfs2.FileSystemManager;
 import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
@@ -6,11 +6,11 @@ import pl.pamsoft.imapcloud.api.containers.VerifyChunkContainer;
 
 import java.io.IOException;
 
-public class RamChunkVerifier implements ChunkVerifier {
+public class VfsChunkVerifier implements ChunkVerifier {
 
 	private FileSystemManager fsManager;
 
-	public RamChunkVerifier(FileSystemManager fsManager) {
+	public VfsChunkVerifier(FileSystemManager fsManager) {
 		this.fsManager = fsManager;
 	}
 

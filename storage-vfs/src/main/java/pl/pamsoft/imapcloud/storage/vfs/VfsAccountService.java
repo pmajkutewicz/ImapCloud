@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.storage.ram;
+package pl.pamsoft.imapcloud.storage.vfs;
 
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
@@ -15,7 +15,7 @@ import pl.pamsoft.imapcloud.api.accounts.ChunkVerifier;
 import javax.annotation.PostConstruct;
 
 @Service
-public class RamAccountService implements AccountService {
+public class VfsAccountService implements AccountService {
 
 	private FileSystemManager fsManager;
 
@@ -26,31 +26,31 @@ public class RamAccountService implements AccountService {
 
 	@Override
 	public String getType() {
-		return "ram";
+		return "vfs";
 	}
 
 	@Override
 	public ChunkUploader getChunkUploader(Account account) {
-		return new RamChunkUploader(fsManager);
+		return new VfsChunkUploader(fsManager);
 	}
 
 	@Override
 	public ChunkDownloader getChunkDownloader(Account account) {
-		return new RamChunkDownloader(fsManager);
+		return new VfsChunkDownloader(fsManager);
 	}
 
 	@Override
 	public ChunkDeleter getChunkDeleter(Account account) {
-		return new RamChunkDeleter(fsManager);
+		return new VfsChunkDeleter(fsManager);
 	}
 
 	@Override
 	public ChunkVerifier getChunkVerifier(Account account) {
-		return new RamChunkVerifier(fsManager);
+		return new VfsChunkVerifier(fsManager);
 	}
 
 	@Override
 	public ChunkRecoverer getChunkRecoverer(Account account) {
-		return new RamChunkRecoverer(fsManager);
+		return new VfsChunkRecoverer(fsManager);
 	}
 }

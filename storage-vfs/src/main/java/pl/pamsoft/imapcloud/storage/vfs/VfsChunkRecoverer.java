@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.storage.ram;
+package pl.pamsoft.imapcloud.storage.vfs;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileExtensionSelector;
@@ -15,20 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class RamChunkRecoverer implements ChunkRecoverer {
+public class VfsChunkRecoverer implements ChunkRecoverer {
 
 	private static final int EXTENSION_LENGTH = 4;
 	private static final String TMP_IC = "/tmp/ic/";
 	private FileSystemManager fsManager;
 
-	public RamChunkRecoverer(FileSystemManager fsManager) {
+	public VfsChunkRecoverer(FileSystemManager fsManager) {
 		this.fsManager = fsManager;
 	}
 
 	@Override
 	public List<Map<String, String>> recover(RecoveryChunkContainer rcc) throws IOException {
 		List<Map<String, String>> results = new ArrayList<>();
-		String filePath = String.format("ram:///%s", TMP_IC);
+		String filePath = String.format("vfs:///%s", TMP_IC);
 		FileObject[] metas = fsManager.resolveFile(filePath).findFiles(new FileExtensionSelector("txt"));
 
 		if (null != metas) {

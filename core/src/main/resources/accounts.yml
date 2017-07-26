@@ -30,8 +30,8 @@ yahoo_com: {
   accountSizeMB: 9999999,
   maxFileSizeMB: 25
   }
-ram_test: {
-  type: ram,
+vfs_test: {
+  type: vfs,
   host: localhost,
   maxConcurrentConnections: 8,
   accountSizeMB: 100,

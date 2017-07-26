@@ -1,4 +1,4 @@
-package pl.pamsoft.imapcloud.storage.ram;
+package pl.pamsoft.imapcloud.storage.vfs;
 
 import org.apache.commons.vfs2.FileSelectInfo;
 import org.apache.commons.vfs2.FileSelector;
@@ -8,19 +8,19 @@ import pl.pamsoft.imapcloud.api.containers.DeleteChunkContainer;
 
 import java.io.IOException;
 
-public class RamChunkDeleter implements ChunkDeleter {
+public class VfsChunkDeleter implements ChunkDeleter {
 
 	private static final String TMP_IC = "/tmp/ic/";
 	private FileSystemManager fsManager;
 
-	public RamChunkDeleter(FileSystemManager fsManager) {
+	public VfsChunkDeleter(FileSystemManager fsManager) {
 		this.fsManager = fsManager;
 	}
 
 	@Override
 	public boolean delete(DeleteChunkContainer dcc) throws IOException {
-		String folderName = RamUtils.createFolderName(dcc.getFileHash());
-		String filePath = String.format("ram:///%s/%s/", TMP_IC, folderName);
+		String folderName = VfsUtils.createFolderName(dcc.getFileHash());
+		String filePath = String.format("vfs:///%s/%s/", TMP_IC, folderName);
 
 		return 0 < fsManager.resolveFile(filePath).delete(new FileSelector() {
 			@Override
