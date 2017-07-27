@@ -18,17 +18,18 @@ import java.util.stream.Collectors;
 public class VfsChunkRecoverer implements ChunkRecoverer {
 
 	private static final int EXTENSION_LENGTH = 4;
-	private static final String TMP_IC = "/tmp/ic/";
 	private FileSystemManager fsManager;
+	private RequiredPropertyWrapper props;
 
-	public VfsChunkRecoverer(FileSystemManager fsManager) {
+	public VfsChunkRecoverer(FileSystemManager fsManager, RequiredPropertyWrapper requiredPropertyWrapper) {
 		this.fsManager = fsManager;
+		props = requiredPropertyWrapper;
 	}
 
 	@Override
 	public List<Map<String, String>> recover(RecoveryChunkContainer rcc) throws IOException {
 		List<Map<String, String>> results = new ArrayList<>();
-		String filePath = String.format("vfs:///%s", TMP_IC);
+		String filePath = VfsUtils.createVfsPrefix(props);
 		FileObject[] metas = fsManager.resolveFile(filePath).findFiles(new FileExtensionSelector("txt"));
 
 		if (null != metas) {

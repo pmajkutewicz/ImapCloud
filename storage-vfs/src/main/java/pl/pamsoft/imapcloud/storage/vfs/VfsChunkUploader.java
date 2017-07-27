@@ -17,18 +17,19 @@ import static java.util.stream.Collectors.toList;
 public class VfsChunkUploader implements ChunkUploader {
 
 	private static final boolean NO_APPEND = false;
-	private static final String TMP_IC = "/tmp/ic/";
 	private FileSystemManager fsManager;
+	private RequiredPropertyWrapper props;
 
-	public VfsChunkUploader(FileSystemManager fsManager) {
+	public VfsChunkUploader(FileSystemManager fsManager, RequiredPropertyWrapper requiredPropertyWrapper) {
 		this.fsManager = fsManager;
+		this.props = requiredPropertyWrapper;
 	}
 
 	@Override
 	public String upload(UploadChunkContainer ucc, Map<String, String> metadata) throws IOException {
 		String folderName = VfsUtils.createFolderName(ucc.getFileHash());
 		String fileName = VfsUtils.createFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
-		String filePath = String.format("vfs:///%s/%s/%s", TMP_IC, folderName, fileName);
+		String filePath = VfsUtils.createUri(props, folderName, fileName);
 
 		FileObject file = fsManager.resolveFile(filePath);
 
@@ -46,7 +47,7 @@ public class VfsChunkUploader implements ChunkUploader {
 	private void writeMetadata(UploadChunkContainer ucc, Map<String, String> metadata) throws IOException {
 		String folderName = VfsUtils.createFolderName(ucc.getFileHash());
 		String fileName = createMetaFileName(ucc.getFileUniqueId(), ucc.getChunkNumber());
-		String filePath = String.format("vfs:///%s/%s/%s", TMP_IC, folderName, fileName);
+		String filePath = VfsUtils.createUri(props, folderName, fileName);
 
 		FileObject file = fsManager.resolveFile(filePath);
 

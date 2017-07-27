@@ -32,9 +32,19 @@ yahoo_com: {
   }
 vfs_tmp: {
   type: vfs,
-  host: localhost,
+  host: localhost_tmp,
   maxConcurrentConnections: 8,
-  accountSizeMB: 100,
-  maxFileSizeMB: 100,
-  location: /tmp
+  accountSizeMB: 10000,
+  maxFileSizeMB: 10000,
+  fs: tmp,
+  location: /tmp/ic
+  }
+vfs_file: {
+  type: vfs,
+  host: localhost_file,
+  maxConcurrentConnections: 8,
+  accountSizeMB: 10000,
+  maxFileSizeMB: 10000,
+  fs: file,
+  location: /tmp/ic
   }

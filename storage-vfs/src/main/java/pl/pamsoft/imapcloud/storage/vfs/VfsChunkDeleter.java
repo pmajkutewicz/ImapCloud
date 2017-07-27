@@ -10,17 +10,18 @@ import java.io.IOException;
 
 public class VfsChunkDeleter implements ChunkDeleter {
 
-	private static final String TMP_IC = "/tmp/ic/";
 	private FileSystemManager fsManager;
+	private RequiredPropertyWrapper props;
 
-	public VfsChunkDeleter(FileSystemManager fsManager) {
+	public VfsChunkDeleter(FileSystemManager fsManager, RequiredPropertyWrapper requiredPropertyWrapper) {
 		this.fsManager = fsManager;
+		props = requiredPropertyWrapper;
 	}
 
 	@Override
 	public boolean delete(DeleteChunkContainer dcc) throws IOException {
 		String folderName = VfsUtils.createFolderName(dcc.getFileHash());
-		String filePath = String.format("vfs:///%s/%s/", TMP_IC, folderName);
+		String filePath = VfsUtils.createUri(props, folderName);
 
 		return 0 < fsManager.resolveFile(filePath).delete(new FileSelector() {
 			@Override

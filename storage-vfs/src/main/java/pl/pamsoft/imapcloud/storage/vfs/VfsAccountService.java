@@ -38,7 +38,7 @@ public class VfsAccountService implements AccountService {
 
 	@Override
 	public ChunkUploader getChunkUploader(Account account) {
-		return new VfsChunkUploader(fsManager);
+		return new VfsChunkUploader(fsManager, new RequiredPropertyWrapper(account.getAdditionalProperties()));
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class VfsAccountService implements AccountService {
 
 	@Override
 	public ChunkDeleter getChunkDeleter(Account account) {
-		return new VfsChunkDeleter(fsManager);
+		return new VfsChunkDeleter(fsManager, new RequiredPropertyWrapper(account.getAdditionalProperties()));
 	}
 
 	@Override
@@ -58,6 +58,6 @@ public class VfsAccountService implements AccountService {
 
 	@Override
 	public ChunkRecoverer getChunkRecoverer(Account account) {
-		return new VfsChunkRecoverer(fsManager);
+		return new VfsChunkRecoverer(fsManager, new RequiredPropertyWrapper(account.getAdditionalProperties()));
 	}
 }

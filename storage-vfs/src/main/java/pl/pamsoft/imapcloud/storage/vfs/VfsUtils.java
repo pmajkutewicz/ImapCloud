@@ -12,8 +12,18 @@ public class VfsUtils {
 		return String.format("%s.%05d", fileName, partNumber);
 	}
 
+	protected static String createVfsPrefix(RequiredPropertyWrapper props) {
+		return String.format("%s:///%s", props.getFs(), props.getLocation());
+	}
+	protected static String createUri(RequiredPropertyWrapper props, String folderName){
+		return String.format("%s://%s/%s", props.getFs(), props.getLocation(), folderName);
+	}
+	protected static String createUri(RequiredPropertyWrapper props, String folderName, String fileName){
+		return String.format("%s://%s/%s/%s", props.getFs(), props.getLocation(), folderName, fileName);
+	}
 	private static String generateFolderName(String hash) {
 		return hash.substring(BEGIN_INDEX, END_INDEX);
 	}
+
 
 }
