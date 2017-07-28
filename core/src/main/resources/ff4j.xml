@@ -10,6 +10,6 @@
 	<feature uid="downloads" enable="true" description="Downloads tab in GUI"/>
 	<feature uid="recovery" enable="true" description="Recovery tab in GUI"/>
 	<feature uid="status" enable="false" description="Status tab in GUI"/>
-	<feature uid="monitoring" enable="false" description="Monitoring tab in GUI"/>
+	<feature uid="monitoring" enable="true" description="Monitoring tab in GUI"/>
 
 </features>
