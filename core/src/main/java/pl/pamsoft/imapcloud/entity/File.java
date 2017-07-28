@@ -15,6 +15,7 @@ public class File {
 	private String absolutePath;
 	private Long size;
 	private String fileHash;
+	private boolean chunkEncryptionEnabled;
 	private boolean completed;
 	private Account ownerAccount;
 
@@ -72,6 +73,14 @@ public class File {
 
 	public void setFileHash(String fileHash) {
 		this.fileHash = fileHash;
+	}
+
+	public boolean isChunkEncryptionEnabled() {
+		return chunkEncryptionEnabled;
+	}
+
+	public void setChunkEncryptionEnabled(boolean chunkEncryption) {
+		this.chunkEncryptionEnabled = chunkEncryption;
 	}
 
 	public boolean isCompleted() {

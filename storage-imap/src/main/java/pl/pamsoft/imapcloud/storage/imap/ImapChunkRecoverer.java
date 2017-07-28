@@ -86,9 +86,7 @@ public class ImapChunkRecoverer implements ChunkRecoverer {
 	}
 
 	private Map<String, String> processMessage(Message message) throws MessagingException {
-		Map<String, String> headers = getHeaders(message);
-		headers.put("size", String.valueOf(message.getSize()));
-		return headers;
+		return getHeaders(message);
 	}
 
 	@SuppressFBWarnings("CLI_CONSTANT_LIST_INDEX")

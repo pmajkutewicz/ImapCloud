@@ -75,6 +75,7 @@ public class FileRepository extends AbstractRepository<File> {
 		fileVertex.setProperty(GraphProperties.FILE_ABSOLUTE_PATH, file.getAbsolutePath());
 		fileVertex.setProperty(GraphProperties.FILE_SIZE, file.getSize());
 		fileVertex.setProperty(GraphProperties.FILE_UNIQUE_ID, file.getFileUniqueId());
+		fileVertex.setProperty(GraphProperties.FILE_ENCRYPTION, file.isChunkEncryptionEnabled());
 		fileVertex.addEdge(GraphProperties.FILE_EDGE_ACCOUNT, vertex);
 	}
 

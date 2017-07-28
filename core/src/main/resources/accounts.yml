@@ -34,8 +34,8 @@ vfs_tmp: {
   type: vfs,
   host: localhost_tmp,
   maxConcurrentConnections: 8,
-  accountSizeMB: 10000,
-  maxFileSizeMB: 10000,
+  accountSizeMB: 9999999,
+  maxFileSizeMB: 25,
   fs: tmp,
   location: /tmp/ic
   }
@@ -43,8 +43,8 @@ vfs_file: {
   type: vfs,
   host: localhost_file,
   maxConcurrentConnections: 8,
-  accountSizeMB: 10000,
-  maxFileSizeMB: 10000,
+  accountSizeMB: 9999999,
+  maxFileSizeMB: 25,
   fs: file,
   location: /tmp/ic
   }

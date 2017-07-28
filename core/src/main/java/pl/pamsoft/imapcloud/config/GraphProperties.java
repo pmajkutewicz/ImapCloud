@@ -18,12 +18,14 @@ public class GraphProperties {
 	public static final String FILE_ABSOLUTE_PATH = "absolutePath";
 	public static final String FILE_SIZE = "size";
 	public static final String FILE_COMPLETED = "completed";
+	public static final String FILE_ENCRYPTION = "encryptionEnabled";
 	public static final String FILE_EDGE_ACCOUNT = "is_owned_by";
 
 	public static final String FILE_CHUNK_UNIQUE_ID = "fileChunkUniqueId";
 	public static final String FILE_CHUNK_NUMBER = "chunkNumber";
 	public static final String FILE_CHUNK_HASH = "chunkHash";
-	public static final String FILE_CHUNK_SIZE = "size";
+	public static final String FILE_CHUNK_ORG_SIZE = "orgSize";
+	public static final String FILE_CHUNK_ENCRYPTED_SIZE = "encryptedSize";
 	public static final String FILE_CHUNK_MESSAGE_ID = "messageId";
 	public static final String FILE_CHUNK_LAST_CHUNK = "lastChunk";
 	public static final String FILE_CHUNK_LAST_VERIFIED_AT = "lastVerifiedAt";

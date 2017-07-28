@@ -29,6 +29,7 @@ public class VertexToFileConverter extends AbstractVertexConverter implements Fu
 		f.setAbsolutePath(v.getProperty(GraphProperties.FILE_ABSOLUTE_PATH));
 		f.setFileHash(v.getProperty(GraphProperties.FILE_HASH));
 		f.setCompleted(v.getProperty(GraphProperties.FILE_COMPLETED));
+		f.setChunkEncryptionEnabled(v.getProperty(GraphProperties.FILE_ENCRYPTION));
 		f.setOwnerAccount(getOwningAccount(v));
 		return f;
 	}

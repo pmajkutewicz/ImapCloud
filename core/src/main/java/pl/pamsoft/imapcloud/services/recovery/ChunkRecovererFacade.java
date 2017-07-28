@@ -67,7 +67,7 @@ public class ChunkRecovererFacade implements Function<RecoveryChunkContainer, Re
 			FileChunk lastChunk = fileChunks.get(nbOfChunks - 1);
 			File file = lastChunk.getOwnerFile();
 			file.setCompleted(nbOfChunks == lastChunk.getChunkNumber() && lastChunk.isLastChunk());
-			file.setSize(fileChunks.stream().mapToLong(FileChunk::getSize).sum());
+			file.setSize(fileChunks.stream().mapToLong(FileChunk::getOrgSize).sum());
 		}
 	}
 
@@ -97,7 +97,7 @@ public class ChunkRecovererFacade implements Function<RecoveryChunkContainer, Re
 
 	private FileChunk headersToFileChunk(Map<String, String> headers) {
 		FileChunk fileChunk = new FileChunk();
-		fileChunk.setSize(Long.valueOf(headers.get("size")));
+		fileChunk.setOrgSize(Long.valueOf(headers.get(MessageHeaders.ChunkSize.toString())));
 		fileChunk.setChunkExists(Boolean.TRUE);
 		fileChunk.setChunkHash(headers.get(MessageHeaders.ChunkHash.toString()));
 		fileChunk.setChunkNumber(Integer.parseInt(headers.get(MessageHeaders.ChunkNumber.toString())));

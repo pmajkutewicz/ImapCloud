@@ -4,7 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
+import pl.pamsoft.imapcloud.services.FileServices;
 import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.resume.ResumeFileChunkIterator;
 
 import java.io.IOException;
 import java.util.Spliterator;
@@ -18,9 +20,11 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 	private static final Logger LOG = LoggerFactory.getLogger(FileSplitter.class);
 
 	private final MonitoringHelper monitoringHelper;
+	private FileServices fileServices;
 	private int maxChunkSizeInMB;
 	private int deviationInPercent;
 	private boolean variableSize;
+	private boolean resumeUploadEnabled;
 
 	public FileSplitter(int maxChunkSizeMB, MonitoringHelper monitoringHelper) {
 		this.maxChunkSizeInMB = maxChunkSizeMB;
@@ -34,15 +38,19 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 		this.variableSize = true;
 	}
 
+	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, FileServices fileServices, MonitoringHelper monitoringHelper) {
+		this(maxChunkSizeMB, deviationInPercent, monitoringHelper);
+		this.fileServices = fileServices;
+		this.resumeUploadEnabled =true;
+	}
+
 	@Override
 	public Stream<UploadChunkContainer> apply(UploadChunkContainer ucc) {
 		LOG.debug("Splitting file {}", ucc.getFileDto().getName());
 		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
 		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
-		FileChunkIterator fileChunkIterator = variableSize
-			? new FileChunkIterator(ucc, maxSize, xPercent(maxSize), monitoringHelper)
-			: new FileChunkIterator(ucc, maxSize, monitoringHelper);
+		FileChunkIterator fileChunkIterator = determineIterator(ucc, maxSize);
 		try {
 			fileChunkIterator.process();
 			return StreamSupport.stream(Spliterators.spliteratorUnknownSize(fileChunkIterator, Spliterator.ORDERED), false);
@@ -50,6 +58,18 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 			LOG.error(String.format("Can't chop file %s into chunks.", fileDto.getAbsolutePath()), e);
 		}
 		return Stream.empty();
+	}
+
+	private FileChunkIterator determineIterator(UploadChunkContainer ucc, int maxSize) {
+		if (resumeUploadEnabled) {
+			return variableSize
+				? new ResumeFileChunkIterator(ucc, maxSize, xPercent(maxSize), fileServices.getFileChunks(ucc.getFileUniqueId()), monitoringHelper)
+				: new ResumeFileChunkIterator(ucc, maxSize, fileServices.getFileChunks(ucc.getFileUniqueId()), monitoringHelper);
+		} else {
+			return variableSize
+				? new FileChunkIterator(ucc, maxSize, xPercent(maxSize), monitoringHelper)
+				: new FileChunkIterator(ucc, maxSize, monitoringHelper);
+		}
 	}
 
 	//CSOFF: MagicNumber

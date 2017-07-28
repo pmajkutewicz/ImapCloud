@@ -39,6 +39,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 		this.monitoringHelper = monitoringHelper;
 	}
 
+	@SuppressFBWarnings("PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS")
 	public FileChunkIterator(UploadChunkContainer ucc, int fetchSize, int deviation, MonitoringHelper monitoringHelper) {
 		this.ucc = ucc;
 		this.monitoringHelper = monitoringHelper;
@@ -55,7 +56,7 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 		maxSize = inChannel.size();
 	}
 
-	private void generateNextFetchSize() {
+	protected void generateNextFetchSize() {
 		this.fetchSize = ThreadLocalRandom.current().nextInt(minFetchSize, minFetchSize + maxIncrease);
 	}
 
@@ -86,11 +87,15 @@ public class FileChunkIterator implements Iterator<UploadChunkContainer> {
 			chunkSizeCumulative += data.length;
 			UploadChunkContainer uploadChunkContainer = UploadChunkContainer.addChunk(ucc, data.length, chunkSizeCumulative, data, currentChunkNumber++, !hasNext());
 			double lastVal = monitoringHelper.stop(monitor);
-			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getData().length, uploadChunkContainer.getFileDto().getAbsolutePath(), lastVal);
+			LOG.debug("Chunk of {} for file {} created in {}", uploadChunkContainer.getChunkSize(), uploadChunkContainer.getFileDto().getAbsolutePath(), lastVal);
 			return uploadChunkContainer;
 		} catch (IOException e) {
 			LOG.warn("Returning EMPTY from FileChunkIterator");
 			return UploadChunkContainer.EMPTY;
 		}
+	}
+
+	protected void setFetchSize(int fetchSize) {
+		this.fetchSize = fetchSize;
 	}
 }

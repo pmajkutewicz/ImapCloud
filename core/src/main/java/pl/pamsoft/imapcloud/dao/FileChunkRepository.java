@@ -94,7 +94,8 @@ public class FileChunkRepository extends AbstractRepository<FileChunk> {
 		OrientVertex vertex = graphDb.getVertex(chunk.getOwnerFile().getId());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_NUMBER, chunk.getChunkNumber());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_HASH, chunk.getChunkHash());
-		fileVertex.setProperty(GraphProperties.FILE_CHUNK_SIZE, chunk.getSize());
+		fileVertex.setProperty(GraphProperties.FILE_CHUNK_ORG_SIZE, chunk.getOrgSize());
+		fileVertex.setProperty(GraphProperties.FILE_CHUNK_ENCRYPTED_SIZE, chunk.getEncryptedSize());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_UNIQUE_ID, chunk.getFileChunkUniqueId());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_MESSAGE_ID, chunk.getMessageId());
 		fileVertex.setProperty(GraphProperties.FILE_CHUNK_LAST_CHUNK, chunk.isLastChunk());

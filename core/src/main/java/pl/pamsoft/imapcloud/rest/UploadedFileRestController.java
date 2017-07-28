@@ -16,6 +16,7 @@ import pl.pamsoft.imapcloud.responses.UploadedFileChunksResponse;
 import pl.pamsoft.imapcloud.responses.UploadedFilesResponse;
 import pl.pamsoft.imapcloud.services.DeletionService;
 import pl.pamsoft.imapcloud.services.FileServices;
+import pl.pamsoft.imapcloud.services.UploadService;
 import pl.pamsoft.imapcloud.services.VerificationService;
 
 import java.io.FileNotFoundException;
@@ -35,6 +36,9 @@ public class UploadedFileRestController {
 	private VerificationService verificationService;
 
 	@Autowired
+	private UploadService uploadService;
+
+	@Autowired
 	private DeletionService deletionService;
 
 	private Function<File, UploadedFileDto> converter = file -> {
@@ -52,7 +56,7 @@ public class UploadedFileRestController {
 		UploadedFileChunkDto ufcd = new UploadedFileChunkDto();
 		ufcd.setMessageId(fileChunk.getMessageId());
 		ufcd.setChunkNumber(fileChunk.getChunkNumber());
-		ufcd.setSize(fileChunk.getSize());
+		ufcd.setSize(fileChunk.getOrgSize());
 		ufcd.setFileChunkUniqueId(fileChunk.getFileChunkUniqueId());
 		ufcd.setChunkHash(fileChunk.getChunkHash());
 		ufcd.setChunkExists(fileChunk.getChunkExists());
@@ -84,6 +88,17 @@ public class UploadedFileRestController {
 	public void verifyFile(@RequestParam(name = "fileId") String fileUniqueId) {
 		List<FileChunk> fileChunks = fileServices.getFileChunks(fileUniqueId);
 		verificationService.validate(fileChunks);
+	}
+
+	@ApiOperation("Resume uploading selected file")
+	@RequestMapping(value = "resume", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void resumeFile(@RequestParam(name = "fileId") String fileUniqueId) {
+		try {
+			File fileByUniqueId = fileServices.getFileByUniqueId(fileUniqueId);
+			uploadService.resume(fileByUniqueId);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@ApiOperation("Delete selected file")

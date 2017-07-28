@@ -6,6 +6,7 @@ import pl.pamsoft.imapcloud.responses.UploadedFilesResponse;
 public class UploadedFileRestClient extends AbstractRestClient {
 
 	private static final String FIND_ALL_FILES = "uploaded/files";
+	private static final String RESUME_FILE = "uploaded/resume";
 	private static final String VERIFY_FILE = "uploaded/verify";
 	private static final String DELETE_FILE = "uploaded/delete";
 	private static final String FIND_ALL_FILE_CHUNKS = "uploaded/chunks";
@@ -24,6 +25,10 @@ public class UploadedFileRestClient extends AbstractRestClient {
 
 	public void verifyFile(String fileId, RequestCallback<Void> callback) {
 		sendGet(VERIFY_FILE, "fileId", fileId, callback);
+	}
+
+	public void resumeFile(String fileId, RequestCallback<Void> callback) {
+		sendGet(RESUME_FILE, "fileId", fileId, callback);
 	}
 
 	public void deleteFile(String fileId, RequestCallback<Void> callback) {

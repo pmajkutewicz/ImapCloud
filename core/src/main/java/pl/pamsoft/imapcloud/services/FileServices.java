@@ -45,6 +45,7 @@ public class FileServices {
 		file.setFileUniqueId(uniqueId);
 		file.setFileHash(uploadChunkContainer.getFileHash());
 		file.setSize(fileDto.getSize());
+		file.setChunkEncryptionEnabled(uploadChunkContainer.isChunkEncryptionEnabled());
 
 		return fileRepository.save(file);
 	}
@@ -53,7 +54,8 @@ public class FileServices {
 		FileChunk chunk = new FileChunk();
 		chunk.setFileChunkUniqueId(uploadChunkContainer.getFileChunkUniqueId());
 		chunk.setOwnerFile(fileRepository.getById(uploadChunkContainer.getSavedFileId()));
-		chunk.setSize((long) uploadChunkContainer.getData().length);
+		chunk.setOrgSize(uploadChunkContainer.getChunkSize());
+		chunk.setEncryptedSize((long) uploadChunkContainer.getData().length);
 		chunk.setChunkNumber(uploadChunkContainer.getChunkNumber());
 		chunk.setChunkHash(uploadChunkContainer.getChunkHash());
 		chunk.setMessageId(uploadChunkContainer.getStorageChunkId());

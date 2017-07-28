@@ -13,7 +13,8 @@ public class FileChunk {
 	private String fileChunkUniqueId;
 	private int chunkNumber;
 	private String chunkHash;
-	private Long size;
+	private Long orgSize;
+	private Long encryptedSize;
 	private File ownerFile;
 	private String messageId; //TODO: rename to getStoredChunkId ?
 	private boolean lastChunk;
@@ -60,12 +61,20 @@ public class FileChunk {
 		this.chunkHash = chunkHash;
 	}
 
-	public Long getSize() {
-		return this.size;
+	public Long getOrgSize() {
+		return orgSize;
 	}
 
-	public void setSize(Long size) {
-		this.size = size;
+	public void setOrgSize(Long orgSize) {
+		this.orgSize = orgSize;
+	}
+
+	public Long getEncryptedSize() {
+		return encryptedSize;
+	}
+
+	public void setEncryptedSize(Long encryptedSize) {
+		this.encryptedSize = encryptedSize;
 	}
 
 	public File getOwnerFile() {

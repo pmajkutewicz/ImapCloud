@@ -68,6 +68,7 @@ public class ChunkUploaderFacade implements Function<UploadChunkContainer, Uploa
 		addMeta(metadata, MessageHeaders.ChunkNumber, String.valueOf(dataChunk.getChunkNumber()));
 		addMeta(metadata, MessageHeaders.ChunkId, String.valueOf(dataChunk.getFileChunkUniqueId()));
 		addMeta(metadata, MessageHeaders.ChunkHash, String.valueOf(dataChunk.getChunkHash()));
+		addMeta(metadata, MessageHeaders.ChunkSize, String.valueOf(dataChunk.getChunkSize()));
 		addMeta(metadata, MessageHeaders.ChunkEncrypted, String.valueOf(dataChunk.isEncrypted()));
 		addMeta(metadata, MessageHeaders.LastChunk, String.valueOf(dataChunk.isLastChunk()));
 		addMeta(metadata, MessageHeaders.FileId, String.valueOf(dataChunk.getFileUniqueId()));

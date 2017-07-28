@@ -81,6 +81,11 @@ public class UploadedController implements Initializable, Refreshable {
 		uploadedFileRestClient.verifyFile(selectedItem.getFileUniqueId(), data -> {});
 	}
 
+	public void resumeButtonClick(ActionEvent event) {
+		UploadedFileDto selectedItem = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem().getValue();
+		uploadedFileRestClient.resumeFile(selectedItem.getFileUniqueId(), data -> {});
+	}
+
 	@Override
 	public void refresh() {
 		embeddedUploadedFilesTableController.refresh();

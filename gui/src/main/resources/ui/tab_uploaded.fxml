@@ -12,7 +12,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import pl.pamsoft.imapcloud.formatters.*?>
+<?import pl.pamsoft.imapcloud.formatters.CellDateFormatter?>
+<?import pl.pamsoft.imapcloud.formatters.CellTrueFalseImageFormatter?>
 <SplitPane fx:id="root" dividerPositions="0.5" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="pl.pamsoft.imapcloud.controllers.UploadedController">
 	<GridPane>
@@ -24,6 +25,7 @@
 			<RowConstraints vgrow="NEVER"/>
 		</rowConstraints>
 		<HBox alignment="CENTER_RIGHT" GridPane.rowIndex="1">
+			<Button onAction="#resumeButtonClick" text="%uploaded.table.button.resumefile"/>
 			<Button onAction="#verifyButtonClick" text="%uploaded.table.button.verifyfile"/>
 			<Button onAction="#deleteButtonClick" text="%uploaded.table.button.deletefile"/>
 		</HBox>

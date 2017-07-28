@@ -8,8 +8,10 @@ import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
+import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.resume.ExistingChunkFilter;
 import pl.pamsoft.imapcloud.services.upload.ChunkEncrypter;
 import pl.pamsoft.imapcloud.services.upload.ChunkUploaderFacade;
 import pl.pamsoft.imapcloud.services.upload.DirectoryProcessor;
@@ -30,6 +32,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static java.util.Collections.singletonList;
 
 @Service
 public class UploadService extends AbstractBackgroundService {
@@ -53,6 +57,55 @@ public class UploadService extends AbstractBackgroundService {
 	private GitStatsUtil gitStatsUtil;
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
+	public boolean resume(File fileByUniqueId) throws RejectedExecutionException {
+		final String taskId = UUID.randomUUID().toString();
+		Future<Void> future = runAsyncOnExecutor(() -> {
+			Thread.currentThread().setName("UT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
+			Account account = fileByUniqueId.getOwnerAccount();
+			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
+			getTaskProgressMap().put(taskId, getTasksProgressService().create(TaskType.UPLOAD, taskId, fileByUniqueId.getSize(),
+				singletonList(new FileDto(fileByUniqueId.getName(), fileByUniqueId.getAbsolutePath(), FileDto.FileType.FILE, fileByUniqueId.getSize()))));
+
+			Function<File, UploadChunkContainer> packInContainer = file -> {
+				FileDto fileDto = new FileDto(file.getName(), file.getAbsolutePath(), FileDto.FileType.FILE, file.getSize());
+				UploadChunkContainer ucc = new UploadChunkContainer(taskId, fileDto, fileByUniqueId.isChunkEncryptionEnabled());
+				ucc = UploadChunkContainer.addFileHash(ucc, file.getFileHash());
+				return UploadChunkContainer.addIds(ucc, file.getId(), file.getFileUniqueId());
+			};
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, fileServices, getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
+			Predicate<UploadChunkContainer> existingChunkFilter = new ExistingChunkFilter(fileByUniqueId.getFileUniqueId(), fileServices);
+
+			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
+			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> chunkUploader = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
+			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
+			Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
+				.process(ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize());
+			Consumer<UploadChunkContainer> persistTaskProgress = ucc -> {
+				TaskProgress updated = getTasksProgressService().persist(getTaskProgressMap().get(ucc.getTaskId()));
+				getTaskProgressMap().put(ucc.getTaskId(), updated);
+			};
+
+			Stream.of(fileByUniqueId)
+				.map(packInContainer)
+				.flatMap(splitFileIntoChunks)
+				.map(generateChunkHash)
+				.filter(existingChunkFilter)
+				.map(ucc -> ucc.isChunkEncryptionEnabled() ? chunkEncrypter.apply(ucc) : ucc)
+				.filter(filterEmptyUcc)
+				.map(chunkUploader)
+				.filter(filterEmptyUcc)
+				.map(storeFileChunk)
+				.peek(updateProgress)
+				.peek(persistTaskProgress)
+				.forEach(System.out::println);
+		});
+		getTaskMap().put(taskId, future);
+		return true;
+	};
+
+	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> future = runAsyncOnExecutor(() -> {
@@ -73,7 +126,7 @@ public class UploadService extends AbstractBackgroundService {
 				getTaskProgressMap().put(ucc.getTaskId(), updated);
 			};
 
-			Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto);
+			Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto, chunkEncryptionEnabled);
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, getMonitoringHelper());
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
