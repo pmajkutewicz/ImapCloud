@@ -38,7 +38,7 @@
 		<main.basedir>${project.basedir}</main.basedir>
 
 		<!-- region backend client-->
-		<okhttp.version>3.8.0</okhttp.version>
+		<okhttp.version>3.8.1</okhttp.version>
 		<!-- endregion -->
 
 		<!-- region common -->
@@ -54,15 +54,15 @@
 		<tomcat.version>8.0.30</tomcat.version>
 
 		<commons-pool2.version>2.4.2</commons-pool2.version>
-		<spring-boot.version>1.5.3.RELEASE</spring-boot.version>
+		<spring-boot.version>1.5.6.RELEASE</spring-boot.version>
 		<snakeyaml.version>1.18</snakeyaml.version>
 		<orientdb.version>2.2.21</orientdb.version>
-		<javax.mail-api.version>1.6.0-rc2</javax.mail-api.version>
+		<javax.mail-api.version>1.6.0</javax.mail-api.version>
 		<joda-time.version>2.9.9</joda-time.version>
 		<zero-allocation-hashing.version>0.8</zero-allocation-hashing.version>
 		<springfox-swagger2.version>2.7.0</springfox-swagger2.version>
 		<jamon.version>2.81</jamon.version>
-		<ff4j-core.version>1.6.4</ff4j-core.version>
+		<ff4j-core.version>1.6.5</ff4j-core.version>
 		<commons-vfs2.version>2.1</commons-vfs2.version>
 		<httpclient.version>4.5.3</httpclient.version>
 		<!-- endregion -->
@@ -70,13 +70,13 @@
 		<!-- region storage-imap -->
 		<commons-lang.version>2.6</commons-lang.version>
 		<!-- check what spring boot version uses and update -->
-		<spring-context.version>4.3.8.RELEASE</spring-context.version>
+		<spring-context.version>4.3.10.RELEASE</spring-context.version>
 		<!-- endregion -->
 
 		<!-- region gui -->
 		<guice.version>4.1.0</guice.version>
 		<ignite-guice.version>1.0.2</ignite-guice.version>
-		<controlsfx.version>8.40.12</controlsfx.version>
+		<controlsfx.version>8.40.13</controlsfx.version>
 		<commons-math3.version>3.6.1</commons-math3.version>
 		<commons-io.version>2.5</commons-io.version>
 		<!-- endregion -->
@@ -111,7 +111,7 @@
 		<!-- 0.7.3, 0.7.4 and 0.7.5 don't works with sonar -->
 		<jacoco-maven-plugin.version>0.7.2.201409121644</jacoco-maven-plugin.version>
 		<testng.version>6.11</testng.version>
-		<mockito-core.version>2.8.9</mockito-core.version>
+		<mockito-core.version>2.8.47</mockito-core.version>
 		<!-- endregion -->
 
 	</properties>
