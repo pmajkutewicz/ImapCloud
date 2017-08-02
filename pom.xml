@@ -109,7 +109,7 @@
 		<fb-contrib.version>6.6.0</fb-contrib.version>
 		<findbugs-annotation.version>3.0.1u2</findbugs-annotation.version>
 		<!-- 0.7.3, 0.7.4 and 0.7.5 don't works with sonar -->
-		<jacoco-maven-plugin.version>0.7.2.201409121644</jacoco-maven-plugin.version>
+		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
 		<testng.version>6.11</testng.version>
 		<mockito-core.version>2.8.47</mockito-core.version>
 		<!-- endregion -->
@@ -126,6 +126,7 @@
 		<module>api</module>
 		<module>storage-imap</module>
 		<module>storage-vfs</module>
+		<module>integration-tests</module>
 	</modules>
 
 	<dependencyManagement>
@@ -159,6 +160,12 @@
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>core</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>core</artifactId>
+				<version>${project.version}</version>
+				<classifier>exec</classifier>
 			</dependency>
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
@@ -660,7 +667,6 @@
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<useFile>false</useFile>
 					<reportFormat>xml</reportFormat>
-					<parallel>classesAndMethods</parallel>
 					<runOrder>random</runOrder>
 				</configuration>
 				<executions>
@@ -682,8 +688,38 @@
 							</includes>
 							<excludes>
 								<exclude>**/integration**/</exclude>
+								<exclude>**/*IT</exclude>
 							</excludes>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.20</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-testng</artifactId>
+						<version>2.13</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<argLine>${failsafeArgLine}</argLine>
+					<printSummary>true</printSummary>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+					<useFile>false</useFile>
+					<reuseForks>false</reuseForks>
+					<forkCount>5</forkCount>
+					<reportFormat>xml</reportFormat>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

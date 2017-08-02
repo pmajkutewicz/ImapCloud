@@ -1,0 +1,27 @@
+spring.data.orient:
+  url: plocal:./.imapcloud_db/db
+  username: admin
+  password: admin
+
+spring.thymeleaf:
+  cache: false
+  mode: LEGACYHTML5
+
+server:
+  tomcat.accesslog.enabled: true
+  port: 9000
+
+security.user.password: test
+
+logging:
+  level:
+    ROOT: ERROR
+    org.springframework.web: ERROR
+    org.apache.http: DEBUG
+    org.apache.http.headers: DEBUG
+    org.apache.http.wire: DEBUG
+    pl.pamsoft: DEBUG
+  file: imapcloud.log
+
+ic:
+  recoveries.folder: ./recoveries/

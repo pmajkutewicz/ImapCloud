@@ -29,7 +29,7 @@
 		<dependencySet>
 			<outputDirectory>IMAPCloud-server</outputDirectory>
 			<includes>
-				<include>pl.pamsoft.imapcloud:core</include>
+				<include>pl.pamsoft.imapcloud:core:jar:exec</include>
 			</includes>
 			<outputFileNameMapping>IMAPCloud.jar</outputFileNameMapping>
 		</dependencySet>
