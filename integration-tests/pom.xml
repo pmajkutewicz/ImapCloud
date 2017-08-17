@@ -17,6 +17,7 @@
 	<properties>
 		<main.basedir>${project.parent.basedir}</main.basedir>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sonar.sources>${basedir}/target/copied</sonar.sources>
 	</properties>
 
 	<dependencies>
@@ -92,12 +93,12 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<phase>pre-integration-test</phase>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/classes</outputDirectory>
+							<outputDirectory>${sonar.sources}</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${basedir}/../api/target/classes</directory>
@@ -124,6 +125,23 @@
 									<filtering>false</filtering>
 								</resource>
 							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${sonar.sources}</source>
+							</sources>
 						</configuration>
 					</execution>
 				</executions>
