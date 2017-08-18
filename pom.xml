@@ -663,7 +663,7 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<!-- Sets the VM argument line used when unit tests are run. -->
-					<argLine>@{surefireArgLine}</argLine>
+					<argLine>${surefireArgLine}</argLine>
 					<printSummary>true</printSummary>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<useFile>false</useFile>
@@ -706,12 +706,12 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<argLine>@{failsafeArgLine}</argLine>
+					<argLine>${failsafeArgLine}</argLine>
 					<printSummary>true</printSummary>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<useFile>false</useFile>
 					<reuseForks>false</reuseForks>
-					<forkCount>5</forkCount>
+					<forkCount>1</forkCount>
 					<reportFormat>xml</reportFormat>
 				</configuration>
 				<executions>
