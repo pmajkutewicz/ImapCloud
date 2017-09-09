@@ -30,6 +30,8 @@
 	</scm>
 
 	<properties>
+		<sonar.jacoco.itReportPath>${project.basedir}/../integration-tests/target/jacoco-it.exec</sonar.jacoco.itReportPath>
+
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 
@@ -740,8 +742,6 @@
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<destFile>${project.build.directory}/jacoco.exec</destFile>
 							<!--
 								Sets the name of the property containing the settings
 								for JaCoCo runtime agent.
@@ -755,16 +755,10 @@
 					-->
 					<execution>
 						<id>post-unit-test</id>
-						<phase>test</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<dataFile>${project.build.directory}/jacoco.exec</dataFile>
-							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
-						</configuration>
 					</execution>
 
 					<!--
@@ -779,8 +773,6 @@
 						</goals>
 						<configuration>
 							<dumpOnExit>true</dumpOnExit>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<destFile>${project.build.directory}/jacoco-it.exec</destFile>
 							<!--
 								Sets the name of the property containing the settings
 								for JaCoCo runtime agent.
@@ -797,14 +789,8 @@
 						<!-- must be after tomcat shutdown -->
 						<phase>verify</phase>
 						<goals>
-							<goal>report-integration</goal>
+							<goal>report-aggregate</goal>
 						</goals>
-						<configuration>
-							<!-- Sets the path to the file which contains the execution data. -->
-							<dataFile>${project.build.directory}/jacoco-it.exec</dataFile>
-							<!-- Sets the output directory for the code coverage report. -->
-							<outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
