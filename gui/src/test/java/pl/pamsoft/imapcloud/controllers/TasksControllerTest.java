@@ -27,8 +27,8 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static com.jayway.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
