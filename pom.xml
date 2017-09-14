@@ -30,7 +30,8 @@
 	</scm>
 
 	<properties>
-		<sonar.jacoco.itReportPath>${project.basedir}/../integration-tests/target/jacoco-it.exec</sonar.jacoco.itReportPath>
+		<jacoco.itReportPath>${project.basedir}/../integration-tests/target/jacoco-it.exec</jacoco.itReportPath>
+		<sonar.jacoco.reportPaths>${jacoco.itReportPath},${project.build.directory}/jacoco-it.exec,${project.build.directory}/jacoco.exec</sonar.jacoco.reportPaths>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
