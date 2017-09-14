@@ -18,7 +18,6 @@ before_script:
   - sleep 5 # give xvfb some time to start
 
 before_install:
-  - sudo rm /etc/mavenrc
   - export M2_HOME=/usr/local/maven
   - export MAVEN_OPTS="-Xms256m -Xmx1024m -XX:MaxPermSize=512m -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dmaven.junit.fork=true -Dmaven.junit.jvmargs=-Xmx2048m -Dmaven.compile.fork=true -Dmaven.javadoc.skip=true"
 
