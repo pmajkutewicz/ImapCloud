@@ -14,6 +14,8 @@ import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +31,7 @@ import static org.testng.AssertJUnit.fail;
 
 public class UploadRestControllerIT extends AbstractIntegrationTest {
 
+	private static final int ONE_MIB = 1024 * 1024 * 1024;
 	private UploadsRestClient uploadsRestClient;
 	private AccountRestClient accountRestClient;
 	private Common common;
@@ -47,7 +50,8 @@ public class UploadRestControllerIT extends AbstractIntegrationTest {
 	@Test
 	public void shouldUploadFile() throws Exception {
 		AccountDto accountDto = common.shouldCreateAccount("shouldUploadFile", "test", "key", "shouldUploadFile@localhost_tmp");
-		String fileName = "1.pdf";
+		Path tempFile = TestUtils.createTempFile(ONE_MIB);
+		String fileName = tempFile.getFileName().toString();
 
 		Callable<Boolean> verifier = () -> {
 			Collection<File> uploadedFiles = fileRepository.findAll();
@@ -56,7 +60,7 @@ public class UploadRestControllerIT extends AbstractIntegrationTest {
 		};
 		assertFalse(String.format("File %s already exists", fileName), verifier.call());
 
-		List<FileDto> files = Collections.singletonList(new FileDto(fileName, "/media/E/1.pdf", FileDto.FileType.FILE, 8525172L));
+		List<FileDto> files = Collections.singletonList(new FileDto(fileName, tempFile.toAbsolutePath().toString(), FileDto.FileType.FILE, 8525172L));
 		uploadsRestClient.startUpload(files, accountDto, Encryption.ON, new RequestCallback<Void>() {
 			@Override
 			public void onFailure(IOException e) {
@@ -70,6 +74,7 @@ public class UploadRestControllerIT extends AbstractIntegrationTest {
 		});
 
 		await().atMost(2, MINUTES).until(verifier, equalTo(true));
+		Files.delete(tempFile);
 		assertTrue(verifier.call());
 	}
 
