@@ -1,5 +1,6 @@
 package pl.pamsoft.imapcloud.integration;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.AccountDto;
@@ -43,8 +44,9 @@ public class AccountRestControllerIT extends AbstractIntegrationTest {
 
 	@Test(dependsOnMethods = "shouldContainVFSAccount")
 	public void shouldCreateAccount() throws IOException, InterruptedException {
-		String expectedAccountEmail = "test1415261@localhost_tmp";
-		AccountDto accountDto = common.shouldCreateAccount("test1415261", "test", "key", expectedAccountEmail);
+		String username = RandomStringUtils.randomAlphabetic(10);
+		String expectedAccountEmail = String.format("%s@localhost_tmp", username);
+		AccountDto accountDto = common.shouldCreateAccount(username, "test", "key", expectedAccountEmail);
 		assertNotNull(accountDto);
 		assertEquals(accountDto.getEmail(), expectedAccountEmail);
 	}

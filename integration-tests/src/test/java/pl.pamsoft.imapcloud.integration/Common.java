@@ -1,16 +1,34 @@
 package pl.pamsoft.imapcloud.integration;
 
+import org.apache.commons.lang.RandomStringUtils;
+import org.testng.AssertJUnit;
+import org.testng.annotations.Test;
+import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.AccountInfo;
+import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.entity.File;
+import pl.pamsoft.imapcloud.requests.Encryption;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
+import pl.pamsoft.imapcloud.rest.RequestCallback;
+import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
@@ -59,5 +77,37 @@ public class Common {
 		assertTrue(lock3.await(testTimeout, TimeUnit.MILLISECONDS), responseNotReceivedMsg);
 
 		return result.get(0);
+	}
+
+	@Test
+	public Path shouldUploadFile(UploadsRestClient uploadsRestClient, FileRepository fileRepository, long fileSize) throws Exception {
+		String username = RandomStringUtils.randomAlphabetic(10);
+		AccountDto accountDto = shouldCreateAccount(username, "test", "key", String.format("%s@localhost_tmp", username));
+		Path tempFile = TestUtils.createTempFile(fileSize);
+		String fileName = tempFile.getFileName().toString();
+
+		Callable<Boolean> verifier = () -> {
+			Collection<File> uploadedFiles = fileRepository.findAll();
+			// have to verify also isCompleted(), but it looks like some kind of caching issue and all services doesn't see updated value.
+			return isNotEmpty(uploadedFiles) ? uploadedFiles.stream().anyMatch(f -> fileName.equals(f.getName())) : Boolean.FALSE;
+		};
+		assertFalse(verifier.call(), String.format("File %s already exists", fileName));
+
+		List<FileDto> files = Collections.singletonList(new FileDto(fileName, tempFile.toAbsolutePath().toString(), FileDto.FileType.FILE, 8525172L));
+		uploadsRestClient.startUpload(files, accountDto, Encryption.ON, new RequestCallback<Void>() {
+			@Override
+			public void onFailure(IOException e) {
+				AssertJUnit.fail("Error starting upload.");
+			}
+
+			@Override
+			public void onSuccess(Void data) throws IOException {
+
+			}
+		});
+
+		await().atMost(2, MINUTES).until(verifier, equalTo(true));
+		assertTrue(verifier.call());
+		return tempFile;
 	}
 }
