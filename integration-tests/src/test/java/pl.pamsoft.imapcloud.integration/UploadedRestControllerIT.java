@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dao.FileRepository;
+import pl.pamsoft.imapcloud.dto.UploadedFileChunkDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.UploadedFileRestClient;
@@ -13,10 +14,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -41,11 +46,27 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 
 	@Test
 	public void shouldReturnUploadedFileData() throws Exception {
-		List<UploadedFileDto> results = shouldUploadFileAndReturnData();
+		List<UploadedFileDto> results = uploadFileAndReturnData();
 		assertEquals(results.size(), 1);
 	}
 
-	private List<UploadedFileDto> shouldUploadFileAndReturnData() throws Exception {
+	@Test
+	public void shouldVerifyUploadedFile() throws Exception {
+		List<UploadedFileDto> results = uploadFileAndReturnData();
+		assertEquals(results.size(), 1);
+		String fileUniqueId = results.get(0).getFileUniqueId();
+
+		CountDownLatch lock = new CountDownLatch(1);
+		uploadedFileRestClient.verifyFile(fileUniqueId, data -> lock.countDown());
+		assertTrue(lock.await(TEST_TIMEOUT, TimeUnit.MILLISECONDS), RESPONSE_NOT_RECEIVED);
+
+		Callable<Boolean> verifier = () -> getUploadedChunks(fileUniqueId).stream().allMatch(UploadedFileChunkDto::getChunkExists);
+
+		await().atMost(2, MINUTES).until(verifier, equalTo(true));
+		assertTrue(verifier.call());
+	}
+
+	private List<UploadedFileDto> uploadFileAndReturnData() throws Exception {
 		Path uploadedFile = common.shouldUploadFile(uploadsRestClient, fileRepository, ONE_MIB);
 		Files.delete(uploadedFile);
 
@@ -58,6 +79,17 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 		CountDownLatch lock = new CountDownLatch(1);
 		uploadedFileRestClient.getUploadedFiles(data -> {
 			results.addAll(data.getFiles());
+			lock.countDown();
+		});
+		assertTrue(lock.await(TEST_TIMEOUT, TimeUnit.MILLISECONDS), RESPONSE_NOT_RECEIVED);
+		return results;
+	}
+
+	private List<UploadedFileChunkDto> getUploadedChunks(String fileId) throws InterruptedException {
+		List<UploadedFileChunkDto> results = new ArrayList<>();
+		CountDownLatch lock = new CountDownLatch(1);
+		uploadedFileRestClient.getUploadedFileChunks(fileId, data -> {
+			results.addAll(data.getFileChunks());
 			lock.countDown();
 		});
 		assertTrue(lock.await(TEST_TIMEOUT, TimeUnit.MILLISECONDS), RESPONSE_NOT_RECEIVED);
