@@ -4,19 +4,33 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.Version;
 import java.util.Map;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
+@Entity
 public class TaskProgress {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	@Version
+	private Long version;
+
 	private TaskType type;
 	private String taskId;
 	private long bytesOverall;
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinColumn(name = "task_progress_id")
+	@MapKey(name = "absolutePath")
 	private Map<String, EntryProgress> progressMap;
 
 	public void process(String currentFileAbsolutePath, long cumulativeFileProgress) {
@@ -42,11 +56,11 @@ public class TaskProgress {
 		entryProgress.setStatus(ProgressStatus.ALREADY_UPLOADED);
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -95,5 +109,13 @@ public class TaskProgress {
 
 	public void setProgressMap(Map<String, EntryProgress> progressMap) {
 		this.progressMap = progressMap;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 }

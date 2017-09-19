@@ -4,14 +4,14 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class EntryProgressDto {
-	private String id;
+	private Long id;
 	private String absolutePath;
 	private long size;
 	private long progress;
 	private ProgressStatus status;
 	private ProgressEntryType type;
 
-	public EntryProgressDto(String id, String absolutePath, long size, long progress, ProgressStatus status, ProgressEntryType type) {
+	public EntryProgressDto(Long id, String absolutePath, long size, long progress, ProgressStatus status, ProgressEntryType type) {
 		this.id = id;
 		this.absolutePath = absolutePath;
 		this.size = size;
@@ -23,11 +23,11 @@ public class EntryProgressDto {
 	public EntryProgressDto() {
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

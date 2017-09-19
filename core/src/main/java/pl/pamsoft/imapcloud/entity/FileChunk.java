@@ -2,38 +2,49 @@ package pl.pamsoft.imapcloud.entity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Version;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
+@Entity
 public class FileChunk {
 	@Id
-	private String id;
-	private Integer version;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	@Version
+	private Long version;
 
 	private String fileChunkUniqueId;
 	private int chunkNumber;
 	private String chunkHash;
 	private Long orgSize;
 	private Long encryptedSize;
+	@ManyToOne
+	@JoinColumn(name="owner_file_id")
 	private File ownerFile;
 	private String messageId; //TODO: rename to getStoredChunkId ?
 	private boolean lastChunk;
 	private Long lastVerifiedAt;
 	private Boolean chunkExists;
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getVersion() {
+	public Long getVersion() {
 		return this.version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(Long version) {
 		this.version = version;
 	}
 

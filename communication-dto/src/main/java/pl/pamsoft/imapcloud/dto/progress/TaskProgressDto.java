@@ -8,14 +8,14 @@ import java.util.Map;
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class TaskProgressDto {
 
-	private String id;
+	private Long id;
 	private TaskType type;
 	private String taskId;
 	private long bytesOverall;
 	private long bytesProcessed;
 	private Map<String, EntryProgressDto> progressMap;
 
-	public TaskProgressDto(String id, TaskType type, String taskId, long bytesOverall, long bytesProcessed, Map<String, EntryProgressDto> progressMap) {
+	public TaskProgressDto(Long id, TaskType type, String taskId, long bytesOverall, long bytesProcessed, Map<String, EntryProgressDto> progressMap) {
 		this.id = id;
 		this.type = type;
 		this.taskId = taskId;
@@ -27,11 +27,11 @@ public class TaskProgressDto {
 	public TaskProgressDto() {
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

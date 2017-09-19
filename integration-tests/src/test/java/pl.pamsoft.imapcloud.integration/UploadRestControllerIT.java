@@ -1,6 +1,5 @@
 package pl.pamsoft.imapcloud.integration;
 
-import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -23,7 +22,6 @@ public class UploadRestControllerIT extends AbstractIntegrationTest {
 
 	@BeforeClass
 	public void init() {
-		OGlobalConfiguration.DISK_CACHE_SIZE.setValue(1000);
 		uploadsRestClient = new UploadsRestClient(getEndpoint(), "user", getPassword());
 		accountRestClient = new AccountRestClient(getEndpoint(), "user", getPassword());
 		common = new Common(accountRestClient, RESPONSE_NOT_RECEIVED, TEST_TIMEOUT);

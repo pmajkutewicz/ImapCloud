@@ -1,7 +1,5 @@
 package pl.pamsoft.imapcloud.services.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.TaskProgressRepository;
@@ -12,7 +10,6 @@ import pl.pamsoft.imapcloud.entity.EntryProgress;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -22,8 +19,6 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class TasksProgressService {
-
-	private static final Logger LOG = LoggerFactory.getLogger(TasksProgressService.class);
 
 	@Autowired
 	private TaskProgressRepository taskProgressRepository;
@@ -45,12 +40,7 @@ public class TasksProgressService {
 	}
 
 	public TaskProgress persist(TaskProgress event) {
-		try {
-			return taskProgressRepository.save(event);
-		} catch (IOException e) {
-			LOG.error("Error storing progress event", e);
-		}
-		return null;
+		return taskProgressRepository.save(event);
 	}
 
 	public List<TaskProgressDto> findAllTasks() {

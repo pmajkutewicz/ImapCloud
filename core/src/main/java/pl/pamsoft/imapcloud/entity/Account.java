@@ -2,13 +2,29 @@ package pl.pamsoft.imapcloud.entity;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Version;
+import java.util.HashMap;
 import java.util.Map;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN", "NM_SAME_SIMPLE_NAME_AS_INTERFACE"})
+@Entity
 public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	@Version
+	private Long version;
+
 	private String login;
 	private String type;
 	private String host;
@@ -17,13 +33,18 @@ public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	private Integer accountSizeMB;
 	private Integer attachmentSizeMB;
 	private String cryptoKey;
-	private Map<String, String> additionalProperties;
 
-	public String getId() {
+	@ElementCollection(fetch = FetchType.EAGER)
+	@MapKeyColumn(name="name")
+	@Column(name="value")
+	@CollectionTable(name="additional_properties", joinColumns=@JoinColumn(name="account_id"))
+	Map<String, String> additionalProperties = new HashMap<>();
+
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -111,5 +132,13 @@ public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	@Override
 	public String getProperty(String name) {
 		return additionalProperties.get(name);
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 }

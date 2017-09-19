@@ -58,8 +58,8 @@ public class FileRecoveryTest {
 		new FileRecovery(singleton(fileKey), fileRepository, fileChunkRepository, accountRepository, cryptoService)
 				.apply(exampleData);
 
-		verify(fileChunkRepository, times(exampleData.getFileChunkMap().get(fileKey).size())).save(any());
-		verify(fileRepository, times(1)).save(any());
+		verify(fileChunkRepository, times(exampleData.getFileChunkMap().get(fileKey).size())).save(any(FileChunk.class));
+		verify(fileRepository, times(1)).save(any(File.class));
 		fileChunkCaptor.getAllValues().forEach(fc -> assertEquals(fc.getOwnerFile().getFileUniqueId(), fileKey));
 	}
 

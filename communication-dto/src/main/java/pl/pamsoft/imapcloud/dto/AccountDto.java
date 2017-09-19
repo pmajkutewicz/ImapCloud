@@ -7,12 +7,12 @@ import pl.pamsoft.imapcloud.utils.ReadableSize;
 @JsonIgnoreProperties({"readableFileSize"})
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class AccountDto {
-	private String id;
+	private Long id;
 	private String email;
 	private String cryptoKey;
 	private Long usedSpace;
 
-	public AccountDto(String id, String email, String cryptoKey, Long usedSpace) {
+	public AccountDto(Long id, String email, String cryptoKey, Long usedSpace) {
 		this.id = id;
 		this.email = email;
 		this.cryptoKey = cryptoKey;
@@ -27,11 +27,11 @@ public class AccountDto {
 		return ReadableSize.getReadableFileSize(usedSpace);
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

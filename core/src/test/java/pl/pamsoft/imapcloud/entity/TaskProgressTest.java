@@ -37,7 +37,7 @@ public class TaskProgressTest {
 	@Test
 	public void shouldUpdateProgress() {
 		//given
-		String id = "task2";
+		Long id = 1333L;
 		int processedBytes = 512;
 		Map<String, EntryProgress> fileList = createFileList();
 

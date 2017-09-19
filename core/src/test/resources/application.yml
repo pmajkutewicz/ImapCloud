@@ -1,7 +1,17 @@
-spring.data.orient:
-  url: plocal:./target/.imapcloud_db/db
-  username: admin
-  password: admin
+spring:
+  datasource:
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
+  jpa:
+    hibernate.ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
 
 spring.thymeleaf:
   cache: false

@@ -12,7 +12,6 @@ import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -46,11 +45,8 @@ public class AccountServices {
 		account.setCryptoKey(getCryptoKey(request));
 		account.setAdditionalProperties(request.getSelectedAccountProvider().getAdditionalProperties());
 
-		try {
-			accountRepository.save(account);
-		} catch (IOException e) {
-			LOG.warn("Account already exists.");
-		}
+		accountRepository.save(account);
+
 	}
 
 	@VisibleForTesting

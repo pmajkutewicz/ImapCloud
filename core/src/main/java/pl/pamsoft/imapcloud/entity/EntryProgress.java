@@ -4,12 +4,21 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.dto.progress.ProgressEntryType;
 import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
+@Entity
 public class EntryProgress {
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
+	@Version
+	private Long version;
+
 	private String absolutePath;
 	private long size;
 	private long progress;
@@ -33,11 +42,11 @@ public class EntryProgress {
 	public EntryProgress() {
 	}
 
-	public String getId() {
+	public Long getId() {
 		return this.id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -79,5 +88,13 @@ public class EntryProgress {
 
 	public void setType(ProgressEntryType type) {
 		this.type = type;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 }

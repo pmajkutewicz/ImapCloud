@@ -8,13 +8,11 @@ import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
-import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 import pl.pamsoft.imapcloud.services.CryptoService;
 import pl.pamsoft.imapcloud.services.containers.RecoveryChunkContainer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -24,9 +22,9 @@ import static org.bouncycastle.pqc.math.linearalgebra.ByteUtils.fromHexString;
 public class FileRecovery implements Function<RecoveryChunkContainer, RecoveryChunkContainer> {
 
 	private final Set<String> uniqueFileIds;
-	private FileRepository fileRepository;
 	private final FileChunkRepository fileChunkRepository;
 	private final AccountRepository accountRepository;
+	private FileRepository fileRepository;
 	private CryptoService cryptoService;
 
 	public FileRecovery(Set<String> uniqueFileIds, FileRepository fileRepository, FileChunkRepository fileChunkRepository,
@@ -58,25 +56,19 @@ public class FileRecovery implements Function<RecoveryChunkContainer, RecoveryCh
 		Account savedAccount = accountRepository.getById(rcc.getAccount().getId());
 		file.setOwnerAccount(savedAccount);
 		File savedFile;
-		try {
-			savedFile = fileRepository.save(file);
-		} catch (FileAlreadyExistsException e) {
-			savedFile = fileRepository.getByFileUniqueId(file.getFileUniqueId());
-		}
+		savedFile = fileRepository.save(file);
+
 		for (FileChunk fileChunk : fileChunks) {
 			fileChunk.setOwnerFile(savedFile);
-			try {
-				fileChunkRepository.save(fileChunk);
-			} catch (ChunkAlreadyExistException ignore) {
-				// already saved, lets recover next one
-			}
+
+			fileChunkRepository.save(fileChunk);
 		}
 	}
 
 	private File decryptFile(PaddedBufferedBlockCipher key, File file) throws IOException, InvalidCipherTextException {
 		File f = new File();
-		f.setAbsolutePath(new String(cryptoService.decryptHex(key, file.getAbsolutePath()),StandardCharsets.UTF_8));
-		f.setName(new String(cryptoService.decryptHex(key, file.getName()),StandardCharsets.UTF_8));
+		f.setAbsolutePath(new String(cryptoService.decryptHex(key, file.getAbsolutePath()), StandardCharsets.UTF_8));
+		f.setName(new String(cryptoService.decryptHex(key, file.getName()), StandardCharsets.UTF_8));
 		f.setSize(file.getSize());
 		f.setFileUniqueId(file.getFileUniqueId());
 		f.setFileHash(file.getFileHash());

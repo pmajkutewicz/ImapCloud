@@ -1,6 +1,7 @@
 package pl.pamsoft.imapcloud.rest;
 
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import pl.pamsoft.imapcloud.services.VerificationService;
 
 import java.io.FileNotFoundException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -78,6 +80,9 @@ public class UploadedFileRestController {
 	@ApiOperation("Get list of uploaded chunk for given file")
 	@RequestMapping(value = "chunks", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public UploadedFileChunksResponse getUploadedChunks(@RequestParam(name = "fileId") String fileUniqueId) {
+		if (StringUtils.isEmpty(fileUniqueId)) {
+			return new UploadedFileChunksResponse(Collections.emptyList());
+		}
 		List<FileChunk> fileChunks = fileServices.getFileChunks(fileUniqueId);
 		List<UploadedFileChunkDto> converted = fileChunks.stream().map(toUploadedFileChunkDtoConverter).collect(Collectors.toList());
 		return new UploadedFileChunksResponse(converted);

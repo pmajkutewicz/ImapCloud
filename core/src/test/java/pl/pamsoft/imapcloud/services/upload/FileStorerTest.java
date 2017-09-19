@@ -21,7 +21,7 @@ import static org.testng.Assert.assertEquals;
 
 public class FileStorerTest {
 
-	private static final String EXAMPLE_ID = "someId";
+	private static final Long EXAMPLE_ID = 123L;
 	private static final String EXAMPLE_UNIQUE_FILE_ID = "uniqueFileId";
 	private FileStorer fileStorer;
 

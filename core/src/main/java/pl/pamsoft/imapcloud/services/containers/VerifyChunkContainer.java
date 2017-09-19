@@ -12,16 +12,16 @@ public class VerifyChunkContainer implements pl.pamsoft.imapcloud.api.containers
 	private final String taskId;
 	private final String fileChunkUniqueId;
 	private final String fileHash;
-	private final String dbChunkId;
+	private final Long dbChunkId;
 	private final String storageChunkId;
 	private final Boolean chunkExist;
 	private final Boolean chunkInfoUpdatedInDb;
 
-	public VerifyChunkContainer(String taskId, String fileChunkUniqueId, String fileHash, String dbChunkId, String storageChunkId) {
+	public VerifyChunkContainer(String taskId, String fileChunkUniqueId, String fileHash, Long dbChunkId, String storageChunkId) {
 		this(taskId, fileChunkUniqueId, fileHash, dbChunkId, storageChunkId, null, null);
 	}
 
-	private VerifyChunkContainer(String taskId, String fileChunkUniqueId, String fileHash, String dbChunkId, String storageChunkId, Boolean chunkExist, Boolean chunkInfoUpdatedInDb) {
+	private VerifyChunkContainer(String taskId, String fileChunkUniqueId, String fileHash, Long dbChunkId, String storageChunkId, Boolean chunkExist, Boolean chunkInfoUpdatedInDb) {
 		this.taskId = taskId;
 		this.fileChunkUniqueId = fileChunkUniqueId;
 		this.fileHash = fileHash;
@@ -82,7 +82,7 @@ public class VerifyChunkContainer implements pl.pamsoft.imapcloud.api.containers
 		return chunkInfoUpdatedInDb;
 	}
 
-	public String getDbChunkId() {
+	public Long getDbChunkId() {
 		return dbChunkId;
 	}
 }

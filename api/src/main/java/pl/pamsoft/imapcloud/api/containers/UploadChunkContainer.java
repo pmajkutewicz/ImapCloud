@@ -7,7 +7,7 @@ public interface UploadChunkContainer {
 
 	String getFileHash();
 
-	String getSavedFileId();
+	Long getSavedFileId();
 
 	String getFileUniqueId();
 

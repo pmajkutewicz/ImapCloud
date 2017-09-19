@@ -16,7 +16,7 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 	private final FileDto fileDto;
 	private final boolean chunkEncryptionEnabled;
 	private final String fileHash;
-	private final String savedFileId;
+	private final Long savedFileId;
 	private final String fileUniqueId;
 	private final long chunkSize;
 	private final long currentFileChunkCumulativeSize;
@@ -33,11 +33,11 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 	}
 
 	public UploadChunkContainer(String taskId, FileDto fileDto, boolean isChunkEncryptionEnabled) {
-		this(taskId, fileDto, isChunkEncryptionEnabled, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, 0, 0, new byte[0], false, 0, false, StringUtils.EMPTY, StringUtils.EMPTY);
+		this(taskId, fileDto, isChunkEncryptionEnabled, StringUtils.EMPTY, null, StringUtils.EMPTY, 0, 0, new byte[0], false, 0, false, StringUtils.EMPTY, StringUtils.EMPTY);
 	}
 
 	//CSOFF: ParameterNumberCheck
-	private UploadChunkContainer(String taskId, FileDto fileDto, boolean enableChunkEncryption, String fileHash, String savedFileId, String fileUniqueId, long chunkSize, long currentFileChunkCumulativeSize,
+	private UploadChunkContainer(String taskId, FileDto fileDto, boolean enableChunkEncryption, String fileHash, Long savedFileId, String fileUniqueId, long chunkSize, long currentFileChunkCumulativeSize,
 	                             byte[] data, boolean encrypted, int chunkNumber, boolean lastChunk, String chunkHash, String messageId) {
 		this.taskId = taskId;
 		this.fileDto = fileDto;
@@ -67,7 +67,7 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId());
 	}
 
-	public static UploadChunkContainer addIds(UploadChunkContainer ucc, String savedFileId, String fileUniqueId) {
+	public static UploadChunkContainer addIds(UploadChunkContainer ucc, Long savedFileId, String fileUniqueId) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.isChunkEncryptionEnabled(), ucc.getFileHash(), savedFileId, fileUniqueId, ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
 			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId());
 	}
@@ -121,7 +121,7 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 	}
 
 	@Override
-	public String getSavedFileId() {
+	public Long getSavedFileId() {
 		return this.savedFileId;
 	}
 
