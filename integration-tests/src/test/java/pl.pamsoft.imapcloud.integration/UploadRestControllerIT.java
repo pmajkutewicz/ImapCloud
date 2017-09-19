@@ -12,7 +12,7 @@ import java.nio.file.Path;
 
 public class UploadRestControllerIT extends AbstractIntegrationTest {
 
-	private static final int ONE_MIB = 1024 * 1024 * 1024;
+	private static final int ONE_MIB = 1024 * 1024;
 	private UploadsRestClient uploadsRestClient;
 	private AccountRestClient accountRestClient;
 	private Common common;

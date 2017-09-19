@@ -88,8 +88,7 @@ public class Common {
 
 		Callable<Boolean> verifier = () -> {
 			Collection<File> uploadedFiles = fileRepository.findAll();
-			// have to verify also isCompleted(), but it looks like some kind of caching issue and all services doesn't see updated value.
-			return isNotEmpty(uploadedFiles) ? uploadedFiles.stream().anyMatch(f -> fileName.equals(f.getName())) : Boolean.FALSE;
+			return isNotEmpty(uploadedFiles) ? uploadedFiles.stream().filter(File::isCompleted).anyMatch(f -> fileName.equals(f.getName())) : Boolean.FALSE;
 		};
 		assertFalse(verifier.call(), String.format("File %s already exists", fileName));
 
