@@ -17,7 +17,6 @@
 	<properties>
 		<main.basedir>${project.parent.basedir}</main.basedir>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<sonar.sources>${basedir}/target/copied</sonar.sources>
 	</properties>
 
 	<dependencies>
@@ -104,66 +103,6 @@
 						</fileset>
 					</filesets>
 				</configuration>
-			</plugin>
-			<!-- crappy hack to generate coverage for all packages -->
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${sonar.sources}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/../api/target/classes</directory>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}/../backend-client/target/classes</directory>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}/../communication-dto/target/classes</directory>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}/../core/target/classes</directory>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}/../storage-imap/target/classes</directory>
-									<filtering>false</filtering>
-								</resource>
-								<resource>
-									<directory>${basedir}/../storage-vfs/target/classes</directory>
-									<filtering>false</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${sonar.sources}</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
