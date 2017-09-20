@@ -51,6 +51,12 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 	}
 
 	@Test
+	public void shouldReturnEmptyChunkListWhenEmptyFileId() throws Exception {
+		List<UploadedFileChunkDto> uploadedChunks = getUploadedChunks("");
+		assertTrue(uploadedChunks.isEmpty());
+	}
+
+	@Test
 	public void shouldVerifyUploadedFile() throws Exception {
 		List<UploadedFileDto> results = uploadFileAndReturnData();
 		assertEquals(results.size(), 1);
@@ -61,6 +67,22 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 		assertTrue(lock.await(TEST_TIMEOUT, TimeUnit.MILLISECONDS), RESPONSE_NOT_RECEIVED);
 
 		Callable<Boolean> verifier = () -> getUploadedChunks(fileUniqueId).stream().allMatch(UploadedFileChunkDto::getChunkExists);
+
+		await().atMost(2, MINUTES).until(verifier, equalTo(true));
+		assertTrue(verifier.call());
+	}
+
+	@Test
+	public void shouldDeleteUploadedFile() throws Exception {
+		List<UploadedFileDto> results = uploadFileAndReturnData();
+		assertEquals(results.size(), 1);
+		String fileUniqueId = results.get(0).getFileUniqueId();
+
+		CountDownLatch lock = new CountDownLatch(1);
+		uploadedFileRestClient.deleteFile(fileUniqueId, data -> lock.countDown());
+		assertTrue(lock.await(TEST_TIMEOUT, TimeUnit.MILLISECONDS), RESPONSE_NOT_RECEIVED);
+
+		Callable<Boolean> verifier = () -> getUploadedFiles().stream().noneMatch(f -> fileUniqueId.equals(f.getFileUniqueId()));
 
 		await().atMost(2, MINUTES).until(verifier, equalTo(true));
 		assertTrue(verifier.call());

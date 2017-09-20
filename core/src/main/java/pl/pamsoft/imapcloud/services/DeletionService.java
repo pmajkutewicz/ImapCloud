@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
+import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.services.containers.DeleteChunkContainer;
@@ -28,6 +29,9 @@ public class DeletionService extends AbstractBackgroundService {
 	@Autowired
 	private FileChunkRepository fileChunkRepository;
 
+	@Autowired
+	private FileRepository fileRepository;
+
 	//FIXME: Delete by chunks not by whole file
 	public boolean delete(File fileToDelete) {
 		final String taskId = UUID.randomUUID().toString();
@@ -39,7 +43,7 @@ public class DeletionService extends AbstractBackgroundService {
 			// TODO: refactor to "DeleteChunkContainer -> delete file container" and "ChunkDeleterFacade -> filedeletefacade" and "DeleteFileChunkFromDb -> delete file from db"
 			Function<File, DeleteChunkContainer> packItInContainer = file -> new DeleteChunkContainer(taskId, file.getFileUniqueId(), file.getFileHash());
 			ChunkDeleterFacade chunkDeleter = new ChunkDeleterFacade(accountService.getChunkDeleter(account), getMonitoringHelper());
-			DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository); // FIXME: this deletes all chunks in file
+			DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository, fileRepository); // FIXME: this deletes all chunks in file
 
 			Stream.of(fileToDelete)
 				.map(packItInContainer)
