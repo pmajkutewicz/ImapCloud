@@ -133,6 +133,7 @@
 		<module>storage-imap</module>
 		<module>storage-vfs</module>
 		<module>integration-tests</module>
+		<module>coverage-all</module>
 	</modules>
 
 	<dependencyManagement>

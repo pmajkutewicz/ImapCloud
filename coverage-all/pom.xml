@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>parent</artifactId>
+		<groupId>pl.pamsoft.imapcloud</groupId>
+		<version>0.1.2-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>coverage-all</artifactId>
+	<name>IMAP Cloud coverage-all</name>
+
+	<properties>
+		<build.directory.api>../api/target</build.directory.api>
+		<build.directory.backend-client>../backend-client/target</build.directory.backend-client>
+		<build.directory.communication-dto>../communication-dto/target</build.directory.communication-dto>
+		<build.directory.core>../core/target</build.directory.core>
+		<build.directory.gui>../gui/target</build.directory.gui>
+		<build.directory.integration-tests>../integration-tests/target</build.directory.integration-tests>
+		<build.directory.storage-imap>../storage-imap/target</build.directory.storage-imap>
+		<build.directory.storage-vfs>../storage-vfs/target</build.directory.storage-vfs>
+
+		<classes.directory.api>../api/target/classes</classes.directory.api>
+		<classes.directory.backend-client>../backend-client/target/classes</classes.directory.backend-client>
+		<classes.directory.communication-dto>../communication-dto/target/classes</classes.directory.communication-dto>
+		<classes.directory.core>../core/target/classes</classes.directory.core>
+		<classes.directory.gui>../gui/target/classes</classes.directory.gui>
+		<classes.directory.storage-imap>../storage-imap/target/classes</classes.directory.storage-imap>
+		<classes.directory.storage-vfs>../storage-vfs/target/classes</classes.directory.storage-vfs>
+
+		<sources.directory.api>../api/src/main/java</sources.directory.api>
+		<sources.directory.backend-client>../backend-client/src/main/java</sources.directory.backend-client>
+		<sources.directory.communication-dto>../communication-dto/src/main/java</sources.directory.communication-dto>
+		<sources.directory.core>../core/src/main/java</sources.directory.core>
+		<sources.directory.gui>../gui/src/main/java</sources.directory.gui>
+		<sources.directory.core>../core/src/main/java</sources.directory.core>
+		<sources.directory.storage-imap>../storage-imap/src/main/java</sources.directory.storage-imap>
+		<sources.directory.storage-vfs>../storage-vfs/src/main/java</sources.directory.storage-vfs>
+
+		<generated-sources.directory.api>../api/target/generated-sources/annotations</generated-sources.directory.api>
+		<generated-sources.directory.backend-client>../backend-client/target/generated-sources/annotations</generated-sources.directory.backend-client>
+		<generated-sources.directory.communication-dto>../communication-dto/target/generated-sources/annotations</generated-sources.directory.communication-dto>
+		<generated-sources.directory.core>../core/target/generated-sources/annotations</generated-sources.directory.core>
+		<generated-sources.directory.gui>../gui/target/generated-sources/annotations</generated-sources.directory.gui>
+		<generated-sources.directory.integration-tests>../integration-tests/target/generated-sources/annotations</generated-sources.directory.integration-tests>
+		<generated-sources.directory.storage-imap>../storage-imap/target/generated-sources/annotations</generated-sources.directory.storage-imap>
+		<generated-sources.directory.storage-vfs>../storage-vfs/target/generated-sources/annotations</generated-sources.directory.storage-vfs>
+
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<!-- Copy the ant tasks jar. Needed for ts.jacoco.report-ant . -->
+					<execution>
+						<id>jacoco-dependency-ant</id>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<phase>process-test-resources</phase>
+						<inherited>false</inherited>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.jacoco</groupId>
+									<artifactId>org.jacoco.ant</artifactId>
+									<version>${jacoco-maven-plugin.version}</version>
+								</artifactItem>
+							</artifactItems>
+							<stripVersion>true</stripVersion>
+							<outputDirectory>${basedir}/target/jacoco-jars</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<!-- Execute an ant task within maven -->
+								<echo message="Generating JaCoCo Reports" />
+								<taskdef name="report" classname="org.jacoco.ant.ReportTask">
+									<classpath path="${basedir}/target/jacoco-jars/org.jacoco.ant.jar" />
+								</taskdef>
+								<mkdir dir="${basedir}/target/coverage-report" />
+								<report>
+									<executiondata>
+										<fileset dir="${build.directory.api}">
+											<include name="jacoco.exec" />
+										</fileset>
+										<fileset dir="${build.directory.backend-client}">
+											<include name="jacoco.exec" />
+										</fileset>
+										<fileset dir="${build.directory.communication-dto}">
+											<include name="jacoco.exec" />
+										</fileset>
+										<fileset dir="${build.directory.core}">
+											<include name="jacoco.exec" />
+										</fileset>
+										<fileset dir="${build.directory.gui}">
+											<include name="jacoco.exec" />
+										</fileset>
+										<fileset dir="${build.directory.integration-tests}">
+											<include name="jacoco.exec" />
+										</fileset>
+										<fileset dir="${build.directory.storage-imap}">
+											<include name="jacoco.exec" />
+										</fileset>
+										<fileset dir="${build.directory.storage-vfs}">
+											<include name="jacoco.exec" />
+										</fileset>
+									</executiondata>
+									<structure name="imapcloud-multi Coverage Project">
+										<group name="imapcloud-multi">
+											<classfiles>
+												<fileset dir="${classes.directory.api}" />
+												<fileset dir="${classes.directory.backend-client}" />
+												<fileset dir="${classes.directory.communication-dto}" />
+												<fileset dir="${classes.directory.core}" />
+												<fileset dir="${classes.directory.gui}" />
+												<fileset dir="${classes.directory.storage-imap}" />
+												<fileset dir="${classes.directory.storage-vfs}" />
+											</classfiles>
+											<sourcefiles encoding="UTF-8">
+												<fileset dir="${sources.directory.api}" />
+												<fileset dir="${sources.directory.backend-client}" />
+												<fileset dir="${sources.directory.communication-dto}" />
+												<fileset dir="${sources.directory.core}" />
+												<fileset dir="${sources.directory.gui}" />
+												<fileset dir="${sources.directory.storage-imap}" />
+												<fileset dir="${sources.directory.storage-vfs}" />
+
+												<fileset dir="${generated-sources.directory.api}" />
+												<fileset dir="${generated-sources.directory.backend-client}" />
+												<fileset dir="${generated-sources.directory.communication-dto}" />
+												<fileset dir="${generated-sources.directory.core}" />
+												<fileset dir="${generated-sources.directory.gui}" />
+												<fileset dir="${generated-sources.directory.storage-imap}" />
+												<fileset dir="${generated-sources.directory.storage-vfs}" />
+											</sourcefiles>
+										</group>
+									</structure>
+									<html destdir="${basedir}/target/coverage-report/html" />
+									<xml destfile="${basedir}/target/coverage-report/coverage-report.xml" />
+									<csv destfile="${basedir}/target/coverage-report/coverage-report.csv" />
+								</report>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.jacoco</groupId>
+						<artifactId>org.jacoco.ant</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
