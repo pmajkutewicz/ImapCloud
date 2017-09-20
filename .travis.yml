@@ -18,8 +18,8 @@ before_script:
   - sleep 5 # give xvfb some time to start
 
 before_install:
-  - export M2_HOME=/usr/local/maven
-  - export MAVEN_OPTS="-Xms256m -Xmx1024m -XX:MaxPermSize=512m -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dmaven.junit.fork=true -Dmaven.junit.jvmargs=-Xmx2048m -Dmaven.compile.fork=true -Dmaven.javadoc.skip=true"
+  - sudo apt-get install jq
+  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
