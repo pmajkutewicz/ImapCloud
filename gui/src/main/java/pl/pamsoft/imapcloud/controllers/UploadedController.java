@@ -66,7 +66,7 @@ public class UploadedController implements Initializable, Refreshable {
 		UploadedFileDto selectedItem = embeddedUploadedFilesTable.getSelectionModel().getSelectedItem().getValue();
 		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
-		//TODO: externalize strings
+		//FIXME: externalize strings
 		alert.setTitle("Warning");
 		alert.setHeaderText("Are You sure You want to delete:\n" + selectedItem.getName());
 

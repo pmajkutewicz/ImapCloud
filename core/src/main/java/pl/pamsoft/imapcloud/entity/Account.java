@@ -38,7 +38,7 @@ public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	@MapKeyColumn(name="name")
 	@Column(name="value")
 	@CollectionTable(name="additional_properties", joinColumns=@JoinColumn(name="account_id"))
-	Map<String, String> additionalProperties = new HashMap<>();
+	private Map<String, String> additionalProperties = new HashMap<>();
 
 	public Long getId() {
 		return this.id;

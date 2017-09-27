@@ -40,7 +40,7 @@ public class DeletionService extends AbstractBackgroundService {
 			final Account account = accountRepository.getById(fileToDelete.getOwnerAccount().getId());
 			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
 
-			// TODO: refactor to "DeleteChunkContainer -> delete file container" and "ChunkDeleterFacade -> filedeletefacade" and "DeleteFileChunkFromDb -> delete file from db"
+			// FIXME: refactor to "DeleteChunkContainer -> delete file container" and "ChunkDeleterFacade -> filedeletefacade" and "DeleteFileChunkFromDb -> delete file from db"
 			Function<File, DeleteChunkContainer> packItInContainer = file -> new DeleteChunkContainer(taskId, file.getFileUniqueId(), file.getFileHash());
 			ChunkDeleterFacade chunkDeleter = new ChunkDeleterFacade(accountService.getChunkDeleter(account), getMonitoringHelper());
 			DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository, fileRepository); // FIXME: this deletes all chunks in file
@@ -51,7 +51,7 @@ public class DeletionService extends AbstractBackgroundService {
 				.map(deleteFileChunkFromDb)
 				.forEach(System.out::println);
 
-			//TODO: all chunks deleted, delete file (when? and who should do this)
+			//FIXME: all chunks deleted, delete file (when? and who should do this)
 		});
 		getTaskMap().put(taskId, task);
 		return true;

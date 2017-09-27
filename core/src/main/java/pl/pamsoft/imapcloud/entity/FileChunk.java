@@ -27,7 +27,7 @@ public class FileChunk {
 	@ManyToOne
 	@JoinColumn(name="owner_file_id")
 	private File ownerFile;
-	private String messageId; //TODO: rename to getStoredChunkId ?
+	private String messageId; //FIXME: rename to getStoredChunkId ?
 	private boolean lastChunk;
 	private Long lastVerifiedAt;
 	private Boolean chunkExists;

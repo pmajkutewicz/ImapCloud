@@ -22,7 +22,7 @@ public class DownloadChunkContainer implements pl.pamsoft.imapcloud.api.containe
 	private final byte[] data;
 	private final String chunkHash;
 	private final String fileHash;
-	//TODO: add chunk size (and file size?)
+	//FIXME: add chunk size (and file size?)
 
 	public DownloadChunkContainer(String taskId, FileChunk chunkToDownload, FileDto destinationDir, String expectedChunkHash, String expectedFileHash) {
 		this(taskId, chunkToDownload, destinationDir, expectedChunkHash, expectedFileHash, new byte[0], null, null);

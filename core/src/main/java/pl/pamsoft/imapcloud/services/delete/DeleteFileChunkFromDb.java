@@ -19,7 +19,7 @@ public class DeleteFileChunkFromDb implements Function<DeleteChunkContainer, Del
 	@Override
 	public DeleteChunkContainer apply(DeleteChunkContainer dcc) {
 		if (dcc.getDeleted()) {
-			// TODO:this should delete one chunk... should be refactore - no delete chunk as for now
+			// FIXME:this should delete one chunk... should be refactore - no delete chunk as for now
 			fileChunkRepository.deleteFileChunks(dcc.getFileUniqueId());
 			File file = fileRepository.getByFileUniqueId(dcc.getFileUniqueId());
 			fileRepository.delete(file);

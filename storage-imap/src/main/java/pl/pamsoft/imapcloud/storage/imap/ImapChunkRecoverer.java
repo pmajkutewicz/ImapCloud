@@ -28,7 +28,7 @@ public class ImapChunkRecoverer implements ChunkRecoverer {
 	private final GenericObjectPool<Store> connectionPool;
 	private List<String> requiredHeaders;
 
-	//TODO: Add once again TasksProgressService tasksProgressService, Map<String, TaskProgress> taskProgressMap - see ChunkRecovery.class
+	//FIXME: Add once again TasksProgressService tasksProgressService, Map<String, TaskProgress> taskProgressMap - see ChunkRecovery.class
 	public ImapChunkRecoverer(GenericObjectPool<Store> connectionPool) {
 		this.connectionPool = connectionPool;
 		this.requiredHeaders = Stream.of(MessageHeaders.values()).map(MessageHeaders::toString).collect(toList());

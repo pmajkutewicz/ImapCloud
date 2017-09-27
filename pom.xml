@@ -7,10 +7,22 @@
 	<packaging>pom</packaging>
 	<name>IMAP Cloud parent</name>
 
+	<parent>
+		<groupId>pl.pamsoft.qa</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
 	<prerequisites>
 		<maven>3.2.1</maven>
 	</prerequisites>
 
+	<repositories>
+		<repository>
+			<id>github</id>
+			<url>https://raw.github.com/pmajkutewicz/qa/repository/</url>
+		</repository>
+	</repositories>
 	<distributionManagement>
 		<repository>
 			<id>archiva.internal</id>
@@ -107,12 +119,6 @@
 		<!-- endregion -->
 
 		<!-- region QA -->
-		<checkstyle.version>6.15</checkstyle.version>
-		<findbugs-maven-plugin.failOnError>true</findbugs-maven-plugin.failOnError>
-		<findsecbugs-plugin.version>1.4.5</findsecbugs-plugin.version>
-		<fb-contrib.version>6.6.0</fb-contrib.version>
-		<findbugs-annotation.version>3.0.1u2</findbugs-annotation.version>
-		<!-- 0.7.3, 0.7.4 and 0.7.5 don't works with sonar -->
 		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
 		<testng.version>6.11</testng.version>
 		<mockito-core.version>2.8.47</mockito-core.version>
@@ -516,152 +522,6 @@
 				<configuration>
 					<tagNameFormat>@{project.version}</tagNameFormat>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<fork>true</fork>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-				<executions>
-					<execution> <!-- this execution excludes my main sources under my.package -->
-						<id>default-compile</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration> <!-- no lint check -->
-							<excludes>
-								<exclude>com/google/**/*.java</exclude>
-							</excludes>
-						</configuration>
-					</execution>
-					<execution> <!-- this execution includes my main sources under my.package -->
-						<id>compile-main</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>compile</goal>
-						</goals>
-						<configuration> <!-- adds lint check -->
-							<includes>
-								<include>com/google/**/*.java</include>
-							</includes>
-							<showDeprecation>true</showDeprecation>
-							<showWarnings>true</showWarnings>
-							<compilerArgs>
-								<arg>-parameters</arg>
-								<arg>-Xlint:all</arg>
-								<arg>-Xlint:-processing</arg>
-								<arg>-Xlint:-serial</arg>
-								<arg>-Xlint:-unchecked</arg> <!-- TODO: remove and fix errors -->
-								<arg>-Xlint:-rawtypes</arg> <!-- TODO: remove and fix errors -->
-								<arg>-Xlint:-path
-								</arg> <!-- jhm module with travis: warning: [path] bad path element "/home/travis/pmajkutewicz/ImapCloud/jmh/target/classes": no such file or directory -->
-								<arg>-Werror</arg>
-							</compilerArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${maven-checkstyle-plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<skip>${skip.checkstyle}</skip>
-					<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-					<configLocation>other/checkstyle_checks.xml</configLocation>
-					<failsOnError>true</failsOnError>
-					<logViolationsToConsole>true</logViolationsToConsole>
-					<consoleOutput>true</consoleOutput>
-				</configuration>
-				<dependencies>
-					<dependency>
-						<groupId>com.puppycrawl.tools</groupId>
-						<artifactId>checkstyle</artifactId>
-						<version>${checkstyle.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>one.util</groupId>
-				<artifactId>huntbugs-maven-plugin</artifactId>
-				<version>0.0.11</version>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>huntbugs</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<failScore>0</failScore>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>findbugs-maven-plugin</artifactId>
-				<version>${maven-findbugs-plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<skip>${skip.findbugs}</skip>
-					<excludeFilterFile>${main.basedir}/other/findbug_excludes.xml</excludeFilterFile>
-					<effort>Max</effort><!-- Min, Default, Max -->
-					<!-- I guess this on can be set to Low after fixing higher priority bugs,
-					 but let start from Highest ones -->
-					<threshold>Default</threshold><!-- High, Default, Low, Ignore -->
-					<failOnError>${findbugs-maven-plugin.failOnError}</failOnError>
-					<plugins>
-						<plugin>
-							<groupId>com.h3xstream.findsecbugs</groupId>
-							<artifactId>findsecbugs-plugin</artifactId>
-							<version>${findsecbugs-plugin.version}</version>
-						</plugin>
-						<plugin>
-							<groupId>com.mebigfatguy.fb-contrib</groupId>
-							<artifactId>fb-contrib</artifactId>
-							<version>${fb-contrib.version}</version>
-						</plugin>
-					</plugins>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${maven-pmd-plugin.version}</version>
-				<configuration>
-					<failOnViolation>${maven-pmd-plugin.failOnViolation}</failOnViolation>
-					<failurePriority>3</failurePriority>
-					<printFailingErrors>true</printFailingErrors>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-							<goal>cpd-check</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<!--<plugin>-->
 				<!--<groupId>edu.illinois</groupId>-->

@@ -36,7 +36,7 @@ public class FileSaver implements Function<DownloadChunkContainer, DownloadChunk
 			double lastVal = monitoringHelper.stop(monitor);
 			LOG.debug("Chunk appended in {} ms", lastVal);
 		} catch (IOException e) {
-			//TODO: can't append chunk to file... what to do?
+			//FIXME: can't append chunk to file... what to do?
 			e.printStackTrace();
 		}
 		return dcc;
