@@ -2,21 +2,22 @@
 
 <?scenebuilder-stylesheet css/custom.css?>
 
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.TasksController"
-      maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.pamsoft.imapcloud.controllers.TasksController">
 	<VBox>
 		<HBox alignment="BASELINE_LEFT">
-			<Label text="%monitoring.label.update"/>
-			<Slider fx:id="updateIntervalSlider" majorTickUnit="1.0" max="10.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" HBox.hgrow="ALWAYS"/>
-			<Label fx:id="sliderLabel"/>
+			<Label text="%monitoring.label.update" />
+			<Slider fx:id="updateIntervalSlider" majorTickUnit="1.0" max="10.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" HBox.hgrow="ALWAYS" />
+			<Label fx:id="sliderLabel" />
+         <CheckBox fx:id="hideCompleted" mnemonicParsing="false" text="%monitoring.checkbox.hide" />
 		</HBox>
 	</VBox>
 	<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
-		<VBox fx:id="tasksContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS"/>
+		<VBox fx:id="tasksContainer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" VBox.vgrow="ALWAYS" />
 	</ScrollPane>
 </VBox>

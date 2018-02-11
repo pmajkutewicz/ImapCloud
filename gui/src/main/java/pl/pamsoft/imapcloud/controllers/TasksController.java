@@ -3,6 +3,7 @@ package pl.pamsoft.imapcloud.controllers;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -45,6 +46,9 @@ public class TasksController implements Initializable {
 	@FXML
 	private Slider updateIntervalSlider;
 
+	@FXML
+	private CheckBox hideCompleted;
+
 	//setter injection
 	private PlatformTools platformTools;
 	private TaskProgressRestClient taskProgressRestClient;
@@ -74,6 +78,11 @@ public class TasksController implements Initializable {
 						current.updateProgress(entry.getAbsolutePath(), entry.getProgress(), entry.getStatus());
 					}
 					current.updateProgress(overallProgress);
+					if (hideCompleted.isSelected() && Double.compare(overallProgress, 1) >= 0) {
+						current.setVisible(false);
+					} else {
+						current.setVisible(true);
+					}
 				}
 			);
 			LOG.debug(event.toString());
