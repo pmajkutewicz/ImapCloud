@@ -65,7 +65,7 @@ public class TasksController implements Initializable {
 			String taskId = event.getTaskId();
 			if (!currentTasks.containsKey(taskId)) {
 				current = new TaskProgressControl(taskId, parseType(event.getType()), event.getProgressMap(),
-					determineBackground(event.getType()));
+					determineBackground(event.getType()), taskProgressRestClient);
 				currentTasks.put(taskId, current);
 				platformTools.runLater(() -> tasksContainer.getChildren().addAll(current));
 			} else {

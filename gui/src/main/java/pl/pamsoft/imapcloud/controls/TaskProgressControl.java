@@ -7,17 +7,24 @@ import com.google.common.annotations.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
+import javafx.stage.StageStyle;
 import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
 import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
+import pl.pamsoft.imapcloud.rest.TaskProgressRestClient;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressFBWarnings("FCBL_FIELD_COULD_BE_LOCAL")
@@ -35,13 +42,17 @@ public class TaskProgressControl extends AbstractControl {
 	@FXML
 	private VBox filesInfo;
 
+	private String taskId;
+	private TaskProgressRestClient taskProgressRestClient;
 	private Map<String, SimpleDoubleProperty> progressMap;
 	private Map<String, SimpleObjectProperty<ProgressStatus>> progressStatusMap;
 
 	@SuppressFBWarnings("UR_UNINIT_READ")
 	public TaskProgressControl(String id, String type, Map<String, EntryProgressDto> progressDtoMap,
-	                           Background background) {
+	                           Background background, TaskProgressRestClient taskProgressRestClient) {
+		this.taskProgressRestClient = taskProgressRestClient;
 		this.setBackground(background);
+		this.taskId = id;
 		this.taskIdLabel.setText(type + ' ' + id);
 		createFileMap(progressDtoMap);
 		generateIdenticon(id);
@@ -58,6 +69,27 @@ public class TaskProgressControl extends AbstractControl {
 		overallProgress.setProgress(overallProgressValue);
 	}
 
+	@FXML
+	public void deleteButtonClick(ActionEvent event) {
+		Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+		alert.setTitle("Are you sure?");
+		alert.setHeaderText("Do You also want to delete all uploaded data?");
+		alert.initStyle(StageStyle.UTILITY);
+
+		ButtonType btnYes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+		ButtonType btnNo = new ButtonType("No", ButtonBar.ButtonData.NO);
+		ButtonType btnCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+		alert.getButtonTypes().setAll(btnYes, btnNo, btnCancel);
+
+
+		Optional<ButtonType> result = alert.showAndWait();
+		if (result.get() == btnYes) {
+			taskProgressRestClient.deleteTask(taskId, true, data -> { });
+		} else if (result.get() == btnNo) {
+			taskProgressRestClient.deleteTask(taskId, false, data -> { });
+		}
+	}
 
 	private void generateIdenticon(String hash) {
 		HashGeneratorInterface hashGenerator = new MessageDigestHashGenerator("sha-512");

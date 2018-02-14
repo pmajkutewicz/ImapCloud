@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?scenebuilder-stylesheet css/custom.css?>
+
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
 <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8"
       xmlns:fx="http://javafx.com/fxml/1">
 	<padding>
@@ -23,4 +26,14 @@
 		<Label fx:id="taskMessage" maxWidth="1.7976931348623157E308" text="Task message"/>
 	</VBox>
 	<ProgressIndicator fx:id="overallProgress" progress="0.0"/>
+	<Button mnemonicParsing="false" onAction="#deleteButtonClick">
+		<padding>
+			<Insets/>
+		</padding>
+		<graphic>
+			<ImageView fitHeight="16" fitWidth="16" pickOnBounds="true" preserveRatio="true">
+				<Image url="@../../img/delete.png"/>
+			</ImageView>
+		</graphic>
+	</Button>
 </HBox>

@@ -2,6 +2,8 @@ package pl.pamsoft.imapcloud.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Repository;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.EntryProgress;
@@ -31,6 +33,13 @@ public class TaskProgressRepositoryImpl implements TaskProgressRepositoryCustom 
 		Map<String, EntryProgress> files = selectedFiles.stream()
 			.collect(Collectors.toMap(FileDto::getAbsolutePath, v -> new EntryProgress(v.getAbsolutePath(), v.getSize())));
 		return createInt(type, taskId, bytesOverall, files);
+	}
+
+	@Override
+	public TaskProgress getByTaskId(String taskId) {
+		TaskProgress taskProgress = new TaskProgress();
+		taskProgress.setTaskId(taskId);
+		return taskProgressRepository.findOne(Example.of(taskProgress, ExampleMatcher.matchingAny()));
 	}
 
 	private TaskProgress createInt(TaskType type, String taskId, long bytesOverall, Map<String, EntryProgress> entries) {

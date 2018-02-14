@@ -2,12 +2,15 @@ package pl.pamsoft.imapcloud.services.common;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dao.TaskProgressRepository;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
 import pl.pamsoft.imapcloud.dto.progress.TaskProgressDto;
 import pl.pamsoft.imapcloud.entity.EntryProgress;
+import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
+import pl.pamsoft.imapcloud.services.DeletionService;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.List;
@@ -22,6 +25,12 @@ public class TasksProgressService {
 
 	@Autowired
 	private TaskProgressRepository taskProgressRepository;
+
+	@Autowired
+	private FileRepository fileRepository;
+
+	@Autowired
+	private DeletionService deletionService;
 
 	private Function<EntryProgress, EntryProgressDto> progressToDto = fp -> new EntryProgressDto(fp.getId(), fp.getAbsolutePath(), fp.getSize(), fp.getProgress(), fp.getStatus(), fp.getType());
 
@@ -46,5 +55,20 @@ public class TasksProgressService {
 	public List<TaskProgressDto> findAllTasks() {
 		List<TaskProgress> tasks = taskProgressRepository.findAll();
 		return tasks.stream().map(taskProgressToDto).collect(toList());
+	}
+
+	public void bindWithFile(String taskId, String absolutePath, String fileUniqueId) {
+		File file = fileRepository.getByFileUniqueId(fileUniqueId);
+		TaskProgress task = taskProgressRepository.getByTaskId(taskId);
+		task.getProgressMap().get(absolutePath).setFile(file);
+		persist(task);
+	}
+
+	public void deleteTask(String taskId, boolean deleteUploadedFiles) {
+		TaskProgress progress = taskProgressRepository.getByTaskId(taskId);
+		if (deleteUploadedFiles) {
+			progress.getProgressMap().values().forEach(e -> deletionService.delete(e.getFile()));
+		}
+		taskProgressRepository.delete(progress);
 	}
 }

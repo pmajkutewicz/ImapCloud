@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
@@ -18,6 +20,10 @@ public class EntryProgress {
 	private Long id;
 	@Version
 	private Long version;
+
+	@OneToOne
+	@JoinColumn(name = "file_id")
+	private File file;
 
 	private String absolutePath;
 	private long size;
@@ -88,6 +94,14 @@ public class EntryProgress {
 
 	public void setType(ProgressEntryType type) {
 		this.type = type;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
 	}
 
 	public Long getVersion() {

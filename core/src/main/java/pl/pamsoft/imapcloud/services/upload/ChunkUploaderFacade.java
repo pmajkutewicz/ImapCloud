@@ -75,7 +75,11 @@ public class ChunkUploaderFacade implements Function<UploadChunkContainer, Uploa
 		addMeta(metadata, MessageHeaders.FileName, encrypt(dataChunk.getFileDto().getName()));
 		addMeta(metadata, MessageHeaders.FilePath, encrypt(dataChunk.getFileDto().getAbsolutePath()));
 		addMeta(metadata, MessageHeaders.FileHash, dataChunk.getFileHash());
-		addMeta(metadata, MessageHeaders.MagicNumber, gitStatsUtil.getGitRepositoryState().getCommitId());
+		try {
+			addMeta(metadata, MessageHeaders.MagicNumber, gitStatsUtil.getGitRepositoryState().getCommitId());
+		} catch (NullPointerException ignored) {
+
+		}
 		return metadata;
 	}
 

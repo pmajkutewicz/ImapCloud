@@ -7,5 +7,4 @@ import pl.pamsoft.imapcloud.entity.TaskProgress;
 @Repository
 public interface TaskProgressRepository extends JpaRepository<TaskProgress, Long>, TaskProgressRepositoryCustom {
 
-	TaskProgress getById(String id);
 }

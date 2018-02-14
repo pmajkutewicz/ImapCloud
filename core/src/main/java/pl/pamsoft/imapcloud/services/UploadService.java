@@ -19,6 +19,7 @@ import pl.pamsoft.imapcloud.services.upload.DirectorySizeCalculator;
 import pl.pamsoft.imapcloud.services.upload.FileChunkStorer;
 import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
+import pl.pamsoft.imapcloud.services.upload.FileWithProgressBinder;
 import pl.pamsoft.imapcloud.services.upload.UploadChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.UploadFileHasher;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
@@ -131,6 +132,7 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, getMonitoringHelper());
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileAlreadyUploaded.andThen(persistTaskProgress));
+			Consumer<UploadChunkContainer> fileWithProgressBinder = new FileWithProgressBinder(fileServices, getTasksProgressService());
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
@@ -143,6 +145,7 @@ public class UploadService extends AbstractBackgroundService {
 				.map(generateFilehash)
 				.filter(removeFilesWithSize0)
 				.map(storeFile)
+				.peek(fileWithProgressBinder)
 				.filter(filterEmptyUcc)
 				.flatMap(splitFileIntoChunks)
 				.filter(filterEmptyUcc)

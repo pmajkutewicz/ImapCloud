@@ -15,4 +15,5 @@ public interface TaskProgressRepositoryCustom {
 
 	TaskProgress create(TaskType type, String taskId, long bytesOverall, List<FileDto> selectedFiles);
 
+	TaskProgress getByTaskId(String taskId);
 }
