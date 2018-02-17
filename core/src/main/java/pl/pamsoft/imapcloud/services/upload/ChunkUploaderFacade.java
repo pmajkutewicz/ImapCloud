@@ -63,6 +63,7 @@ public class ChunkUploaderFacade implements Function<UploadChunkContainer, Uploa
 		monitoringHelper.add(Keys.IMAP_THROUGHPUT, ((double) chunkSize / elapsedMs) * THOUSAND);
 	}
 
+	@SuppressWarnings("PMD.EmptyCatchBlock")
 	private Map<String, String> createMetadata(UploadChunkContainer dataChunk) throws IOException {
 		Map<String, String> metadata = new HashMap<>();
 		addMeta(metadata, MessageHeaders.ChunkNumber, String.valueOf(dataChunk.getChunkNumber()));

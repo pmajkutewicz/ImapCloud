@@ -44,11 +44,20 @@ public class ImapChunkUploader implements ChunkUploader {
 	}
 
 	private String retryLoop(UploadChunkContainer dataChunk, Map<String, String> metadata) throws IOException {
-		String uploadedResult = uploadInt(dataChunk, metadata);
-		if (StringUtils.EMPTY.equals(uploadedResult) && MAX_RETRIES > retryCounter.getAndIncrement()) {
-			retryLoop(dataChunk, metadata);
+		try {
+			String uploadedResult = uploadInt(dataChunk, metadata);
+			if (StringUtils.EMPTY.equals(uploadedResult) && MAX_RETRIES > retryCounter.getAndIncrement()) {
+				return retryLoop(dataChunk, metadata);
+			} else {
+				return uploadedResult;
+			}
+		} catch (IOException e) {
+			if (MAX_RETRIES > retryCounter.getAndIncrement()) {
+				return retryLoop(dataChunk, metadata);
+			} else {
+				throw e;
+			}
 		}
-		return uploadedResult;
 	}
 
 	private String uploadInt(UploadChunkContainer dataChunk, Map<String, String> metadata) throws IOException {

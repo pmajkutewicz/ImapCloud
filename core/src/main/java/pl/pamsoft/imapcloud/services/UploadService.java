@@ -132,7 +132,7 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, getMonitoringHelper());
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileAlreadyUploaded.andThen(persistTaskProgress));
-			Consumer<UploadChunkContainer> fileWithProgressBinder = new FileWithProgressBinder(fileServices, getTasksProgressService());
+			Consumer<UploadChunkContainer> fileWithProgressBinder = new FileWithProgressBinder(fileServices, getTaskProgressMap());
 			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
