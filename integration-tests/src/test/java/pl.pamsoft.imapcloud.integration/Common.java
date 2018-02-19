@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -45,6 +46,12 @@ public class Common {
 	}
 
 	public AccountDto shouldCreateAccount(String username, String password, String cryptoKey, String expectedAccountEmail) throws IOException, InterruptedException {
+		return shouldCreateAccount(username, password, cryptoKey, expectedAccountEmail, "vfs", a-> "tmp".equals(a.getProperty("fs")));
+	}
+	public AccountDto shouldCreateAccount(String username, String password, String cryptoKey, String expectedAccountEmail, String type) throws IOException, InterruptedException {
+		return shouldCreateAccount(username, password, cryptoKey, expectedAccountEmail, type, a -> true);
+	}
+	private AccountDto shouldCreateAccount(String username, String password, String cryptoKey, String expectedAccountEmail, String type, Predicate<AccountInfo> filter) throws IOException, InterruptedException {
 		// get available accounts
 		CountDownLatch lock = new CountDownLatch(1);
 		List<AccountInfo> responses = new ArrayList<>();
@@ -55,7 +62,7 @@ public class Common {
 		);
 		assertTrue(lock.await(testTimeout, TimeUnit.MILLISECONDS), responseNotReceivedMsg);
 
-		Optional<AccountInfo> accountInfo = responses.stream().filter(a -> "vfs".equals(a.getType())).filter(a -> "tmp".equals(a.getProperty("fs"))).findFirst();
+		Optional<AccountInfo> accountInfo = responses.stream().filter(a -> type.equals(a.getType())).filter(filter).findFirst();
 		if (!accountInfo.isPresent()) {
 			fail("No VFS account available");
 		}

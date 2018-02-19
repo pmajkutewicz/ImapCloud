@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ImapChunkUploader implements ChunkUploader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImapChunkUploader.class);
-	private static final int MAX_RETRIES = 20;
+	private static final int MAX_RETRIES = 10;
 
 	private GenericObjectPool<Store> connectionPool;
 	private AtomicInteger retryCounter = new AtomicInteger(0);
@@ -53,6 +53,7 @@ public class ImapChunkUploader implements ChunkUploader {
 			}
 		} catch (IOException e) {
 			if (MAX_RETRIES > retryCounter.getAndIncrement()) {
+				LOG.warn("Uploading failed, retrying: " + retryCounter.get()  + " for: " + dataChunk.getFileChunkUniqueId());
 				return retryLoop(dataChunk, metadata);
 			} else {
 				throw e;

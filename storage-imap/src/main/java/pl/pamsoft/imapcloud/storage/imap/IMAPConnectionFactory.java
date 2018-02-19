@@ -28,11 +28,16 @@ public class IMAPConnectionFactory implements PooledObjectFactory<Store> {
 	@Override
 	public PooledObject<Store> makeObject() throws Exception {
 		Properties props = new Properties();
-		props.put("mail.store.protocol", "imaps");
+		props.put("mail.store.protocol", "imap");
 
 		Session session = Session.getDefaultInstance(props, null);
-		Store store = session.getStore("imaps");
-		store.connect(host, username, password);
+		Store store = session.getStore("imap");
+		if (host.contains(":")) {
+			String[] split = host.split(":");
+			store.connect(split[0], Integer.parseInt(split[1]), username, password);
+		} else {
+			store.connect(host, username, password);
+		}
 		DefaultPooledObject<Store> storeDefaultPooledObject = new DefaultPooledObject<>(store);
 		LOG.debug("Store created: {}", storeDefaultPooledObject);
 		return storeDefaultPooledObject;

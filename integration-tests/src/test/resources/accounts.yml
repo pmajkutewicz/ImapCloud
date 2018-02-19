@@ -1,0 +1,17 @@
+localhost_imap: {
+  type: imap,
+  host: "localhost:23784",
+  loginType: USERNAME_ONLY,
+  maxConcurrentConnections: 8,
+  accountSizeMB: 9999999,
+  maxFileSizeMB: 25,
+  }
+vfs_tmp: {
+  type: vfs,
+  host: localhost_tmp,
+  maxConcurrentConnections: 8,
+  accountSizeMB: 9999999,
+  maxFileSizeMB: 25,
+  fs: tmp,
+  location: /tmp/ic
+  }

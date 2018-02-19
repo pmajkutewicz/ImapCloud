@@ -30,6 +30,7 @@ logging:
     org.apache.http: DEBUG
     org.apache.http.headers: DEBUG
     org.apache.http.wire: DEBUG
+    com.icegreen.greenmail: DEBUG
     pl.pamsoft: DEBUG
   file: imapcloud.log
 
