@@ -57,17 +57,13 @@ public class TasksProgressService {
 		return tasks.stream().map(taskProgressToDto).collect(toList());
 	}
 
-	public void bindWithFile(String taskId, String absolutePath, String fileUniqueId) {
-		File file = fileRepository.getByFileUniqueId(fileUniqueId);
-		TaskProgress task = taskProgressRepository.getByTaskId(taskId);
-		task.getProgressMap().get(absolutePath).setFile(file);
-		persist(task);
-	}
-
 	public void deleteTask(String taskId, boolean deleteUploadedFiles) {
 		TaskProgress progress = taskProgressRepository.getByTaskId(taskId);
 		if (deleteUploadedFiles) {
-			progress.getProgressMap().values().forEach(e -> deletionService.delete(e.getFile()));
+			progress.getProgressMap().values().forEach(e -> {
+				File fileToDelete = fileRepository.getByAbsolutePath(e.getAbsolutePath());
+				deletionService.delete(fileToDelete);
+			});
 		}
 		taskProgressRepository.delete(progress);
 	}

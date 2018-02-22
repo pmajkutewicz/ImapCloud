@@ -22,10 +22,11 @@ import java.util.function.Function;
 public class ImapChunkVerifier implements ChunkVerifier {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImapChunkVerifier.class);
+	private static final int TEN = 10;
 
 	private final GenericObjectPool<Store> connectionPool;
 
-	private final Cache<String, Message[]> cache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).build();
+	private final Cache<String, Message[]> cache = CacheBuilder.newBuilder().expireAfterWrite(TEN, TimeUnit.MINUTES).build();
 
 	private final Function<Message, String[]> extractMessageId = m -> {
 		try {

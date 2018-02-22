@@ -19,7 +19,7 @@ spring.thymeleaf:
 
 server:
   tomcat.accesslog.enabled: true
-  port: 9000
+  port: 9009
 
 security.user.password: test
 
@@ -31,7 +31,7 @@ logging:
     org.apache.catalina.filters: TRACE
     org.apache.http: DEBUG
     org.apache.http.wire: DEBUG
-    javax.mail: DEBUG
+    javax.mail: ERROR
     pl.pamsoft: DEBUG
   file: imapcloud.log
 
