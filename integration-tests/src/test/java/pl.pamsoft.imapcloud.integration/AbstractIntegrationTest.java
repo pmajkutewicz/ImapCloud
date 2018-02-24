@@ -23,6 +23,10 @@ public abstract class AbstractIntegrationTest extends AbstractTestNGSpringContex
 		return "127.0.0.1:" + targetWebServerPort;
 	}
 
+	String getUsername() {
+		return "user";
+	}
+
 	String getPassword() {
 		return password;
 	}

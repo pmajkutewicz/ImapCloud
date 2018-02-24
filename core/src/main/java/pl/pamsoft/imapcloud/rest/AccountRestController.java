@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.AccountProviderInfoList;
+import pl.pamsoft.imapcloud.requests.AccountCapacityTestRequest;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 import pl.pamsoft.imapcloud.responses.AccountProviderInfoResponse;
 import pl.pamsoft.imapcloud.responses.ListAccountResponse;
@@ -42,5 +43,11 @@ public class AccountRestController {
 	public ListAccountResponse listAccounts() {
 		List<AccountDto> accountDtos = accountServices.listAccounts();
 		return new ListAccountResponse(accountDtos);
+	}
+
+	@ApiOperation("Returns list of accounts")
+	@RequestMapping(value = "testCapacity", method = RequestMethod.POST)
+	public void testAccountCapacity(@RequestBody AccountCapacityTestRequest accountCapacityTestRequest) {
+		accountServices.testAccountCapacity(accountCapacityTestRequest);
 	}
 }

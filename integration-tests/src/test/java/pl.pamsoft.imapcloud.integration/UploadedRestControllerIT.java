@@ -38,9 +38,9 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 
 	@BeforeClass
 	public void init() {
-		uploadedFileRestClient = new UploadedFileRestClient(getEndpoint(), "user", getPassword());
-		uploadsRestClient = new UploadsRestClient(getEndpoint(), "user", getPassword());
-		accountRestClient = new AccountRestClient(getEndpoint(), "user", getPassword());
+		uploadedFileRestClient = new UploadedFileRestClient(getEndpoint(), getUsername(), getPassword());
+		uploadsRestClient = new UploadsRestClient(getEndpoint(), getUsername(), getPassword());
+		accountRestClient = new AccountRestClient(getEndpoint(), getUsername(), getPassword());
 		common = new Common(accountRestClient, RESPONSE_NOT_RECEIVED, TEST_TIMEOUT);
 	}
 

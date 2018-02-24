@@ -29,7 +29,10 @@ public class IMAPConnectionFactory implements PooledObjectFactory<Store> {
 	public PooledObject<Store> makeObject() throws Exception {
 		Properties props = new Properties();
 		props.put("mail.store.protocol", "imaps");
-		//props.put("mail.debug", "true");
+		if (host.startsWith("localhost")) {
+			props.put("mail.imaps.ssl.trust", "*");
+			//props.put("mail.debug", "true");
+		}
 
 		Session session = Session.getDefaultInstance(props, null);
 		Store store = session.getStore("imaps");
@@ -40,7 +43,7 @@ public class IMAPConnectionFactory implements PooledObjectFactory<Store> {
 			store.connect(host, username, password);
 		}
 		DefaultPooledObject<Store> storeDefaultPooledObject = new DefaultPooledObject<>(store);
-		LOG.debug("Store created: {}", storeDefaultPooledObject);
+		LOG.trace("Store created: {}", storeDefaultPooledObject);
 		return storeDefaultPooledObject;
 	}
 
@@ -48,7 +51,7 @@ public class IMAPConnectionFactory implements PooledObjectFactory<Store> {
 	public void destroyObject(PooledObject<Store> pooledObject) throws Exception {
 		try {
 			pooledObject.getObject().close();
-			LOG.debug("Store destroyed: {}", pooledObject);
+			LOG.trace("Store destroyed: {}", pooledObject);
 		} catch (MessagingException e) {
 			LOG.warn("Can't close imap client.");
 		}
@@ -56,17 +59,17 @@ public class IMAPConnectionFactory implements PooledObjectFactory<Store> {
 
 	@Override
 	public boolean validateObject(PooledObject<Store> pooledObject) {
-		LOG.debug("Store validated: {}", pooledObject);
+		LOG.trace("Store validated: {}", pooledObject);
 		return pooledObject.getObject().isConnected();
 	}
 
 	@Override
 	public void activateObject(PooledObject<Store> pooledObject) throws Exception {
-		LOG.debug("Store activated: {}", pooledObject);
+		LOG.trace("Store activated: {}", pooledObject);
 	}
 
 	@Override
 	public void passivateObject(PooledObject<Store> pooledObject) throws Exception {
-		LOG.debug("Store passivated: {}", pooledObject);
+		LOG.trace("Store passivated: {}", pooledObject);
 	}
 }

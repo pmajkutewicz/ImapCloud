@@ -17,7 +17,7 @@ public class FeaturesControllerIT extends AbstractIntegrationTest {
 
 	@BeforeClass
 	public void init() {
-		imapCloudFeaturesClient = new IMAPCloudFeaturesClient(getEndpoint(), "user", getPassword());
+		imapCloudFeaturesClient = new IMAPCloudFeaturesClient(getEndpoint(), getUsername(), getPassword());
 	}
 
 	@Test

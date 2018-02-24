@@ -49,7 +49,7 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 		LOG.debug("Splitting file {}", ucc.getFileDto().getName());
 		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
-		int maxSize = calculateMaxSize(toBytes(maxChunkSizeInMB));
+		int maxSize = calculateMaxSize(UploadUtils.toBytes(maxChunkSizeInMB));
 		FileChunkIterator fileChunkIterator = determineIterator(ucc, maxSize);
 		try {
 			fileChunkIterator.process();
@@ -73,10 +73,6 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 	}
 
 	//CSOFF: MagicNumber
-	private int toBytes(int maxChunkSizeMB) {
-		return maxChunkSizeMB * 1024 * 1024;
-	}
-
 	private int calculateMaxSize(int maxSize) {
 		// https://en.wikipedia.org/wiki/Base64
 		// bytes = (string_length(encoded_string) - 814) / 1.37

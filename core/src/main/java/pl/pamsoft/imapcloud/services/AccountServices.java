@@ -9,23 +9,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
+import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
+import pl.pamsoft.imapcloud.requests.AccountCapacityTestRequest;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
+import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
+import pl.pamsoft.imapcloud.services.upload.UploadUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-public class AccountServices {
+public class AccountServices extends AbstractBackgroundService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AccountServices.class);
+	//CSOFF: MagicNumber
+	private static final float TWENTY_PERCENT = 20 / 100.0f;
+	//CSON: MagicNumber
 	private AccountRepository accountRepository;
 	private CryptoService cryptoService;
+	private UploadService uploadService;
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
 		long usedSpace = accountRepository.getUsedSpace(a.getLogin());
@@ -47,6 +58,116 @@ public class AccountServices {
 
 		accountRepository.save(account);
 
+	}
+
+	private enum CapacityStatus {
+		TO_HIGH, TO_LOW
+	};
+
+	public boolean testAccountCapacity(AccountCapacityTestRequest request) {
+		final String taskId = UUID.randomUUID().toString();
+		Future<Void> future = runAsyncOnExecutor(() -> {
+			Thread.currentThread().setName("ACTT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
+			AccountDto selectedAccount = request.getSelectedAccount();
+			int declaredMaxChunkSize = UploadUtils.toBytes(accountRepository.getById(selectedAccount.getId()).getAttachmentSizeMB());
+
+			LOG.debug("Trying chunk size: {}", declaredMaxChunkSize);
+			boolean isSuccessfullyUploaded = uploadService.uploadTestChunk(selectedAccount, createUCC(taskId, 1, declaredMaxChunkSize, false, getData(declaredMaxChunkSize)));
+			int[] range = new int[] {declaredMaxChunkSize, declaredMaxChunkSize};
+			CapacityStatus lastStatus = isSuccessfullyUploaded ? CapacityStatus.TO_LOW : CapacityStatus.TO_HIGH;
+			range = determineRange(taskId, selectedAccount, 2, range, lastStatus);
+			int foundedCapacity = findCapacity(taskId, selectedAccount, 2, range, lastStatus);
+			Account byId = accountRepository.getById(selectedAccount.getId());
+			byId.setVerifiedAttachmentSizeBytes(foundedCapacity);
+			accountRepository.save(byId);
+		});
+		getTaskMap().put(taskId, future);
+		return true;
+	}
+
+	private int[] determineRange(String uuid, AccountDto account, int chunkNumber, int[] range, CapacityStatus lastStatus) {
+		LOG.debug("Chunk {} with size: {} was {}", chunkNumber, CapacityStatus.TO_LOW == lastStatus ? range[0] : range[1], lastStatus);
+		int newChunkSize = calculateNewChunkSize(CapacityStatus.TO_LOW == lastStatus ? range[0] : range[1], lastStatus);
+		LOG.debug("Trying new chunk size: {}", newChunkSize);
+		boolean isSuccessfullyUploaded = uploadService.uploadTestChunk(account, createUCC(uuid, chunkNumber, newChunkSize, false, getData(newChunkSize)));
+
+		switch (lastStatus) {
+			case TO_LOW:
+				if (isSuccessfullyUploaded) {
+					range[0] = newChunkSize;
+					return determineRange(uuid, account, ++chunkNumber, range, lastStatus);
+				} else {
+					range[1] = newChunkSize;
+					Arrays.sort(range);
+					return range;
+				}
+			case TO_HIGH:
+				if (isSuccessfullyUploaded) {
+					range[0] = newChunkSize;
+					Arrays.sort(range);
+					return range;
+				} else {
+					range[1] = newChunkSize;
+					return determineRange(uuid, account, ++chunkNumber, range, lastStatus);
+				}
+			default:
+				return range;// infinite loop
+		}
+	}
+
+	private int findCapacity(String uuid, AccountDto account, int chunkNumber, int[] range, CapacityStatus lastStatus) {
+		LOG.debug("Looking for valid size between {} and {}, range: {}", range[0], range[1], range[1] - range[0]);
+		int chunkSize = findMiddle(range);
+		boolean isSuccessfullyUploaded = uploadService.uploadTestChunk(account, createUCC(uuid, chunkNumber++, chunkSize, false, getData(chunkSize)));
+		LOG.debug("New size: {} is OK?: {}", chunkSize, isSuccessfullyUploaded);
+		if (range[1]-range[0] <= 1 && isSuccessfullyUploaded) {
+			int founded = range[0] == chunkSize ? range[0] : range[1];
+			LOG.debug("Founded max size: {}", founded);
+			return founded;
+		}
+		switch (lastStatus) {
+			case TO_LOW:
+				range[isSuccessfullyUploaded ? 0 : 1] = chunkSize;
+				return findCapacity(uuid, account, chunkNumber, range, lastStatus);
+			case TO_HIGH:
+				range[isSuccessfullyUploaded ? 1 : 0] = chunkSize;
+				return findCapacity(uuid, account, chunkNumber, range, lastStatus);
+			default:
+				return 0;
+		}
+	}
+
+	private int findMiddle(int[] range) {
+		return range[0] + (int) ((range[1] - range[0]) / 2.0);
+	}
+
+	private int calculateNewChunkSize(int lastChunkSize, CapacityStatus lastStatus){
+		int change = (int)(lastChunkSize * TWENTY_PERCENT);
+		switch (lastStatus) {
+			case TO_LOW:
+				return lastChunkSize + change;
+			case TO_HIGH:
+				return lastChunkSize - change;
+			default: // infinite loop :P
+				return lastChunkSize;
+		}
+	}
+
+	private byte[] getData(int size) {
+		byte[] data = new byte[size];
+		Arrays.fill(data, (byte) 0);
+		return data;
+	}
+
+	private UploadChunkContainer createUCC(String uuid, int chunkNumber, long chunkSize, boolean isLastChunk, byte[] data) {
+		FileDto fileDto = new FileDto("dummyFile", "noPath", FileDto.FileType.FILE, chunkSize);
+		UploadChunkContainer ucc = new UploadChunkContainer(uuid, fileDto);
+		ucc = UploadChunkContainer.addFileHash(ucc, "0000000000000000");
+		ucc = UploadChunkContainer.addIds(ucc, -1L, uuid);
+		ucc = UploadChunkContainer.addChunk(ucc, chunkSize, chunkSize, data, chunkNumber, isLastChunk);
+		ucc = UploadChunkContainer.addChunkHash(ucc, "0000000000000000");
+		ucc = UploadChunkContainer.addEncryptedData(ucc, data);
+		return ucc;
 	}
 
 	@VisibleForTesting
@@ -83,5 +204,19 @@ public class AccountServices {
 	@Autowired
 	public void setCryptoService(CryptoService cryptoService) {
 		this.cryptoService = cryptoService;
+	}
+
+	@Autowired
+	public void setUploadService(UploadService uploadService) {
+		this.uploadService = uploadService;
+	}
+
+	protected int getMaxTasks() {
+		return DEFAULT_MAX_TASKS;
+	}
+
+	@Override
+	protected String getNameFormat() {
+		return "AccountCapacityTestTask-%d";
 	}
 }

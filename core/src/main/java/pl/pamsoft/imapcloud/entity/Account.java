@@ -33,6 +33,7 @@ public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	private Integer accountSizeMB;
 	private Integer attachmentSizeMB;
 	private String cryptoKey;
+	private Integer verifiedAttachmentSizeBytes;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@MapKeyColumn(name="name")
@@ -118,6 +119,15 @@ public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 
 	public void setCryptoKey(String cryptoKey) {
 		this.cryptoKey = cryptoKey;
+	}
+
+	@Override
+	public Integer getVerifiedAttachmentSizeBytes() {
+		return verifiedAttachmentSizeBytes;
+	}
+
+	public void setVerifiedAttachmentSizeBytes(Integer verifiedAttachmentSizeBytes) {
+		this.verifiedAttachmentSizeBytes = verifiedAttachmentSizeBytes;
 	}
 
 	@Override

@@ -28,7 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ImapChunkUploader implements ChunkUploader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ImapChunkUploader.class);
-	private static final int MAX_RETRIES = 10;
+	//CSOFF: MagicNumber
+	private int maxRetries = 10;
+	//CSON: MagicNumber
 
 	private GenericObjectPool<Store> connectionPool;
 	private AtomicInteger retryCounter = new AtomicInteger(0);
@@ -46,13 +48,13 @@ public class ImapChunkUploader implements ChunkUploader {
 	private String retryLoop(UploadChunkContainer dataChunk, Map<String, String> metadata) throws IOException {
 		try {
 			String uploadedResult = uploadInt(dataChunk, metadata);
-			if (StringUtils.EMPTY.equals(uploadedResult) && MAX_RETRIES > retryCounter.getAndIncrement()) {
+			if (StringUtils.EMPTY.equals(uploadedResult) && maxRetries > retryCounter.getAndIncrement()) {
 				return retryLoop(dataChunk, metadata);
 			} else {
 				return uploadedResult;
 			}
 		} catch (IOException e) {
-			if (MAX_RETRIES > retryCounter.getAndIncrement()) {
+			if (maxRetries > retryCounter.getAndIncrement()) {
 				LOG.warn("Uploading failed, retrying: " + retryCounter.get()  + " for: " + dataChunk.getFileChunkUniqueId());
 				return retryLoop(dataChunk, metadata);
 			} else {
@@ -139,10 +141,14 @@ public class ImapChunkUploader implements ChunkUploader {
 	}
 
 	private void printPoolStats(GenericObjectPool<Store> pool){
-		LOG.info("Stats start");
-		LOG.info("Poolid: {}", pool.hashCode());
-		LOG.info("getNumActive: {}", pool.getNumActive());
-		LOG.info("getNumIdle: {}", pool.getNumIdle());
-		LOG.info("Stats end");
+		LOG.trace("Stats start");
+		LOG.trace("Poolid: {}", pool.hashCode());
+		LOG.trace("getNumActive: {}", pool.getNumActive());
+		LOG.trace("getNumIdle: {}", pool.getNumIdle());
+		LOG.trace("Stats end");
+	}
+
+	public void setMaxRetries(int maxRetries) {
+		this.maxRetries = maxRetries;
 	}
 }

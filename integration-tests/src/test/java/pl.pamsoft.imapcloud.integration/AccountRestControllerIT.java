@@ -26,7 +26,7 @@ public class AccountRestControllerIT extends AbstractIntegrationTest {
 
 	@BeforeClass
 	public void init() {
-		accountRestClient = new AccountRestClient(getEndpoint(), "user", getPassword());
+		accountRestClient = new AccountRestClient(getEndpoint(), getUsername(), getPassword());
 		common = new Common(accountRestClient, RESPONSE_NOT_RECEIVED, TEST_TIMEOUT);
 	}
 

@@ -17,7 +17,7 @@ public class GitStatsControllerIT extends AbstractIntegrationTest {
 
 	@BeforeClass
 	public void init() {
-		gitStatusRestClient = new GitStatusRestClient(getEndpoint(), "user", getPassword());
+		gitStatusRestClient = new GitStatusRestClient(getEndpoint(), getUsername(), getPassword());
 	}
 
 	@Test

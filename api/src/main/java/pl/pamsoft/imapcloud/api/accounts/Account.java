@@ -19,6 +19,8 @@ public interface Account {
 
 	String getCryptoKey();
 
+	Integer getVerifiedAttachmentSizeBytes();
+
 	Map<String, String> getAdditionalProperties();
 
 	String getProperty(String name);

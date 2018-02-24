@@ -1,6 +1,8 @@
 package pl.pamsoft.imapcloud.services;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.api.accounts.AccountService;
@@ -21,6 +23,7 @@ import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
 import pl.pamsoft.imapcloud.services.upload.UploadChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.UploadFileHasher;
+import pl.pamsoft.imapcloud.storage.imap.ImapChunkUploader;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
@@ -33,10 +36,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 
 @Service
 public class UploadService extends AbstractBackgroundService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(UploadService.class);
 
 	@Autowired
 	private AccountServicesHolder accountServicesHolder;
@@ -158,6 +164,20 @@ public class UploadService extends AbstractBackgroundService {
 		});
 		getTaskMap().put(taskId, future);
 		return true;
+	}
+
+	public boolean uploadTestChunk(AccountDto selectedAccount, UploadChunkContainer container) {
+		final Account account = accountRepository.getById(selectedAccount.getId());
+		AccountService accountService = accountServicesHolder.getAccountService(account.getType());
+		ImapChunkUploader chunkUploader = (ImapChunkUploader) accountService.getChunkUploader(account);
+		chunkUploader.setMaxRetries(0);
+		try {
+			chunkUploader.upload(container, emptyMap());
+			return true;
+		} catch (Exception e) {
+			LOG.warn(e.getMessage(), e);
+			return false;
+		}
 	}
 
 	protected int getMaxTasks() {
