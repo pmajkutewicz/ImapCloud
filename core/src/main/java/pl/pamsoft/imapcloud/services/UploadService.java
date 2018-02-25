@@ -23,6 +23,7 @@ import pl.pamsoft.imapcloud.services.upload.FileSplitter;
 import pl.pamsoft.imapcloud.services.upload.FileStorer;
 import pl.pamsoft.imapcloud.services.upload.UploadChunkHasher;
 import pl.pamsoft.imapcloud.services.upload.UploadFileHasher;
+import pl.pamsoft.imapcloud.services.upload.UploadUtils;
 import pl.pamsoft.imapcloud.storage.imap.ImapChunkUploader;
 import pl.pamsoft.imapcloud.utils.GitStatsUtil;
 import pl.pamsoft.imapcloud.websocket.TaskType;
@@ -78,7 +79,7 @@ public class UploadService extends AbstractBackgroundService {
 				ucc = UploadChunkContainer.addFileHash(ucc, file.getFileHash());
 				return UploadChunkContainer.addIds(ucc, file.getId(), file.getFileUniqueId());
 			};
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, fileServices, getMonitoringHelper());
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(getMaxChunkSizeInBytes(account), 2, fileServices, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
 			Predicate<UploadChunkContainer> existingChunkFilter = new ExistingChunkFilter(fileByUniqueId.getFileUniqueId(), fileServices);
 
@@ -109,7 +110,12 @@ public class UploadService extends AbstractBackgroundService {
 		});
 		getTaskMap().put(taskId, future);
 		return true;
-	};
+	}
+
+	private int getMaxChunkSizeInBytes(Account account) {
+		Integer verifiedAttachmentSize = account.getVerifiedAttachmentSizeBytes();
+		return null != verifiedAttachmentSize ? verifiedAttachmentSize : UploadUtils.toBytes(account.getAttachmentSizeMB());
+	}
 
 	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) throws RejectedExecutionException {
@@ -137,7 +143,7 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, getMonitoringHelper());
 			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
 			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileAlreadyUploaded.andThen(persistTaskProgress));
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(account.getAttachmentSizeMB(), 2, getMonitoringHelper());
+			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(getMaxChunkSizeInBytes(account), 2, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> chunkUploader = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());

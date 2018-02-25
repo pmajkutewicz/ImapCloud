@@ -21,25 +21,25 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 
 	private final MonitoringHelper monitoringHelper;
 	private FileServices fileServices;
-	private int maxChunkSizeInMB;
+	private int maxChunkSizeInBytes;
 	private int deviationInPercent;
 	private boolean variableSize;
 	private boolean resumeUploadEnabled;
 
-	public FileSplitter(int maxChunkSizeMB, MonitoringHelper monitoringHelper) {
-		this.maxChunkSizeInMB = maxChunkSizeMB;
+	public FileSplitter(int maxChunkSizeInBytes, MonitoringHelper monitoringHelper) {
+		this.maxChunkSizeInBytes = maxChunkSizeInBytes;
 		this.monitoringHelper = monitoringHelper;
 	}
 
-	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, MonitoringHelper monitoringHelper) {
-		this.maxChunkSizeInMB = maxChunkSizeMB;
+	public FileSplitter(int maxChunkSizeInBytes, int deviationInPercent, MonitoringHelper monitoringHelper) {
+		this.maxChunkSizeInBytes = maxChunkSizeInBytes;
 		this.deviationInPercent = deviationInPercent;
 		this.monitoringHelper = monitoringHelper;
 		this.variableSize = true;
 	}
 
-	public FileSplitter(int maxChunkSizeMB, int deviationInPercent, FileServices fileServices, MonitoringHelper monitoringHelper) {
-		this(maxChunkSizeMB, deviationInPercent, monitoringHelper);
+	public FileSplitter(int maxChunkSizeInBytes, int deviationInPercent, FileServices fileServices, MonitoringHelper monitoringHelper) {
+		this(maxChunkSizeInBytes, deviationInPercent, monitoringHelper);
 		this.fileServices = fileServices;
 		this.resumeUploadEnabled =true;
 	}
@@ -49,7 +49,7 @@ public class FileSplitter implements Function<UploadChunkContainer, Stream<Uploa
 		LOG.debug("Splitting file {}", ucc.getFileDto().getName());
 		FileDto fileDto = ucc.getFileDto();
 		LOG.debug("Processing: {}", fileDto.getAbsolutePath());
-		int maxSize = calculateMaxSize(UploadUtils.toBytes(maxChunkSizeInMB));
+		int maxSize = calculateMaxSize(maxChunkSizeInBytes);
 		FileChunkIterator fileChunkIterator = determineIterator(ucc, maxSize);
 		try {
 			fileChunkIterator.process();
