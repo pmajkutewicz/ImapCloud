@@ -67,16 +67,17 @@ public class AccountServices extends AbstractBackgroundService {
 	public boolean testAccountCapacity(AccountCapacityTestRequest request) {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> future = runAsyncOnExecutor(() -> {
+			String fileId = "00000000-0000-0000-0000-0000000000000";
 			Thread.currentThread().setName("ACTT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			AccountDto selectedAccount = request.getSelectedAccount();
 			int declaredMaxChunkSize = UploadUtils.toBytes(accountRepository.getById(selectedAccount.getId()).getAttachmentSizeMB());
 
 			LOG.debug("Trying chunk size: {}", declaredMaxChunkSize);
-			boolean isSuccessfullyUploaded = uploadService.uploadTestChunk(selectedAccount, createUCC(taskId, 1, declaredMaxChunkSize, false, getData(declaredMaxChunkSize)));
+			boolean isSuccessfullyUploaded = uploadService.uploadTestChunk(selectedAccount, createUCC(fileId, 1, declaredMaxChunkSize, false, getData(declaredMaxChunkSize)));
 			int[] range = new int[] {declaredMaxChunkSize, declaredMaxChunkSize};
 			CapacityStatus lastStatus = isSuccessfullyUploaded ? CapacityStatus.TO_LOW : CapacityStatus.TO_HIGH;
-			range = determineRange(taskId, selectedAccount, 2, range, lastStatus);
-			int foundedCapacity = findCapacity(taskId, selectedAccount, 2, range, lastStatus);
+			range = determineRange(fileId, selectedAccount, 2, range, lastStatus);
+			int foundedCapacity = findCapacity(fileId, selectedAccount, 2, range, lastStatus);
 			Account byId = accountRepository.getById(selectedAccount.getId());
 			byId.setVerifiedAttachmentSizeBytes(foundedCapacity);
 			accountRepository.save(byId);
