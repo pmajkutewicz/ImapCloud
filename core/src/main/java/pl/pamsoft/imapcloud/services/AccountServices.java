@@ -8,9 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
+import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.Account;
+import pl.pamsoft.imapcloud.entity.FileChunk;
 import pl.pamsoft.imapcloud.requests.AccountCapacityTestRequest;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
@@ -35,12 +37,14 @@ public class AccountServices extends AbstractBackgroundService {
 	private static final float TWENTY_PERCENT = 20 / 100.0f;
 	//CSON: MagicNumber
 	private AccountRepository accountRepository;
+	private FileChunkRepository fileChunkRepository;
 	private CryptoService cryptoService;
 	private UploadService uploadService;
 
 	private Function<? super Account, AccountDto> toAccount = a -> {
-		long usedSpace = accountRepository.getUsedSpace(a.getLogin());
-		return new AccountDto(a.getId(), String.format("%s@%s", a.getLogin(), a.getHost()), a.getCryptoKey(), usedSpace);
+		List<FileChunk> chunks = fileChunkRepository.getFileChunksByAccountId(a.getId());
+		long sum = chunks.stream().mapToLong(FileChunk::getOrgSize).sum();
+		return new AccountDto(a.getId(), String.format("%s@%s", a.getLogin(), a.getHost()), a.getCryptoKey(), sum);
 	};
 
 	public void addAccount(CreateAccountRequest request) {
@@ -200,6 +204,11 @@ public class AccountServices extends AbstractBackgroundService {
 	@Autowired
 	public void setAccountRepository(AccountRepository accountRepository) {
 		this.accountRepository = accountRepository;
+	}
+
+	@Autowired
+	public void setFileChunkRepository(FileChunkRepository fileChunkRepository) {
+		this.fileChunkRepository = fileChunkRepository;
 	}
 
 	@Autowired

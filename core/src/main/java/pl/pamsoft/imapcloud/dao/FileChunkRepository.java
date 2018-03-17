@@ -14,4 +14,6 @@ public interface FileChunkRepository extends JpaRepository<FileChunk, Long>, Fil
 	@Query("select fc from FileChunk fc where fc.ownerFile.fileUniqueId = :fileUniqueId")
 	List<FileChunk> getFileChunks(@Param("fileUniqueId") String fileUniqueId);
 
+	@Query("select fc from FileChunk fc where fc.ownerFile.ownerAccount.id = :accountId")
+	List<FileChunk> getFileChunksByAccountId(@Param("accountId") Long accountId);
 }
