@@ -26,4 +26,6 @@ public interface UploadChunkContainer {
 	String getChunkHash();
 
 	String getStorageChunkId();
+
+	long getUploadTimeMs();
 }

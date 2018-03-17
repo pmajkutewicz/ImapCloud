@@ -28,6 +28,7 @@ public class FileChunk {
 	@JoinColumn(name="owner_file_id")
 	private File ownerFile;
 	private String messageId; //FIXME: rename to getStoredChunkId ?
+	private Long uploadTimeMs;
 	private boolean lastChunk;
 	private Long lastVerifiedAt;
 	private Boolean chunkExists;
@@ -102,6 +103,14 @@ public class FileChunk {
 
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
+	}
+
+	public Long getUploadTimeMs() {
+		return uploadTimeMs;
+	}
+
+	public void setUploadTimeMs(Long uploadTimeMs) {
+		this.uploadTimeMs = uploadTimeMs;
 	}
 
 	public boolean isLastChunk() {

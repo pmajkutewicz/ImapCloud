@@ -63,6 +63,7 @@ public class UploadedFileRestController {
 		ufcd.setChunkHash(fileChunk.getChunkHash());
 		ufcd.setChunkExists(fileChunk.getChunkExists());
 		ufcd.setLastVerifiedAt(fileChunk.getLastVerifiedAt());
+		ufcd.setUploadTimeMs(fileChunk.getUploadTimeMs());
 		return ufcd;
 	};
 

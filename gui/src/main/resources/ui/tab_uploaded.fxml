@@ -48,6 +48,11 @@
 					<PropertyValueFactory property="readableFileSize"/>
 				</cellValueFactory>
 			</TableColumn>
+			<TableColumn prefWidth="60.0" text="%uploaded.table.column.chunk.speed">
+				<cellValueFactory>
+					<PropertyValueFactory property="uploadSpeed"/>
+				</cellValueFactory>
+			</TableColumn>
 			<TableColumn prefWidth="30.0" text="%uploaded.table.column.chunk.message_id">
 				<cellValueFactory>
 					<PropertyValueFactory property="messageId"/>

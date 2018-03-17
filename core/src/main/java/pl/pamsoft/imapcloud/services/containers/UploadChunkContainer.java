@@ -27,18 +27,19 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 	private final boolean lastChunk;
 	private final String chunkHash;
 	private final String messageId;
+	private final long uploadTimeMs;
 
 	public UploadChunkContainer(String taskId, FileDto fileDto) {
 		this(taskId, fileDto, false);
 	}
 
 	public UploadChunkContainer(String taskId, FileDto fileDto, boolean isChunkEncryptionEnabled) {
-		this(taskId, fileDto, isChunkEncryptionEnabled, StringUtils.EMPTY, null, StringUtils.EMPTY, 0, 0, new byte[0], false, 0, false, StringUtils.EMPTY, StringUtils.EMPTY);
+		this(taskId, fileDto, isChunkEncryptionEnabled, StringUtils.EMPTY, null, StringUtils.EMPTY, 0, 0, new byte[0], false, 0, false, StringUtils.EMPTY, StringUtils.EMPTY, 0);
 	}
 
 	//CSOFF: ParameterNumberCheck
 	private UploadChunkContainer(String taskId, FileDto fileDto, boolean enableChunkEncryption, String fileHash, Long savedFileId, String fileUniqueId, long chunkSize, long currentFileChunkCumulativeSize,
-	                             byte[] data, boolean encrypted, int chunkNumber, boolean lastChunk, String chunkHash, String messageId) {
+	                             byte[] data, boolean encrypted, int chunkNumber, boolean lastChunk, String chunkHash, String messageId, long uploadTimeMs) {
 		this.taskId = taskId;
 		this.fileDto = fileDto;
 		this.chunkEncryptionEnabled = enableChunkEncryption;
@@ -53,43 +54,44 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 		this.lastChunk = lastChunk;
 		this.chunkHash = chunkHash;
 		this.messageId = messageId;
+		this.uploadTimeMs = uploadTimeMs;
 	}
 	//CSON
 
 	@SuppressFBWarnings("OCP_OVERLY_CONCRETE_PARAMETER")
 	public static UploadChunkContainer addFileDto(UploadChunkContainer ucc, FileDto file) {
 		return new UploadChunkContainer(ucc.getTaskId(), file, ucc.isChunkEncryptionEnabled(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId(), ucc.getUploadTimeMs());
 	}
 
 	public static UploadChunkContainer addFileHash(UploadChunkContainer ucc, String fileHash) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.isChunkEncryptionEnabled(), fileHash, ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId(), ucc.getUploadTimeMs());
 	}
 
 	public static UploadChunkContainer addIds(UploadChunkContainer ucc, Long savedFileId, String fileUniqueId) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.isChunkEncryptionEnabled(), ucc.getFileHash(), savedFileId, fileUniqueId, ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId(), ucc.getUploadTimeMs());
 	}
 
 	public static UploadChunkContainer addChunk(UploadChunkContainer ucc, long chunkSize, long currentFileChunkCumulativeSize, byte[] data, int chunkNumber, boolean lastChunk) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.isChunkEncryptionEnabled(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), chunkSize, currentFileChunkCumulativeSize,
-			data, ucc.isEncrypted(), chunkNumber, lastChunk, ucc.getChunkHash(), ucc.getStorageChunkId());
+			data, ucc.isEncrypted(), chunkNumber, lastChunk, ucc.getChunkHash(), ucc.getStorageChunkId(), ucc.getUploadTimeMs());
 	}
 
 	public static UploadChunkContainer addChunkHash(UploadChunkContainer ucc, String chunkHash) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.isChunkEncryptionEnabled(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), chunkHash, ucc.getStorageChunkId());
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), chunkHash, ucc.getStorageChunkId(), ucc.getUploadTimeMs());
 	}
 
 	public static UploadChunkContainer addEncryptedData(UploadChunkContainer ucc, byte[] encrypted) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.isChunkEncryptionEnabled(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			encrypted, true, ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId());
+			encrypted, true, ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), ucc.getStorageChunkId(), ucc.getUploadTimeMs());
 	}
 
-	public static UploadChunkContainer addMessageId(UploadChunkContainer ucc, String messageId) {
+	public static UploadChunkContainer addMessageId(UploadChunkContainer ucc, String messageId, long uploadTimeInMs) {
 		return new UploadChunkContainer(ucc.getTaskId(), ucc.getFileDto(), ucc.isChunkEncryptionEnabled(), ucc.getFileHash(), ucc.getSavedFileId(), ucc.getFileUniqueId(), ucc.getChunkSize(), ucc.getCurrentFileChunkCumulativeSize(),
-			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), messageId);
+			ucc.getData(), ucc.isEncrypted(), ucc.getChunkNumber(), ucc.isLastChunk(), ucc.getChunkHash(), messageId, uploadTimeInMs);
 	}
 
 	@Override
@@ -168,5 +170,10 @@ public class UploadChunkContainer implements pl.pamsoft.imapcloud.api.containers
 	@Override
 	public String getStorageChunkId() {
 		return this.messageId;
+	}
+
+	@Override
+	public long getUploadTimeMs() {
+		return uploadTimeMs;
 	}
 }

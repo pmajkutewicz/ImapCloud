@@ -15,4 +15,13 @@ public class ReadableSize {
 		int digitGroups = (int) (Math.log10(size) / Math.log10(KIB));
 		return new DecimalFormat("#,##0.#").format(size / Math.pow(KIB, digitGroups)) + " " + UNITS[digitGroups];
 	}
+
+	@SuppressWarnings("Rule:OnlyOneReturn")
+	public static String getReadableFileSize(Double size) {
+		if (null == size || size <= 0) {
+			return "0";
+		}
+		int digitGroups = (int) (Math.log10(size) / Math.log10(KIB));
+		return new DecimalFormat("#,##0.#").format(size / Math.pow(KIB, digitGroups)) + " " + UNITS[digitGroups];
+	}
 }

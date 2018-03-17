@@ -47,11 +47,11 @@ public class ChunkUploaderFacade implements Function<UploadChunkContainer, Uploa
 
 			String messageId = uploader.upload(dataChunk, createMetadata(dataChunk));
 
-			double lastVal = monitoringHelper.stop(monitor);
-			LOG.info("Chunk saved in {} ms", lastVal);
-			monitor(lastVal, dataChunk.getChunkSize());
+			double elapsedMs = monitoringHelper.stop(monitor);
+			LOG.info("Chunk saved in {} ms", elapsedMs);
+			monitor(elapsedMs, dataChunk.getChunkSize());
 
-			return UploadChunkContainer.addMessageId(dataChunk, messageId);
+			return UploadChunkContainer.addMessageId(dataChunk, messageId, Double.valueOf(elapsedMs).longValue());
 		} catch (Exception e) {
 			LOG.error("Error in stream", e);
 		}

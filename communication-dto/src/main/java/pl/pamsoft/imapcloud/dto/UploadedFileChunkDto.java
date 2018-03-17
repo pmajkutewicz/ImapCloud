@@ -4,24 +4,27 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import pl.pamsoft.imapcloud.utils.ReadableSize;
 
-@JsonIgnoreProperties({"readableFileSize"})
+@JsonIgnoreProperties({"readableFileSize", "uploadSpeed"})
 @SuppressFBWarnings({"UCPM_USE_CHARACTER_PARAMETERIZED_METHOD", "USBR_UNNECESSARY_STORE_BEFORE_RETURN"})
 public class UploadedFileChunkDto {
 
+	private static final int TO_SECONDS = 1000;
 	private String fileChunkUniqueId;
 	private int chunkNumber;
 	private String chunkHash;
 	private Long size;
 	private String messageId;
+	private Long uploadTimeMs;
 	private Long lastVerifiedAt;
 	private Boolean chunkExists;
 
-	public UploadedFileChunkDto(String fileChunkUniqueId, int chunkNumber, String chunkHash, Long size, String messageId, Long lastVerifiedAt, Boolean chunkExists) {
+	public UploadedFileChunkDto(String fileChunkUniqueId, int chunkNumber, String chunkHash, Long size, String messageId, Long uploadTimeMs, Long lastVerifiedAt, Boolean chunkExists) {
 		this.fileChunkUniqueId = fileChunkUniqueId;
 		this.chunkNumber = chunkNumber;
 		this.chunkHash = chunkHash;
 		this.size = size;
 		this.messageId = messageId;
+		this.uploadTimeMs = uploadTimeMs;
 		this.lastVerifiedAt = lastVerifiedAt;
 		this.chunkExists = chunkExists;
 	}
@@ -32,6 +35,11 @@ public class UploadedFileChunkDto {
 	// used as javafx property
 	public String getReadableFileSize() {
 		return ReadableSize.getReadableFileSize(size);
+	}
+
+	// used as javafx property
+	public String getUploadSpeed() {
+		return null == uploadTimeMs ? "" : String.valueOf(ReadableSize.getReadableFileSize(((double) size * TO_SECONDS) / uploadTimeMs) + "/s");
 	}
 
 	public String getFileChunkUniqueId() {
@@ -72,6 +80,14 @@ public class UploadedFileChunkDto {
 
 	public void setMessageId(String messageId) {
 		this.messageId = messageId;
+	}
+
+	public Long getUploadTimeMs() {
+		return uploadTimeMs;
+	}
+
+	public void setUploadTimeMs(Long uploadTimeMs) {
+		this.uploadTimeMs = uploadTimeMs;
 	}
 
 	public Long getLastVerifiedAt() {
