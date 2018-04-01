@@ -7,12 +7,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableView;
+import javafx.scene.control.ComboBox;
 import pl.pamsoft.imapcloud.Utils;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
+import pl.pamsoft.imapcloud.rest.AccountRestClient;
 import pl.pamsoft.imapcloud.rest.RequestCallback;
 import pl.pamsoft.imapcloud.rest.UploadsRestClient;
+import pl.pamsoft.imapcloud.tools.PlatformTools;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -29,7 +31,13 @@ public class UploadsController implements Initializable, Refreshable {
 	private UploadsRestClient uploadsRestClient;
 
 	@Inject
+	private AccountRestClient accountRestClient;
+
+	@Inject
 	private Utils utils;
+
+	@Inject
+	private PlatformTools platformTools;
 
 	@FXML
 	private FragFileListController embeddedFileListTableController;
@@ -39,10 +47,7 @@ public class UploadsController implements Initializable, Refreshable {
 	private Parent embeddedFileListTable;
 
 	@FXML
-	private TableView<AccountDto> embeddedAccountTable;
-
-	@FXML
-	private FragAccountsTableController embeddedAccountTableController;
+	private ComboBox<AccountDto> destinationAccount;
 
 	@FXML
 	private CheckBox encrypt;
@@ -57,7 +62,7 @@ public class UploadsController implements Initializable, Refreshable {
 
 	public void onUploadClick() {
 		ObservableList<FileDto> selectedFiles = embeddedFileListTableController.getFileList().getSelectionModel().getSelectedItems();
-		AccountDto selectedAccountDto = embeddedAccountTable.getSelectionModel().getSelectedItem();
+		AccountDto selectedAccountDto = destinationAccount.getSelectionModel().getSelectedItem();
 		uploadsRestClient.startUpload(selectedFiles, selectedAccountDto, encrypt.isSelected() ? ON : OFF, new RequestCallback<Void>() {
 			@Override
 			public void onFailure(IOException e) {
@@ -71,7 +76,10 @@ public class UploadsController implements Initializable, Refreshable {
 
 	@Override
 	public void refresh() {
-		embeddedAccountTableController.refresh();
+		accountRestClient.listAccounts(data -> platformTools.runLater(() -> {
+			destinationAccount.getItems().addAll(data.getAccount());
+			destinationAccount.getSelectionModel().selectFirst();
+		}));
 	}
 
 	@Override

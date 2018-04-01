@@ -58,4 +58,9 @@ public class AccountDto {
 	public void setUsedSpace(Long usedSpace) {
 		this.usedSpace = usedSpace;
 	}
+
+	@Override
+	public String toString() {
+		return getEmail() + " (" + getReadableFileSize() + " used)";
+	}
 }
