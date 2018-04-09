@@ -149,7 +149,7 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, UploadChunkContainer> chunkUploader = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
-			selectedFiles.stream()
+			selectedFiles.stream().parallel()
 				.map(packInContainer)
 				.flatMap(parseDirectories)
 				.map(generateFilehash)

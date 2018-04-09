@@ -15,3 +15,10 @@ vfs_tmp: {
   fs: tmp,
   location: /tmp/ic
   }
+ic_testing: {
+  type: ic-testing,
+  host: localhost_testing,
+  maxConcurrentConnections: 8,
+  accountSizeMB: 9999999,
+  maxFileSizeMB: 1,
+  }

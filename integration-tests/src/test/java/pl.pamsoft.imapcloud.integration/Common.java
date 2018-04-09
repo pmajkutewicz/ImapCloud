@@ -51,7 +51,7 @@ public class Common {
 	public AccountDto shouldCreateAccount(String username, String password, String cryptoKey, String expectedAccountEmail, String type) throws IOException, InterruptedException {
 		return shouldCreateAccount(username, password, cryptoKey, expectedAccountEmail, type, a -> true);
 	}
-	private AccountDto shouldCreateAccount(String username, String password, String cryptoKey, String expectedAccountEmail, String type, Predicate<AccountInfo> filter) throws IOException, InterruptedException {
+	public AccountDto shouldCreateAccount(String username, String password, String cryptoKey, String expectedAccountEmail, String type, Predicate<AccountInfo> filter) throws IOException, InterruptedException {
 		// get available accounts
 		CountDownLatch lock = new CountDownLatch(1);
 		List<AccountInfo> responses = new ArrayList<>();

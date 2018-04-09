@@ -138,6 +138,7 @@
 		<module>api</module>
 		<module>storage-imap</module>
 		<module>storage-vfs</module>
+		<module>storage-testing</module>
 		<module>integration-tests</module>
 		<module>coverage-all</module>
 	</modules>
@@ -157,6 +158,11 @@
 			<dependency>
 				<groupId>pl.pamsoft.imapcloud</groupId>
 				<artifactId>storage-imap</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>pl.pamsoft.imapcloud</groupId>
+				<artifactId>storage-testing</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -377,7 +383,7 @@
 			</dependency>
 			<!-- endregion -->
 
-			<!-- region storage-imap -->
+			<!-- region storage-testing -->
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>

@@ -27,6 +27,11 @@
 		</dependency>
 		<dependency>
 			<groupId>pl.pamsoft.imapcloud</groupId>
+			<artifactId>storage-testing</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>pl.pamsoft.imapcloud</groupId>
 			<artifactId>backend-client</artifactId>
 			<scope>test</scope>
 		</dependency>
