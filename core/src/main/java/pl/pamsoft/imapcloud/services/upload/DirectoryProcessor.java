@@ -10,7 +10,6 @@ import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
 import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -43,14 +42,6 @@ public class DirectoryProcessor implements Function<UploadChunkContainer, Stream
 
 	@SuppressFBWarnings("PATH_TRAVERSAL_IN")
 	private List<FileDto> parseDirectories(FileDto fileDto) {
-		List<FileDto> result = new ArrayList<>();
-		for (FileDto dto : filesService.listFilesInDir(filesService.getFile(fileDto))) {
-			if (FileDto.FileType.DIRECTORY == dto.getType()) {
-				result.addAll(parseDirectories(dto));
-			} else {
-				result.add(dto);
-			}
-		}
-		return result;
+		return UploadUtils.parseDirectories(filesService, fileDto);
 	}
 }

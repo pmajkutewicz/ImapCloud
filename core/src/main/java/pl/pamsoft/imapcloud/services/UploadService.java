@@ -35,6 +35,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyMap;
@@ -124,8 +125,9 @@ public class UploadService extends AbstractBackgroundService {
 			Thread.currentThread().setName("UT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
 			final Account account = accountRepository.getById(selectedAccount.getId());
 			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
-			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, getMonitoringHelper()).apply(selectedFiles);
-			getTaskProgressMap().put(taskId, getTasksProgressService().create(TaskType.UPLOAD, taskId, bytesToProcess, selectedFiles));
+			List<FileDto> parsedFiles = selectedFiles.stream().map(f -> UploadUtils.parseDirectories(filesIOService, f)).flatMap(List::stream).collect(Collectors.toList());
+			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, getMonitoringHelper()).apply(parsedFiles);
+			getTaskProgressMap().put(taskId, getTasksProgressService().create(TaskType.UPLOAD, taskId, bytesToProcess, parsedFiles));
 
 			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
 			Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
