@@ -4,6 +4,7 @@ import pl.pamsoft.imapcloud.api.accounts.ChunkUploader;
 import pl.pamsoft.imapcloud.api.containers.UploadChunkContainer;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestingChunkUploader implements ChunkUploader {
@@ -13,7 +14,7 @@ public class TestingChunkUploader implements ChunkUploader {
 	public String upload(UploadChunkContainer dataChunk, Map<String, String> metadata) {
 		counter.incrementAndGet();
 		try {
-			Thread.sleep(100000);
+			Thread.sleep(TimeUnit.MINUTES.toMillis(1));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
