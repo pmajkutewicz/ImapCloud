@@ -53,14 +53,14 @@
 		<main.basedir>${project.basedir}</main.basedir>
 
 		<!-- region backend client-->
-		<okhttp.version>3.8.1</okhttp.version>
+		<okhttp.version>3.10.0</okhttp.version>
 		<!-- endregion -->
 
 		<!-- region common -->
-		<bouncycastle.version>1.57</bouncycastle.version>
+		<bouncycastle.version>1.59</bouncycastle.version>
 		<guava.version>21.0</guava.version>
-		<jackson.version>2.8.6</jackson.version>
-		<jackson-datatype-jdk8.version>2.8.6</jackson-datatype-jdk8.version>
+		<jackson.version>2.9.5</jackson.version>
+		<jackson-datatype-jdk8.version>2.9.5</jackson-datatype-jdk8.version>
 		<logback-classic.version>1.2.3</logback-classic.version>
 		<!-- endregion -->
 
@@ -68,18 +68,19 @@
 		<jetty.version>9.4.0.M1</jetty.version>
 		<tomcat.version>8.0.30</tomcat.version>
 
-		<commons-pool2.version>2.4.2</commons-pool2.version>
+		<commons-pool2.version>2.5.0</commons-pool2.version>
 		<spring-boot.version>1.5.6.RELEASE</spring-boot.version>
-		<snakeyaml.version>1.18</snakeyaml.version>
-		<orientdb.version>2.2.26</orientdb.version>
-		<javax.mail-api.version>1.6.0</javax.mail-api.version>
+		<snakeyaml.version>1.20</snakeyaml.version>
+		<javax.mail-api.version>1.6.1</javax.mail-api.version>
 		<joda-time.version>2.9.9</joda-time.version>
 		<zero-allocation-hashing.version>0.8</zero-allocation-hashing.version>
 		<springfox-swagger2.version>2.7.0</springfox-swagger2.version>
 		<jamon.version>2.81</jamon.version>
-		<ff4j-core.version>1.6.5</ff4j-core.version>
-		<commons-vfs2.version>2.1</commons-vfs2.version>
-		<httpclient.version>4.5.3</httpclient.version>
+		<ff4j-core.version>1.7.1</ff4j-core.version>
+		<commons-vfs2.version>2.2</commons-vfs2.version>
+		<httpclient.version>4.5.5</httpclient.version>
+		<mysql-connector-java.version>8.0.7-dmr</mysql-connector-java.version>
+		<HikariCP.version>3.1.0</HikariCP.version>
 		<!-- endregion -->
 
 		<!-- region storage-imap -->
@@ -89,15 +90,15 @@
 		<!-- endregion -->
 
 		<!-- region gui -->
-		<guice.version>4.1.0</guice.version>
+		<guice.version>4.2.0</guice.version>
 		<ignite-guice.version>1.0.2</ignite-guice.version>
-		<controlsfx.version>8.40.13</controlsfx.version>
+		<controlsfx.version>9.0.0</controlsfx.version>
 		<commons-math3.version>3.6.1</commons-math3.version>
-		<commons-io.version>2.5</commons-io.version>
+		<commons-io.version>2.6</commons-io.version>
 		<!-- endregion -->
 
 		<!-- region jmh -->
-		<jmh-core.version>1.19</jmh-core.version>
+		<jmh-core.version>1.20</jmh-core.version>
 		<!-- endregion -->
 
 		<!-- region maven plugins -->
@@ -110,7 +111,7 @@
 		<maven-resources-plugin.version>3.0.2</maven-resources-plugin.version>
 		<maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
 		<maven-install-plugin.version>2.5.2</maven-install-plugin.version>
-		<maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
+		<maven-surefire-plugin.version>2.21.0</maven-surefire-plugin.version>
 		<maven-pmd-plugin.version>3.8</maven-pmd-plugin.version>
 		<maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
 		<maven-findbugs-plugin.version>3.0.4</maven-findbugs-plugin.version>
@@ -120,12 +121,12 @@
 
 		<!-- region QA -->
 		<jacoco-maven-plugin.version>0.7.9</jacoco-maven-plugin.version>
-		<testng.version>6.11</testng.version>
+		<testng.version>6.14.3</testng.version>
 		<mockito-core.version>2.8.47</mockito-core.version>
 		<!-- endregion -->
 
-		<awaitility.version>3.0.0</awaitility.version>
-		<h2.version>1.4.195</h2.version>
+		<awaitility.version>3.1.0</awaitility.version>
+		<h2.version>1.4.197</h2.version>
 	</properties>
 
 	<modules>
@@ -240,26 +241,6 @@
 				<version>${snakeyaml.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.orientechnologies</groupId>
-				<artifactId>orientdb-core</artifactId>
-				<version>${orientdb.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.orientechnologies</groupId>
-				<artifactId>orientdb-server</artifactId>
-				<version>${orientdb.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.orientechnologies</groupId>
-				<artifactId>orientdb-graphdb</artifactId>
-				<version>${orientdb.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.orientechnologies</groupId>
-				<artifactId>orientdb-object</artifactId>
-				<version>${orientdb.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time.version}</version>
@@ -280,6 +261,17 @@
 				<groupId>net.openhft</groupId>
 				<artifactId>zero-allocation-hashing</artifactId>
 				<version>${zero-allocation-hashing.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql-connector-java.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.zaxxer</groupId>
+				<artifactId>HikariCP</artifactId>
+				<version>${HikariCP.version}</version>
 			</dependency>
 
 			<dependency>
@@ -586,7 +578,7 @@
 					<dependency>
 						<groupId>org.apache.maven.surefire</groupId>
 						<artifactId>surefire-testng</artifactId>
-						<version>2.20</version>
+						<version>${maven-surefire-plugin.version}</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -713,7 +705,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.20</version>
+					<version>${maven-surefire-plugin.version}</version>
 				</plugin>
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
