@@ -7,6 +7,7 @@ import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface TaskProgressRepositoryCustom {
@@ -15,5 +16,5 @@ public interface TaskProgressRepositoryCustom {
 
 	TaskProgress create(TaskType type, String taskId, long bytesOverall, List<FileDto> selectedFiles);
 
-	TaskProgress getByTaskId(String taskId);
+	Optional<TaskProgress> getByTaskId(String taskId);
 }

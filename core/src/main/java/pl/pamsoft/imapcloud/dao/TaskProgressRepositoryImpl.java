@@ -12,6 +12,7 @@ import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -36,7 +37,7 @@ public class TaskProgressRepositoryImpl implements TaskProgressRepositoryCustom 
 	}
 
 	@Override
-	public TaskProgress getByTaskId(String taskId) {
+	public Optional<TaskProgress> getByTaskId(String taskId) {
 		TaskProgress taskProgress = new TaskProgress();
 		taskProgress.setTaskId(taskId);
 		return taskProgressRepository.findOne(Example.of(taskProgress, ExampleMatcher.matchingAny()));

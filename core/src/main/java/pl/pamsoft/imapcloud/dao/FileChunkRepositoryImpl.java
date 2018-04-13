@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import pl.pamsoft.imapcloud.entity.FileChunk;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class FileChunkRepositoryImpl implements FileChunkRepositoryCustom {
@@ -16,9 +17,11 @@ public class FileChunkRepositoryImpl implements FileChunkRepositoryCustom {
 
 	@Override
 	public void markChunkVerified(Long chunkDbId, boolean isExist) {
-		FileChunk chunk = fileChunkRepository.findOne(chunkDbId);
-		chunk.setChunkExists(isExist);
-		fileChunkRepository.save(chunk);
+		Optional<FileChunk> chunk = fileChunkRepository.findById(chunkDbId);
+		if (chunk.isPresent()) {
+			chunk.get().setChunkExists(isExist);
+			fileChunkRepository.save(chunk.get());
+		}
 	}
 
 	@Override

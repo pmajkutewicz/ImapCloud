@@ -36,20 +36,11 @@ public class ImapCloudApplicationTests extends AbstractTestNGSpringContextTests 
 	public int targetWebServerPort;
 
 	@Test
-	public void indexShouldWork() throws IOException {
-		String pageCode = getPage(new HttpGet("/"));
-
-		assertThat(pageCode, containsString("Swagger UI"));
-		assertThat(pageCode, containsString("FF4J Console"));
-		assertThat(pageCode, containsString("FF4J Web Console"));
-	}
-
-	@Test
 	public void swaggerShouldWork() throws IOException {
 		String pageCode = getPage(new HttpGet("/swagger-ui.html"));
 
 		assertThat(pageCode, containsString("<title>Swagger UI</title>"));
-		assertThat(pageCode, containsString("swagger-ui-container"));
+		assertThat(pageCode, containsString("swagger-ui"));
 	}
 
 	@Test

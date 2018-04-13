@@ -69,12 +69,12 @@
 		<tomcat.version>8.0.30</tomcat.version>
 
 		<commons-pool2.version>2.5.0</commons-pool2.version>
-		<spring-boot.version>1.5.6.RELEASE</spring-boot.version>
-		<snakeyaml.version>1.20</snakeyaml.version>
+		<spring-boot.version>2.0.1.RELEASE</spring-boot.version>
+		<snakeyaml.version>1.18</snakeyaml.version>
 		<javax.mail-api.version>1.6.1</javax.mail-api.version>
 		<joda-time.version>2.9.9</joda-time.version>
 		<zero-allocation-hashing.version>0.8</zero-allocation-hashing.version>
-		<springfox-swagger2.version>2.7.0</springfox-swagger2.version>
+		<springfox-swagger2.version>2.8.0</springfox-swagger2.version>
 		<jamon.version>2.81</jamon.version>
 		<ff4j-core.version>1.7.1</ff4j-core.version>
 		<commons-vfs2.version>2.2</commons-vfs2.version>
@@ -86,7 +86,7 @@
 		<!-- region storage-imap -->
 		<commons-lang.version>2.6</commons-lang.version>
 		<!-- check what spring boot version uses and update -->
-		<spring-context.version>4.3.10.RELEASE</spring-context.version>
+		<spring-context.version>5.0.5.RELEASE</spring-context.version>
 		<!-- endregion -->
 
 		<!-- region gui -->

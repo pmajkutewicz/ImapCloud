@@ -20,7 +20,7 @@ import java.util.Map;
 @Entity
 public class TaskProgress {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Version
 	private Long version;

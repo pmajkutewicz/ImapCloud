@@ -15,6 +15,7 @@ import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,13 +59,15 @@ public class TasksProgressService {
 	}
 
 	public void deleteTask(String taskId, boolean deleteUploadedFiles) {
-		TaskProgress progress = taskProgressRepository.getByTaskId(taskId);
-		if (deleteUploadedFiles) {
-			progress.getProgressMap().values().forEach(e -> {
-				File fileToDelete = fileRepository.getByAbsolutePath(e.getAbsolutePath());
-				deletionService.delete(fileToDelete);
-			});
+		Optional<TaskProgress> progress = taskProgressRepository.getByTaskId(taskId);
+		if (progress.isPresent()) {
+			if (deleteUploadedFiles) {
+				progress.get().getProgressMap().values().forEach(e -> {
+					File fileToDelete = fileRepository.getByAbsolutePath(e.getAbsolutePath());
+					deletionService.delete(fileToDelete);
+				});
+			}
+			taskProgressRepository.delete(progress.get());
 		}
-		taskProgressRepository.delete(progress);
 	}
 }

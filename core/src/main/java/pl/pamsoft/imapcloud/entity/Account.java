@@ -20,7 +20,7 @@ import java.util.Map;
 @Entity
 public class Account implements pl.pamsoft.imapcloud.api.accounts.Account {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Version
 	private Long version;

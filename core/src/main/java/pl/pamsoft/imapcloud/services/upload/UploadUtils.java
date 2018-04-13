@@ -16,11 +16,15 @@ public class UploadUtils {
 
 	public static List<FileDto> parseDirectories(FilesIOService filesService, FileDto fileDto) {
 		List<FileDto> result = new ArrayList<>();
-		for (FileDto dto : filesService.listFilesInDir(filesService.getFile(fileDto))) {
-			if (FileDto.FileType.DIRECTORY == dto.getType()) {
-				result.addAll(parseDirectories(filesService, dto));
-			} else {
-				result.add(dto);
+		if (FileDto.FileType.FILE == fileDto.getType()) {
+			result.add(fileDto);
+		} else {
+			for (FileDto dto : filesService.listFilesInDir(filesService.getFile(fileDto))) {
+				if (FileDto.FileType.DIRECTORY == dto.getType()) {
+					result.addAll(parseDirectories(filesService, dto));
+				} else {
+					result.add(dto);
+				}
 			}
 		}
 		return result;
