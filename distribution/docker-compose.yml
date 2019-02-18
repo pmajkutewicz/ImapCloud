@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  ejsik_imapcloud:
+    container_name: ejsik_imapcloud
+    build: .
+    external_links:
+      - ejsik_mariadb:db
+    volumes:
+      - ${DOCKER_DIRS}:/data:rw
+    ports:
+      - "9090:9000"
+    restart: on-failure
+    networks:
+      - mariadb_back
+
+networks:
+  apache:
+  mariadb_back:
+    external:
+      name: mariadb_back
