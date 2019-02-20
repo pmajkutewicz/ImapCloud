@@ -87,7 +87,7 @@ public class FilesIOService {
 	}
 
 	public long calculateDirSize(File directory) {
-		Iterable<File> files = com.google.common.io.Files.fileTreeTraverser().breadthFirstTraversal(directory);
+		Iterable<File> files = com.google.common.io.Files.fileTraverser().breadthFirst(directory);
 		return StreamSupport.stream(files.spliterator(), false).mapToLong(File::length).sum();
 	}
 
