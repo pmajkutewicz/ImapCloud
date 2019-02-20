@@ -4,8 +4,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
@@ -20,14 +20,14 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
-public class UploadFileHasherTest {
+class UploadFileHasherTest {
 
 	private UploadFileHasher uploadFileHasher;
 
@@ -35,8 +35,8 @@ public class UploadFileHasherTest {
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
-	@BeforeClass
-	public void init() throws NoSuchAlgorithmException {
+	@BeforeAll
+	void init() throws NoSuchAlgorithmException {
 		uploadFileHasher = new UploadFileHasher(filesIOService, monitoringHelper);
 	}
 
@@ -44,7 +44,7 @@ public class UploadFileHasherTest {
 	/**
 	 * @see DownloadFileHasherTest#shouldCalculateHash()
 	 */
-	public void shouldCalculateHash() throws IOException, NoSuchAlgorithmException {
+	void shouldCalculateHash() throws IOException, NoSuchAlgorithmException {
 		byte[] randomBytes = TestUtils.getRandomBytes(1024);
 		FileSystemManager manager = VFS.getManager();
 		FileObject fileObject = manager.resolveFile("ram:///exampleFile.txt");
@@ -62,12 +62,12 @@ public class UploadFileHasherTest {
 	}
 
 	@Test
-	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
+	void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
 		when(filesIOService.getInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
 
 		UploadChunkContainer response = uploadFileHasher.apply(ucc);
 
-		assertEquals(response, UploadChunkContainer.EMPTY);
+		assertEquals(UploadChunkContainer.EMPTY, response);
 	}
 }

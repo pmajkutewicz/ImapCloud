@@ -6,8 +6,8 @@ import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -21,13 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
 public class RecoveredFileChunksFileWriterTest {
 
@@ -37,8 +37,8 @@ public class RecoveredFileChunksFileWriterTest {
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private FileSystemManager fsManager;
 
-	@BeforeMethod
-	public void init() throws FileSystemException {
+	@BeforeEach
+	void init() throws FileSystemException {
 		recoveredFileChunksFileWriter = new RecoveredFileChunksFileWriter(filesIOService, ".");
 		fsManager = VFS.getManager();
 		fsManager.createVirtualFileSystem(RAM_VIRTUAL);
@@ -46,7 +46,7 @@ public class RecoveredFileChunksFileWriterTest {
 	}
 
 	@Test
-	public void shouldSaveJsonToFile() throws IOException {
+	void shouldSaveJsonToFile() throws IOException {
 		String random = RandomStringUtils.randomAlphanumeric(10);
 		String file = RAM_VIRTUAL + "/" + random + ".ic";
 		OutputStream os = create(file).getContent().getOutputStream();
@@ -61,18 +61,18 @@ public class RecoveredFileChunksFileWriterTest {
 		String jsonAsString = filesIOService.unPack(is);
 
 		RecoveryChunkContainer recoveryChunkContainer = new ObjectMapper().readValue(jsonAsString, RecoveryChunkContainer.class);
-		assertEquals(result, dummyData);
-		assertEquals(recoveryChunkContainer.getTaskId(), dummyData.getTaskId());
+		assertEquals(dummyData, result);
+		assertEquals(dummyData.getTaskId(), recoveryChunkContainer.getTaskId());
 	}
 
 	@Test
-	public void shouldReturnEmptyContainerWhenErrorOccured() throws IOException {
+	void shouldReturnEmptyContainerWhenErrorOccured() throws IOException {
 		when(filesIOService.getOutputStream(any())).thenThrow(new IOException("success"));
 		RecoveryChunkContainer dummyData = create();
 
 		RecoveryChunkContainer result = recoveredFileChunksFileWriter.apply(dummyData);
 
-		assertEquals(result, RecoveryChunkContainer.EMPTY);
+		assertEquals(RecoveryChunkContainer.EMPTY, result);
 	}
 
 	private FileObject create(String file) throws FileSystemException {

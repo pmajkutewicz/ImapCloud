@@ -10,8 +10,8 @@ import com.icegreen.greenmail.imap.commands.ImapCommandFactory;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.commons.lang.RandomStringUtils;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 
@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-public abstract class AbstractGreenMailIntegrationTest extends AbstractIntegrationTest {
+abstract class AbstractGreenMailIntegrationTest extends AbstractIntegrationTest {
 	protected AccountRestClient accountRestClient;
 	protected Common common;
 	protected GreenMail greenMail;
@@ -28,16 +28,16 @@ public abstract class AbstractGreenMailIntegrationTest extends AbstractIntegrati
 	private String username = RandomStringUtils.randomAlphabetic(10);
 	private String pass = RandomStringUtils.randomAlphabetic(10);
 
-	@BeforeClass
-	public void init() throws IOException, InterruptedException {
+	@BeforeAll
+	void init() throws IOException, InterruptedException {
 		accountRestClient = new AccountRestClient(getEndpoint(), getUsername(), getPassword());
 		common = new Common(accountRestClient, RESPONSE_NOT_RECEIVED, TEST_TIMEOUT);
 		testAccountDto = common.shouldCreateAccount(username, pass, "key", String.format("%s@localhost:23784", username), "imap");
 		setupGreenMail();
 	}
 
-	@AfterClass
-	public void shutDown() {
+	@AfterAll
+	void shutDown() {
 		if (null != greenMail) {
 			greenMail.stop();
 		}

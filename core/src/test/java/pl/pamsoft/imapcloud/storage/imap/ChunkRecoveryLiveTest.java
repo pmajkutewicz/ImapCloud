@@ -14,14 +14,14 @@ import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
-public class ChunkRecoveryLiveTest {
+class ChunkRecoveryLiveTest {
 
 	private ImapChunkRecoverer chunkRecovery;
 
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@SuppressWarnings("unchecked")
-	public void init() {
+	void init() {
 		Account a = new Account();
 		a.setLogin("adam.b92");
 		a.setPassword("&*PJMsSyhshwfKmmEg*3xY$Vgca8z5#c");
@@ -33,7 +33,7 @@ public class ChunkRecoveryLiveTest {
 		chunkRecovery = new ImapChunkRecoverer(pool);
 	}
 
-	public void testLive() {
+	void testLive() {
 		try {
 			chunkRecovery.recover(RecoveryChunkContainer.EMPTY);
 		} catch (IOException e) {

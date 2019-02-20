@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.entity.Account;
 import pl.pamsoft.imapcloud.entity.File;
@@ -12,14 +12,14 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
-public class FileStorerTest {
+class FileStorerTest {
 
 	private static final Long EXAMPLE_ID = 123L;
 	private static final String EXAMPLE_UNIQUE_FILE_ID = "uniqueFileId";
@@ -30,31 +30,31 @@ public class FileStorerTest {
 	@SuppressWarnings("unchecked")
 	private Consumer<UploadChunkContainer> updateProgress = (Consumer<UploadChunkContainer>) mock(Consumer.class);
 
-	@BeforeClass
-	public void init() {
+	@BeforeAll
+	void init() {
 		fileStorer = new FileStorer(fileServices, account, updateProgress);
 	}
 
 	@Test
-	public void shouldStoreFile() throws FileAlreadyExistsException {
+	void shouldStoreFile() throws FileAlreadyExistsException {
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), TestUtils.mockFileDto());
 		when(fileServices.saveFile(eq(ucc), eq(account))).thenReturn(mockFile());
 
 		UploadChunkContainer result = fileStorer.apply(ucc);
 
 		verify(fileServices, times(1)).saveFile(eq(ucc), eq(account));
-		assertEquals(result.getFileUniqueId(), EXAMPLE_UNIQUE_FILE_ID);
-		assertEquals(result.getSavedFileId(), EXAMPLE_ID);
+		assertEquals(EXAMPLE_UNIQUE_FILE_ID, result.getFileUniqueId());
+		assertEquals(EXAMPLE_ID, result.getSavedFileId());
 	}
 
 	@Test
-	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws FileAlreadyExistsException {
+	void shouldReturnEmptyUCCWhenExceptionOccurred() throws FileAlreadyExistsException {
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), TestUtils.mockFileDto());
 		when(fileServices.saveFile(eq(ucc), eq(account))).thenThrow(new FileAlreadyExistsException("exampleFAEE"));
 
 		UploadChunkContainer result = fileStorer.apply(ucc);
 
-		assertEquals(result, UploadChunkContainer.EMPTY);
+		assertEquals(UploadChunkContainer.EMPTY, result);
 	}
 
 	private File mockFile() {

@@ -1,8 +1,8 @@
 package pl.pamsoft.imapcloud.services.upload;
 
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
@@ -13,19 +13,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
-public class FileChunkIteratorTest {
+class FileChunkIteratorTest {
 
 	private static final int MEBIBYTE = 1024 * 1024;
 
 	private MonitoringHelper monitoringHelper = Mockito.mock(MonitoringHelper.class);
 
 	@DataProvider
-	public Object[][] lastChunkShouldBeMarkedAsLastDataProvider() {
+	Object[][] lastChunkShouldBeMarkedAsLastDataProvider() {
 		return new Object[][] {
 			{10, 1, 9},
 			{10, 3, 3}
@@ -33,7 +33,7 @@ public class FileChunkIteratorTest {
 	}
 
 	@Test(dataProvider = "lastChunkShouldBeMarkedAsLastDataProvider")
-	public void lastChunkShouldBeMarkedAsLast(int fileSize, int readSize, int nbOfNonLastChunks) throws IOException {
+	void lastChunkShouldBeMarkedAsLast(int fileSize, int readSize, int nbOfNonLastChunks) throws IOException {
 		String filePath = getTempDir() + "/last_chunk.txt";
 		FileDto mockedFileDto = createFile(filePath, fileSize);
 
@@ -47,22 +47,22 @@ public class FileChunkIteratorTest {
 	}
 
 	@Test
-	public void fileReadingWithNotAlignedChunks() throws IOException {
+	void fileReadingWithNotAlignedChunks() throws IOException {
 		String filePath = getTempDir() + "/not_aligned.txt";
 		FileDto mockedFileDto = createFile(filePath, 10);
 
 		FileChunkIterator fileChunkIterator = new FileChunkIterator(new UploadChunkContainer("testId", mockedFileDto), 3, monitoringHelper);
 		fileChunkIterator.process();
 
-		assertEquals(3, fileChunkIterator.next().getData().length);
-		assertEquals(3, fileChunkIterator.next().getData().length);
-		assertEquals(3, fileChunkIterator.next().getData().length);
-		assertEquals(1, fileChunkIterator.next().getData().length);
+		assertEquals(fileChunkIterator.next().getData().length, 3);
+		assertEquals(fileChunkIterator.next().getData().length, 3);
+		assertEquals(fileChunkIterator.next().getData().length, 3);
+		assertEquals(fileChunkIterator.next().getData().length, 1);
 		deleteFile(filePath);
 	}
 
 	@Test
-	public void fileShouldBeReadUsingConstantChunks() throws IOException {
+	void fileShouldBeReadUsingConstantChunks() throws IOException {
 		String filePath = getTempDir() + "/constant_chunks.txt";
 		FileDto mockedFileDto = createFile(filePath, MEBIBYTE);
 
@@ -74,12 +74,12 @@ public class FileChunkIteratorTest {
 			counter++;
 		}
 		//There was 1024 chunks
-		assertEquals(1024, counter);
+		assertEquals(counter, 1024);
 		deleteFile(filePath);
 	}
 
 	@Test
-	public void fileShouldBeReadUsingVariableChunks() throws IOException {
+	void fileShouldBeReadUsingVariableChunks() throws IOException {
 		String filePath = getTempDir() + "/variable_chunks.txt";
 		FileDto mockedFileDto = createFile(filePath, MEBIBYTE);
 

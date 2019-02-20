@@ -3,9 +3,10 @@ package pl.pamsoft.imapcloud.controllers;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
 import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
 import pl.pamsoft.imapcloud.dto.progress.ProgressStatus;
@@ -30,12 +31,12 @@ import static com.google.common.collect.ImmutableMap.of;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.testng.Assert.assertEquals;
 
-public class TasksControllerTest {
+class TasksControllerTest {
 
 	private TasksController tasksController;
 
@@ -53,8 +54,8 @@ public class TasksControllerTest {
 		}
 	};
 
-	@BeforeClass
-	public void init() throws InterruptedException, MalformedURLException {
+	@BeforeAll
+	void init() throws InterruptedException, MalformedURLException {
 		final AtomicBoolean initialized = new AtomicBoolean();
 		new Thread(() -> {
 			new JFXPanel(); // initializes JavaFX environment
@@ -71,8 +72,9 @@ public class TasksControllerTest {
 		tasksController.initialize(new URL("http://example.com"), resourceBundle);
 	}
 
-	@Test(enabled = false) // DISABLE due to jenkins (won't work TasksControllerTest.lambda$init$0:60 » UnsupportedOperation Unable to open DIS)
-	public void testFlow() throws InterruptedException, IOException {
+	@Test // DISABLE due to jenkins (won't work TasksControllerTest.lambda$init$0:60 » UnsupportedOperation Unable to open DIS)
+	@Disabled
+	void testFlow() throws InterruptedException, IOException {
 		Map<String, TaskProgressControl> currentTasks = (Map<String, TaskProgressControl>) getInternalState(tasksController, "currentTasks");
 		RequestCallback<TaskProgressResponse> lambdaToTest = captureLambda();
 		TaskProgressResponse taskProgressResponse = new TaskProgressResponse();
@@ -82,15 +84,15 @@ public class TasksControllerTest {
 		taskProgressResponse.setTaskProgressList(Collections.singletonList(create("1", 10, 100, of(FILE_1, f1))));
 		lambdaToTest.onSuccess(taskProgressResponse);
 		TaskProgressControl taskProgressControl = currentTasks.get("1");
-		assertEquals(taskProgressControl.getOverallProgress().getProgress(), 0.1);
-		assertEquals(taskProgressControl.getProgressMap().get(FILE_1).longValue(), 10);
+		assertEquals(0.1, taskProgressControl.getOverallProgress().getProgress());
+		assertEquals(10, taskProgressControl.getProgressMap().get(FILE_1).longValue());
 
 		f1.setProgress(20);
 		taskProgressResponse.setTaskProgressList(Collections.singletonList(create("1", 20, 100, of(FILE_1, f1))));
 		lambdaToTest.onSuccess(taskProgressResponse);
 		taskProgressControl = currentTasks.get("1");
-		assertEquals(taskProgressControl.getOverallProgress().getProgress(), 0.2);
-		assertEquals(taskProgressControl.getProgressMap().get(FILE_1).longValue(), 20);
+		assertEquals(0.2, taskProgressControl.getOverallProgress().getProgress());
+		assertEquals(20, taskProgressControl.getProgressMap().get(FILE_1).longValue());
 	}
 
 	private TaskProgressDto create(String taskId, long processed, long overall, Map<String, EntryProgressDto> progressDtoList) {

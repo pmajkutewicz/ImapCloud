@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.services.download;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -15,9 +15,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import static pl.pamsoft.imapcloud.dto.FileDto.FileType.FILE;
 
 public class FileSaverTest {
@@ -29,14 +29,14 @@ public class FileSaverTest {
 
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
-	@BeforeClass
+	@BeforeAll
 	public void init() throws NoSuchAlgorithmException {
 		fileSaver = new FileSaver(monitoringHelper);
 		tempPath = System.getProperty("java.io.tmpdir") + File.separator + "ic";
 	}
 
 	@Test
-	public void shouldAppendToNewFile() throws IOException {
+	void shouldAppendToNewFile() throws IOException {
 		String outputFileName = "out.txt";
 		deleteTempFile(outputFileName);
 
@@ -49,13 +49,13 @@ public class FileSaverTest {
 
 		DownloadChunkContainer result = fileSaver.apply(dcc);
 
-		assertEquals(result, dcc);
-		assertEquals(Paths.get(tempPath, outputFileName).toFile().length(), FILE_SIZE);
+		assertEquals(dcc, result);
+		assertEquals(FILE_SIZE, Paths.get(tempPath, outputFileName).toFile().length());
 		deleteTempFile(outputFileName);
 	}
 
 	@Test
-	public void shouldAppendToExistingFile() throws IOException {
+	void shouldAppendToExistingFile() throws IOException {
 		String outputFileName = "out_existing.txt";
 		deleteTempFile(outputFileName);
 
@@ -69,8 +69,8 @@ public class FileSaverTest {
 		fileSaver.apply(dcc);
 		DownloadChunkContainer result = fileSaver.apply(dcc);
 
-		assertEquals(result, dcc);
-		assertEquals(Paths.get(tempPath, outputFileName).toFile().length(), FILE_SIZE * 2);
+		assertEquals(dcc, result);
+		assertEquals(FILE_SIZE * 2, Paths.get(tempPath, outputFileName).toFile().length());
 		deleteTempFile(outputFileName);
 	}
 

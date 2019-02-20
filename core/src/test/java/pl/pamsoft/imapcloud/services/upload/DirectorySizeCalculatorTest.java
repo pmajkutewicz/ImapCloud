@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
@@ -10,29 +10,29 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 import static pl.pamsoft.imapcloud.dto.FileDto.FileType.FILE;
 
-public class DirectorySizeCalculatorTest {
+class DirectorySizeCalculatorTest {
 
 	private DirectorySizeCalculator directorySizeCalculator;
 
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
-	@BeforeClass
-	public void init() {
+	@BeforeAll
+	void init() {
 		reset(filesIOService);
 		directorySizeCalculator = new DirectorySizeCalculator(filesIOService, monitoringHelper);
 		when(filesIOService.calculateDirSize(any(File.class))).thenCallRealMethod();
 	}
 
 	@Test
-	public void shouldCalculateFilesSize() {
+	void shouldCalculateFilesSize() {
 		List<FileDto> files = Arrays.asList(create("a", FILE, 1024L), create("b", FILE, 2048L));
 		when(filesIOService.getFile(any(FileDto.class))).thenAnswer(invocation -> {
             Object[] arguments = invocation.getArguments();
@@ -44,7 +44,7 @@ public class DirectorySizeCalculatorTest {
 
 		long size = directorySizeCalculator.apply(files);
 
-		assertEquals(size, 1024L + 2048L);
+		assertEquals(1024L + 2048L, size);
 	}
 
 

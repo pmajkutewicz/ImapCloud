@@ -1,8 +1,8 @@
 package pl.pamsoft.imapcloud.services.recovery;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dao.FileChunkRepository;
 import pl.pamsoft.imapcloud.dao.FileRepository;
@@ -16,15 +16,15 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 import static java.util.Collections.singleton;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
-public class FileRecoveryTest {
+class FileRecoveryTest {
 
 	private CryptoService cryptoService = new CryptoService();
 	private FilesIOService filesIOService = mock(FilesIOService.class);
@@ -34,8 +34,8 @@ public class FileRecoveryTest {
 
 	private RecoveryChunkContainer exampleData;
 
-	@BeforeMethod
-	public void init() throws IOException {
+	@BeforeEach
+	void init() throws IOException {
 		reset(fileRepository);
 		reset(fileChunkRepository);
 		reset(filesIOService);
@@ -47,7 +47,7 @@ public class FileRecoveryTest {
 	}
 
 	@Test
-	public void shouldRecoverSelectedFile() throws IOException {
+	void shouldRecoverSelectedFile() throws IOException {
 		ArgumentCaptor<File> fileCaptor = ArgumentCaptor.forClass(File.class);
 		ArgumentCaptor<FileChunk> fileChunkCaptor = ArgumentCaptor.forClass(FileChunk.class);
 		when(fileRepository.save(fileCaptor.capture())).thenAnswer(i -> fileCaptor.getValue());

@@ -1,6 +1,6 @@
 package pl.pamsoft.imapcloud.services.download;
 
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.File;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -9,18 +9,18 @@ import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
-public class ChunkHashVerifierTest {
+class ChunkHashVerifierTest {
 
 	private static final String EXPECTED_HASH = "expectedHash";
 	private static final String FILE_ID = "fileId";
 
 	@Test
-	public void shouldVerifyHashIfLastChunk() {
+	void shouldVerifyHashIfLastChunk() {
 		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 		FileChunk fc = createFileChunk();
 		DownloadChunkContainer dcc = DownloadChunkContainer.addChunkHash(
@@ -28,12 +28,12 @@ public class ChunkHashVerifierTest {
 
 		DownloadChunkContainer result = new ChunkHashVerifier(invalidFileIds).apply(dcc);
 
-		assertEquals(result, dcc);
+		assertEquals(dcc, result);
 		assertTrue(invalidFileIds.isEmpty());
 	}
 
 	@Test
-	public void shouldAddFileToInvalidFileIdsWhenMismatch() {
+	void shouldAddFileToInvalidFileIdsWhenMismatch() {
 		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
 		FileChunk fc = createFileChunk();
 		DownloadChunkContainer dcc = DownloadChunkContainer.addFileHash(
@@ -41,10 +41,10 @@ public class ChunkHashVerifierTest {
 
 		DownloadChunkContainer result = new ChunkHashVerifier(invalidFileIds).apply(dcc);
 
-		assertEquals(result, DownloadChunkContainer.EMPTY);
+		assertEquals(DownloadChunkContainer.EMPTY, result);
 		assertFalse(invalidFileIds.isEmpty());
-		assertEquals(1,  invalidFileIds.size());
-		assertEquals(invalidFileIds.get(0), FILE_ID);
+		assertEquals(invalidFileIds.size(), 1);
+		assertEquals(FILE_ID, invalidFileIds.get(0));
 	}
 
 	private FileChunk createFileChunk() {

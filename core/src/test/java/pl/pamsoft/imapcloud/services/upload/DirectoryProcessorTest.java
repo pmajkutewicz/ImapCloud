@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
@@ -12,41 +12,41 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
-public class DirectoryProcessorTest {
+class DirectoryProcessorTest {
 
 	private DirectoryProcessor directoryProcessor;
 
 	private FilesIOService filesService = mock(FilesIOService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
-	@BeforeClass
-	public void init(){
+	@BeforeAll
+	void init(){
 		directoryProcessor = new DirectoryProcessor(filesService, monitoringHelper);
 	}
 
 	@Test
-	public void shouldParseSingleFile() {
+	void shouldParseSingleFile() {
 		FileDto fileDto = create("example");
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
 
 		Stream<UploadChunkContainer> result = directoryProcessor.apply(ucc);
 
-		assertEquals(result.findFirst().get().getFileDto(), fileDto);
+		assertEquals(fileDto, result.findFirst().get().getFileDto());
 	}
 
 	@Test
-	public void shouldParseDirectoryFile() {
+	void shouldParseDirectoryFile() {
 		FileDto fileDto = createDir();
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
 
 		Stream<UploadChunkContainer> result = directoryProcessor.apply(ucc);
 
-		assertEquals(result.count(), 3);
+		assertEquals(3, result.count());
 	}
 
 	private FileDto createDir() {

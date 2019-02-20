@@ -1,10 +1,9 @@
 package pl.pamsoft.imapcloud.integration;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
@@ -26,11 +25,12 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.with;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class ConcurrentChunkUploadIT extends AbstractIntegrationTest {
+class ConcurrentChunkUploadIT extends AbstractIntegrationTest {
 
 	private static final int FIVE_MB = 5 * 1024 * 1024;
 	private UploadsRestClient uploadsRestClient;
@@ -46,15 +46,15 @@ public class ConcurrentChunkUploadIT extends AbstractIntegrationTest {
 	@Autowired
 	private FileRepository fileRepository;
 
-	@BeforeClass
-	public void init() {
+	@BeforeAll
+	void init() {
 		uploadsRestClient = new UploadsRestClient(getEndpoint(), getUsername(), getPassword());
 		accountRestClient = new AccountRestClient(getEndpoint(), getUsername(), getPassword());
 		common = new Common(accountRestClient, RESPONSE_NOT_RECEIVED, TEST_TIMEOUT);
 	}
 
 	@Test
-	public void shouldUseAllAvailableConcurrentConnections() throws Exception {
+	void shouldUseAllAvailableConcurrentConnections() throws Exception {
 
 		String username = RandomStringUtils.randomAlphabetic(10);
 		AccountDto accountDto = common.shouldCreateAccount(username, "test", "key", String.format("%s@localhost_testing", username), "ic-testing");
@@ -62,13 +62,13 @@ public class ConcurrentChunkUploadIT extends AbstractIntegrationTest {
 
 		TestingChunkUploader chunkUploader = (TestingChunkUploader) testingAccountService.getChunkUploader(accountRepository.getById(accountDto.getId()));
 
-		assertEquals(chunkUploader.getCounter().get(), 0);
+		assertEquals(0, chunkUploader.getCounter().get());
 
 		List<FileDto> filesToUpload = createFiles();
 		uploadsRestClient.startUpload(filesToUpload, accountDto, Encryption.ON, new RequestCallback<Void>() {
 			@Override
 			public void onFailure(IOException e) {
-				AssertJUnit.fail("Error starting upload.");
+				fail("Error starting upload.");
 			}
 
 			@Override

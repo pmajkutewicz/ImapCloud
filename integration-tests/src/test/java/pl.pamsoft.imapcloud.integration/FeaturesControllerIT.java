@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.integration;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.ff4j.IMAPCloudFeature;
 import pl.pamsoft.imapcloud.responses.GetFeaturesResponse;
 import pl.pamsoft.imapcloud.rest.IMAPCloudFeaturesClient;
@@ -9,19 +9,19 @@ import pl.pamsoft.imapcloud.rest.IMAPCloudFeaturesClient;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FeaturesControllerIT extends AbstractIntegrationTest {
+class FeaturesControllerIT extends AbstractIntegrationTest {
 
 	private IMAPCloudFeaturesClient imapCloudFeaturesClient;
 
-	@BeforeClass
+	@BeforeAll
 	public void init() {
 		imapCloudFeaturesClient = new IMAPCloudFeaturesClient(getEndpoint(), getUsername(), getPassword());
 	}
 
 	@Test
-	public void shouldReturnGitStats() throws IOException, InterruptedException {
+	void shouldReturnGitStats() throws IOException, InterruptedException {
 		GetFeaturesResponse features = imapCloudFeaturesClient.getFeatures();
 
 		Map<IMAPCloudFeature, Boolean> featureMap = features.getFeatureMap();

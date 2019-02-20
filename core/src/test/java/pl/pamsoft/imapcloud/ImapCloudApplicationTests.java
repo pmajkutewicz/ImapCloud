@@ -13,11 +13,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.containsString;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {ImapCloudApplication.class})
 @DirtiesContext
-public class ImapCloudApplicationTests extends AbstractTestNGSpringContextTests {
+class ImapCloudApplicationTests extends AbstractTestNGSpringContextTests {
 
 	@Value("${security.user.password}")
 	public String password;
@@ -36,7 +36,7 @@ public class ImapCloudApplicationTests extends AbstractTestNGSpringContextTests 
 	public int targetWebServerPort;
 
 	@Test
-	public void swaggerShouldWork() throws IOException {
+	void swaggerShouldWork() throws IOException {
 		String pageCode = getPage(new HttpGet("/swagger-ui.html"));
 
 		assertThat(pageCode, containsString("<title>Swagger UI</title>"));
@@ -44,7 +44,7 @@ public class ImapCloudApplicationTests extends AbstractTestNGSpringContextTests 
 	}
 
 	@Test
-	public void ff4jWebConsoleShouldWork() throws IOException {
+	void ff4jWebConsoleShouldWork() throws IOException {
 		String pageCode = getPage(new HttpGet("/ff4j-web-console/home"));
 
 		assertThat(pageCode, containsString("<title>FF4J - Home</title>"));
@@ -52,7 +52,7 @@ public class ImapCloudApplicationTests extends AbstractTestNGSpringContextTests 
 	}
 
 	@Test
-	public void ff4jConsoleShouldWork() throws IOException {
+	void ff4jConsoleShouldWork() throws IOException {
 		String pageCode = getPage(new HttpGet("/ff4j-console"));
 
 		assertThat(pageCode, containsString("<title>ff4j</title>"));

@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud;
 
 import net.openhft.hashing.LongHashFunction;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
@@ -17,7 +18,6 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.testng.annotations.Test;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,11 +29,11 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.stream.Collectors.toMap;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @State(Scope.Benchmark)
-public class JHMHashSpeedBenchmark {
+class JHMHashSpeedBenchmark {
 
 	private static final int SIZE_100MB = 100 * 1024 * 1024;
 	private MessageDigest md5;
@@ -45,7 +45,7 @@ public class JHMHashSpeedBenchmark {
 	private Random random = new SecureRandom();
 
 	@Setup(Level.Trial)
-	public void classSetup() throws NoSuchAlgorithmException {
+	void classSetup() throws NoSuchAlgorithmException {
 		Security.addProvider(new BouncyCastleProvider());
 		md5 = MessageDigest.getInstance("MD5");
 		keccak512 = MessageDigest.getInstance("KECCAK-512");
@@ -54,47 +54,47 @@ public class JHMHashSpeedBenchmark {
 	}
 
 	@Setup(Level.Invocation)
-	public void init() throws NoSuchAlgorithmException {
+	void init() throws NoSuchAlgorithmException {
 		random.nextBytes(testData);
 	}
 
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MILLISECONDS)
-	public void xx64HashTimeOf100MiB(Blackhole blackhole) {
+	void xx64HashTimeOf100MiB(Blackhole blackhole) {
 		blackhole.consume(LongHashFunction.xx().hashBytes(testData));
 	}
 
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MILLISECONDS)
-	public void keccak512HashTimeOf100MiB(Blackhole blackhole) {
+	void keccak512HashTimeOf100MiB(Blackhole blackhole) {
 		blackhole.consume(keccak512.digest(testData));
 	}
 
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MILLISECONDS)
-	public void blake2b512HashTimeOf100MiB(Blackhole blackhole) {
+	void blake2b512HashTimeOf100MiB(Blackhole blackhole) {
 		blackhole.consume(blake2b512.digest(testData));
 	}
 
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MILLISECONDS)
-	public void sha3512HashTimeOf100MiB(Blackhole blackhole) {
+	void sha3512HashTimeOf100MiB(Blackhole blackhole) {
 		blackhole.consume(sha3512.digest(testData));
 	}
 
 	@Benchmark
 	@BenchmarkMode(Mode.AverageTime)
 	@OutputTimeUnit(TimeUnit.MILLISECONDS)
-	public void md5HashTimeOf100MiB(Blackhole blackhole) {
+	void md5HashTimeOf100MiB(Blackhole blackhole) {
 		blackhole.consume(md5.digest(testData));
 	}
 
 	@Test
-	public void startBenchmark() throws RunnerException, InterruptedException {
+	void startBenchmark() throws RunnerException, InterruptedException {
 		Options opt = new OptionsBuilder()
 			.include(".*" + JHMHashSpeedBenchmark.class.getSimpleName() + ".*")
 			.warmupIterations(5)
@@ -107,7 +107,7 @@ public class JHMHashSpeedBenchmark {
 			.map(RunResult::getPrimaryResult)
 			.collect(toMap(Result::getLabel, Result::getScore));
 
-		assertEquals(results.size(), 5);
+		assertEquals(5, results.size());
 		assertTrue(resultMap.get("md5HashTimeOf100MiB") > resultMap.get("xx64HashTimeOf100MiB"));
 	}
 }

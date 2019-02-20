@@ -2,19 +2,19 @@ package pl.pamsoft.imapcloud.config;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.api.accounts.AccountService;
 import pl.pamsoft.imapcloud.dto.AccountInfo;
 
 import java.io.IOException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
-public class AccountsSettingsTest {
+class AccountsSettingsTest {
 
 	private String basicImapExample = "mail_ru: {\n" +
 		"  type: imap,\n" +
@@ -35,41 +35,41 @@ public class AccountsSettingsTest {
 		"  }";
 
 	@Test
-	public void shouldntLoadAccountWhenServiceIsNotFounded() throws IOException {
+	void shouldntLoadAccountWhenServiceIsNotFounded() throws IOException {
 		AccountsSettings accountsSettings = spy(AccountsSettings.class);
 		when(accountsSettings.getData()).thenReturn(IOUtils.toInputStream(basicImapExample, "UTF-8"));
 
 		List<AccountInfo> emailProviders = accountsSettings.createAccountProviders(ImmutableList.of(create("invalid"))).getAccountProviders();
 
-		assertEquals(emailProviders.size(), 0);
+		assertEquals(0, emailProviders.size());
 	}
 
 	@Test
-	public void shouldLoadAccountData() throws IOException {
+	void shouldLoadAccountData() throws IOException {
 		AccountsSettings accountsSettings = spy(AccountsSettings.class);
 		when(accountsSettings.getData()).thenReturn(IOUtils.toInputStream(basicImapExample, "UTF-8"));
 
 		List<AccountInfo> emailProviders = accountsSettings.createAccountProviders(ImmutableList.of(create("imap"))).getAccountProviders();
 
-		assertEquals(emailProviders.size(), 1);
-		assertEquals(emailProviders.get(0).getMaxFileSizeMB().intValue(), 25);
-		assertEquals(emailProviders.get(0).getAccountSizeMB().intValue(), 9999999);
-		assertEquals(emailProviders.get(0).getMaxConcurrentConnections().intValue(), 8);
-		assertEquals(emailProviders.get(0).getHost(), "imap.mail.ru");
+		assertEquals(1, emailProviders.size());
+		assertEquals(25, emailProviders.get(0).getMaxFileSizeMB().intValue());
+		assertEquals(9999999, emailProviders.get(0).getAccountSizeMB().intValue());
+		assertEquals(8, emailProviders.get(0).getMaxConcurrentConnections().intValue());
+		assertEquals("imap.mail.ru", emailProviders.get(0).getHost());
 	}
 
 	@Test
-	public void shouldLoadAdditionalPropertiesInAccountData() throws IOException {
+	void shouldLoadAdditionalPropertiesInAccountData() throws IOException {
 		AccountsSettings accountsSettings = spy(AccountsSettings.class);
 		when(accountsSettings.getData()).thenReturn(IOUtils.toInputStream(additionalPropertiesExample, "UTF-8"));
 
 		List<AccountInfo> emailProviders = accountsSettings.createAccountProviders(ImmutableList.of(create("imap"))).getAccountProviders();
 
-		assertEquals(emailProviders.size(), 1);
-		assertEquals(emailProviders.get(0).getProperty("test"), "test");
+		assertEquals(1, emailProviders.size());
+		assertEquals("test", emailProviders.get(0).getProperty("test"));
 	}
 
-	public AccountService create(String type) {
+	AccountService create(String type) {
 		AccountService mock = Mockito.mock(AccountService.class);
 		Mockito.when(mock.getType()).thenReturn(type);
 		return mock;

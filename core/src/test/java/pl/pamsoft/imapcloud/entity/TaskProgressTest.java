@@ -1,15 +1,15 @@
 package pl.pamsoft.imapcloud.entity;
 
-import com.beust.jcommander.internal.Maps;
-import org.testng.annotations.Test;
+import com.google.common.collect.Maps;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.websocket.TaskType;
 
 import java.util.Collections;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TaskProgressTest {
+class TaskProgressTest {
 
 	private static final long SIZE_1K = 1024L;
 	private static final long SIZE_2K = 2048L;
@@ -17,7 +17,7 @@ public class TaskProgressTest {
 	private static final String TEST1_PATH = "/tmp/test1";
 
 	@Test
-	public void shouldInitProperly() {
+	void shouldInitProperly() {
 		//given
 		String id = "id";
 
@@ -29,13 +29,13 @@ public class TaskProgressTest {
 		task.setBytesOverall(SIZE_1K + SIZE_2K + SIZE_3K);
 
 		//then
-		assertEquals(task.getTaskId(), id);
-		assertEquals(task.getBytesOverall(), SIZE_1K + SIZE_2K + SIZE_3K);
-		assertEquals(task.getBytesProcessed(), 0);
+		assertEquals(id, task.getTaskId());
+		assertEquals(SIZE_1K + SIZE_2K + SIZE_3K, task.getBytesOverall());
+		assertEquals(0, task.getBytesProcessed());
 	}
 
 	@Test
-	public void shouldUpdateProgress() {
+	void shouldUpdateProgress() {
 		//given
 		Long id = 1333L;
 		int processedBytes = 512;
@@ -50,8 +50,8 @@ public class TaskProgressTest {
 		task.process(TEST1_PATH, processedBytes);
 
 		//then
-		assertEquals(task.getBytesProcessed(), processedBytes);
-		assertEquals(task.getProgressMap().get(TEST1_PATH).getProgress(), processedBytes);
+		assertEquals(processedBytes, task.getBytesProcessed());
+		assertEquals(processedBytes, task.getProgressMap().get(TEST1_PATH).getProgress());
 	}
 
 	private Map<String, EntryProgress> createFileList() {

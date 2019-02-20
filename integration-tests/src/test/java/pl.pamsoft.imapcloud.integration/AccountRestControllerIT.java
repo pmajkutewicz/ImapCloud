@@ -1,8 +1,8 @@
 package pl.pamsoft.imapcloud.integration;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.AccountInfo;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
@@ -15,23 +15,23 @@ import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AccountRestControllerIT extends AbstractIntegrationTest {
+class AccountRestControllerIT extends AbstractIntegrationTest {
 
 	private AccountRestClient accountRestClient;
 	private Common common;
 
-	@BeforeClass
-	public void init() {
+	@BeforeAll
+	void init() {
 		accountRestClient = new AccountRestClient(getEndpoint(), getUsername(), getPassword());
 		common = new Common(accountRestClient, RESPONSE_NOT_RECEIVED, TEST_TIMEOUT);
 	}
 
 	@Test
-	public void shouldContainVFSAccount() throws IOException, InterruptedException {
+	void shouldContainVFSAccount() throws IOException, InterruptedException {
 		CountDownLatch lock = new CountDownLatch(1);
 		accountRestClient.getAvailableAccounts(accountProviders -> {
 			assertThat(accountProviders.getAccountProviders().size(), greaterThanOrEqualTo(1));
@@ -48,6 +48,6 @@ public class AccountRestControllerIT extends AbstractIntegrationTest {
 		String expectedAccountEmail = String.format("%s@localhost_tmp", username);
 		AccountDto accountDto = common.shouldCreateAccount(username, "test", "key", expectedAccountEmail);
 		assertNotNull(accountDto);
-		assertEquals(accountDto.getEmail(), expectedAccountEmail);
+		assertEquals(expectedAccountEmail, accountDto.getEmail());
 	}
 }

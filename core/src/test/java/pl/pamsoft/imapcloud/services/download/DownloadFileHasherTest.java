@@ -4,8 +4,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 public class DownloadFileHasherTest {
 
@@ -34,7 +34,7 @@ public class DownloadFileHasherTest {
 	private FilesIOService filesIOService = mock(FilesIOService.class);
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
-	@BeforeClass
+	@BeforeAll
 	public void init() throws NoSuchAlgorithmException {
 		downloadFileHasher = new DownloadFileHasher(filesIOService, monitoringHelper);
 	}
@@ -64,7 +64,7 @@ public class DownloadFileHasherTest {
 	}
 
 	@Test
-	public void shouldSkipStemWhenNotLastChunk() throws IOException {
+	void shouldSkipStemWhenNotLastChunk() throws IOException {
 		FileChunk fc = TestUtils.createFileChunk("exampleName", false);
 		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 
@@ -74,13 +74,13 @@ public class DownloadFileHasherTest {
 	}
 
 	@Test
-	public void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
+	void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
 		FileChunk fc = TestUtils.createFileChunk("exampleName", true);
 		DownloadChunkContainer dcc = new DownloadChunkContainer(UUID.randomUUID().toString(), fc, fileDto, fc.getChunkHash(), fc.getOwnerFile().getFileHash());
 		when(filesIOService.getInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
 
 		DownloadChunkContainer response = downloadFileHasher.apply(dcc);
 
-		assertEquals(response, DownloadChunkContainer.EMPTY);
+		assertEquals(DownloadChunkContainer.EMPTY, response);
 	}
 }

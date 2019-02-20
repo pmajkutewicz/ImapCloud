@@ -1,9 +1,8 @@
 package pl.pamsoft.imapcloud.integration;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.AssertJUnit;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.FileDto;
@@ -21,23 +20,24 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.testng.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class UploadRestControllerNegativeIT extends AbstractGreenMailIntegrationTest {
+class UploadRestControllerNegativeIT extends AbstractGreenMailIntegrationTest {
 
 	private static final int ONE_MIB = 1024 * 1024 * 10;
 	private UploadsRestClient uploadsRestClient;
 	@Autowired
 	private FileRepository fileRepository;
 
-	@BeforeClass
-	public void init() throws IOException, InterruptedException {
+	@BeforeAll
+	void init() throws IOException, InterruptedException {
 		super.init();
 		uploadsRestClient = new UploadsRestClient(getEndpoint(), getUsername(), getPassword());
 	}
 
 	@Test
-	public void shouldUploadFile() throws Exception {
+	void shouldUploadFile() throws Exception {
 		sendFile(testAccountDto);
 	}
 
@@ -55,7 +55,7 @@ public class UploadRestControllerNegativeIT extends AbstractGreenMailIntegration
 		uploadsRestClient.startUpload(files, accountDto, Encryption.ON, new RequestCallback<Void>() {
 			@Override
 			public void onFailure(IOException e) {
-				AssertJUnit.fail("Error starting upload.");
+				fail("Error starting upload.");
 			}
 
 			@Override

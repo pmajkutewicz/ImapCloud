@@ -1,7 +1,7 @@
 package pl.pamsoft.imapcloud.services.upload;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.exceptions.ChunkAlreadyExistException;
 import pl.pamsoft.imapcloud.services.FileServices;
@@ -14,20 +14,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class FileChunkStorerTest {
+class FileChunkStorerTest {
 
 	private FileChunkStorer fileChunkStorer;
 
 	private FileServices fileServices = mock(FileServices.class);
 
-	@BeforeClass
-	public void init() {
+	@BeforeAll
+	void init() {
 		fileChunkStorer = new FileChunkStorer(fileServices);
 	}
 
 
 	@Test
-	public void shouldStoreChunk() throws ChunkAlreadyExistException {
+	void shouldStoreChunk() throws ChunkAlreadyExistException {
 		FileDto fileDto = mock(FileDto.class);
 		when(fileDto.getName()).thenReturn("exampleName");
 		when(fileDto.getAbsolutePath()).thenReturn("/path/exampleName.txt");

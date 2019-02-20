@@ -1,8 +1,8 @@
 package pl.pamsoft.imapcloud.integration;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.UploadedFileChunkDto;
 import pl.pamsoft.imapcloud.dto.UploadedFileDto;
@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UploadedRestControllerIT extends AbstractIntegrationTest {
+class UploadedRestControllerIT extends AbstractIntegrationTest {
 
 	private static final int ONE_MIB = 1024 * 1024;
 	private UploadsRestClient uploadsRestClient;
@@ -36,8 +36,8 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 	@Autowired
 	private FileRepository fileRepository;
 
-	@BeforeClass
-	public void init() {
+	@BeforeAll
+	void init() {
 		uploadedFileRestClient = new UploadedFileRestClient(getEndpoint(), getUsername(), getPassword());
 		uploadsRestClient = new UploadsRestClient(getEndpoint(), getUsername(), getPassword());
 		accountRestClient = new AccountRestClient(getEndpoint(), getUsername(), getPassword());
@@ -45,21 +45,21 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 	}
 
 	@Test
-	public void shouldReturnUploadedFileData() throws Exception {
+	void shouldReturnUploadedFileData() throws Exception {
 		List<UploadedFileDto> results = uploadFileAndReturnData();
-		assertEquals(results.size(), 1);
+		assertEquals(1, results.size());
 	}
 
 	@Test
-	public void shouldReturnEmptyChunkListWhenEmptyFileId() throws Exception {
+	void shouldReturnEmptyChunkListWhenEmptyFileId() throws Exception {
 		List<UploadedFileChunkDto> uploadedChunks = getUploadedChunks("");
 		assertTrue(uploadedChunks.isEmpty());
 	}
 
 	@Test
-	public void shouldVerifyUploadedFile() throws Exception {
+	void shouldVerifyUploadedFile() throws Exception {
 		List<UploadedFileDto> results = uploadFileAndReturnData();
-		assertEquals(results.size(), 1);
+		assertEquals(1, results.size());
 		String fileUniqueId = results.get(0).getFileUniqueId();
 
 		CountDownLatch lock = new CountDownLatch(1);
@@ -73,9 +73,9 @@ public class UploadedRestControllerIT extends AbstractIntegrationTest {
 	}
 
 	@Test
-	public void shouldDeleteUploadedFile() throws Exception {
+	void shouldDeleteUploadedFile() throws Exception {
 		List<UploadedFileDto> results = uploadFileAndReturnData();
-		assertEquals(results.size(), 1);
+		assertEquals(1, results.size());
 		String fileUniqueId = results.get(0).getFileUniqueId();
 
 		CountDownLatch lock = new CountDownLatch(1);

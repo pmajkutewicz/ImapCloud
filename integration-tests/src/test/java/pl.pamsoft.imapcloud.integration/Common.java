@@ -1,8 +1,7 @@
 package pl.pamsoft.imapcloud.integration;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.testng.AssertJUnit;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.dto.AccountInfo;
@@ -29,11 +28,11 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class Common {
+class Common {
 
 	private final String responseNotReceivedMsg;
 	private final int testTimeout;
@@ -87,7 +86,7 @@ public class Common {
 	}
 
 	@Test
-	public Path shouldUploadFile(UploadsRestClient uploadsRestClient, FileRepository fileRepository, long fileSize) throws Exception {
+	Path shouldUploadFile(UploadsRestClient uploadsRestClient, FileRepository fileRepository, long fileSize) throws Exception {
 		String username = RandomStringUtils.randomAlphabetic(10);
 		AccountDto accountDto = shouldCreateAccount(username, "test", "key", String.format("%s@localhost_tmp", username));
 		Path tempFile = TestUtils.createTempFile(fileSize);
@@ -103,7 +102,7 @@ public class Common {
 		uploadsRestClient.startUpload(files, accountDto, Encryption.ON, new RequestCallback<Void>() {
 			@Override
 			public void onFailure(IOException e) {
-				AssertJUnit.fail("Error starting upload.");
+				fail("Error starting upload.");
 			}
 
 			@Override

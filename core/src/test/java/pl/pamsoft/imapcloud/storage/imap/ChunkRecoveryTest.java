@@ -4,14 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 import pl.pamsoft.imapcloud.api.accounts.ChunkRecoverer;
 import pl.pamsoft.imapcloud.entity.TaskProgress;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
@@ -36,15 +36,15 @@ import java.util.Map;
 import java.util.Random;
 
 import static java.util.stream.Collectors.toList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
-public class ChunkRecoveryTest {
+class ChunkRecoveryTest {
 
 	private static final int MAX_CHUNK_SIZE = 1024 * 1024 * 10; // 10MB
 	private ChunkRecovererFacade chunkRecovererFacade;
@@ -61,8 +61,8 @@ public class ChunkRecoveryTest {
 
 	private Random random = new SecureRandom();
 
-	@BeforeMethod
-	public void init() throws Exception {
+	@BeforeEach
+	void init() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		JsonNode jsonObject = loadData();
 		Folder[] folderList = createFolderList(jsonObject);
@@ -79,35 +79,35 @@ public class ChunkRecoveryTest {
 	}
 
 	@Test
-	public void shouldRecoverMailbox() throws IOException {
+	void shouldRecoverMailbox() throws IOException {
 		RecoveryChunkContainer result = chunkRecovererFacade.apply(RecoveryChunkContainer.EMPTY);
-		assertEquals(result.getFileMap().size(), 4);
-		assertEquals(result.getFileChunkMap().get("9be83237-0d72-43e2-944b-de81715c93f2").size(), 830);
-		assertEquals(result.getFileChunkMap().get("d1f93ec9-2067-4c98-a4e0-2aeb6535fa81").size(), 830);
-		assertEquals(result.getFileChunkMap().get("09f82836-b89f-4606-86e8-7f3d54938aca").size(), 610);
-		assertEquals(result.getFileChunkMap().get("83f6ffaf-d275-49c4-b23a-f8f12f4a8774").size(), 639);
+		assertEquals(4, result.getFileMap().size());
+		assertEquals(830, result.getFileChunkMap().get("9be83237-0d72-43e2-944b-de81715c93f2").size());
+		assertEquals(830, result.getFileChunkMap().get("d1f93ec9-2067-4c98-a4e0-2aeb6535fa81").size());
+		assertEquals(610, result.getFileChunkMap().get("09f82836-b89f-4606-86e8-7f3d54938aca").size());
+		assertEquals(639, result.getFileChunkMap().get("83f6ffaf-d275-49c4-b23a-f8f12f4a8774").size());
 	}
 
 	@Test
-	public void shouldInvalidateConnectionOnError() throws Exception {
+	void shouldInvalidateConnectionOnError() throws Exception {
 		reset(store);
 		when(store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME)).thenThrow(new MessagingException("success"));
 
 		RecoveryChunkContainer result = chunkRecovererFacade.apply(RecoveryChunkContainer.EMPTY);
 
-		assertEquals(RecoveryChunkContainer.EMPTY, result);
+		assertEquals(result, RecoveryChunkContainer.EMPTY);
 		verify(pool).invalidateObject(store);
 	}
 
 	@Test
-	public void inCaseOfInvalidationErrorEmptyResultShouldBeReturned() throws Exception {
+	void inCaseOfInvalidationErrorEmptyResultShouldBeReturned() throws Exception {
 		reset(store);
 		when(store.getFolder(IMAPUtils.IMAP_CLOUD_FOLDER_NAME)).thenThrow(new MessagingException("success"));
 		doThrow(new MessagingException("success")).when(pool).invalidateObject(store);
 
 		RecoveryChunkContainer result = chunkRecovererFacade.apply(RecoveryChunkContainer.EMPTY);
 
-		assertEquals(RecoveryChunkContainer.EMPTY, result);
+		assertEquals(result, RecoveryChunkContainer.EMPTY);
 		verify(pool).invalidateObject(store);
 	}
 
