@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.FilesIOService;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static pl.pamsoft.imapcloud.dto.FileDto.FileType.FILE;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DirectorySizeCalculatorTest {
 
 	private DirectorySizeCalculator directorySizeCalculator;

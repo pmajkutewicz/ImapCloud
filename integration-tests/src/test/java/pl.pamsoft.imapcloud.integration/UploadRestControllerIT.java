@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.integration;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.pamsoft.imapcloud.dao.FileRepository;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
@@ -10,6 +11,7 @@ import pl.pamsoft.imapcloud.rest.UploadsRestClient;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UploadRestControllerIT extends AbstractIntegrationTest {
 
 	private static final int ONE_MIB = 1024 * 1024;

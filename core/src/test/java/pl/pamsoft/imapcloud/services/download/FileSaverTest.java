@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.services.download;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -20,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static pl.pamsoft.imapcloud.dto.FileDto.FileType.FILE;
 
-public class FileSaverTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class FileSaverTest {
 
 	private static final int FILE_SIZE = 1024;
 
@@ -30,7 +32,7 @@ public class FileSaverTest {
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeAll
-	public void init() throws NoSuchAlgorithmException {
+	void init() throws NoSuchAlgorithmException {
 		fileSaver = new FileSaver(monitoringHelper);
 		tempPath = System.getProperty("java.io.tmpdir") + File.separator + "ic";
 	}

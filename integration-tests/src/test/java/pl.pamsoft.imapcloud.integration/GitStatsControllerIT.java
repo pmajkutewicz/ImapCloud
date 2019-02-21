@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.integration;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import pl.pamsoft.imapcloud.rest.GitStatusRestClient;
 
 import java.io.IOException;
@@ -11,12 +12,13 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GitStatsControllerIT extends AbstractIntegrationTest {
 
 	private GitStatusRestClient gitStatusRestClient;
 
 	@BeforeAll
-	public void init() {
+	void init() {
 		gitStatusRestClient = new GitStatusRestClient(getEndpoint(), getUsername(), getPassword());
 	}
 

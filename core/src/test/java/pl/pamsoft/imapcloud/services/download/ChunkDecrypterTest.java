@@ -4,6 +4,7 @@ import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -14,12 +15,14 @@ import pl.pamsoft.imapcloud.services.containers.DownloadChunkContainer;
 import java.io.IOException;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ChunkDecrypterTest {
 
 	private ChunkDecrypter chunkDecrypter;
@@ -44,7 +47,7 @@ class ChunkDecrypterTest {
 
 		DownloadChunkContainer response = chunkDecrypter.apply(ucc);
 
-		assertEquals(out, response.getData());
+		assertArrayEquals(out, response.getData());
 	}
 
 	@Test

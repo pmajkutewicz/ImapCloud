@@ -6,6 +6,7 @@ import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.entity.FileChunk;
@@ -26,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DownloadFileHasherTest {
 
 	private DownloadFileHasher downloadFileHasher;
@@ -35,7 +37,7 @@ public class DownloadFileHasherTest {
 	private MonitoringHelper monitoringHelper = mock(MonitoringHelper.class);
 
 	@BeforeAll
-	public void init() throws NoSuchAlgorithmException {
+	void init() throws NoSuchAlgorithmException {
 		downloadFileHasher = new DownloadFileHasher(filesIOService, monitoringHelper);
 	}
 

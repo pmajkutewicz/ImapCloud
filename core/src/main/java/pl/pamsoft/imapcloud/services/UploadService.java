@@ -152,6 +152,7 @@ public class UploadService extends AbstractBackgroundService {
 			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
 
 			selectedFiles.stream().parallel()
+				.peek(i -> LOG.trace("Thread started: {}", Thread.currentThread().getName())) // use custom pool with max number as specified in account
 				.map(packInContainer)
 				.flatMap(parseDirectories)
 				.map(generateFilehash)

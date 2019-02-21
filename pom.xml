@@ -68,7 +68,7 @@
 		<jetty.version>9.4.0.M1</jetty.version>
 		<tomcat.version>8.0.30</tomcat.version>
 
-		<commons-pool2.version>2.6.1</commons-pool2.version>
+		<commons-pool2.version>2.5.0</commons-pool2.version>
 		<spring-boot.version>2.0.1.RELEASE</spring-boot.version>
 		<snakeyaml.version>1.23</snakeyaml.version>
 		<javax.mail-api.version>1.6.1</javax.mail-api.version>
@@ -504,6 +504,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito-core.version}</version>
@@ -590,13 +595,6 @@
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>3.0.0-M3</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.surefire</groupId>
-						<artifactId>surefire-testng</artifactId>
-						<version>${maven-org.apache.maven.plugins-maven-surefire-plugin.version}</version>
-					</dependency>
-				</dependencies>
 				<configuration>
 					<argLine>${failsafeArgLine}</argLine>
 					<printSummary>true</printSummary>

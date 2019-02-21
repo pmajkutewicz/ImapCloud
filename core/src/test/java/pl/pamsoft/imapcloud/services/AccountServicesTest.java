@@ -2,31 +2,33 @@ package pl.pamsoft.imapcloud.services;
 
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.testng.annotations.DataProvider;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import pl.pamsoft.imapcloud.requests.CreateAccountRequest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.of;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AccountServicesTest {
 
 	private AccountServices services = new AccountServices();
 
+	static Stream<Arguments> testData() {
+		return Stream.of(of("123"), of("1234567890"), null);
+	}
+
 	@BeforeAll
-	public void init() {
+	void init() {
 		services.setCryptoService(new CryptoService());
 	}
 
-	@DataProvider
-	Object[][] testData() {
-		return new Object[][] {
-			{"123"},
-			{"1234567890"},
-			{null}
-		};
-	}
-
-	@Test(dataProvider = "testData")
+	@ParameterizedTest
+	@MethodSource("testData")
 	void shouldGenerate256bitsKey(String key) {
 		CreateAccountRequest r = new CreateAccountRequest();
 		r.setCryptoKey(key);

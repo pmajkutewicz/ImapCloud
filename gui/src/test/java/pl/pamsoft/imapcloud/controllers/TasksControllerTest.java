@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.ArgumentCaptor;
 import pl.pamsoft.imapcloud.controls.TaskProgressControl;
 import pl.pamsoft.imapcloud.dto.progress.EntryProgressDto;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TasksControllerTest {
 
 	private TasksController tasksController;

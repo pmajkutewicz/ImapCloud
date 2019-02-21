@@ -2,6 +2,7 @@ package pl.pamsoft.imapcloud.integration;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import pl.pamsoft.imapcloud.ff4j.IMAPCloudFeature;
 import pl.pamsoft.imapcloud.responses.GetFeaturesResponse;
 import pl.pamsoft.imapcloud.rest.IMAPCloudFeaturesClient;
@@ -11,12 +12,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class FeaturesControllerIT extends AbstractIntegrationTest {
 
 	private IMAPCloudFeaturesClient imapCloudFeaturesClient;
 
 	@BeforeAll
-	public void init() {
+	void init() {
 		imapCloudFeaturesClient = new IMAPCloudFeaturesClient(getEndpoint(), getUsername(), getPassword());
 	}
 

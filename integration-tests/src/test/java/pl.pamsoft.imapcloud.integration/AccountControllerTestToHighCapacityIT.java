@@ -4,7 +4,10 @@ import com.icegreen.greenmail.imap.commands.ImapCommand;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import pl.pamsoft.imapcloud.dao.AccountRepository;
 import pl.pamsoft.imapcloud.integration.greenmail.CapacityToHighAppendCommand;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
@@ -16,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(SpringExtension.class)
 class AccountControllerTestToHighCapacityIT extends AbstractGreenMailIntegrationTest {
 
 	private AccountRestClient accountRestClient;

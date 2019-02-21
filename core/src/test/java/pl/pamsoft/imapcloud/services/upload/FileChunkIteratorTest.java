@@ -1,8 +1,10 @@
 package pl.pamsoft.imapcloud.services.upload;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
-import org.testng.annotations.DataProvider;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
 import pl.pamsoft.imapcloud.services.containers.UploadChunkContainer;
@@ -12,10 +14,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.of;
 import static org.mockito.Mockito.when;
 
 class FileChunkIteratorTest {
@@ -24,15 +28,16 @@ class FileChunkIteratorTest {
 
 	private MonitoringHelper monitoringHelper = Mockito.mock(MonitoringHelper.class);
 
-	@DataProvider
-	Object[][] lastChunkShouldBeMarkedAsLastDataProvider() {
-		return new Object[][] {
-			{10, 1, 9},
-			{10, 3, 3}
-		};
+	static Stream<Arguments> lastChunkShouldBeMarkedAsLastDataProvider() {
+		return Stream.of(  //
+			of(10, 1, 9), //
+			of(10, 3, 3 //
+			)
+		);
 	}
 
-	@Test(dataProvider = "lastChunkShouldBeMarkedAsLastDataProvider")
+	@ParameterizedTest
+	@MethodSource("lastChunkShouldBeMarkedAsLastDataProvider")
 	void lastChunkShouldBeMarkedAsLast(int fileSize, int readSize, int nbOfNonLastChunks) throws IOException {
 		String filePath = getTempDir() + "/last_chunk.txt";
 		FileDto mockedFileDto = createFile(filePath, fileSize);

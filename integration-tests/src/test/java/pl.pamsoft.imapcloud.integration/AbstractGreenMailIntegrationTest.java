@@ -12,6 +12,7 @@ import com.icegreen.greenmail.util.ServerSetup;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.rest.AccountRestClient;
 
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class AbstractGreenMailIntegrationTest extends AbstractIntegrationTest {
 	protected AccountRestClient accountRestClient;
 	protected Common common;

@@ -4,8 +4,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mockito;
 import pl.pamsoft.imapcloud.TestUtils;
 import pl.pamsoft.imapcloud.dto.FileDto;
 import pl.pamsoft.imapcloud.monitoring.MonitoringHelper;
@@ -27,6 +30,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UploadFileHasherTest {
 
 	private UploadFileHasher uploadFileHasher;
@@ -40,17 +44,17 @@ class UploadFileHasherTest {
 		uploadFileHasher = new UploadFileHasher(filesIOService, monitoringHelper);
 	}
 
+	@AfterEach
+	void clean() {
+		Mockito.reset(filesIOService, monitoringHelper);
+	}
+
 	@Test
 	/**
 	 * @see DownloadFileHasherTest#shouldCalculateHash()
 	 */
 	void shouldCalculateHash() throws IOException, NoSuchAlgorithmException {
-		byte[] randomBytes = TestUtils.getRandomBytes(1024);
-		FileSystemManager manager = VFS.getManager();
-		FileObject fileObject = manager.resolveFile("ram:///exampleFile.txt");
-		fileObject.createFile();
-		IOUtils.copy(new ByteArrayInputStream(randomBytes), fileObject.getContent().getOutputStream());
-		fileObject.close();
+		FileObject fileObject = getTempFile();
 		File file = new File(fileObject.getName().getPath());
 		when(filesIOService.getFile(eq(fileDto))).thenReturn(file);
 		when(filesIOService.getInputStream(file)).thenReturn(fileObject.getContent().getInputStream());
@@ -64,10 +68,23 @@ class UploadFileHasherTest {
 	@Test
 	void shouldReturnEmptyUCCWhenExceptionOccurred() throws IOException {
 		UploadChunkContainer ucc = new UploadChunkContainer(UUID.randomUUID().toString(), fileDto);
+		FileObject fileObject = getTempFile();
+		File file = new File(fileObject.getName().getPath());
+		when(filesIOService.getFile(fileDto)).thenReturn(file);
 		when(filesIOService.getInputStream(any(File.class))).thenThrow(new FileNotFoundException("example"));
 
 		UploadChunkContainer response = uploadFileHasher.apply(ucc);
 
 		assertEquals(UploadChunkContainer.EMPTY, response);
+	}
+
+	private FileObject getTempFile() throws IOException {
+		byte[] randomBytes = TestUtils.getRandomBytes(1024);
+		FileSystemManager manager = VFS.getManager();
+		FileObject fileObject = manager.resolveFile("ram:///exampleFile.txt");
+		fileObject.createFile();
+		IOUtils.copy(new ByteArrayInputStream(randomBytes), fileObject.getContent().getOutputStream());
+		fileObject.close();
+		return fileObject;
 	}
 }
