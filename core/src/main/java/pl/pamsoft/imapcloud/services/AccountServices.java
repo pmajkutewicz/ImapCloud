@@ -67,7 +67,7 @@ public class AccountServices extends AbstractBackgroundService {
 
 	private enum CapacityStatus {
 		TO_HIGH, TO_LOW
-	};
+	}
 
 	public boolean testAccountCapacity(AccountCapacityTestRequest request) {
 		final String taskId = UUID.randomUUID().toString();

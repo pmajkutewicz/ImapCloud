@@ -43,7 +43,7 @@ public class ResticApiResponseWriter implements HttpMessageConverter<Object> {
 	}
 
 	@Override
-	public Object read(Class<? extends Object> aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
+	public Object read(Class<?> aClass, HttpInputMessage httpInputMessage) throws IOException, HttpMessageNotReadableException {
 		return null;
 	}
 

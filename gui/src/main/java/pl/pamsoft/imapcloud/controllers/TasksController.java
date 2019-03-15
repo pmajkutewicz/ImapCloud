@@ -79,9 +79,7 @@ public class TasksController implements Initializable {
 					}
 					current.updateProgress(overallProgress);
 					if (hideCompleted.isSelected() && Double.compare(overallProgress, 1) >= 0) {
-						if (tasksContainer.getChildren().contains(current)) {
-							tasksContainer.getChildren().remove(current);
-						}
+						tasksContainer.getChildren().remove(current);
 					} else {
 						if (!tasksContainer.getChildren().contains(current)) {
 							tasksContainer.getChildren().add(current);

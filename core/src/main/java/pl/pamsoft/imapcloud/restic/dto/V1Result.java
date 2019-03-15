@@ -5,7 +5,6 @@ public class V1Result {
 
 	public V1Result(String name) {
 		this.name = name;
-		;
 	}
 
 	public String getName() {

@@ -39,7 +39,7 @@ public class AccountsSettings {
 		List<AccountInfo> result = new ArrayList<>();
 		Yaml yaml = new Yaml();
 		try {
-			Map<String, Map<String, Object>> load = (Map<String, Map<String, Object>>) yaml.load(getData());
+			Map<String, Map<String, Object>> load = yaml.load(getData());
 			for (Map.Entry<String, Map<String, Object>> mapEntry : load.entrySet()) {
 				Map<String, Object> value = mapEntry.getValue();
 				AccountInfo accountProvider = createAccountProvider(value);

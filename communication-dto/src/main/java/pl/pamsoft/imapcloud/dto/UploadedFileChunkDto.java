@@ -39,7 +39,7 @@ public class UploadedFileChunkDto {
 
 	// used as javafx property
 	public String getUploadSpeed() {
-		return null == uploadTimeMs ? "" : String.valueOf(ReadableSize.getReadableFileSize(((double) size * TO_SECONDS) / uploadTimeMs) + "/s");
+		return null == uploadTimeMs ? "" : ReadableSize.getReadableFileSize(((double) size * TO_SECONDS) / uploadTimeMs) + "/s";
 	}
 
 	public String getFileChunkUniqueId() {

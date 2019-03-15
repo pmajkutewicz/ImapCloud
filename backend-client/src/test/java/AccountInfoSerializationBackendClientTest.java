@@ -15,7 +15,7 @@ class AccountInfoSerializationBackendClientTest {
 	void shouldSerialize() throws JsonProcessingException {
 		ObjectMapper mapper = MapperHolder.OBJECT_MAPPER;
 		AccountInfo accountInfo = new AccountInfo("imap", "test", 1, 3, 2, of("test1", "testVal"));
-		String expected = "{\"type\":\"imap\",\"host\":\"test\",\"accountSizeMB\":3,\"maxFileSizeMB\":2,\"maxConcurrentConnections\":1,\"additionalProperties\":{\"test1\":\"testVal\"}}";;
+		String expected = "{\"type\":\"imap\",\"host\":\"test\",\"accountSizeMB\":3,\"maxFileSizeMB\":2,\"maxConcurrentConnections\":1,\"additionalProperties\":{\"test1\":\"testVal\"}}";
 
 		String result = mapper.writeValueAsString(accountInfo);
 

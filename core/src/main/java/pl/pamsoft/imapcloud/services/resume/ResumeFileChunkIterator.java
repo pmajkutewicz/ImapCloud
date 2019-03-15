@@ -28,7 +28,7 @@ public class ResumeFileChunkIterator extends FileChunkIterator {
 	}
 
 	private void mapToChunkList(List<FileChunk> existingFileChunks) {
-		this.chunkSizeQueue = new LinkedList<>(existingFileChunks.stream().map(FileChunk::getOrgSize).collect(Collectors.toList()));
+		this.chunkSizeQueue = existingFileChunks.stream().map(FileChunk::getOrgSize).collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	@Override
