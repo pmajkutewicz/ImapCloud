@@ -37,23 +37,34 @@ public class DeletionService extends AbstractBackgroundService {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> task = runAsyncOnExecutor(() -> {
 			Thread.currentThread().setName("DelT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
-			final Account account = accountRepository.getById(fileToDelete.getOwnerAccount().getId());
-			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
-
-			// FIXME: refactor to "DeleteChunkContainer -> delete file container" and "ChunkDeleterFacade -> filedeletefacade" and "DeleteFileChunkFromDb -> delete file from db"
-			Function<File, DeleteChunkContainer> packItInContainer = file -> new DeleteChunkContainer(taskId, file.getFileUniqueId(), file.getFileHash());
-			ChunkDeleterFacade chunkDeleter = new ChunkDeleterFacade(accountService.getChunkDeleter(account), getMonitoringHelper());
-			DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository, fileRepository); // FIXME: this deletes all chunks in file
-
-			Stream.of(fileToDelete)
-				.map(packItInContainer)
-				.map(chunkDeleter)
-				.map(deleteFileChunkFromDb)
-				.forEach(System.out::println);
-
-			//FIXME: all chunks deleted, delete file (when? and who should do this)
+			delete(fileToDelete, taskId);
 		});
 		getTaskMap().put(taskId, task);
+		return true;
+	}
+
+	public boolean deleteSync(File fileToDelete) {
+		final String taskId = UUID.randomUUID().toString();
+		return delete(fileToDelete, taskId);
+	}
+
+	//FIXME: Delete by chunks not by whole file
+	private boolean delete(File fileToDelete, String taskId) {
+		final Account account = accountRepository.getById(fileToDelete.getOwnerAccount().getId());
+		AccountService accountService = accountServicesHolder.getAccountService(account.getType());
+
+		// FIXME: refactor to "DeleteChunkContainer -> delete file container" and "ChunkDeleterFacade -> filedeletefacade" and "DeleteFileChunkFromDb -> delete file from db"
+		Function<File, DeleteChunkContainer> packItInContainer = file -> new DeleteChunkContainer(taskId, file.getFileUniqueId(), file.getFileHash());
+		ChunkDeleterFacade chunkDeleter = new ChunkDeleterFacade(accountService.getChunkDeleter(account), getMonitoringHelper());
+		DeleteFileChunkFromDb deleteFileChunkFromDb = new DeleteFileChunkFromDb(fileChunkRepository, fileRepository); // FIXME: this deletes all chunks in file
+
+		Stream.of(fileToDelete)
+			.map(packItInContainer)
+			.map(chunkDeleter)
+			.map(deleteFileChunkFromDb)
+			.forEach(System.out::println);
+
+		//FIXME: all chunks deleted, delete file (when? and who should do this)
 		return true;
 	}
 

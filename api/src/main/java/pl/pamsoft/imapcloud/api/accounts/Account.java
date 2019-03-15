@@ -21,6 +21,8 @@ public interface Account {
 
 	Integer getVerifiedAttachmentSizeBytes();
 
+	String getResticName();
+
 	Map<String, String> getAdditionalProperties();
 
 	String getProperty(String name);

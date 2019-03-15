@@ -75,7 +75,7 @@ public class JAMonLogbackAppender extends AppenderBase<LoggingEvent> {
 	 *
 	 * <ul>
 	 * <li>DEBUG/ERROR/WARN/INFO/ERROR/FATAL, as well as...
-	 * <li>TOTAL (A listener that gets called for all levels),
+	 * <li>TOTAL (AccountAspect listener that gets called for all levels),
 	 * <li>BASIC (same as calling TOTAL/ERROR/FATAL),
 	 * <li>ALL (same as calling ERROR/WARN/INFO/ERROR/FATAL/TOTAL).
 	 * </ul>

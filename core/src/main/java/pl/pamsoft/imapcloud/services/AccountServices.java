@@ -24,6 +24,7 @@ import java.security.NoSuchProviderException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -199,6 +200,11 @@ public class AccountServices extends AbstractBackgroundService {
 		return all.stream()
 			.map(toAccount)
 			.collect(Collectors.toList());
+	}
+
+	public Optional<AccountDto> getByResticName(String resticName) {
+		Account byResticName = accountRepository.getByResticName(resticName);
+		return null == byResticName ? Optional.empty() : Optional.of(toAccount.apply(byResticName));
 	}
 
 	@Autowired

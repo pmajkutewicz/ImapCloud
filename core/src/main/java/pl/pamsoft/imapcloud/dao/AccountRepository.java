@@ -8,4 +8,6 @@ import pl.pamsoft.imapcloud.entity.Account;
 public interface AccountRepository extends JpaRepository<Account, Long> {
 
 	Account getById(Long id);
+
+	Account getByResticName(String resticName);
 }

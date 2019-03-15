@@ -122,57 +122,67 @@ public class UploadService extends AbstractBackgroundService {
 	public boolean upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) throws RejectedExecutionException {
 		final String taskId = UUID.randomUUID().toString();
 		Future<Void> future = runAsyncOnExecutor(() -> {
-			Thread.currentThread().setName("UT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
-			final Account account = accountRepository.getById(selectedAccount.getId());
-			AccountService accountService = accountServicesHolder.getAccountService(account.getType());
-			List<FileDto> parsedFiles = selectedFiles.stream().map(f -> UploadUtils.parseDirectories(filesIOService, f)).flatMap(List::stream).collect(Collectors.toList());
-			final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, getMonitoringHelper()).apply(parsedFiles);
-			getTaskProgressMap().put(taskId, getTasksProgressService().create(TaskType.UPLOAD, taskId, bytesToProcess, parsedFiles));
-
-			Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
-			Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
-				.process(ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize());
-			Consumer<UploadChunkContainer> markFileAlreadyUploaded = ucc -> getTaskProgressMap().get(ucc.getTaskId())
-				.markFileAlreadyUploaded(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
-
-			Consumer<UploadChunkContainer> persistTaskProgress = ucc -> {
-				TaskProgress updated = getTasksProgressService().persist(getTaskProgressMap().get(ucc.getTaskId()));
-				getTaskProgressMap().put(ucc.getTaskId(), updated);
-			};
-
-			Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto, chunkEncryptionEnabled);
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, getMonitoringHelper());
-			Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, getMonitoringHelper());
-			Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
-			Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileAlreadyUploaded.andThen(persistTaskProgress));
-			Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(getMaxChunkSizeInBytes(account), 2, getMonitoringHelper());
-			Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
-			Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
-			Function<UploadChunkContainer, UploadChunkContainer> chunkUploader = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
-			Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
-
-			selectedFiles.stream().parallel()
-				.peek(i -> LOG.trace("Thread started: {}", Thread.currentThread().getName())) // use custom pool with max number as specified in account
-				.map(packInContainer)
-				.flatMap(parseDirectories)
-				.map(generateFilehash)
-				.filter(removeFilesWithSize0)
-				.map(storeFile)
-				.filter(filterEmptyUcc)
-				.flatMap(splitFileIntoChunks)
-				.filter(filterEmptyUcc)
-				.map(generateChunkHash)
-				.map(ucc -> chunkEncryptionEnabled ? chunkEncrypter.apply(ucc) : ucc)
-				.filter(filterEmptyUcc)
-				.map(chunkUploader)
-				.filter(filterEmptyUcc)
-				.map(storeFileChunk)
-				.peek(updateProgress)
-				.peek(persistTaskProgress)
-				.forEach(System.out::println);
-		});
+				Thread.currentThread().setName("UT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
+				upload(selectedAccount, selectedFiles, chunkEncryptionEnabled, taskId);
+			});
 		getTaskMap().put(taskId, future);
 		return true;
+	}
+
+	public void uploadSync(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled) {
+		final String taskId = UUID.randomUUID().toString();
+		upload(selectedAccount, selectedFiles, chunkEncryptionEnabled, taskId);
+	}
+
+	@SuppressFBWarnings("STT_TOSTRING_STORED_IN_FIELD")
+	private void upload(AccountDto selectedAccount, List<FileDto> selectedFiles, boolean chunkEncryptionEnabled, String taskId) throws RejectedExecutionException {
+		final Account account = accountRepository.getById(selectedAccount.getId());
+		AccountService accountService = accountServicesHolder.getAccountService(account.getType());
+		List<FileDto> parsedFiles = selectedFiles.stream().map(f -> UploadUtils.parseDirectories(filesIOService, f)).flatMap(List::stream).collect(Collectors.toList());
+		final Long bytesToProcess = new DirectorySizeCalculator(filesIOService, getMonitoringHelper()).apply(parsedFiles);
+		getTaskProgressMap().put(taskId, getTasksProgressService().create(TaskType.UPLOAD, taskId, bytesToProcess, parsedFiles));
+
+		Predicate<UploadChunkContainer> filterEmptyUcc = ucc -> UploadChunkContainer.EMPTY != ucc;
+		Consumer<UploadChunkContainer> updateProgress = ucc -> getTaskProgressMap().get(ucc.getTaskId())
+			.process(ucc.getFileDto().getAbsolutePath(), ucc.getCurrentFileChunkCumulativeSize());
+		Consumer<UploadChunkContainer> markFileAlreadyUploaded = ucc -> getTaskProgressMap().get(ucc.getTaskId())
+			.markFileAlreadyUploaded(ucc.getFileDto().getAbsolutePath(), ucc.getFileDto().getSize());
+
+		Consumer<UploadChunkContainer> persistTaskProgress = ucc -> {
+			TaskProgress updated = getTasksProgressService().persist(getTaskProgressMap().get(ucc.getTaskId()));
+			getTaskProgressMap().put(ucc.getTaskId(), updated);
+		};
+
+		Function<FileDto, UploadChunkContainer> packInContainer = fileDto -> new UploadChunkContainer(taskId, fileDto, chunkEncryptionEnabled);
+		Function<UploadChunkContainer, Stream<UploadChunkContainer>> parseDirectories = new DirectoryProcessor(filesIOService, getMonitoringHelper());
+		Function<UploadChunkContainer, UploadChunkContainer> generateFilehash = new UploadFileHasher(filesIOService, getMonitoringHelper());
+		Predicate<UploadChunkContainer> removeFilesWithSize0 = ucc -> ucc.getFileDto().getSize() > 0;
+		Function<UploadChunkContainer, UploadChunkContainer> storeFile = new FileStorer(fileServices, account, markFileAlreadyUploaded.andThen(persistTaskProgress));
+		Function<UploadChunkContainer, Stream<UploadChunkContainer>> splitFileIntoChunks = new FileSplitter(getMaxChunkSizeInBytes(account), 2, getMonitoringHelper());
+		Function<UploadChunkContainer, UploadChunkContainer> generateChunkHash = new UploadChunkHasher(getMonitoringHelper());
+		Function<UploadChunkContainer, UploadChunkContainer> chunkEncrypter = new ChunkEncrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
+		Function<UploadChunkContainer, UploadChunkContainer> chunkUploader = new ChunkUploaderFacade(accountService.getChunkUploader(account), cryptoService, account.getCryptoKey(), gitStatsUtil, getMonitoringHelper());
+		Function<UploadChunkContainer, UploadChunkContainer> storeFileChunk = new FileChunkStorer(fileServices);
+
+		selectedFiles.stream().parallel()
+			.peek(i -> LOG.trace("Thread started: {}", Thread.currentThread().getName())) // use custom pool with max number as specified in account
+			.map(packInContainer)
+			.flatMap(parseDirectories)
+			.map(generateFilehash)
+			.filter(removeFilesWithSize0)
+			.map(storeFile)
+			.filter(filterEmptyUcc)
+			.flatMap(splitFileIntoChunks)
+			.filter(filterEmptyUcc)
+			.map(generateChunkHash)
+			.map(ucc -> chunkEncryptionEnabled ? chunkEncrypter.apply(ucc) : ucc)
+			.filter(filterEmptyUcc)
+			.map(chunkUploader)
+			.filter(filterEmptyUcc)
+			.map(storeFileChunk)
+			.peek(updateProgress)
+			.peek(persistTaskProgress)
+			.forEach(System.out::println);
 	}
 
 	public boolean uploadTestChunk(AccountDto selectedAccount, UploadChunkContainer container) {

@@ -71,7 +71,7 @@
 		<commons-pool2.version>2.5.0</commons-pool2.version>
 		<spring-boot.version>2.0.1.RELEASE</spring-boot.version>
 		<snakeyaml.version>1.23</snakeyaml.version>
-		<javax.mail-api.version>1.6.1</javax.mail-api.version>
+		<javax.mail-api.version>1.6.2</javax.mail-api.version>
 		<joda-time.version>2.10.1</joda-time.version>
 		<zero-allocation-hashing.version>0.8</zero-allocation-hashing.version>
 		<springfox-swagger2.version>2.9.2</springfox-swagger2.version>
@@ -211,6 +211,16 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-security</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-actuator</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-actuator-autoconfigure</artifactId>
 				<version>${spring-boot.version}</version>
 			</dependency>
 			<dependency>

@@ -11,5 +11,6 @@ public interface FileRepository extends JpaRepository<File, Long>, FileRepositor
 
 	File getById(Long savedFileId);
 
+	// TODO: add ownerAccount id to params
 	File getByAbsolutePath(String absolutePath);
 }

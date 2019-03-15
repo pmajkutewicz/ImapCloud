@@ -56,40 +56,49 @@ public class DownloadService extends AbstractBackgroundService {
 		Future<Void> task = runAsyncOnExecutor(() -> {
 			try {
 				Thread.currentThread().setName("DT-" + taskId.substring(0, NB_OF_TASK_ID_CHARS));
-				List<String> invalidFileIds = new CopyOnWriteArrayList<>();
-				File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
-				Account account = file.getOwnerAccount();
-				AccountService accountService = accountServicesHolder.getAccountService(account.getType());
-				List<FileChunk> chunkToDownload = fileChunkRepository.getFileChunks(fileToDownload.getFileUniqueId());
-
-				Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir, fileChunk.getChunkHash(), fileChunk.getOwnerFile().getFileHash());
-				Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDownloader = new ChunkDownloadFacade(accountService.getChunkDownloader(account), getMonitoringHelper());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(getMonitoringHelper());
-				Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
-				Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver(getMonitoringHelper());
-				Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, getMonitoringHelper());
-				Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
-
-				chunkToDownload.stream()
-					.peek(c -> LOG.info("Processing {}", c.getChunkNumber()))
-					.map(packInContainer)
-					.filter(filterOutInvalidFiles)
-					.map(chunkDownloader)
-					.map(chunkDecoder)
-					.map(downloadChunkHasher)
-					.map(chunkHashVerifier)
-					.map(fileSaver)
-					.map(downloadFileHasher)
-					.map(fileHashVerifier)
-					.forEach(c -> LOG.info("Done: {}", c.getChunkToDownload().getChunkNumber()));
+				download(fileToDownload, destDir, taskId);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
 		getTaskMap().put(taskId, task);
 		return true;
+	}
+
+	public void downloadSync(UploadedFileDto fileToDownload, FileDto destDir) throws RejectedExecutionException {
+		final String taskId = UUID.randomUUID().toString();
+		download(fileToDownload, destDir, taskId);
+	}
+
+	private void download(UploadedFileDto fileToDownload, FileDto destDir, String taskId) throws RejectedExecutionException {
+		List<String> invalidFileIds = new CopyOnWriteArrayList<>();
+		File file = fileRepository.getByFileUniqueId(fileToDownload.getFileUniqueId());
+		Account account = file.getOwnerAccount();
+		AccountService accountService = accountServicesHolder.getAccountService(account.getType());
+		List<FileChunk> chunkToDownload = fileChunkRepository.getFileChunks(fileToDownload.getFileUniqueId());
+
+		Function<FileChunk, DownloadChunkContainer> packInContainer = fileChunk -> new DownloadChunkContainer(taskId, fileChunk, destDir, fileChunk.getChunkHash(), fileChunk.getOwnerFile().getFileHash());
+		Predicate<DownloadChunkContainer> filterOutInvalidFiles = dcc -> !invalidFileIds.contains(dcc.getChunkToDownload().getOwnerFile().getFileUniqueId());
+		Function<DownloadChunkContainer, DownloadChunkContainer> chunkDownloader = new ChunkDownloadFacade(accountService.getChunkDownloader(account), getMonitoringHelper());
+		Function<DownloadChunkContainer, DownloadChunkContainer> chunkDecoder = new ChunkDecrypter(cryptoService, account.getCryptoKey(), getMonitoringHelper());
+		Function<DownloadChunkContainer, DownloadChunkContainer> downloadChunkHasher = new DownloadChunkHasher(getMonitoringHelper());
+		Function<DownloadChunkContainer, DownloadChunkContainer> chunkHashVerifier = new ChunkHashVerifier(invalidFileIds);
+		Function<DownloadChunkContainer, DownloadChunkContainer> fileSaver = new FileSaver(getMonitoringHelper());
+		Function<DownloadChunkContainer, DownloadChunkContainer> downloadFileHasher = new DownloadFileHasher(filesIOService, getMonitoringHelper());
+		Function<DownloadChunkContainer, DownloadChunkContainer> fileHashVerifier = new FileHashVerifier(invalidFileIds);
+
+		chunkToDownload.stream()
+			.peek(c -> LOG.info("Processing {}", c.getChunkNumber()))
+			.map(packInContainer)
+			.filter(filterOutInvalidFiles)
+			.map(chunkDownloader)
+			.map(chunkDecoder)
+			.map(downloadChunkHasher)
+			.map(chunkHashVerifier)
+			.map(fileSaver)
+			.map(downloadFileHasher)
+			.map(fileHashVerifier)
+			.forEach(c -> LOG.info("Done: {}", c.getChunkToDownload().getChunkNumber()));
 	}
 
 	protected int getMaxTasks() {
