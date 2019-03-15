@@ -66,12 +66,13 @@ public class ImapChunkDownloader implements ChunkDownloader {
 				!StringUtils.isNotBlank(bodyPart.getFileName())) {
 				continue; // dealing with attachments only
 			}
-			InputStream is = bodyPart.getInputStream();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(bodyPart.getSize());
-			IOUtils.copyLarge(is, baos);
-			IOUtils.closeQuietly(is);
-			IOUtils.closeQuietly(baos);
-			return baos.toByteArray();
+			try (
+				InputStream is = bodyPart.getInputStream();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream(bodyPart.getSize());
+			) {
+				IOUtils.copyLarge(is, baos);
+				return baos.toByteArray();
+			}
 		}
 		throw new IOException("Missing attachment");
 	}
