@@ -1,17 +1,23 @@
 package pl.pamsoft.imapcloud.restic.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRange;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.restic.ResticType;
+import pl.pamsoft.imapcloud.restic.ResticTypeConverter;
 import pl.pamsoft.imapcloud.restic.ResticUtils;
 import pl.pamsoft.imapcloud.restic.dto.V1Result;
 
@@ -29,12 +35,20 @@ public class ResticGeneralController extends AbstractResticController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResticGeneralController.class);
 
+	@Autowired
+	private ObjectMapper mapper;
+
+	@InitBinder
+	public void initBinder(final WebDataBinder webdataBinder) {
+		webdataBinder.registerCustomEditor(ResticType.class, new ResticTypeConverter());
+	}
+
 	@RequestMapping(value = "{path}/{type}", method = GET)
-	public ResponseEntity<Collection<? extends V1Result>> get(@PathVariable String path, @PathVariable ResticType type, HttpServletRequest request) {
+	public ResponseEntity<String> get(@PathVariable String path, @PathVariable ResticType type, HttpServletRequest request) throws JsonProcessingException {
 		LOG.info("Restic received {}: {}/{}", request.getMethod(), path, type);
 		Optional<AccountDto> account = accountServices.getByResticName(path);
 		Collection<? extends V1Result> result = resticService.findByTypeAndOwnerAccountId(type, ResticUtils.getAPIVersion(request), account.get().getId());
-		return new ResponseEntity<>(result, ResticUtils.getHeaders(request), HttpStatus.OK);
+		return new ResponseEntity<>(mapper.writeValueAsString(result), ResticUtils.getHeaders(request), HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "{path}/{type}/{name}", method = GET)

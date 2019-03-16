@@ -5,12 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.pamsoft.imapcloud.dto.AccountDto;
 import pl.pamsoft.imapcloud.entity.ResticMapping;
+import pl.pamsoft.imapcloud.restic.ResticType;
+import pl.pamsoft.imapcloud.restic.ResticTypeConverter;
 import pl.pamsoft.imapcloud.restic.ResticUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +32,11 @@ public class ResticConfigController extends AbstractResticController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResticConfigController.class);
 	private static final String CONFIG_NAME = "config";
+
+	@InitBinder
+	public void initBinder(final WebDataBinder webdataBinder) {
+		webdataBinder.registerCustomEditor(ResticType.class, new ResticTypeConverter());
+	}
 
 	@RequestMapping(value = "{path}", method = RequestMethod.POST)
 	public ResponseEntity<String> createRepo(@PathVariable String path, @RequestParam(required = false) Boolean create, HttpServletRequest request) {
