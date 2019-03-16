@@ -32,3 +32,4 @@ logging:
 
 ic:
   recoveries.folder: ./recoveries/
+  temp.folder: /tmp/ic_temp

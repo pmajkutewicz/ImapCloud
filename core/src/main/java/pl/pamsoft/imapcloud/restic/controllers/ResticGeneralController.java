@@ -61,10 +61,4 @@ public class ResticGeneralController extends AbstractResticController {
 		delete(path, type, name);
 		return new ResponseEntity<>(ResticUtils.getHeaders(request), HttpStatus.OK);
 	}
-
-	@RequestMapping(value = "{path}/{type}/{name}")
-	public ResponseEntity<String> debug(@PathVariable String path, @PathVariable ResticType type, @PathVariable String name, HttpServletRequest request) {
-		LOG.info("Restic received {}: {}/{}/{}", request.getMethod(), path, type, name);
-		return new ResponseEntity<>(ResticUtils.getHeaders(request), HttpStatus.I_AM_A_TEAPOT);
-	}
 }
